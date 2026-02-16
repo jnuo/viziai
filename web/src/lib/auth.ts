@@ -1,6 +1,7 @@
 import GoogleProvider from "next-auth/providers/google";
 import { getServerSession } from "next-auth";
 import type { NextAuthOptions } from "next-auth";
+import * as Sentry from "@sentry/nextjs";
 import { sql } from "@/lib/db";
 import { reportError } from "@/lib/error-reporting";
 
@@ -211,7 +212,11 @@ export async function getUserProfiles(userId: string): Promise<
 export async function requireAuth(): Promise<string | null> {
   const session = await getServerSession(authOptions);
   if (!session?.user?.email) return null;
-  return getDbUserId(session);
+  const userId = getDbUserId(session);
+  if (userId) {
+    Sentry.setUser({ id: userId, email: session.user.email });
+  }
+  return userId;
 }
 
 export async function requireProfileOwner(
