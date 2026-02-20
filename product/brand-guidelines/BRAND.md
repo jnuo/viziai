@@ -25,7 +25,40 @@ From "visualization" + "AI". Clear meaning: AI-powered health data visualization
 
 ## Logo
 
-> TODO: Create logo using `/image-generator` skill
+### Wordmark (Current)
+
+The ViziAI wordmark is a two-tone text mark. This is the canonical way to render the brand name anywhere in the product.
+
+**Rules:**
+
+- "Vizi" in `text-primary` (teal) + "AI" in `text-secondary` (coral) — always split, never single-color
+- Size varies by context (`text-xl`, `text-2xl`, `text-3xl`, etc.) — the two-tone split is the constant
+- Font weight: `font-bold`
+- Hover state: both parts fade to 80% opacity (`hover:text-primary/80`, `hover:text-secondary/80`)
+- Focus: `focus-visible:ring-2 focus-visible:ring-primary`
+
+**Reference implementation:** `web/src/components/viziai-logo.tsx`
+
+```tsx
+<span className="text-primary">Vizi</span>
+<span className="text-secondary">AI</span>
+```
+
+**Do:**
+
+- Use the `ViziAILogo` component from `@/components/viziai-logo` everywhere
+- Vary the size via the `className` prop (e.g., `className="text-3xl"`)
+- Make it clickable (links to `/` or `/dashboard`) when used as navigation
+
+**Don't:**
+
+- Render "ViziAI" as single-color text (e.g., all teal)
+- Use a plain `<div>` or `<h1>` with the brand name instead of the component
+- Change the color split (it's always "Vizi" + "AI", never "Viz" + "iAI")
+
+### Icon (Planned)
+
+> TODO: Create logo icon using `/image-generator` skill
 
 **Concept**: Modern interpretation of the Rod of Asclepius (single snake around staff - the medical symbol)
 
