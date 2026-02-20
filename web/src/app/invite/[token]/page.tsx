@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { ViziAILogo } from "@/components/viziai-logo";
 
 type InviteStatus =
   | "loading"
@@ -190,7 +191,9 @@ export default function InviteClaimPage() {
     <PageWrapper>
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <div className="mb-2 text-3xl font-bold text-primary">ViziAI</div>
+          <div className="mb-2">
+            <ViziAILogo className="text-3xl" />
+          </div>
           <CardTitle className="text-xl">Profil Daveti</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">

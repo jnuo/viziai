@@ -7,6 +7,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { signIn, useSession } from "next-auth/react";
 import { reportError } from "@/lib/error-reporting";
+import { ViziAILogo } from "@/components/viziai-logo";
 
 function LoginContent(): React.ReactElement {
   const router = useRouter();
@@ -55,11 +56,8 @@ function LoginContent(): React.ReactElement {
     <Card className="w-full max-w-md">
       <CardHeader className="text-center">
         <div className="mb-4">
-          <Link
-            href="/"
-            className="text-3xl font-bold text-primary hover:text-primary/80"
-          >
-            ViziAI
+          <Link href="/" className="hover:opacity-80 transition-opacity">
+            <ViziAILogo className="text-3xl" />
           </Link>
         </div>
         <CardTitle className="text-2xl">Tahlil Sonuçları</CardTitle>
@@ -151,7 +149,7 @@ function LoginFallback(): React.ReactElement {
     <Card className="w-full max-w-md">
       <CardHeader className="text-center">
         <div className="mb-4">
-          <h1 className="text-3xl font-bold text-primary">ViziAI</h1>
+          <ViziAILogo className="text-3xl" />
         </div>
         <CardTitle className="text-2xl">Tahlil Sonuçları</CardTitle>
         <p className="text-sm text-muted-foreground mt-2">Yükleniyor…</p>

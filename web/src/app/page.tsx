@@ -8,6 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Header } from "@/components/header";
+import { ViziAILogo } from "@/components/viziai-logo";
 import { FileText, BarChart3, Shield, Zap, LucideIcon } from "lucide-react";
 
 const COLOR_MAP = {
@@ -162,7 +163,7 @@ export default function Home(): React.ReactElement {
       <section className="py-12 md:py-16 bg-muted/30">
         <div className="container mx-auto px-4 max-w-4xl">
           <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
-            Neden <span className="text-primary">ViziAI</span>?
+            Neden <ViziAILogo className="text-2xl md:text-3xl" />?
           </h2>
 
           <div className="grid md:grid-cols-2 gap-6">

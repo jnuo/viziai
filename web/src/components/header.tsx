@@ -3,7 +3,9 @@
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { ViziAILogo } from "@/components/viziai-logo";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,24 +34,6 @@ interface HeaderProps {
   currentProfileId?: string;
   onLogout?: () => void;
   onLogin?: () => void;
-}
-
-function ViziAILogo({ onClick }: { onClick?: () => void }): React.ReactElement {
-  return (
-    <button
-      type="button"
-      className="text-xl sm:text-2xl font-bold cursor-pointer select-none flex items-baseline bg-transparent border-none outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-sm"
-      onClick={onClick}
-      aria-label="ViziAI - Ana sayfa"
-    >
-      <span className="text-primary hover:text-primary/80 transition-colors">
-        Vizi
-      </span>
-      <span className="text-secondary hover:text-secondary/80 transition-colors">
-        AI
-      </span>
-    </button>
-  );
 }
 
 function getInitials(name?: string | null): string {
@@ -83,10 +67,6 @@ export function Header({
     setMounted(true);
   }, []);
 
-  function handleLogoClick(): void {
-    router.push("/dashboard");
-  }
-
   function handleLoginClick(): void {
     if (onLogin) {
       onLogin();
@@ -117,7 +97,13 @@ export function Header({
         >
           {/* Left: Logo + Profile Switcher */}
           <div className="flex items-center gap-2 sm:gap-4">
-            <ViziAILogo onClick={handleLogoClick} />
+            <Link
+              href="/dashboard"
+              className="hover:opacity-80 transition-opacity focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-sm"
+              aria-label="ViziAI - Ana sayfa"
+            >
+              <ViziAILogo />
+            </Link>
             {isLoggedIn && (
               <ProfileSwitcher
                 currentProfileId={currentProfileId}
