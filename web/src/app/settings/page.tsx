@@ -10,9 +10,12 @@ import {
   ChevronRight,
   FileText,
   Loader2,
+  Trash2,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TrackingHistory } from "@/components/tracking-history";
+import { useToast } from "@/components/ui/toast";
 import { useActiveProfile } from "@/hooks/use-active-profile";
 import { formatDateTR, formatDateTimeTR } from "@/lib/date";
 import { reportError } from "@/lib/error-reporting";
@@ -54,6 +57,7 @@ function SettingsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { activeProfile, activeProfileId } = useActiveProfile();
+  const { addToast } = useToast();
 
   const tabParam = searchParams.get("tab") as Tab | null;
   const activeTab: Tab =
@@ -177,6 +181,35 @@ function SettingsContent() {
   }, [activeProfileId, activeTab, filesFetched]);
 
   const accessLevel = activeProfile?.access_level ?? null;
+  const canEdit = accessLevel === "owner" || accessLevel === "editor";
+
+  // --- File deletion ---
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
+
+  function requestDelete(id: string) {
+    if (deleting) return;
+    setDeletingId(id);
+  }
+
+  async function confirmDelete(id: string) {
+    if (deleting) return;
+    setDeleting(true);
+    try {
+      const res = await fetch(`/api/settings/files/${id}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("Silme basarisiz");
+      setFiles((prev) => prev.filter((f) => f.id !== id));
+      setDeletingId(null);
+      addToast({ message: "Dosya silindi", type: "success" });
+    } catch (err) {
+      reportError(err, { op: "settings.deleteFile", id });
+      addToast({ message: "Dosya silinirken hata olustu", type: "error" });
+    } finally {
+      setDeleting(false);
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -242,50 +275,103 @@ function SettingsContent() {
                       </tr>
                     </thead>
                     <tbody>
-                      {sortedFiles.map((file) => (
-                        <tr
-                          key={file.id}
-                          className="border-t hover:bg-muted/50"
-                        >
-                          <td className="p-3 max-w-[200px]">
-                            <span
-                              className="font-medium truncate block"
-                              title={file.file_name}
-                            >
-                              {file.file_name}
-                            </span>
-                          </td>
-                          <td className="p-3">
-                            {file.sample_date ? (
-                              <span className="font-medium">
-                                {formatDateTR(file.sample_date)}
+                      {sortedFiles.map((file) => {
+                        const isDeleting = deletingId === file.id;
+
+                        return (
+                          <tr
+                            key={file.id}
+                            className="border-t hover:bg-muted/50"
+                          >
+                            <td className="p-3 max-w-[200px]">
+                              <span
+                                className="font-medium truncate block"
+                                title={file.file_name}
+                              >
+                                {file.file_name}
                               </span>
-                            ) : (
-                              <span className="text-muted-foreground">—</span>
-                            )}
-                          </td>
-                          <td className="p-3 text-muted-foreground">
-                            {formatDateTimeTR(file.created_at)}
-                          </td>
-                          <td className="p-3 text-center">
-                            <span className="inline-flex items-center justify-center min-w-[2rem] px-2 py-0.5 bg-primary/10 text-primary rounded-full text-xs font-medium tabular-nums">
-                              {file.metric_count}
-                            </span>
-                          </td>
-                          <td className="p-3 text-right">
-                            <Link
-                              href={`/settings/files/${file.id}`}
-                              className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium border rounded-md hover:bg-accent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                            >
-                              Değerleri Gör
-                              <ChevronRight
-                                aria-hidden="true"
-                                className="h-4 w-4"
-                              />
-                            </Link>
-                          </td>
-                        </tr>
-                      ))}
+                            </td>
+                            <td className="p-3">
+                              {file.sample_date ? (
+                                <span className="font-medium">
+                                  {formatDateTR(file.sample_date)}
+                                </span>
+                              ) : (
+                                <span className="text-muted-foreground">—</span>
+                              )}
+                            </td>
+                            <td className="p-3 text-muted-foreground">
+                              {formatDateTimeTR(file.created_at)}
+                            </td>
+                            <td className="p-3 text-center">
+                              <span className="inline-flex items-center justify-center min-w-[2rem] px-2 py-0.5 bg-primary/10 text-primary rounded-full text-xs font-medium tabular-nums">
+                                {file.metric_count}
+                              </span>
+                            </td>
+                            <td className="p-3 text-right">
+                              {isDeleting ? (
+                                <div className="flex items-center justify-end gap-2">
+                                  {deleting ? (
+                                    <>
+                                      <Loader2 className="h-3 w-3 animate-spin text-muted-foreground" />
+                                      <span className="text-sm text-muted-foreground">
+                                        Siliniyor...
+                                      </span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <span className="text-sm text-status-critical">
+                                        {file.metric_count} metrik silinecek.
+                                      </span>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="h-7 text-status-critical hover:text-status-critical"
+                                        onClick={() => confirmDelete(file.id)}
+                                      >
+                                        Onayla
+                                      </Button>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="h-7"
+                                        onClick={() => setDeletingId(null)}
+                                      >
+                                        İptal
+                                      </Button>
+                                    </>
+                                  )}
+                                </div>
+                              ) : (
+                                <div className="flex items-center justify-end gap-1">
+                                  <Link
+                                    href={`/settings/files/${file.id}`}
+                                    className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium border rounded-md hover:bg-accent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                  >
+                                    Değerleri Gör
+                                    <ChevronRight
+                                      aria-hidden="true"
+                                      className="h-4 w-4"
+                                    />
+                                  </Link>
+                                  {canEdit && (
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className="h-8 w-8 text-muted-foreground hover:text-status-critical"
+                                      onClick={() => requestDelete(file.id)}
+                                      disabled={deleting}
+                                      aria-label="Sil"
+                                    >
+                                      <Trash2 className="h-3.5 w-3.5" />
+                                    </Button>
+                                  )}
+                                </div>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
@@ -320,42 +406,103 @@ function SettingsContent() {
                         (sortDirection === "desc" ? "↓" : "↑")}
                     </button>
                   </div>
-                  {sortedFiles.map((file) => (
-                    <Link
-                      key={file.id}
-                      href={`/settings/files/${file.id}`}
-                      className="flex items-center gap-3 border rounded-lg p-3 hover:bg-muted/50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    >
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between gap-2">
-                          <p
-                            className="font-medium text-sm truncate"
-                            title={file.file_name}
-                          >
-                            {file.file_name}
-                          </p>
-                          <span className="inline-flex items-center justify-center min-w-[2rem] px-2 py-0.5 bg-primary/10 text-primary rounded-full text-xs font-medium tabular-nums shrink-0">
-                            {file.metric_count}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-3 mt-1.5 text-xs text-muted-foreground">
-                          {file.sample_date ? (
-                            <span>
-                              Tahlil: {formatDateTR(file.sample_date)}
-                            </span>
-                          ) : (
-                            <span>Tahlil tarihi yok</span>
+                  {sortedFiles.map((file) => {
+                    const isDeleting = deletingId === file.id;
+
+                    return (
+                      <div key={file.id} className="border rounded-lg p-3">
+                        <div
+                          className="flex items-center gap-3 cursor-pointer hover:bg-muted/50 -m-3 p-3 rounded-lg transition-colors"
+                          onClick={() => {
+                            if (!isDeleting)
+                              router.push(`/settings/files/${file.id}`);
+                          }}
+                        >
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-start justify-between gap-2">
+                              <p
+                                className="font-medium text-sm truncate"
+                                title={file.file_name}
+                              >
+                                {file.file_name}
+                              </p>
+                              <span className="inline-flex items-center justify-center min-w-[2rem] px-2 py-0.5 bg-primary/10 text-primary rounded-full text-xs font-medium tabular-nums shrink-0">
+                                {file.metric_count}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-3 mt-1.5 text-xs text-muted-foreground">
+                              {file.sample_date ? (
+                                <span>
+                                  Tahlil: {formatDateTR(file.sample_date)}
+                                </span>
+                              ) : (
+                                <span>Tahlil tarihi yok</span>
+                              )}
+                              <span>·</span>
+                              <span>{formatDateTimeTR(file.created_at)}</span>
+                            </div>
+                          </div>
+                          {!isDeleting && (
+                            <div className="flex items-center gap-1 shrink-0">
+                              {canEdit && (
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-7 w-7 text-muted-foreground hover:text-status-critical"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    requestDelete(file.id);
+                                  }}
+                                  disabled={deleting}
+                                  aria-label="Sil"
+                                >
+                                  <Trash2 className="h-3 w-3" />
+                                </Button>
+                              )}
+                              <ChevronRight
+                                aria-hidden="true"
+                                className="h-4 w-4 text-muted-foreground"
+                              />
+                            </div>
                           )}
-                          <span>·</span>
-                          <span>{formatDateTimeTR(file.created_at)}</span>
                         </div>
+                        {isDeleting && (
+                          <div className="mt-2 pt-2 border-t">
+                            {deleting ? (
+                              <div className="flex items-center gap-2">
+                                <Loader2 className="h-3 w-3 animate-spin text-muted-foreground" />
+                                <span className="text-sm text-muted-foreground">
+                                  Siliniyor...
+                                </span>
+                              </div>
+                            ) : (
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm text-status-critical">
+                                  {file.metric_count} metrik silinecek.
+                                </span>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-7 text-status-critical hover:text-status-critical"
+                                  onClick={() => confirmDelete(file.id)}
+                                >
+                                  Onayla
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-7"
+                                  onClick={() => setDeletingId(null)}
+                                >
+                                  İptal
+                                </Button>
+                              </div>
+                            )}
+                          </div>
+                        )}
                       </div>
-                      <ChevronRight
-                        aria-hidden="true"
-                        className="h-4 w-4 text-muted-foreground shrink-0"
-                      />
-                    </Link>
-                  ))}
+                    );
+                  })}
                 </div>
               </>
             )}
