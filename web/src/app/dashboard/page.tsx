@@ -924,8 +924,10 @@ export default function Dashboard(): React.ReactElement | null {
               <CardContent className="pt-0 px-0">
                 <div
                   ref={gridContainerRef}
-                  className="overflow-y-auto p-2"
-                  style={{ maxHeight: gridHeight }}
+                  className="overflow-y-auto p-2 max-h-48 md:max-h-[var(--grid-h)]"
+                  style={
+                    { "--grid-h": `${gridHeight}px` } as React.CSSProperties
+                  }
                 >
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
                     {displayedMetrics.map((m) => {
