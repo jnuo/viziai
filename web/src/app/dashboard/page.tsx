@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, useRef, useCallback } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import {
   DndContext,
   closestCenter,
@@ -253,9 +253,6 @@ export default function Dashboard(): React.ReactElement | null {
   const hasAutoSelected = useRef(false);
   const [gridHeight, setGridHeight] = useState(DEFAULT_GRID_HEIGHT);
   const gridContainerRef = useRef<HTMLDivElement>(null);
-  const resizeDragRef = useRef<{ startY: number; startHeight: number } | null>(
-    null,
-  );
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearchInput, setShowSearchInput] = useState(false);
   const [sortSheetOpen, setSortSheetOpen] = useState(false);
@@ -590,71 +587,66 @@ export default function Dashboard(): React.ReactElement | null {
   };
 
   // --- Grid resize handlers ---
-  const getMaxGridHeight = useCallback(() => {
-    if (!gridContainerRef.current) return DEFAULT_GRID_HEIGHT;
-    return gridContainerRef.current.scrollHeight;
-  }, []);
+  const getMaxGridHeight = () =>
+    gridContainerRef.current?.scrollHeight ?? DEFAULT_GRID_HEIGHT;
 
-  const handleResizeStart = useCallback(
-    (e: React.MouseEvent) => {
-      e.preventDefault();
-      resizeDragRef.current = { startY: e.clientY, startHeight: gridHeight };
-      document.body.style.userSelect = "none";
-      document.body.style.cursor = "ns-resize";
+  const handleResizeStart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const startY = e.clientY;
+    const startHeight = gridContainerRef.current?.offsetHeight ?? gridHeight;
+    let rafId: number | null = null;
 
-      const handleMouseMove = (moveEvent: MouseEvent) => {
-        if (!resizeDragRef.current) return;
-        const delta = moveEvent.clientY - resizeDragRef.current.startY;
+    document.body.style.userSelect = "none";
+    document.body.style.cursor = "ns-resize";
+
+    const handleMouseMove = (moveEvent: MouseEvent) => {
+      if (rafId !== null) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+        const delta = moveEvent.clientY - startY;
         const newHeight = Math.max(
           MIN_GRID_HEIGHT,
-          Math.min(
-            resizeDragRef.current.startHeight + delta,
-            getMaxGridHeight(),
-          ),
+          Math.min(startHeight + delta, getMaxGridHeight()),
         );
         setGridHeight(newHeight);
-      };
+      });
+    };
 
-      const handleMouseUp = () => {
-        resizeDragRef.current = null;
-        document.body.style.userSelect = "";
-        document.body.style.cursor = "";
-        document.removeEventListener("mousemove", handleMouseMove);
-        document.removeEventListener("mouseup", handleMouseUp);
-      };
+    const handleMouseUp = () => {
+      if (rafId !== null) cancelAnimationFrame(rafId);
+      document.body.style.userSelect = "";
+      document.body.style.cursor = "";
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
 
-      document.addEventListener("mousemove", handleMouseMove);
-      document.addEventListener("mouseup", handleMouseUp);
-    },
-    [gridHeight, getMaxGridHeight],
-  );
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+  };
 
-  const handleResizeKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (e.key === "ArrowDown") {
-        e.preventDefault();
-        setGridHeight((h) => Math.min(h + KEYBOARD_STEP, getMaxGridHeight()));
-      } else if (e.key === "ArrowUp") {
-        e.preventDefault();
-        setGridHeight((h) => Math.max(h - KEYBOARD_STEP, MIN_GRID_HEIGHT));
-      }
-    },
-    [getMaxGridHeight],
-  );
+  const handleResizeKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setGridHeight((h) => Math.min(h + KEYBOARD_STEP, getMaxGridHeight()));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setGridHeight((h) => Math.max(h - KEYBOARD_STEP, MIN_GRID_HEIGHT));
+    }
+  };
 
   // Auto-clamp grid height when search filter reduces visible content
   useEffect(() => {
-    // Use rAF to read layout after React renders the filtered list
     const id = requestAnimationFrame(() => {
-      if (gridContainerRef.current) {
-        const contentHeight = gridContainerRef.current.scrollHeight;
-        if (gridHeight > contentHeight && contentHeight >= MIN_GRID_HEIGHT) {
-          setGridHeight(contentHeight);
+      const el = gridContainerRef.current;
+      if (el) {
+        const contentHeight = el.scrollHeight;
+        if (contentHeight >= MIN_GRID_HEIGHT) {
+          setGridHeight((h) => (h > contentHeight ? contentHeight : h));
         }
       }
     });
     return () => cancelAnimationFrame(id);
-  }, [displayedMetrics.length, gridHeight]);
+  }, [displayedMetrics.length]);
 
   const handleSortDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
@@ -1064,9 +1056,6 @@ export default function Dashboard(): React.ReactElement | null {
                 <div
                   role="separator"
                   aria-orientation="horizontal"
-                  aria-valuenow={gridHeight}
-                  aria-valuemin={MIN_GRID_HEIGHT}
-                  aria-valuemax={getMaxGridHeight()}
                   aria-label="Metrik alanını boyutlandır"
                   tabIndex={0}
                   className={cn(
