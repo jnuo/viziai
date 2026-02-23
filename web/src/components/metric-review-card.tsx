@@ -56,7 +56,7 @@ export const MetricReviewCard = React.memo(function MetricReviewCard({
       role="group"
       aria-labelledby={`metric-label-${index}`}
       className={cn(
-        "metric-card border rounded-lg p-3",
+        "border rounded-lg p-3",
         isOutOfRange && "bg-status-critical/10 border-status-critical/20",
       )}
     >

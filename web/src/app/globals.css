@@ -167,12 +167,6 @@
   padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* Browser-level optimization for off-screen metric cards */
-.metric-card {
-  content-visibility: auto;
-  contain-intrinsic-size: 0 200px;
-}
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
