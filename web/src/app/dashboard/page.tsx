@@ -634,20 +634,6 @@ export default function Dashboard(): React.ReactElement | null {
     }
   };
 
-  // Auto-clamp grid height when search filter reduces visible content
-  useEffect(() => {
-    const id = requestAnimationFrame(() => {
-      const el = gridContainerRef.current;
-      if (el) {
-        const contentHeight = el.scrollHeight;
-        if (contentHeight >= MIN_GRID_HEIGHT) {
-          setGridHeight((h) => (h > contentHeight ? contentHeight : h));
-        }
-      }
-    });
-    return () => cancelAnimationFrame(id);
-  }, [displayedMetrics.length]);
-
   const handleSortDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
