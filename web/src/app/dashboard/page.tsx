@@ -58,6 +58,10 @@ import { reportError } from "@/lib/error-reporting";
 
 type ApiData = { metrics: Metric[]; values: MetricValue[] };
 
+const DEFAULT_GRID_HEIGHT = 192; // matches Tailwind max-h-48 (12rem)
+const MIN_GRID_HEIGHT = 96; // ~1 card row
+const KEYBOARD_STEP = 48; // ~1 row per keypress
+
 type DateRange = "all" | "15" | "30" | "90";
 
 function isValueInRange(
@@ -247,6 +251,8 @@ export default function Dashboard(): React.ReactElement | null {
   }, [needsOnboarding, router]);
 
   const hasAutoSelected = useRef(false);
+  const [gridHeight, setGridHeight] = useState(DEFAULT_GRID_HEIGHT);
+  const gridContainerRef = useRef<HTMLDivElement>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearchInput, setShowSearchInput] = useState(false);
   const [sortSheetOpen, setSortSheetOpen] = useState(false);
@@ -580,6 +586,54 @@ export default function Dashboard(): React.ReactElement | null {
     setSearchQuery("");
   };
 
+  // --- Grid resize handlers ---
+  const getMaxGridHeight = () =>
+    gridContainerRef.current?.scrollHeight ?? DEFAULT_GRID_HEIGHT;
+
+  const handleResizeStart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const startY = e.clientY;
+    const startHeight = gridContainerRef.current?.offsetHeight ?? gridHeight;
+    let rafId: number | null = null;
+
+    document.body.style.userSelect = "none";
+    document.body.style.cursor = "ns-resize";
+
+    const handleMouseMove = (moveEvent: MouseEvent) => {
+      if (rafId !== null) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+        const delta = moveEvent.clientY - startY;
+        const newHeight = Math.max(
+          MIN_GRID_HEIGHT,
+          Math.min(startHeight + delta, getMaxGridHeight()),
+        );
+        setGridHeight(newHeight);
+      });
+    };
+
+    const handleMouseUp = () => {
+      if (rafId !== null) cancelAnimationFrame(rafId);
+      document.body.style.userSelect = "";
+      document.body.style.cursor = "";
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+  };
+
+  const handleResizeKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setGridHeight((h) => Math.min(h + KEYBOARD_STEP, getMaxGridHeight()));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setGridHeight((h) => Math.max(h - KEYBOARD_STEP, MIN_GRID_HEIGHT));
+    }
+  };
+
   const handleSortDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
@@ -868,7 +922,13 @@ export default function Dashboard(): React.ReactElement | null {
                 </div>
               </CardHeader>
               <CardContent className="pt-0 px-0">
-                <div className="max-h-48 overflow-y-auto p-2">
+                <div
+                  ref={gridContainerRef}
+                  className="overflow-y-auto p-2 max-h-48 md:max-h-[var(--grid-h)]"
+                  style={
+                    { "--grid-h": `${gridHeight}px` } as React.CSSProperties
+                  }
+                >
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
                     {displayedMetrics.map((m) => {
                       const latest = valuesByMetric.get(m.id);
@@ -979,6 +1039,23 @@ export default function Dashboard(): React.ReactElement | null {
                       );
                     })}
                   </div>
+                </div>
+                {/* Resize handle — desktop only */}
+                <div
+                  role="separator"
+                  aria-orientation="horizontal"
+                  aria-label="Metrik alanını boyutlandır"
+                  tabIndex={0}
+                  className={cn(
+                    "hidden md:flex items-center justify-center",
+                    "h-2 cursor-row-resize select-none",
+                    "hover:bg-muted/50 transition-colors",
+                    "group",
+                  )}
+                  onMouseDown={handleResizeStart}
+                  onKeyDown={handleResizeKeyDown}
+                >
+                  <div className="w-8 h-0.5 rounded-full bg-muted-foreground/30 group-hover:bg-muted-foreground/50 transition-colors" />
                 </div>
               </CardContent>
             </Card>
