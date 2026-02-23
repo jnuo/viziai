@@ -6,7 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
-import { checkOutOfRange } from "@/lib/metrics";
+import {
+  checkOutOfRange,
+  type ExtractedMetric,
+  type MetricField,
+} from "@/lib/metrics";
 
 interface RenameInfo {
   original: string;
@@ -15,18 +19,12 @@ interface RenameInfo {
 }
 
 interface MetricReviewCardProps {
-  metric: {
-    name: string;
-    value: number;
-    unit?: string;
-    ref_low?: number | null;
-    ref_high?: number | null;
-  };
+  metric: ExtractedMetric;
   index: number;
   renameInfo: RenameInfo | null;
   onMetricChange: (
     index: number,
-    field: string,
+    field: MetricField,
     value: string | number | null,
   ) => void;
   onRemove: (index: number) => void;
@@ -69,7 +67,7 @@ export const MetricReviewCard = React.memo(function MetricReviewCard({
               htmlFor={`metric-name-${index}`}
               className="text-xs text-muted-foreground mb-1 block"
             >
-              Metrik adi
+              Metrik Adı
             </label>
             <Input
               id={`metric-name-${index}`}
@@ -121,7 +119,7 @@ export const MetricReviewCard = React.memo(function MetricReviewCard({
               htmlFor={`metric-value-${index}`}
               className="text-xs text-muted-foreground mb-1 block"
             >
-              Deger
+              Değer
             </label>
             <Input
               id={`metric-value-${index}`}

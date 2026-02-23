@@ -39,21 +39,16 @@ import { Header } from "@/components/header";
 import { cn } from "@/lib/utils";
 import { formatDateTimeTR } from "@/lib/date";
 import { reportError } from "@/lib/error-reporting";
-import { checkOutOfRange } from "@/lib/metrics";
+import {
+  checkOutOfRange,
+  type ExtractedMetric,
+  type MetricField,
+} from "@/lib/metrics";
 import { MetricReviewCard } from "@/components/metric-review-card";
 
 interface Profile {
   id: string;
   display_name: string;
-}
-
-interface ExtractedMetric {
-  name: string;
-  value: number;
-  unit?: string;
-  ref_low?: number | null;
-  ref_high?: number | null;
-  _key?: string;
 }
 
 interface ExtractedData {
@@ -385,7 +380,7 @@ function UploadPageContent(): React.ReactElement {
   });
 
   const handleMetricChange = useCallback(
-    (index: number, field: string, value: string | number | null) => {
+    (index: number, field: MetricField, value: string | number | null) => {
       setEditedMetrics((prev) =>
         prev.map((m, i) => (i === index ? { ...m, [field]: value } : m)),
       );
