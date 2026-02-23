@@ -14,6 +14,10 @@ const inter = Inter({
   subsets: ["latin", "latin-ext"],
 });
 
+export const viewport = {
+  viewportFit: "cover" as const,
+};
+
 export const metadata: Metadata = {
   title: "ViziAI",
   description:
