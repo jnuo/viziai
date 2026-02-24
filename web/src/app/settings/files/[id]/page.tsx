@@ -11,23 +11,9 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
 import { formatDateTR } from "@/lib/date";
+import { checkOutOfRange } from "@/lib/metrics";
 
 const EMPTY_FORM = { value: "", unit: "", ref_low: "", ref_high: "" };
-
-function checkOutOfRange(
-  value: number | string | null,
-  refLow: number | string | null,
-  refHigh: number | string | null,
-): boolean {
-  if (value == null) return false;
-  const v = Number(value);
-  if (isNaN(v)) return false;
-  if (refLow != null && !isNaN(Number(refLow)) && v < Number(refLow))
-    return true;
-  if (refHigh != null && !isNaN(Number(refHigh)) && v > Number(refHigh))
-    return true;
-  return false;
-}
 
 interface Metric {
   id: string;

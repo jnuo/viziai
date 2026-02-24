@@ -3,6 +3,7 @@
 import React, {
   useState,
   useCallback,
+  useMemo,
   useEffect,
   useRef,
   Suspense,
@@ -38,18 +39,21 @@ import { Header } from "@/components/header";
 import { cn } from "@/lib/utils";
 import { formatDateTimeTR } from "@/lib/date";
 import { reportError } from "@/lib/error-reporting";
+import {
+  checkOutOfRange,
+  type ExtractedMetric,
+  type EditableMetric,
+  type MetricField,
+  type RenameInfo,
+} from "@/lib/metrics";
+import {
+  MetricReviewCard,
+  type MetricCardLabels,
+} from "@/components/metric-review-card";
 
 interface Profile {
   id: string;
   display_name: string;
-}
-
-interface ExtractedMetric {
-  name: string;
-  value: number;
-  unit?: string;
-  ref_low?: number | null;
-  ref_high?: number | null;
 }
 
 interface ExtractedData {
@@ -80,12 +84,12 @@ function UploadPageContent(): React.ReactElement {
   const [extractedData, setExtractedData] = useState<ExtractedData | null>(
     null,
   );
-  const [editedMetrics, setEditedMetrics] = useState<ExtractedMetric[]>([]);
+  const [editedMetrics, setEditedMetrics] = useState<EditableMetric[]>([]);
   const [sampleDate, setSampleDate] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [uploadCreatedAt, setUploadCreatedAt] = useState<string | null>(null);
   const [appliedRenames, setAppliedRenames] = useState<
-    Record<string, { original: string; canonical: string; applied: boolean }>
+    Record<string, RenameInfo>
   >({});
   const pollIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const pollStartTimeRef = useRef<number | null>(null);
@@ -216,20 +220,6 @@ function UploadPageContent(): React.ReactElement {
     }
   }
 
-  function getRenameInfo(
-    metricName: string,
-  ): { original: string; canonical: string; applied: boolean } | null {
-    for (const entry of Object.values(appliedRenames)) {
-      if (
-        (entry.applied && metricName === entry.canonical) ||
-        (!entry.applied && metricName === entry.original)
-      ) {
-        return entry;
-      }
-    }
-    return null;
-  }
-
   async function loadExtractedData(id: string): Promise<void> {
     try {
       const response = await fetch(`/api/upload/${id}`);
@@ -246,7 +236,10 @@ function UploadPageContent(): React.ReactElement {
         const { metrics, renames } = await applyAliases(
           extracted.metrics || [],
         );
-        setEditedMetrics(metrics);
+        const ts = Date.now();
+        setEditedMetrics(
+          metrics.map((m, i) => ({ ...m, _key: `metric-${i}-${ts}` })),
+        );
         setAppliedRenames(renames);
         setStatus("review");
       }
@@ -391,19 +384,18 @@ function UploadPageContent(): React.ReactElement {
     disabled: status !== "idle" && status !== "error",
   });
 
-  function handleMetricChange(
-    index: number,
-    field: keyof ExtractedMetric,
-    value: string | number | null,
-  ): void {
-    setEditedMetrics((prev) =>
-      prev.map((m, i) => (i === index ? { ...m, [field]: value } : m)),
-    );
-  }
+  const handleMetricChange = useCallback(
+    (index: number, field: MetricField, value: string | number | null) => {
+      setEditedMetrics((prev) =>
+        prev.map((m, i) => (i === index ? { ...m, [field]: value } : m)),
+      );
+    },
+    [],
+  );
 
-  function handleRemoveMetric(index: number): void {
+  const handleRemoveMetric = useCallback((index: number) => {
     setEditedMetrics((prev) => prev.filter((_, i) => i !== index));
-  }
+  }, []);
 
   async function handleConfirm(): Promise<void> {
     if (!uploadId || !sampleDate || editedMetrics.length === 0) return;
@@ -437,19 +429,31 @@ function UploadPageContent(): React.ReactElement {
     }
   }
 
-  function handleAliasToggle(index: number, checked: boolean): void {
-    const metric = editedMetrics[index];
-    const info = getRenameInfo(metric.name);
-    if (!info) return;
+  const handleAliasToggle = useCallback(
+    (index: number, checked: boolean, info: RenameInfo) => {
+      const newName = checked ? info.canonical : info.original;
+      setEditedMetrics((prev) =>
+        prev.map((m, i) => (i === index ? { ...m, name: newName } : m)),
+      );
+      setAppliedRenames((prev) => ({
+        ...prev,
+        [info.original.toLowerCase()]: {
+          ...prev[info.original.toLowerCase()],
+          applied: checked,
+        },
+      }));
+    },
+    [],
+  );
 
-    const key = info.original.toLowerCase();
-    const newName = checked ? info.canonical : info.original;
-    handleMetricChange(index, "name", newName);
-    setAppliedRenames((prev) => ({
-      ...prev,
-      [key]: { ...prev[key], applied: checked },
-    }));
-  }
+  const renameInfoMap = useMemo(() => {
+    const map = new Map<string, RenameInfo>();
+    for (const entry of Object.values(appliedRenames)) {
+      const key = entry.applied ? entry.canonical : entry.original;
+      map.set(key, entry);
+    }
+    return map;
+  }, [appliedRenames]);
 
   async function handleCancel(): Promise<void> {
     stopPolling();
@@ -477,6 +481,23 @@ function UploadPageContent(): React.ReactElement {
     router.push("/dashboard");
   }
 
+  const cardLabels = useMemo<MetricCardLabels>(
+    () => ({
+      metricName: t("metricName"),
+      value: t("value"),
+      unit: t("unit"),
+      refMin: t("refMin"),
+      refMax: t("refMax"),
+      refPrefix: t("refPrefix"),
+      deleteMetric: t("deleteMetric"),
+      willBeAddedAs: t("willBeAddedAs"),
+      willStayAs: t("willStayAs"),
+      yesDelete: tc("yesDelete"),
+      cancel: tc("cancel"),
+    }),
+    [t, tc],
+  );
+
   const selectedProfile = profiles.find((p) => p.id === selectedProfileId);
 
   return (
@@ -496,7 +517,11 @@ function UploadPageContent(): React.ReactElement {
 
         <Card>
           <CardHeader>
-            <CardTitle>{t("title")}</CardTitle>
+            <CardTitle>
+              {status === "review" || status === "confirming"
+                ? t("reviewTitle")
+                : t("title")}
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Profile Selection */}
@@ -569,14 +594,16 @@ function UploadPageContent(): React.ReactElement {
             {/* Review State */}
             {status === "review" && extractedData && (
               <div className="space-y-6">
-                <div className="flex items-center gap-2 text-status-normal">
-                  <FileText className="h-5 w-5" />
-                  <span className="font-medium">{fileName}</span>
-                  {uploadCreatedAt && (
-                    <span className="text-muted-foreground text-sm">
-                      - {formatDateTimeTR(uploadCreatedAt, locale)}
-                    </span>
-                  )}
+                <div className="flex items-start gap-2 text-status-normal">
+                  <FileText className="h-5 w-5 shrink-0 mt-0.5" />
+                  <div className="min-w-0">
+                    <p className="font-medium text-sm truncate">{fileName}</p>
+                    {uploadCreatedAt && (
+                      <p className="text-muted-foreground text-xs mt-0.5">
+                        {formatDateTimeTR(uploadCreatedAt, locale)}
+                      </p>
+                    )}
+                  </div>
                 </div>
 
                 {/* Sample Date */}
@@ -591,10 +618,12 @@ function UploadPageContent(): React.ReactElement {
                   />
                 </div>
 
-                {/* Metrics Table */}
+                {/* Metrics */}
                 <div className="space-y-2">
                   <Label>{t("metrics", { count: editedMetrics.length })}</Label>
-                  <div className="border rounded-lg overflow-hidden">
+
+                  {/* Desktop table view */}
+                  <div className="hidden md:block border rounded-lg overflow-hidden">
                     <div className="max-h-96 overflow-y-auto">
                       <table className="w-full text-sm">
                         <thead className="bg-muted sticky top-0">
@@ -619,17 +648,15 @@ function UploadPageContent(): React.ReactElement {
                         </thead>
                         <tbody>
                           {editedMetrics.map((metric, index) => {
-                            const isOutOfRange =
-                              metric.value != null &&
-                              ((metric.ref_low != null &&
-                                Number(metric.value) <
-                                  Number(metric.ref_low)) ||
-                                (metric.ref_high != null &&
-                                  Number(metric.value) >
-                                    Number(metric.ref_high)));
-                            const renameInfo = getRenameInfo(metric.name);
+                            const isOutOfRange = checkOutOfRange(
+                              metric.value,
+                              metric.ref_low ?? null,
+                              metric.ref_high ?? null,
+                            );
+                            const renameInfo =
+                              renameInfoMap.get(metric.name) ?? null;
                             return (
-                              <React.Fragment key={index}>
+                              <React.Fragment key={metric._key}>
                                 <tr
                                   className={cn(
                                     "border-t",
@@ -658,7 +685,9 @@ function UploadPageContent(): React.ReactElement {
                                         handleMetricChange(
                                           index,
                                           "value",
-                                          parseFloat(e.target.value) || 0,
+                                          e.target.value
+                                            ? parseFloat(e.target.value)
+                                            : null,
                                         )
                                       }
                                       className={cn(
@@ -747,7 +776,11 @@ function UploadPageContent(): React.ReactElement {
                                         <Switch
                                           checked={renameInfo.applied}
                                           onCheckedChange={(checked) =>
-                                            handleAliasToggle(index, checked)
+                                            handleAliasToggle(
+                                              index,
+                                              checked,
+                                              renameInfo,
+                                            )
                                           }
                                           aria-label={`${renameInfo.original} → ${renameInfo.canonical}`}
                                         />
@@ -779,10 +812,46 @@ function UploadPageContent(): React.ReactElement {
                       </table>
                     </div>
                   </div>
+
+                  {/* Mobile card view */}
+                  <div className="md:hidden space-y-2 pb-20">
+                    {editedMetrics.map((metric, index) => (
+                      <MetricReviewCard
+                        key={metric._key}
+                        metric={metric}
+                        index={index}
+                        labels={cardLabels}
+                        renameInfo={renameInfoMap.get(metric.name) ?? null}
+                        onMetricChange={handleMetricChange}
+                        onRemove={handleRemoveMetric}
+                        onAliasToggle={handleAliasToggle}
+                      />
+                    ))}
+                  </div>
                 </div>
 
-                {/* Actions */}
-                <div className="flex gap-3 justify-end">
+                {/* Mobile: sticky actions */}
+                <div className="md:hidden sticky bottom-0 bg-background border-t p-3 pb-safe">
+                  <div className="flex flex-col-reverse gap-2">
+                    <Button
+                      variant="outline"
+                      onClick={handleCancel}
+                      className="w-full"
+                    >
+                      {tc("cancel")}
+                    </Button>
+                    <Button
+                      onClick={handleConfirm}
+                      disabled={!sampleDate || editedMetrics.length === 0}
+                      className="w-full"
+                    >
+                      {t("confirmSave")}
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Desktop: inline actions */}
+                <div className="hidden md:flex gap-3 justify-end">
                   <Button variant="outline" onClick={handleCancel}>
                     {tc("cancel")}
                   </Button>
