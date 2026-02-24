@@ -16,7 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import type { Metric, MetricValue } from "@/lib/sheets";
 import { compareDateAsc, parseToISO, formatTR } from "@/lib/date";
 import { cn, friendlyMetricName } from "@/lib/utils";
@@ -104,6 +104,7 @@ export function MetricChart({
 }: MetricChartProps): React.ReactElement {
   const colors = useChartColors();
   const t = useTranslations("components.metricChart");
+  const locale = useLocale();
 
   // Sort values by date and create chart data
   const chartData: ChartData[] = values
@@ -253,7 +254,7 @@ export function MetricChart({
 
               <XAxis
                 dataKey="date"
-                tickFormatter={(value: string) => formatTR(value)}
+                tickFormatter={(value: string) => formatTR(value, locale)}
                 tick={{ fontSize: 10 }}
                 tickLine={false}
                 axisLine={false}
@@ -298,7 +299,7 @@ export function MetricChart({
                             : t("noValue")}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          {formatTR(label as string)}
+                          {formatTR(label as string, locale)}
                         </p>
                         {metric.ref_min !== null && metric.ref_max !== null && (
                           <p className="mt-1 text-xs text-status-normal">

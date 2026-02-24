@@ -11,8 +11,10 @@ export type TrackingMeasurement = {
   created_at: string;
 };
 
+export type BPStatusKey = "low" | "high" | "highNormal" | "normal";
+
 export type BPStatus = {
-  label: string;
+  key: BPStatusKey;
   color: string;
   bg: string;
   borderColor: string;
@@ -20,11 +22,12 @@ export type BPStatus = {
 
 /**
  * Classify blood pressure. Ranges per AHA/ESC 2024 guidelines, simplified.
+ * Returns a status key instead of a translated label — callers use t(`common.${key}`) to get the label.
  */
 export function getBPStatus(systolic: number, diastolic: number): BPStatus {
   if (systolic < 90 || diastolic < 60) {
     return {
-      label: "Düşük",
+      key: "low",
       color: "text-status-critical",
       bg: "bg-status-critical/10",
       borderColor: "border-l-status-critical",
@@ -32,7 +35,7 @@ export function getBPStatus(systolic: number, diastolic: number): BPStatus {
   }
   if (systolic >= 140 || diastolic >= 90) {
     return {
-      label: "Yüksek",
+      key: "high",
       color: "text-status-critical",
       bg: "bg-status-critical/10",
       borderColor: "border-l-status-critical",
@@ -40,14 +43,14 @@ export function getBPStatus(systolic: number, diastolic: number): BPStatus {
   }
   if (systolic >= 120 || diastolic >= 80) {
     return {
-      label: "Yüksek Normal",
+      key: "highNormal",
       color: "text-status-warning",
       bg: "bg-status-warning/10",
       borderColor: "border-l-status-warning",
     };
   }
   return {
-    label: "Normal",
+    key: "normal",
     color: "text-status-normal",
     bg: "bg-status-normal/10",
     borderColor: "border-l-status-normal",
@@ -55,11 +58,12 @@ export function getBPStatus(systolic: number, diastolic: number): BPStatus {
 }
 
 /**
- * Format a date string for display in tracking dialogs (Turkish locale).
+ * Format a date string for display in tracking dialogs.
+ * @param locale - "tr" or "en"
  */
-export function formatTrackingDate(dateStr: string): string {
+export function formatTrackingDate(dateStr: string, locale = "tr"): string {
   const date = new Date(dateStr);
-  return date.toLocaleDateString("tr-TR", {
+  return date.toLocaleDateString(locale === "tr" ? "tr-TR" : "en-US", {
     day: "numeric",
     month: "short",
   });
@@ -67,10 +71,11 @@ export function formatTrackingDate(dateStr: string): string {
 
 /**
  * Format a date string with time for blood pressure dialog.
+ * @param locale - "tr" or "en"
  */
-export function formatTrackingDateTime(dateStr: string): string {
+export function formatTrackingDateTime(dateStr: string, locale = "tr"): string {
   const date = new Date(dateStr);
-  return date.toLocaleDateString("tr-TR", {
+  return date.toLocaleDateString(locale === "tr" ? "tr-TR" : "en-US", {
     day: "numeric",
     month: "short",
     hour: "2-digit",
@@ -79,16 +84,34 @@ export function formatTrackingDateTime(dateStr: string): string {
 }
 
 /**
- * Format a date string as relative time (Turkish).
+ * Format a date string as relative time.
+ * Returns a key for "justNow" / "yesterday", or a formatted date string.
  */
-export function formatRelativeDate(dateStr: string): string {
+export function formatRelativeDate(
+  dateStr: string,
+  locale = "tr",
+):
+  | { type: "key"; key: "justNow" | "yesterday" }
+  | { type: "date"; value: string } {
   const date = new Date(dateStr);
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
   const diffHours = diffMs / (1000 * 60 * 60);
 
-  if (diffHours < 1) return "Az önce";
-  if (diffHours < 24) return `${Math.floor(diffHours)} saat önce`;
-  if (diffHours < 48) return "Dün";
-  return date.toLocaleDateString("tr-TR", { day: "numeric", month: "short" });
+  if (diffHours < 1) return { type: "key", key: "justNow" };
+  if (diffHours < 24) {
+    const hours = Math.floor(diffHours);
+    return {
+      type: "date",
+      value: locale === "tr" ? `${hours} saat önce` : `${hours}h ago`,
+    };
+  }
+  if (diffHours < 48) return { type: "key", key: "yesterday" };
+  return {
+    type: "date",
+    value: date.toLocaleDateString(locale === "tr" ? "tr-TR" : "en-US", {
+      day: "numeric",
+      month: "short",
+    }),
+  };
 }

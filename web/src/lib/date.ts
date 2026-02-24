@@ -25,15 +25,15 @@ export function compareDateAsc(a: string, b: string): number {
 }
 
 /**
- * Format date as short Turkish format: "15.01.26"
+ * Format date as short format: "15.01.26"
  * Used in charts
  */
-export function formatTR(dateStr: string): string {
+export function formatTR(dateStr: string, locale = "tr"): string {
   const iso = parseToISO(dateStr);
   if (!iso) return dateStr;
   const [year, month, day] = iso.split("-").map(Number);
   const dt = new Date(Date.UTC(year, month - 1, day));
-  return dt.toLocaleDateString("tr-TR", {
+  return dt.toLocaleDateString(locale === "tr" ? "tr-TR" : "en-US", {
     day: "2-digit",
     month: "2-digit",
     year: "2-digit",
@@ -42,17 +42,18 @@ export function formatTR(dateStr: string): string {
 }
 
 /**
- * Format date in Turkish: "29 Oca 2025"
+ * Format date: "29 Oca 2025" (TR) / "Jan 29, 2025" (EN)
  * Always uses Turkey timezone
  */
-export function formatDateTR(dateString: string | null): string {
+export function formatDateTR(dateString: string | null, locale = "tr"): string {
   if (!dateString) return "—";
+  const localeStr = locale === "tr" ? "tr-TR" : "en-US";
 
   // For date-only strings like "2026-01-15", parse directly to avoid timezone shift
   if (!dateString.includes("T")) {
     const [year, month, day] = dateString.split("-").map(Number);
     const date = new Date(Date.UTC(year, month - 1, day));
-    return date.toLocaleDateString("tr-TR", {
+    return date.toLocaleDateString(localeStr, {
       day: "numeric",
       month: "short",
       year: "numeric",
@@ -62,7 +63,7 @@ export function formatDateTR(dateString: string | null): string {
 
   // For full ISO strings, use timezone conversion
   const date = new Date(dateString);
-  return date.toLocaleDateString("tr-TR", {
+  return date.toLocaleDateString(localeStr, {
     day: "numeric",
     month: "short",
     year: "numeric",
@@ -71,14 +72,17 @@ export function formatDateTR(dateString: string | null): string {
 }
 
 /**
- * Format datetime in Turkish: "29 Oca 2025, 10:30"
+ * Format datetime: "29 Oca 2025, 10:30" (TR) / "Jan 29, 2025, 10:30 AM" (EN)
  * Always uses Turkey timezone
  */
-export function formatDateTimeTR(dateString: string | null): string {
+export function formatDateTimeTR(
+  dateString: string | null,
+  locale = "tr",
+): string {
   if (!dateString) return "—";
 
   const date = new Date(dateString);
-  return date.toLocaleString("tr-TR", {
+  return date.toLocaleString(locale === "tr" ? "tr-TR" : "en-US", {
     day: "numeric",
     month: "short",
     year: "numeric",

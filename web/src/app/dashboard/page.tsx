@@ -54,6 +54,7 @@ import { Header } from "@/components/header";
 import { LoadingState, ErrorState } from "@/components/ui/spinner";
 import type { TrackingMeasurement } from "@/lib/tracking";
 import { useRouter } from "next/navigation";
+import { useTranslations, useLocale } from "next-intl";
 import { reportError } from "@/lib/error-reporting";
 
 type ApiData = { metrics: Metric[]; values: MetricValue[] };
@@ -132,6 +133,7 @@ function SortableMetricItem({
   onSendToTop?: () => void;
   isFirst?: boolean;
 }): React.ReactElement {
+  const t = useTranslations("pages.dashboard");
   const {
     attributes,
     listeners,
@@ -228,6 +230,9 @@ function SortableMetricItem({
 export default function Dashboard(): React.ReactElement | null {
   const router = useRouter();
   const { addToast } = useToast();
+  const t = useTranslations("pages.dashboard");
+  const tc = useTranslations("common");
+  const locale = useLocale();
   const [data, setData] = useState<ApiData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -289,7 +294,7 @@ export default function Dashboard(): React.ReactElement | null {
         reportError(err, { op: "dashboard.loadMetricOrder" });
         addToast({
           type: "error",
-          message: "Metrik sıralaması yüklenemedi.",
+          message: t("metricOrderFailed"),
           duration: 5000,
         });
       }
@@ -332,7 +337,7 @@ export default function Dashboard(): React.ReactElement | null {
           }
         }
       } catch (e: unknown) {
-        const errorMessage = (e as Error)?.message ?? "Bilinmeyen hata";
+        const errorMessage = (e as Error)?.message ?? t("dataLoadFailed");
         reportError(e, {
           op: "dashboard.loadMetrics",
           profileId: activeProfileId,
@@ -341,7 +346,7 @@ export default function Dashboard(): React.ReactElement | null {
           setError(errorMessage);
           addToast({
             type: "error",
-            message: `Veriler yüklenemedi: ${errorMessage}`,
+            message: `${t("dataLoadFailed")}: ${errorMessage}`,
             duration: 5000,
           });
         }
@@ -411,7 +416,7 @@ export default function Dashboard(): React.ReactElement | null {
     if (weightEntries.length > 0) {
       trackingMetrics.push({
         id: "__tracking_weight",
-        name: "Kilo",
+        name: t("weight"),
         unit: "kg",
         ref_min: null,
         ref_max: null,
@@ -428,14 +433,14 @@ export default function Dashboard(): React.ReactElement | null {
     if (bpEntries.length > 0) {
       trackingMetrics.push({
         id: "__tracking_bp_systolic",
-        name: "Tansiyon (Sistolik)",
+        name: t("bpSystolic"),
         unit: "mmHg",
         ref_min: null,
         ref_max: 130,
       });
       trackingMetrics.push({
         id: "__tracking_bp_diastolic",
-        name: "Tansiyon (Diastolik)",
+        name: t("bpDiastolic"),
         unit: "mmHg",
         ref_min: null,
         ref_max: 85,
@@ -554,7 +559,7 @@ export default function Dashboard(): React.ReactElement | null {
   }, [filteredData, showAverage]);
 
   const dateRangeDisplay = useMemo(() => {
-    if (!filteredData || filteredData.values.length === 0) return "Veri yok";
+    if (!filteredData || filteredData.values.length === 0) return t("noData");
 
     const dates = filteredData.values
       .map((v) => parseToISO(v.date) ?? v.date)
@@ -563,11 +568,11 @@ export default function Dashboard(): React.ReactElement | null {
     const latest = dates[dates.length - 1];
 
     if (earliest === latest) {
-      return formatTR(earliest);
+      return formatTR(earliest, locale);
     }
 
-    return `${formatTR(earliest)} - ${formatTR(latest)}`;
-  }, [filteredData]);
+    return `${formatTR(earliest, locale)} - ${formatTR(latest, locale)}`;
+  }, [filteredData, locale]);
 
   const toggleMetric = (metricId: string) => {
     if (selectedMetrics.includes(metricId)) {
@@ -657,7 +662,7 @@ export default function Dashboard(): React.ReactElement | null {
       reportError(err, { op: "dashboard.saveMetricOrder" });
       addToast({
         type: "error",
-        message: "Sıralama kaydedilemedi. Lütfen tekrar deneyin.",
+        message: t("sortSaveFailed"),
         duration: 5000,
       });
       setMetricOrder(oldOrder);
@@ -672,7 +677,7 @@ export default function Dashboard(): React.ReactElement | null {
 
     addToast({
       type: "success",
-      message: "Sıralama varsayılana döndürüldü.",
+      message: t("sortReset"),
       duration: 3000,
     });
 
@@ -692,7 +697,7 @@ export default function Dashboard(): React.ReactElement | null {
       reportError(err, { op: "dashboard.resetMetricOrder" });
       addToast({
         type: "error",
-        message: "Sıralama sıfırlanamadı. Lütfen tekrar deneyin.",
+        message: t("sortResetFailed"),
         duration: 5000,
       });
     }
@@ -730,7 +735,7 @@ export default function Dashboard(): React.ReactElement | null {
       reportError(err, { op: "dashboard.sendToTop", metricId });
       addToast({
         type: "error",
-        message: "Metrik en üste taşınamadı. Lütfen tekrar deneyin.",
+        message: t("moveTopFailed"),
         duration: 5000,
       });
       setMetricOrder(oldOrder);
@@ -750,7 +755,7 @@ export default function Dashboard(): React.ReactElement | null {
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <LoadingState message="Veriler yükleniyor…" />
+        <LoadingState message={t("loadingData")} />
       </div>
     );
   }
@@ -791,7 +796,7 @@ export default function Dashboard(): React.ReactElement | null {
                 {/* Row 1: Title + Average + Date */}
                 <div className="flex items-center gap-2">
                   <CardTitle className="text-xs font-medium text-muted-foreground whitespace-nowrap">
-                    Değerler
+                    {t("values")}
                   </CardTitle>
 
                   <div className="flex items-center gap-2 ml-auto">
@@ -801,7 +806,7 @@ export default function Dashboard(): React.ReactElement | null {
                         htmlFor="average-switch"
                         className="text-xs text-muted-foreground whitespace-nowrap hidden sm:inline"
                       >
-                        Son Değer
+                        {t("lastValue")}
                       </Label>
                       <Switch
                         id="average-switch"
@@ -812,7 +817,7 @@ export default function Dashboard(): React.ReactElement | null {
                         htmlFor="average-switch"
                         className="text-xs text-muted-foreground whitespace-nowrap hidden sm:inline"
                       >
-                        Ortalama
+                        {t("average")}
                       </Label>
                     </div>
 
@@ -825,10 +830,10 @@ export default function Dashboard(): React.ReactElement | null {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">Tümü</SelectItem>
-                        <SelectItem value="90">Son 90 gün</SelectItem>
-                        <SelectItem value="30">Son 30 gün</SelectItem>
-                        <SelectItem value="15">Son 15 gün</SelectItem>
+                        <SelectItem value="all">{t("all")}</SelectItem>
+                        <SelectItem value="90">{t("last90")}</SelectItem>
+                        <SelectItem value="30">{t("last30")}</SelectItem>
+                        <SelectItem value="15">{t("last15")}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -842,17 +847,17 @@ export default function Dashboard(): React.ReactElement | null {
                       <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
                       <Input
                         type="text"
-                        placeholder="Ara…"
+                        placeholder={t("searchPlaceholder")}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="h-7 pl-8 pr-7 w-48 text-xs"
-                        aria-label="Metrik ara"
+                        aria-label={t("searchMetric")}
                       />
                       {searchQuery && (
                         <button
                           onClick={() => setSearchQuery("")}
                           className="absolute right-1.5 top-1/2 -translate-y-1/2 h-4 w-4 rounded-full bg-muted-foreground/20 hover:bg-muted-foreground/40 flex items-center justify-center transition-colors"
-                          aria-label="Aramayı temizle"
+                          aria-label={t("clearSearch")}
                         >
                           <X className="h-2.5 w-2.5 text-muted-foreground" />
                         </button>
@@ -866,7 +871,7 @@ export default function Dashboard(): React.ReactElement | null {
                       className="h-7 gap-1 px-2"
                     >
                       <ArrowUpDown className="h-3.5 w-3.5" />
-                      <span className="text-xs">Sırala</span>
+                      <span className="text-xs">{t("sort")}</span>
                     </Button>
                   </div>
 
@@ -880,7 +885,7 @@ export default function Dashboard(): React.ReactElement | null {
                         className="h-7 gap-1 px-2"
                       >
                         <Search className="h-3.5 w-3.5" />
-                        <span className="text-xs">Ara</span>
+                        <span className="text-xs">{t("search")}</span>
                       </Button>
                       <div className="w-px h-5 bg-border" />
                       <Button
@@ -890,25 +895,25 @@ export default function Dashboard(): React.ReactElement | null {
                         className="h-7 gap-1 px-2"
                       >
                         <ArrowUpDown className="h-3.5 w-3.5" />
-                        <span className="text-xs">Sırala</span>
+                        <span className="text-xs">{t("sort")}</span>
                       </Button>
                     </div>
                   ) : (
                     <div className="flex-1 md:hidden relative">
                       <Input
                         type="text"
-                        placeholder="Ara…"
+                        placeholder={t("searchPlaceholder")}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="h-7 pr-8 text-xs"
-                        aria-label="Metrik ara"
+                        aria-label={t("searchMetric")}
                       />
                       <Button
                         variant="ghost"
                         size="icon"
                         onClick={closeSearch}
                         className="absolute right-0.5 top-0.5 h-6 w-6"
-                        aria-label="Aramayı kapat"
+                        aria-label={t("closeSearch")}
                       >
                         <X className="h-3.5 w-3.5" />
                       </Button>
@@ -946,13 +951,13 @@ export default function Dashboard(): React.ReactElement | null {
                         m.ref_min != null &&
                         value < m.ref_min
                       ) {
-                        flagStatus = "Düşük";
+                        flagStatus = tc("low");
                       } else if (
                         value !== undefined &&
                         m.ref_max != null &&
                         value > m.ref_max
                       ) {
-                        flagStatus = "Yüksek";
+                        flagStatus = tc("high");
                       }
 
                       return (
@@ -979,7 +984,7 @@ export default function Dashboard(): React.ReactElement | null {
                                 <TooltipTrigger asChild>
                                   <Info
                                     className="h-3 w-3 text-muted-foreground hover:text-foreground transition-colors flex-shrink-0 ml-1"
-                                    aria-label="Detaylar"
+                                    aria-label={t("details")}
                                   />
                                 </TooltipTrigger>
                                 <TooltipContent side="top" className="max-w-xs">
@@ -989,21 +994,23 @@ export default function Dashboard(): React.ReactElement | null {
                                     </div>
                                     {m.ref_min != null && m.ref_max != null ? (
                                       <div className="text-sm">
-                                        Referans aralığı: {m.ref_min} -{" "}
+                                        {t("refRange")}: {m.ref_min} -{" "}
                                         {m.ref_max} {m.unit || ""}
                                       </div>
                                     ) : m.ref_min != null ? (
                                       <div className="text-sm">
-                                        Minimum: {m.ref_min} {m.unit || ""}
+                                        {t("minimum")}: {m.ref_min}{" "}
+                                        {m.unit || ""}
                                       </div>
                                     ) : m.ref_max != null ? (
                                       <div className="text-sm">
-                                        Maksimum: {m.ref_max} {m.unit || ""}
+                                        {t("maximum")}: {m.ref_max}{" "}
+                                        {m.unit || ""}
                                       </div>
                                     ) : null}
                                     {flagStatus && (
                                       <div className="text-sm font-medium text-status-critical">
-                                        Durum: {flagStatus}
+                                        {t("status")}: {flagStatus}
                                       </div>
                                     )}
                                   </div>
@@ -1030,8 +1037,8 @@ export default function Dashboard(): React.ReactElement | null {
                             {latest && (
                               <div className="text-xs text-muted-foreground leading-none">
                                 {showAverage && latest.count > 1
-                                  ? `${latest.count} değer`
-                                  : formatTR(latest.date)}
+                                  ? t("nValues", { count: latest.count })
+                                  : formatTR(latest.date, locale)}
                               </div>
                             )}
                           </CardContent>
@@ -1044,7 +1051,7 @@ export default function Dashboard(): React.ReactElement | null {
                 <div
                   role="separator"
                   aria-orientation="horizontal"
-                  aria-label="Metrik alanını boyutlandır"
+                  aria-label={t("resizeMetricGrid")}
                   tabIndex={0}
                   className={cn(
                     "hidden md:flex items-center justify-center",
@@ -1084,9 +1091,9 @@ export default function Dashboard(): React.ReactElement | null {
           <SheetContent className="w-full sm:max-w-sm !p-0 !gap-0 overflow-hidden">
             <div className="flex flex-col h-full">
               <SheetHeader className="pb-4 pl-2 pt-6 flex-shrink-0">
-                <SheetTitle className="text-base">Metrikleri Sırala</SheetTitle>
+                <SheetTitle className="text-base">{t("sortTitle")}</SheetTitle>
                 <p className="text-xs text-muted-foreground">
-                  Sıralamayı değiştirmek için metrikleri sürükleyin
+                  {t("sortDescription")}
                 </p>
               </SheetHeader>
               <div
@@ -1150,7 +1157,7 @@ export default function Dashboard(): React.ReactElement | null {
                   className="w-full"
                   size="sm"
                 >
-                  Varsayılana Dön
+                  {t("resetDefault")}
                 </Button>
               </div>
             </div>
