@@ -17,6 +17,7 @@ function LoginContent(): React.ReactElement {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const t = useTranslations("pages.login");
+  const tLanding = useTranslations("pages.landing");
 
   useEffect(() => {
     const errorParam = searchParams.get("error");
@@ -62,10 +63,9 @@ function LoginContent(): React.ReactElement {
             <ViziAILogo className="text-3xl" />
           </Link>
         </div>
-        <CardTitle className="text-2xl">{t("testResults")}</CardTitle>
-        <p className="text-sm text-muted-foreground mt-2">
-          {t("signInWithGoogle")}
-        </p>
+        <CardTitle className="text-2xl">
+          {tLanding.rich("heroTitle", { highlight: (chunks) => chunks })}
+        </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {error && (
@@ -144,7 +144,7 @@ function LoginContent(): React.ReactElement {
 }
 
 function LoginFallback(): React.ReactElement {
-  const t = useTranslations("pages.login");
+  const tLanding = useTranslations("pages.landing");
   const tc = useTranslations("common");
   return (
     <Card className="w-full max-w-md">
@@ -152,7 +152,9 @@ function LoginFallback(): React.ReactElement {
         <div className="mb-4">
           <ViziAILogo className="text-3xl" />
         </div>
-        <CardTitle className="text-2xl">{t("testResults")}</CardTitle>
+        <CardTitle className="text-2xl">
+          {tLanding.rich("heroTitle", { highlight: (chunks) => chunks })}
+        </CardTitle>
         <p className="text-sm text-muted-foreground mt-2">{tc("loading")}</p>
       </CardHeader>
       <CardContent className="space-y-4">
