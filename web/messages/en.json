@@ -1,0 +1,233 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "change": "Change",
+    "ok": "OK",
+    "loading": "Loading...",
+    "error": "Error",
+    "errorOccurred": "An error occurred",
+    "errorRetry": "An error occurred. Please try again.",
+    "somethingWentWrong": "Something went wrong",
+    "errorLogged": "Error logged. Please try again.",
+    "deleting": "Deleting...",
+    "deleteFailed": "Delete failed",
+    "saveFailed": "Save failed",
+    "updated": "Updated",
+    "recordDeleted": "Record deleted",
+    "confirmDelete": "Delete?",
+    "yesDelete": "Yes, Delete",
+    "copy": "Copy",
+    "copied": "Copied",
+    "redirecting": "Redirecting…",
+    "creating": "Creating…",
+    "profile": "Profile",
+    "selectProfile": "Select profile",
+    "low": "Low",
+    "high": "High",
+    "normal": "Normal",
+    "highNormal": "High Normal",
+    "ascending": "ascending",
+    "descending": "descending",
+    "justNow": "Just now",
+    "yesterday": "Yesterday",
+    "copyright": "© 2026 ViziAI. All rights reserved.",
+    "accessLevel": {
+      "owner": "Owner",
+      "editor": "Editor",
+      "viewer": "Viewer"
+    }
+  },
+  "pages": {
+    "landing": {
+      "heroTitle": "Understand Your Test Results Easily",
+      "heroHighlight": "Easily",
+      "heroDescription": "Upload your blood test results as PDF. ViziAI uses AI to analyze your results, presenting your values in a clear and comparable interface.",
+      "getStarted": "Get Started",
+      "tryFree": "Try for Free",
+      "dashboardAlt": "ViziAI Dashboard - Visually track your test results",
+      "whyViziAI": "Why ViziAI?",
+      "startTracking": "Start Tracking Your Health",
+      "neverEasier": "Understanding your test results has never been easier.",
+      "features": {
+        "aiAnalysis": "AI-Powered Analysis",
+        "aiAnalysisDesc": "Automatically extracts and organizes test data from PDFs using artificial intelligence.",
+        "visualDashboard": "Visual Dashboard",
+        "visualDashboardDesc": "Track and compare your values over time with visual charts.",
+        "easyUpload": "Easy PDF Upload",
+        "easyUploadDesc": "Easily upload your test reports in PDF format with drag and drop.",
+        "securePrivate": "Secure & Private",
+        "securePrivateDesc": "Your data is stored on secure infrastructure, accessible only by you."
+      }
+    },
+    "login": {
+      "testResults": "Test Results",
+      "signInWithGoogle": "Sign in with Google",
+      "signingIn": "Signing in…",
+      "accessDenied": "You do not have permission to sign in with this email address.",
+      "loginError": "An error occurred while signing in",
+      "termsAgreement": "By signing in, you agree to our Terms of Service and Privacy Policy."
+    },
+    "upload": {
+      "title": "Upload Test Report",
+      "selectPdf": "Select PDF file",
+      "testDate": "Test Date",
+      "metricName": "Metric name",
+      "value": "Value",
+      "deleteMetric": "Delete metric",
+      "confirmSave": "Confirm & Save",
+      "resultsAdded": "Test results added to your profile",
+      "selectProfile": "Please select a profile",
+      "onlyPdf": "Only PDF files are accepted",
+      "uploadFailed": "Upload failed",
+      "extractionFailed": "Data extraction failed",
+      "dataLoadFailed": "Failed to load data",
+      "confirmFailed": "Confirmation failed",
+      "timeout": "Could not complete within 5 minutes. Please try again."
+    },
+    "dashboard": {
+      "loadingData": "Loading data…",
+      "metricOrderFailed": "Failed to load metric order.",
+      "sortSaveFailed": "Failed to save order. Please try again.",
+      "sortReset": "Order reset to default.",
+      "sortResetFailed": "Failed to reset order. Please try again.",
+      "moveTopFailed": "Failed to move metric to top. Please try again.",
+      "clearSearch": "Clear search",
+      "closeSearch": "Close search",
+      "resizeMetricGrid": "Resize metric grid"
+    },
+    "settings": {
+      "testReports": "Test Reports",
+      "weight": "Weight",
+      "bloodPressure": "Blood Pressure",
+      "uploadDate": "Upload Date",
+      "testDate": "Test Date",
+      "noTestDate": "No test date",
+      "filesLoadFailed": "Failed to load files",
+      "filesLoadError": "An error occurred while loading files",
+      "deletionFailed": "Deletion failed",
+      "fileNotFound": "File not found",
+      "fileDetailsFailed": "Failed to load file details",
+      "valueRequired": "Value cannot be empty",
+      "metricUpdated": "Metric updated"
+    },
+    "access": {
+      "profileDescription": "Upload test results and track changes over time.",
+      "createProfile": "Create New Profile",
+      "leaveProfile": "Leave Profile",
+      "deleteProfile": "Delete Profile"
+    },
+    "onboarding": {
+      "visualize": "Visualize your test results and track your health trends.",
+      "createProfileTitle": "Create a Profile",
+      "addProfile": "Add New Profile",
+      "profileNameLabel": "Profile Name",
+      "profileNamePlaceholder": "e.g. John D.",
+      "profileNameRequired": "Profile name is required",
+      "profileCreated": "Profile Created",
+      "profileCreateFailed": "Failed to create profile",
+      "enterPersonName": "Enter the name of the person whose test results you want to track"
+    },
+    "invite": {
+      "profileInvite": "Profile Invite",
+      "inviteNotFound": "Invite Not Found",
+      "linkInvalid": "This link is invalid.",
+      "inviteCancelled": "Invite Cancelled",
+      "inviteAlreadyUsed": "Invite Already Used",
+      "inviteAlreadyAccepted": "This invite has already been accepted.",
+      "inviteExpired": "Invite Expired",
+      "inviteLoadError": "An error occurred while loading invite details.",
+      "accessGranted": "Access Granted",
+      "inviteLink": "Invite Link",
+      "now": "now"
+    }
+  },
+  "components": {
+    "header": {
+      "mainNav": "Main navigation",
+      "home": "ViziAI - Home",
+      "testReports": "Test Reports",
+      "add": "Add",
+      "addBP": "Add Blood Pressure",
+      "addWeight": "Add Weight",
+      "uploadReport": "Upload Report",
+      "userMenu": "User menu",
+      "profiles": "Profiles",
+      "lightTheme": "Light Theme",
+      "darkTheme": "Dark Theme",
+      "logout": "Sign Out",
+      "login": "Sign In"
+    },
+    "extraction": {
+      "readingPdf": "Reading PDF…",
+      "scanningPages": "Scanning pages…",
+      "findingValues": "Finding test values…",
+      "checkingRanges": "Checking reference ranges…",
+      "normalizingNames": "Normalizing metric names…",
+      "structuringData": "Structuring data…",
+      "aiAnalyzing": "AI Analyzing"
+    },
+    "emptyState": {
+      "startByUploading": "Start by uploading your first report.",
+      "uploadFirst": "Upload First Test"
+    },
+    "profileSwitcher": {
+      "selectProfile": "Select Profile",
+      "addProfile": "Add New Profile"
+    },
+    "inviteModal": {
+      "sendFailed": "Failed to send invite"
+    },
+    "metricChart": {
+      "removeChart": "Remove chart"
+    },
+    "notification": {
+      "viewProfiles": "View Profiles"
+    }
+  },
+  "tracking": {
+    "systolicFriendly": "Systolic Blood Pressure",
+    "diastolicFriendly": "Diastolic Blood Pressure",
+    "pulse": "Pulse",
+    "weightPlaceholder": "Morning, empty stomach…",
+    "dataLoadFailed": "Failed to load data",
+    "dataLoadError": "An error occurred while loading data",
+    "validWeight": "Enter a valid weight (1-500)",
+    "validBP": "Enter valid blood pressure values",
+    "validPulse": "Enter a valid pulse (20-250)",
+    "registrationFailed": "Registration failed",
+    "profilesLoadFailed": "Failed to load profiles",
+    "addBPTitle": "Add Blood Pressure",
+    "addWeightTitle": "Add Weight"
+  },
+  "api": {
+    "profileNotFound": "Profile not found",
+    "profileDeleteFailed": "Failed to delete profile",
+    "profileCreateFailed": "An error occurred while creating profile. Please try again.",
+    "noProfileAccess": "You do not have access to this profile",
+    "ownerCannotLeave": "Profile owner cannot leave the profile",
+    "leaveFailed": "Failed to leave profile",
+    "cannotChangeOwnAccess": "You cannot change your own access level",
+    "invalidAccessLevel": "Access level must be 'viewer' or 'editor'",
+    "userAccessNotFound": "User access not found",
+    "accessUpdateFailed": "Failed to update access level",
+    "cannotRemoveOwnAccess": "You cannot remove your own access",
+    "accessRemoveFailed": "Failed to remove access",
+    "invalidEmail": "Invalid email address",
+    "userAlreadyHasAccess": "This user already has access",
+    "inviteAlreadyPending": "A pending invite already exists for this email",
+    "inviteCreateFailed": "Failed to create invite",
+    "onlyPdf": "Only PDF files are accepted",
+    "invalidPdf": "Invalid PDF file",
+    "fileAlreadyUploaded": "This file has already been uploaded",
+    "inviteNotFound": "Invite not found",
+    "inviteInfoFailed": "Failed to retrieve invite details",
+    "inviteCancelled": "This invite has been cancelled",
+    "inviteAlreadyUsed": "This invite has already been used",
+    "inviteExpired": "Invite has expired",
+    "emailMismatch": "Email does not match",
+    "inviteNotFoundOrProcessed": "Invite not found or already processed"
+  }
+}

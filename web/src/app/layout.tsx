@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Script from "next/script";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages } from "next-intl/server";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ToastProvider } from "@/components/ui/toast";
@@ -13,18 +15,21 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "ViziAI - Tahlil Sonuçlarınızı Kolayca Anlamlandırın",
+  title: "ViziAI",
   description:
-    "E-nabız'dan veya laboratuar sayfalarından indirdiğiniz tahlil sonuçlarını PDF (veya herhangi bir formatta) yükleyin. ViziAI yapay zeka ile bu verileri düzenli bir formata ta analiz eder, farklıl değerleri kolayca annlaşılır ve karşılaştırılabilir bir arayüzde incelemenizi sağlar.",
+    "Upload your blood test results and get AI-powered analysis with visual health insights.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
-    <html lang="tr" suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning>
       <head>
         <meta
           name="theme-color"
@@ -52,12 +57,14 @@ export default function RootLayout({
       </head>
       <body className={`${inter.variable} antialiased`}>
         <Providers>
-          <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-            <ToastProvider>
-              <NotificationChecker />
-              {children}
-            </ToastProvider>
-          </ThemeProvider>
+          <NextIntlClientProvider locale={locale} messages={messages}>
+            <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+              <ToastProvider>
+                <NotificationChecker />
+                {children}
+              </ToastProvider>
+            </ThemeProvider>
+          </NextIntlClientProvider>
         </Providers>
       </body>
     </html>

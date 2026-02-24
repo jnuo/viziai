@@ -1,0 +1,233 @@
+{
+  "common": {
+    "save": "Kaydet",
+    "cancel": "İptal",
+    "delete": "Sil",
+    "edit": "Düzenle",
+    "change": "Değiştir",
+    "ok": "Tamam",
+    "loading": "Yükleniyor...",
+    "error": "Hata",
+    "errorOccurred": "Bir hata oluştu",
+    "errorRetry": "Bir hata oluştu. Lütfen tekrar deneyin.",
+    "somethingWentWrong": "Bir şeyler yanlış gitti",
+    "errorLogged": "Hata kaydedildi. Lütfen tekrar deneyin.",
+    "deleting": "Siliniyor...",
+    "deleteFailed": "Silme başarısız",
+    "saveFailed": "Kaydetme başarısız",
+    "updated": "Güncellendi",
+    "recordDeleted": "Kayıt silindi",
+    "confirmDelete": "Sil?",
+    "yesDelete": "Evet, Sil",
+    "copy": "Kopyala",
+    "copied": "Kopyalandı",
+    "redirecting": "Yönlendiriliyor…",
+    "creating": "Oluşturuluyor…",
+    "profile": "Profil",
+    "selectProfile": "Profil seçin",
+    "low": "Düşük",
+    "high": "Yüksek",
+    "normal": "Normal",
+    "highNormal": "Yüksek Normal",
+    "ascending": "artan sıra",
+    "descending": "azalan sıra",
+    "justNow": "Az önce",
+    "yesterday": "Dün",
+    "copyright": "© 2026 ViziAI. Tüm hakları saklıdır.",
+    "accessLevel": {
+      "owner": "Sahip",
+      "editor": "Düzenleyici",
+      "viewer": "Görüntüleyici"
+    }
+  },
+  "pages": {
+    "landing": {
+      "heroTitle": "Tahlil Sonuçlarını Kolayca Anlayın",
+      "heroHighlight": "Kolayca",
+      "heroDescription": "E-nabız'dan veya laboratuar sayfalarından indirdiğiniz tahlil sonuçlarını PDF olarak yükleyin. ViziAI yapay zeka ile sonuçlarınızı analiz eder, değerlerinizi anlaşılır ve karşılaştırılabilir bir arayüzde sunar.",
+      "getStarted": "Hemen Başla",
+      "tryFree": "Ücretsiz Deneyin",
+      "dashboardAlt": "ViziAI Dashboard - Test sonuçlarınızı görsel olarak takip edin",
+      "whyViziAI": "Neden ViziAI?",
+      "startTracking": "Sağlığınızı Takip Etmeye Başlayın",
+      "neverEasier": "Tahlil sonuçlarınızı anlamak hiç bu kadar kolay olmamıştı.",
+      "features": {
+        "aiAnalysis": "AI Destekli Analiz",
+        "aiAnalysisDesc": "Yapay zeka ile PDF'lerden tahlil verilerini otomatik olarak çıkarır ve düzenler.",
+        "visualDashboard": "Görsel Dashboard",
+        "visualDashboardDesc": "Değerlerinizi zaman içinde görsel grafiklerle takip edin ve karşılaştırın.",
+        "easyUpload": "Kolay PDF Yükleme",
+        "easyUploadDesc": "PDF formatındaki tahlil raporlarınızı sürükle-bırak ile kolayca yükleyin.",
+        "securePrivate": "Güvenli ve Özel",
+        "securePrivateDesc": "Verileriniz güvenli altyapıda saklanır, sadece siz erişebilirsiniz."
+      }
+    },
+    "login": {
+      "testResults": "Tahlil Sonuçları",
+      "signInWithGoogle": "Google ile Giriş Yap",
+      "signingIn": "Giriş yapılıyor…",
+      "accessDenied": "Bu e-posta adresiyle giriş izniniz bulunmamaktadır.",
+      "loginError": "Giriş yapılırken bir hata oluştu",
+      "termsAgreement": "Giriş yaparak Kullanım Koşulları ve Gizlilik Politikası'nı kabul etmiş olursunuz."
+    },
+    "upload": {
+      "title": "Tahlil Raporu Yükle",
+      "selectPdf": "PDF dosyası seç",
+      "testDate": "Tahlil Tarihi",
+      "metricName": "Metrik adı",
+      "value": "Değer",
+      "deleteMetric": "Metriği sil",
+      "confirmSave": "Onayla ve Kaydet",
+      "resultsAdded": "Tahlil sonuçları profilinize eklendi",
+      "selectProfile": "Lütfen bir profil seçin",
+      "onlyPdf": "Sadece PDF dosyaları kabul edilir",
+      "uploadFailed": "Yükleme başarısız",
+      "extractionFailed": "Veri çıkarma başarısız",
+      "dataLoadFailed": "Veri yüklenemedi",
+      "confirmFailed": "Onaylama başarısız",
+      "timeout": "5 dakika içinde tamamlanamadı. Lütfen tekrar deneyin."
+    },
+    "dashboard": {
+      "loadingData": "Veriler yükleniyor…",
+      "metricOrderFailed": "Metrik sıralaması yüklenemedi.",
+      "sortSaveFailed": "Sıralama kaydedilemedi. Lütfen tekrar deneyin.",
+      "sortReset": "Sıralama varsayılana döndürüldü.",
+      "sortResetFailed": "Sıralama sıfırlanamadı. Lütfen tekrar deneyin.",
+      "moveTopFailed": "Metrik en üste taşınamadı. Lütfen tekrar deneyin.",
+      "clearSearch": "Aramayı temizle",
+      "closeSearch": "Aramayı kapat",
+      "resizeMetricGrid": "Metrik alanını boyutlandır"
+    },
+    "settings": {
+      "testReports": "Tahliller",
+      "weight": "Kilo",
+      "bloodPressure": "Tansiyon",
+      "uploadDate": "Yüklenme",
+      "testDate": "Tahlil Tarihi",
+      "noTestDate": "Tahlil tarihi yok",
+      "filesLoadFailed": "Dosyalar yüklenemedi",
+      "filesLoadError": "Dosyalar yüklenirken bir hata oluştu",
+      "deletionFailed": "Silme başarısız",
+      "fileNotFound": "Dosya bulunamadı",
+      "fileDetailsFailed": "Dosya detayları yüklenemedi",
+      "valueRequired": "Değer boş olamaz",
+      "metricUpdated": "Metrik güncellendi"
+    },
+    "access": {
+      "profileDescription": "Tahlil sonuçlarını yükleyip zaman içindeki değişimleri takip edin.",
+      "createProfile": "Yeni Profil Oluştur",
+      "leaveProfile": "Profilden Ayrıl",
+      "deleteProfile": "Profili Sil"
+    },
+    "onboarding": {
+      "visualize": "Tahlil sonuçlarınızı görselleştirin ve sağlık trendlerinizi takip edin.",
+      "createProfileTitle": "Profil Oluşturun",
+      "addProfile": "Yeni Profil Ekle",
+      "profileNameLabel": "Profil Adı",
+      "profileNamePlaceholder": "örn: Yüksel O.",
+      "profileNameRequired": "Profil adı gerekli",
+      "profileCreated": "Profil Oluşturuldu",
+      "profileCreateFailed": "Profil oluşturulamadı",
+      "enterPersonName": "Tahlil sonuçlarını takip etmek istediğiniz kişinin adını girin"
+    },
+    "invite": {
+      "profileInvite": "Profil Daveti",
+      "inviteNotFound": "Davet Bulunamadı",
+      "linkInvalid": "Bu bağlantı geçerli değil.",
+      "inviteCancelled": "Davet İptal Edilmiş",
+      "inviteAlreadyUsed": "Davet Zaten Kullanılmış",
+      "inviteAlreadyAccepted": "Bu davet daha önce kabul edilmiş.",
+      "inviteExpired": "Davet Süresi Dolmuş",
+      "inviteLoadError": "Davet bilgileri yüklenirken bir hata oluştu.",
+      "accessGranted": "Erişim Verildi",
+      "inviteLink": "Davet Bağlantısı",
+      "now": "artık"
+    }
+  },
+  "components": {
+    "header": {
+      "mainNav": "Ana navigasyon",
+      "home": "ViziAI - Ana sayfa",
+      "testReports": "Tahliller",
+      "add": "Ekle",
+      "addBP": "Tansiyon Ekle",
+      "addWeight": "Kilo Ekle",
+      "uploadReport": "Tahlil Yükle",
+      "userMenu": "Kullanıcı menüsü",
+      "profiles": "Profiller",
+      "lightTheme": "Açık Tema",
+      "darkTheme": "Koyu Tema",
+      "logout": "Çıkış",
+      "login": "Giriş Yap"
+    },
+    "extraction": {
+      "readingPdf": "PDF okunuyor…",
+      "scanningPages": "Sayfalar taranıyor…",
+      "findingValues": "Tahlil değerleri bulunuyor…",
+      "checkingRanges": "Referans aralıkları kontrol ediliyor…",
+      "normalizingNames": "Metrik isimleri normalize ediliyor…",
+      "structuringData": "Veriler yapılandırılıyor…",
+      "aiAnalyzing": "AI Analiz Ediyor"
+    },
+    "emptyState": {
+      "startByUploading": "İlk raporunuzu yükleyerek başlayın.",
+      "uploadFirst": "İlk Tahlilini Yükle"
+    },
+    "profileSwitcher": {
+      "selectProfile": "Profil Seç",
+      "addProfile": "Yeni Profil Ekle"
+    },
+    "inviteModal": {
+      "sendFailed": "Davet gönderilemedi"
+    },
+    "metricChart": {
+      "removeChart": "Grafiği kaldır"
+    },
+    "notification": {
+      "viewProfiles": "Profilleri gör"
+    }
+  },
+  "tracking": {
+    "systolicFriendly": "Büyük Tansiyon (Sistolik)",
+    "diastolicFriendly": "Küçük Tansiyon (Diastolik)",
+    "pulse": "Nabız",
+    "weightPlaceholder": "Sabah aç karnına…",
+    "dataLoadFailed": "Veriler yüklenemedi",
+    "dataLoadError": "Veriler yüklenirken bir hata oluştu",
+    "validWeight": "Geçerli bir kilo değeri girin (1-500)",
+    "validBP": "Geçerli tansiyon değerleri girin",
+    "validPulse": "Geçerli bir nabız değeri girin (20-250)",
+    "registrationFailed": "Kayıt başarısız",
+    "profilesLoadFailed": "Profiller yüklenemedi",
+    "addBPTitle": "Tansiyon Ekle",
+    "addWeightTitle": "Kilo Ekle"
+  },
+  "api": {
+    "profileNotFound": "Profil bulunamadı",
+    "profileDeleteFailed": "Profil silinemedi",
+    "profileCreateFailed": "Profil oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.",
+    "noProfileAccess": "Bu profile erişiminiz yok",
+    "ownerCannotLeave": "Profil sahibi profilden ayrılamaz",
+    "leaveFailed": "Profilden ayrılınamadı",
+    "cannotChangeOwnAccess": "Kendi erişim seviyenizi değiştiremezsiniz",
+    "invalidAccessLevel": "Erişim seviyesi 'viewer' veya 'editor' olmalı",
+    "userAccessNotFound": "Kullanıcı erişimi bulunamadı",
+    "accessUpdateFailed": "Erişim seviyesi güncellenemedi",
+    "cannotRemoveOwnAccess": "Kendi erişiminizi kaldıramazsınız",
+    "accessRemoveFailed": "Erişim kaldırılamadı",
+    "invalidEmail": "Geçersiz e-posta adresi",
+    "userAlreadyHasAccess": "Bu kullanıcının zaten erişimi var",
+    "inviteAlreadyPending": "Bu e-posta için bekleyen bir davet zaten var",
+    "inviteCreateFailed": "Davet oluşturulamadı",
+    "onlyPdf": "Sadece PDF dosyaları kabul edilir",
+    "invalidPdf": "Geçersiz PDF dosyası",
+    "fileAlreadyUploaded": "Bu dosya zaten yüklenmiş",
+    "inviteNotFound": "Davet bulunamadı",
+    "inviteInfoFailed": "Davet bilgileri alınamadı",
+    "inviteCancelled": "Bu davet iptal edilmiş",
+    "inviteAlreadyUsed": "Bu davet zaten kullanılmış",
+    "inviteExpired": "Davet süresi dolmuş",
+    "emailMismatch": "E-posta uyuşmuyor",
+    "inviteNotFoundOrProcessed": "Davet bulunamadı veya zaten işlenmiş"
+  }
+}
