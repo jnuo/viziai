@@ -92,6 +92,7 @@ export function formatRelativeDate(
   locale = "tr",
 ):
   | { type: "key"; key: "justNow" | "yesterday" }
+  | { type: "key"; key: "hoursAgo"; count: number }
   | { type: "date"; value: string } {
   const date = new Date(dateStr);
   const now = new Date();
@@ -100,11 +101,7 @@ export function formatRelativeDate(
 
   if (diffHours < 1) return { type: "key", key: "justNow" };
   if (diffHours < 24) {
-    const hours = Math.floor(diffHours);
-    return {
-      type: "date",
-      value: locale === "tr" ? `${hours} saat önce` : `${hours}h ago`,
-    };
+    return { type: "key", key: "hoursAgo", count: Math.floor(diffHours) };
   }
   if (diffHours < 48) return { type: "key", key: "yesterday" };
   return {

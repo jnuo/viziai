@@ -23,7 +23,7 @@ export function NotificationChecker() {
         if (!data.notifications?.length) return;
 
         for (const n of data.notifications) {
-          const grantor = n.granted_by_name || "?";
+          const grantor = n.granted_by_name || tn("someone");
           const level = t(n.access_level as "owner" | "editor" | "viewer");
           addToast({
             message: tn("addedToProfile", {

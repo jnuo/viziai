@@ -230,7 +230,7 @@ export function MetricChart({
                   strokeDasharray="2 2"
                   strokeOpacity={0.6}
                   label={{
-                    value: `Min: ${metric.ref_min}`,
+                    value: `${t("refMin")}: ${metric.ref_min}`,
                     position: "insideTopRight",
                     fill: colors.statusNormal,
                     fontSize: 10,
@@ -244,7 +244,7 @@ export function MetricChart({
                   strokeDasharray="2 2"
                   strokeOpacity={0.6}
                   label={{
-                    value: `Max: ${metric.ref_max}`,
+                    value: `${t("refMax")}: ${metric.ref_max}`,
                     position: "insideBottomRight",
                     fill: colors.statusNormal,
                     fontSize: 10,

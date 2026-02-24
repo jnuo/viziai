@@ -35,6 +35,7 @@
     "descending": "azalan sıra",
     "justNow": "Az önce",
     "yesterday": "Dün",
+    "hoursAgo": "{count} saat önce",
     "copyright": "© 2026 ViziAI. Tüm hakları saklıdır.",
     "accessLevel": {
       "owner": "Sahip",
@@ -299,10 +300,13 @@
       "removeChart": "Grafiği kaldır",
       "noData": "Veri bulunamadı",
       "noValue": "Veri yok",
-      "range": "Aralık"
+      "range": "Aralık",
+      "refMin": "Min",
+      "refMax": "Maks"
     },
     "notification": {
       "viewProfiles": "Profilleri gör",
+      "someone": "Birisi",
       "addedToProfile": "{grantor} seni {profileName} profiline {level} olarak ekledi."
     }
   },

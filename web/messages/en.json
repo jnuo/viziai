@@ -35,6 +35,7 @@
     "descending": "descending",
     "justNow": "Just now",
     "yesterday": "Yesterday",
+    "hoursAgo": "{count}h ago",
     "copyright": "© 2026 ViziAI. All rights reserved.",
     "accessLevel": {
       "owner": "Owner",
@@ -299,10 +300,13 @@
       "removeChart": "Remove chart",
       "noData": "No data found",
       "noValue": "No data",
-      "range": "Range"
+      "range": "Range",
+      "refMin": "Min",
+      "refMax": "Max"
     },
     "notification": {
       "viewProfiles": "View Profiles",
+      "someone": "Someone",
       "addedToProfile": "{grantor} added you to {profileName} as {level}."
     }
   },

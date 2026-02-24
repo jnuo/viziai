@@ -220,7 +220,7 @@ function SortableMetricItem({
               d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18"
             />
           </svg>
-          <span className="hidden sm:inline">En üste gönder</span>
+          <span className="hidden sm:inline">{t("sendToTop")}</span>
         </button>
       )}
     </div>
