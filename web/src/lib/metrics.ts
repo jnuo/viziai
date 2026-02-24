@@ -1,10 +1,19 @@
 export interface ExtractedMetric {
   name: string;
-  value: number;
+  value: number | null;
   unit?: string;
   ref_low?: number | null;
   ref_high?: number | null;
-  _key?: string;
+}
+
+export interface EditableMetric extends ExtractedMetric {
+  _key: string;
+}
+
+export interface RenameInfo {
+  original: string;
+  canonical: string;
+  applied: boolean;
 }
 
 export type MetricField = "name" | "value" | "unit" | "ref_low" | "ref_high";

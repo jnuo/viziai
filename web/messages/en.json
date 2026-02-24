@@ -99,6 +99,7 @@
       "refMax": "Ref Max",
       "refMinAria": "Reference minimum",
       "refMaxAria": "Reference maximum",
+      "refPrefix": "Ref:",
       "willBeAddedAs": "will be added as",
       "willStayAs": "will stay as",
       "saving": "Saving…",

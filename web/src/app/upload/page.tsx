@@ -42,9 +42,14 @@ import { reportError } from "@/lib/error-reporting";
 import {
   checkOutOfRange,
   type ExtractedMetric,
+  type EditableMetric,
   type MetricField,
+  type RenameInfo,
 } from "@/lib/metrics";
-import { MetricReviewCard } from "@/components/metric-review-card";
+import {
+  MetricReviewCard,
+  type MetricCardLabels,
+} from "@/components/metric-review-card";
 
 interface Profile {
   id: string;
@@ -79,12 +84,12 @@ function UploadPageContent(): React.ReactElement {
   const [extractedData, setExtractedData] = useState<ExtractedData | null>(
     null,
   );
-  const [editedMetrics, setEditedMetrics] = useState<ExtractedMetric[]>([]);
+  const [editedMetrics, setEditedMetrics] = useState<EditableMetric[]>([]);
   const [sampleDate, setSampleDate] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [uploadCreatedAt, setUploadCreatedAt] = useState<string | null>(null);
   const [appliedRenames, setAppliedRenames] = useState<
-    Record<string, { original: string; canonical: string; applied: boolean }>
+    Record<string, RenameInfo>
   >({});
   const pollIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const pollStartTimeRef = useRef<number | null>(null);
@@ -425,11 +430,7 @@ function UploadPageContent(): React.ReactElement {
   }
 
   const handleAliasToggle = useCallback(
-    (
-      index: number,
-      checked: boolean,
-      info: { original: string; canonical: string },
-    ) => {
+    (index: number, checked: boolean, info: RenameInfo) => {
       const newName = checked ? info.canonical : info.original;
       setEditedMetrics((prev) =>
         prev.map((m, i) => (i === index ? { ...m, name: newName } : m)),
@@ -446,10 +447,7 @@ function UploadPageContent(): React.ReactElement {
   );
 
   const renameInfoMap = useMemo(() => {
-    const map = new Map<
-      string,
-      { original: string; canonical: string; applied: boolean }
-    >();
+    const map = new Map<string, RenameInfo>();
     for (const entry of Object.values(appliedRenames)) {
       const key = entry.applied ? entry.canonical : entry.original;
       map.set(key, entry);
@@ -482,6 +480,23 @@ function UploadPageContent(): React.ReactElement {
   function handleGoToDashboard(): void {
     router.push("/dashboard");
   }
+
+  const cardLabels = useMemo<MetricCardLabels>(
+    () => ({
+      metricName: t("metricName"),
+      value: t("value"),
+      unit: t("unit"),
+      refMin: t("refMin"),
+      refMax: t("refMax"),
+      refPrefix: t("refPrefix"),
+      deleteMetric: t("deleteMetric"),
+      willBeAddedAs: t("willBeAddedAs"),
+      willStayAs: t("willStayAs"),
+      yesDelete: tc("yesDelete"),
+      cancel: tc("cancel"),
+    }),
+    [t, tc],
+  );
 
   const selectedProfile = profiles.find((p) => p.id === selectedProfileId);
 
@@ -641,7 +656,7 @@ function UploadPageContent(): React.ReactElement {
                             const renameInfo =
                               renameInfoMap.get(metric.name) ?? null;
                             return (
-                              <React.Fragment key={metric._key || index}>
+                              <React.Fragment key={metric._key}>
                                 <tr
                                   className={cn(
                                     "border-t",
@@ -670,7 +685,9 @@ function UploadPageContent(): React.ReactElement {
                                         handleMetricChange(
                                           index,
                                           "value",
-                                          parseFloat(e.target.value) || 0,
+                                          e.target.value
+                                            ? parseFloat(e.target.value)
+                                            : null,
                                         )
                                       }
                                       className={cn(
@@ -800,9 +817,10 @@ function UploadPageContent(): React.ReactElement {
                   <div className="md:hidden space-y-2 pb-20">
                     {editedMetrics.map((metric, index) => (
                       <MetricReviewCard
-                        key={metric._key || index}
+                        key={metric._key}
                         metric={metric}
                         index={index}
+                        labels={cardLabels}
                         renameInfo={renameInfoMap.get(metric.name) ?? null}
                         onMetricChange={handleMetricChange}
                         onRemove={handleRemoveMetric}

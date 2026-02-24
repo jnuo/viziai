@@ -99,6 +99,7 @@
       "refMax": "Ref Max",
       "refMinAria": "Referans minimum",
       "refMaxAria": "Referans maksimum",
+      "refPrefix": "Ref:",
       "willBeAddedAs": "olarak eklenecek",
       "willStayAs": "olarak kalacak",
       "saving": "Kaydediliyor…",

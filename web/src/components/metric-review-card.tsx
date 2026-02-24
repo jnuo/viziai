@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { ArrowRight, ChevronDown, Trash2 } from "lucide-react";
-import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
@@ -11,17 +10,27 @@ import {
   checkOutOfRange,
   type ExtractedMetric,
   type MetricField,
+  type RenameInfo,
 } from "@/lib/metrics";
 
-interface RenameInfo {
-  original: string;
-  canonical: string;
-  applied: boolean;
+export interface MetricCardLabels {
+  metricName: string;
+  value: string;
+  unit: string;
+  refMin: string;
+  refMax: string;
+  refPrefix: string;
+  deleteMetric: string;
+  willBeAddedAs: string;
+  willStayAs: string;
+  yesDelete: string;
+  cancel: string;
 }
 
 interface MetricReviewCardProps {
   metric: ExtractedMetric;
   index: number;
+  labels: MetricCardLabels;
   renameInfo: RenameInfo | null;
   onMetricChange: (
     index: number,
@@ -29,11 +38,7 @@ interface MetricReviewCardProps {
     value: string | number | null,
   ) => void;
   onRemove: (index: number) => void;
-  onAliasToggle: (
-    index: number,
-    checked: boolean,
-    info: { original: string; canonical: string },
-  ) => void;
+  onAliasToggle: (index: number, checked: boolean, info: RenameInfo) => void;
 }
 
 function formatRefRange(
@@ -51,13 +56,12 @@ function formatRefRange(
 export const MetricReviewCard = React.memo(function MetricReviewCard({
   metric,
   index,
+  labels,
   renameInfo,
   onMetricChange,
   onRemove,
   onAliasToggle,
 }: MetricReviewCardProps) {
-  const t = useTranslations("pages.upload");
-  const tc = useTranslations("common");
   const [expanded, setExpanded] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
 
@@ -107,7 +111,7 @@ export const MetricReviewCard = React.memo(function MetricReviewCard({
                   &middot;
                 </span>
                 <span className="text-xs text-muted-foreground tabular-nums">
-                  Ref: {refRange}
+                  {labels.refPrefix} {refRange}
                 </span>
               </>
             )}
@@ -134,7 +138,7 @@ export const MetricReviewCard = React.memo(function MetricReviewCard({
                 {renameInfo.canonical}
               </span>
               <span className="ml-1">
-                {renameInfo.applied ? t("willBeAddedAs") : t("willStayAs")}
+                {renameInfo.applied ? labels.willBeAddedAs : labels.willStayAs}
               </span>
             </span>
             <Switch
@@ -160,7 +164,7 @@ export const MetricReviewCard = React.memo(function MetricReviewCard({
               htmlFor={`metric-name-${index}`}
               className="text-xs text-muted-foreground mb-1 block"
             >
-              {t("metricName")}
+              {labels.metricName}
             </label>
             <Input
               id={`metric-name-${index}`}
@@ -179,7 +183,7 @@ export const MetricReviewCard = React.memo(function MetricReviewCard({
                 htmlFor={`metric-value-${index}`}
                 className="text-xs text-muted-foreground mb-1 block"
               >
-                {t("value")}
+                {labels.value}
               </label>
               <Input
                 id={`metric-value-${index}`}
@@ -193,7 +197,7 @@ export const MetricReviewCard = React.memo(function MetricReviewCard({
                   onMetricChange(
                     index,
                     "value",
-                    normalized ? parseFloat(normalized) || 0 : 0,
+                    normalized ? parseFloat(normalized) : null,
                   );
                 }}
                 className={cn(
@@ -207,7 +211,7 @@ export const MetricReviewCard = React.memo(function MetricReviewCard({
                 htmlFor={`metric-unit-${index}`}
                 className="text-xs text-muted-foreground mb-1 block"
               >
-                {t("unit")}
+                {labels.unit}
               </label>
               <Input
                 id={`metric-unit-${index}`}
@@ -227,7 +231,7 @@ export const MetricReviewCard = React.memo(function MetricReviewCard({
                 htmlFor={`metric-refmin-${index}`}
                 className="text-xs text-muted-foreground mb-1 block"
               >
-                {t("refMin")}
+                {labels.refMin}
               </label>
               <Input
                 id={`metric-refmin-${index}`}
@@ -253,7 +257,7 @@ export const MetricReviewCard = React.memo(function MetricReviewCard({
                 htmlFor={`metric-refmax-${index}`}
                 className="text-xs text-muted-foreground mb-1 block"
               >
-                {t("refMax")}
+                {labels.refMax}
               </label>
               <Input
                 id={`metric-refmax-${index}`}
@@ -286,7 +290,7 @@ export const MetricReviewCard = React.memo(function MetricReviewCard({
                 onClick={() => onRemove(index)}
               >
                 <Trash2 className="h-3.5 w-3.5 mr-1.5" />
-                {tc("yesDelete")}
+                {labels.yesDelete}
               </Button>
               <Button
                 variant="outline"
@@ -294,7 +298,7 @@ export const MetricReviewCard = React.memo(function MetricReviewCard({
                 className="w-full"
                 onClick={() => setConfirmingDelete(false)}
               >
-                {tc("cancel")}
+                {labels.cancel}
               </Button>
             </div>
           ) : (
@@ -305,7 +309,7 @@ export const MetricReviewCard = React.memo(function MetricReviewCard({
               onClick={() => setConfirmingDelete(true)}
             >
               <Trash2 className="h-3.5 w-3.5 mr-1.5" />
-              {t("deleteMetric")}
+              {labels.deleteMetric}
             </Button>
           )}
         </div>
