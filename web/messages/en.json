@@ -42,13 +42,12 @@
   },
   "pages": {
     "landing": {
-      "heroTitle": "Understand Your Test Results Easily",
-      "heroHighlight": "Easily",
+      "heroTitle": "Understand Your Test Results <highlight>Easily</highlight>",
       "heroDescription": "Upload your blood test results as PDF. ViziAI uses AI to analyze your results, presenting your values in a clear and comparable interface.",
       "getStarted": "Get Started",
       "tryFree": "Try for Free",
       "dashboardAlt": "ViziAI Dashboard - Visually track your test results",
-      "whyViziAI": "Why ViziAI?",
+      "whyPrefix": "Why",
       "startTracking": "Start Tracking Your Health",
       "neverEasier": "Understanding your test results has never been easier.",
       "features": {
@@ -170,7 +169,10 @@
       "aiAnalyzing": "AI Analyzing"
     },
     "emptyState": {
+      "noReports": "No test reports yet",
       "startByUploading": "Start by uploading your first report.",
+      "startByUploadingFor": "— start by uploading their first test report.",
+      "aiExtracts": "Our AI-powered system automatically extracts data from PDFs.",
       "uploadFirst": "Upload First Test"
     },
     "profileSwitcher": {
@@ -181,10 +183,14 @@
       "sendFailed": "Failed to send invite"
     },
     "metricChart": {
-      "removeChart": "Remove chart"
+      "removeChart": "Remove chart",
+      "noData": "No data found",
+      "noValue": "No data",
+      "range": "Range"
     },
     "notification": {
-      "viewProfiles": "View Profiles"
+      "viewProfiles": "View Profiles",
+      "addedToProfile": "{grantor} added you to {profileName} as {level}."
     }
   },
   "tracking": {

@@ -42,13 +42,12 @@
   },
   "pages": {
     "landing": {
-      "heroTitle": "Tahlil Sonuçlarını Kolayca Anlayın",
-      "heroHighlight": "Kolayca",
+      "heroTitle": "Tahlil Sonuçlarını <highlight>Kolayca</highlight> Anlayın",
       "heroDescription": "E-nabız'dan veya laboratuar sayfalarından indirdiğiniz tahlil sonuçlarını PDF olarak yükleyin. ViziAI yapay zeka ile sonuçlarınızı analiz eder, değerlerinizi anlaşılır ve karşılaştırılabilir bir arayüzde sunar.",
       "getStarted": "Hemen Başla",
       "tryFree": "Ücretsiz Deneyin",
       "dashboardAlt": "ViziAI Dashboard - Test sonuçlarınızı görsel olarak takip edin",
-      "whyViziAI": "Neden ViziAI?",
+      "whyPrefix": "Neden",
       "startTracking": "Sağlığınızı Takip Etmeye Başlayın",
       "neverEasier": "Tahlil sonuçlarınızı anlamak hiç bu kadar kolay olmamıştı.",
       "features": {
@@ -65,7 +64,7 @@
     "login": {
       "testResults": "Tahlil Sonuçları",
       "signInWithGoogle": "Google ile Giriş Yap",
-      "signingIn": "Giriş yapılıyor…",
+      "signingIn": "Yönlendiriliyor…",
       "accessDenied": "Bu e-posta adresiyle giriş izniniz bulunmamaktadır.",
       "loginError": "Giriş yapılırken bir hata oluştu",
       "termsAgreement": "Giriş yaparak Kullanım Koşulları ve Gizlilik Politikası'nı kabul etmiş olursunuz."
@@ -170,7 +169,10 @@
       "aiAnalyzing": "AI Analiz Ediyor"
     },
     "emptyState": {
+      "noReports": "Henüz tahlil raporu yok",
       "startByUploading": "İlk raporunuzu yükleyerek başlayın.",
+      "startByUploadingFor": "için ilk tahlil raporunu yükleyerek başlayın.",
+      "aiExtracts": "AI destekli sistemimiz PDF'lerden verileri otomatik çıkarır.",
       "uploadFirst": "İlk Tahlilini Yükle"
     },
     "profileSwitcher": {
@@ -181,10 +183,14 @@
       "sendFailed": "Davet gönderilemedi"
     },
     "metricChart": {
-      "removeChart": "Grafiği kaldır"
+      "removeChart": "Grafiği kaldır",
+      "noData": "Veri bulunamadı",
+      "noValue": "Veri yok",
+      "range": "Aralık"
     },
     "notification": {
-      "viewProfiles": "Profilleri gör"
+      "viewProfiles": "Profilleri gör",
+      "addedToProfile": "{grantor} seni {profileName} profiline {level} olarak ekledi."
     }
   },
   "tracking": {

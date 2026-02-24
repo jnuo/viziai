@@ -2,6 +2,7 @@
 
 import * as Sentry from "@sentry/nextjs";
 import { useEffect } from "react";
+import { useTranslations } from "next-intl";
 
 export default function GlobalError({
   error,
@@ -10,6 +11,8 @@ export default function GlobalError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const t = useTranslations("common");
+
   useEffect(() => {
     Sentry.captureException(error);
   }, [error]);
@@ -18,10 +21,8 @@ export default function GlobalError({
     <html>
       <body>
         <div style={{ padding: "2rem", textAlign: "center" }}>
-          <h2>Bir şeyler ters gitti</h2>
-          <p style={{ color: "#666", margin: "1rem 0" }}>
-            Hata kaydedildi. Lütfen tekrar deneyin.
-          </p>
+          <h2>{t("somethingWentWrong")}</h2>
+          <p style={{ color: "#666", margin: "1rem 0" }}>{t("errorLogged")}</p>
           <button
             onClick={reset}
             style={{
@@ -33,7 +34,7 @@ export default function GlobalError({
               cursor: "pointer",
             }}
           >
-            Tekrar Dene
+            {t("errorRetry")}
           </button>
         </div>
       </body>

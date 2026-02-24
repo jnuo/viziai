@@ -16,6 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTranslations } from "next-intl";
 import type { Metric, MetricValue } from "@/lib/sheets";
 import { compareDateAsc, parseToISO, formatTR } from "@/lib/date";
 import { cn, friendlyMetricName } from "@/lib/utils";
@@ -102,6 +103,7 @@ export function MetricChart({
   className,
 }: MetricChartProps): React.ReactElement {
   const colors = useChartColors();
+  const t = useTranslations("components.metricChart");
 
   // Sort values by date and create chart data
   const chartData: ChartData[] = values
@@ -122,14 +124,14 @@ export function MetricChart({
               size="sm"
               onClick={onRemove}
               className="h-6 w-6 p-0"
-              aria-label="Grafiği kaldır"
+              aria-label={t("removeChart")}
             >
               <X className="h-3 w-3" />
             </Button>
           </div>
         </CardHeader>
         <CardContent className="!px-3 pt-0 pb-2">
-          <div className="text-sm text-muted-foreground">Veri bulunamadı</div>
+          <div className="text-sm text-muted-foreground">{t("noData")}</div>
         </CardContent>
       </Card>
     );
@@ -176,7 +178,7 @@ export function MetricChart({
             >
               {latestValue !== null
                 ? `${latestValue} ${metric.unit}`
-                : "Veri yok"}
+                : t("noValue")}
             </Badge>
           </div>
           <Button
@@ -293,14 +295,14 @@ export function MetricChart({
                         >
                           {data.value !== null
                             ? `${data.value} ${metric.unit}`
-                            : "Veri yok"}
+                            : t("noValue")}
                         </p>
                         <p className="text-xs text-muted-foreground">
                           {formatTR(label as string)}
                         </p>
                         {metric.ref_min !== null && metric.ref_max !== null && (
                           <p className="mt-1 text-xs text-status-normal">
-                            Aralık: {metric.ref_min} - {metric.ref_max}{" "}
+                            {t("range")}: {metric.ref_min} - {metric.ref_max}{" "}
                             {metric.unit}
                           </p>
                         )}
