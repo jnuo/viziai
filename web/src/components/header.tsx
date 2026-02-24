@@ -3,6 +3,7 @@
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ViziAILogo } from "@/components/viziai-logo";
@@ -23,9 +24,15 @@ import {
   LogOut,
   Users,
   FileText,
+  Globe,
+  Loader2,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
+import { useLocale } from "next-intl";
+import { setLocale } from "@/app/actions/locale";
+import type { Locale } from "@/i18n/config";
 import { ProfileSwitcher } from "@/components/profile-switcher";
+import { LocaleSwitcher } from "@/components/locale-switcher";
 import { AddBloodPressureDialog } from "@/components/add-blood-pressure-dialog";
 import { AddWeightDialog } from "@/components/add-weight-dialog";
 
@@ -58,6 +65,25 @@ export function Header({
   const [mounted, setMounted] = useState(false);
   const [bpDialogOpen, setBpDialogOpen] = useState(false);
   const [weightDialogOpen, setWeightDialogOpen] = useState(false);
+  const t = useTranslations("components.header");
+  const locale = useLocale();
+  const [isLocalePending, startLocaleTransition] = useTransition();
+  const localeSwitching = useRef(false);
+
+  const nextLocale: Locale = locale === "tr" ? "en" : "tr";
+
+  function handleLocaleSwitch() {
+    if (localeSwitching.current) return;
+    localeSwitching.current = true;
+    startLocaleTransition(async () => {
+      try {
+        await setLocale(nextLocale);
+        router.refresh();
+      } finally {
+        localeSwitching.current = false;
+      }
+    });
+  }
 
   const isLoggedIn = status === "authenticated";
   const isDark = theme === "dark";
@@ -93,14 +119,14 @@ export function Header({
       <header className="border-b bg-card">
         <nav
           className="flex items-center justify-between px-3 py-2.5 sm:px-6 md:px-8"
-          aria-label="Ana navigasyon"
+          aria-label={t("mainNav")}
         >
           {/* Left: Logo + Profile Switcher */}
           <div className="flex items-center gap-2 sm:gap-4">
             <Link
               href="/dashboard"
               className="hover:opacity-80 transition-opacity focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-sm"
-              aria-label="ViziAI - Ana sayfa"
+              aria-label={t("home")}
             >
               <ViziAILogo />
             </Link>
@@ -114,6 +140,9 @@ export function Header({
 
           {/* Right: Nav + Actions */}
           <div className="flex items-center gap-1.5 sm:gap-2">
+            {/* Locale Switcher — only when not logged in (otherwise inside user menu) */}
+            {!isLoggedIn && <LocaleSwitcher />}
+
             {/* Tahliller nav link — desktop only */}
             {isLoggedIn && (
               <Button
@@ -123,7 +152,7 @@ export function Header({
                 className="hidden sm:flex gap-1.5 text-muted-foreground hover:text-foreground"
               >
                 <FileText className="h-4 w-4" />
-                Tahliller
+                {t("testReports")}
               </Button>
             )}
 
@@ -137,7 +166,7 @@ export function Header({
                     className="gap-1 border-primary/30 hover:border-primary hover:bg-primary/5"
                   >
                     <Plus className="h-4 w-4" />
-                    <span className="hidden sm:inline">Ekle</span>
+                    <span className="hidden sm:inline">{t("add")}</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
@@ -146,14 +175,14 @@ export function Header({
                     className="cursor-pointer"
                   >
                     <Heart className="h-4 w-4 text-status-critical" />
-                    Tansiyon Ekle
+                    {t("addBP")}
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => setWeightDialogOpen(true)}
                     className="cursor-pointer"
                   >
                     <Scale className="h-4 w-4 text-primary" />
-                    Kilo Ekle
+                    {t("addWeight")}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
@@ -161,7 +190,7 @@ export function Header({
                     className="cursor-pointer"
                   >
                     <Upload className="h-4 w-4" />
-                    Tahlil Yükle
+                    {t("uploadReport")}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -175,7 +204,7 @@ export function Header({
                     variant="ghost"
                     size="icon"
                     className="h-9 w-9 rounded-full"
-                    aria-label="Kullanıcı menüsü"
+                    aria-label={t("userMenu")}
                   >
                     <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20">
                       <span className="text-xs font-semibold text-primary">
@@ -191,14 +220,14 @@ export function Header({
                     className="sm:hidden cursor-pointer"
                   >
                     <FileText className="h-4 w-4" />
-                    Tahliller
+                    {t("testReports")}
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => router.push("/settings/access")}
                     className="cursor-pointer"
                   >
                     <Users className="h-4 w-4" />
-                    Profiller
+                    {t("profiles")}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   {mounted && (
@@ -211,9 +240,21 @@ export function Header({
                       ) : (
                         <Moon className="h-4 w-4 text-brand-primary" />
                       )}
-                      {isDark ? "Açık Tema" : "Koyu Tema"}
+                      {isDark ? t("lightTheme") : t("darkTheme")}
                     </DropdownMenuItem>
                   )}
+                  <DropdownMenuItem
+                    onClick={handleLocaleSwitch}
+                    disabled={isLocalePending}
+                    className="cursor-pointer"
+                  >
+                    {isLocalePending ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Globe className="h-4 w-4" />
+                    )}
+                    {nextLocale === "en" ? "English" : "Türkçe"}
+                  </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     onClick={handleLogoutClick}
@@ -221,13 +262,13 @@ export function Header({
                     variant="destructive"
                   >
                     <LogOut className="h-4 w-4" />
-                    Çıkış
+                    {t("logout")}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
               <Button variant="default" size="sm" onClick={handleLoginClick}>
-                Giriş Yap
+                {t("login")}
               </Button>
             )}
           </div>

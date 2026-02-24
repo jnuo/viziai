@@ -3,6 +3,8 @@
 import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { useLocale } from "next-intl";
 import {
   ArrowDown,
   ArrowUp,
@@ -21,12 +23,6 @@ import { formatDateTR, formatDateTimeTR } from "@/lib/date";
 import { reportError } from "@/lib/error-reporting";
 
 type Tab = "tahliller" | "kilo" | "tansiyon";
-
-const TABS: { key: Tab; label: string }[] = [
-  { key: "tahliller", label: "Tahliller" },
-  { key: "kilo", label: "Kilo" },
-  { key: "tansiyon", label: "Tansiyon" },
-];
 
 type SortColumn = "sample_date" | "created_at";
 type SortDirection = "asc" | "desc";
@@ -58,10 +54,21 @@ function SettingsContent() {
   const searchParams = useSearchParams();
   const { activeProfile, activeProfileId } = useActiveProfile();
   const { addToast } = useToast();
+  const t = useTranslations("pages.settings");
+  const tc = useTranslations("common");
+  const locale = useLocale();
+
+  const TABS: { key: Tab; label: string }[] = [
+    { key: "tahliller", label: t("testReports") },
+    { key: "kilo", label: t("weight") },
+    { key: "tansiyon", label: t("bloodPressure") },
+  ];
 
   const tabParam = searchParams.get("tab") as Tab | null;
   const activeTab: Tab =
-    tabParam && TABS.some((t) => t.key === tabParam) ? tabParam : "tahliller";
+    tabParam && TABS.some((tab) => tab.key === tabParam)
+      ? tabParam
+      : "tahliller";
 
   function setActiveTab(tab: Tab) {
     const params = new URLSearchParams(searchParams.toString());
@@ -124,8 +131,8 @@ function SettingsContent() {
   }): React.ReactElement {
     const isActive = sortColumn === column;
     const ariaLabel = isActive
-      ? `${label} - ${sortDirection === "asc" ? "artan sıra" : "azalan sıra"}`
-      : `${label} - sıralanmamış`;
+      ? `${label} - ${sortDirection === "asc" ? tc("ascending") : tc("descending")}`
+      : `${label} - ${t("unsorted")}`;
 
     return (
       <th
@@ -160,7 +167,7 @@ function SettingsContent() {
         );
 
         if (!response.ok) {
-          throw new Error("Dosyalar yüklenemedi");
+          throw new Error(t("filesLoadFailed"));
         }
 
         const data = await response.json();
@@ -171,7 +178,7 @@ function SettingsContent() {
           op: "settings.fetchFiles",
           profileId: activeProfileId,
         });
-        setFilesError("Dosyalar yüklenirken bir hata oluştu");
+        setFilesError(t("filesLoadError"));
       } finally {
         setFilesLoading(false);
       }
@@ -199,13 +206,13 @@ function SettingsContent() {
       const res = await fetch(`/api/settings/files/${id}`, {
         method: "DELETE",
       });
-      if (!res.ok) throw new Error("Silme basarisiz");
+      if (!res.ok) throw new Error(t("deletionFailed"));
       setFiles((prev) => prev.filter((f) => f.id !== id));
       setDeletingId(null);
-      addToast({ message: "Dosya silindi", type: "success" });
+      addToast({ message: t("fileDeleted"), type: "success" });
     } catch (err) {
       reportError(err, { op: "settings.deleteFile", id });
-      addToast({ message: "Dosya silinirken hata olustu", type: "error" });
+      addToast({ message: t("fileDeleteError"), type: "error" });
     } finally {
       setDeleting(false);
     }
@@ -236,7 +243,7 @@ function SettingsContent() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <FileText aria-hidden="true" className="h-5 w-5" />
-              Yüklenen Dosyalar
+              {t("uploadedFiles")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -247,13 +254,13 @@ function SettingsContent() {
                 aria-live="polite"
               >
                 <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-                <span className="sr-only">Yükleniyor…</span>
+                <span className="sr-only">{tc("loading")}</span>
               </div>
             ) : filesError ? (
               <p className="text-sm text-status-critical py-4">{filesError}</p>
             ) : files.length === 0 ? (
               <p className="text-sm text-muted-foreground py-4">
-                Henüz yüklenmiş dosya yok.
+                {t("noFilesYet")}
               </p>
             ) : (
               <>
@@ -262,15 +269,22 @@ function SettingsContent() {
                   <table className="w-full text-sm">
                     <thead className="bg-muted">
                       <tr>
-                        <th className="text-left p-3 font-medium">Dosya Adı</th>
+                        <th className="text-left p-3 font-medium">
+                          {t("fileName")}
+                        </th>
                         <SortableHeader
                           column="sample_date"
-                          label="Tahlil Tarihi"
+                          label={t("testDate")}
                         />
-                        <SortableHeader column="created_at" label="Yüklenme" />
-                        <th className="text-center p-3 font-medium">Metrik</th>
+                        <SortableHeader
+                          column="created_at"
+                          label={t("uploadDate")}
+                        />
+                        <th className="text-center p-3 font-medium">
+                          {t("metricCount")}
+                        </th>
                         <th className="text-right p-3 font-medium">
-                          <span className="sr-only">İşlemler</span>
+                          <span className="sr-only">{t("actions")}</span>
                         </th>
                       </tr>
                     </thead>
@@ -294,14 +308,14 @@ function SettingsContent() {
                             <td className="p-3">
                               {file.sample_date ? (
                                 <span className="font-medium">
-                                  {formatDateTR(file.sample_date)}
+                                  {formatDateTR(file.sample_date, locale)}
                                 </span>
                               ) : (
                                 <span className="text-muted-foreground">—</span>
                               )}
                             </td>
                             <td className="p-3 text-muted-foreground">
-                              {formatDateTimeTR(file.created_at)}
+                              {formatDateTimeTR(file.created_at, locale)}
                             </td>
                             <td className="p-3 text-center">
                               <span className="inline-flex items-center justify-center min-w-[2rem] px-2 py-0.5 bg-primary/10 text-primary rounded-full text-xs font-medium tabular-nums">
@@ -315,13 +329,15 @@ function SettingsContent() {
                                     <>
                                       <Loader2 className="h-3 w-3 animate-spin text-muted-foreground" />
                                       <span className="text-sm text-muted-foreground">
-                                        Siliniyor...
+                                        {tc("deleting")}
                                       </span>
                                     </>
                                   ) : (
                                     <>
                                       <span className="text-sm text-status-critical">
-                                        {file.metric_count} metrik silinecek.
+                                        {t("metricsWillBeDeleted", {
+                                          count: file.metric_count,
+                                        })}
                                       </span>
                                       <Button
                                         variant="ghost"
@@ -329,7 +345,7 @@ function SettingsContent() {
                                         className="h-7 text-status-critical hover:text-status-critical"
                                         onClick={() => confirmDelete(file.id)}
                                       >
-                                        Onayla
+                                        {tc("confirm")}
                                       </Button>
                                       <Button
                                         variant="ghost"
@@ -337,7 +353,7 @@ function SettingsContent() {
                                         className="h-7"
                                         onClick={() => setDeletingId(null)}
                                       >
-                                        İptal
+                                        {tc("cancel")}
                                       </Button>
                                     </>
                                   )}
@@ -348,7 +364,7 @@ function SettingsContent() {
                                     href={`/settings/files/${file.id}`}
                                     className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium border rounded-md hover:bg-accent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                                   >
-                                    Değerleri Gör
+                                    {t("viewValues")}
                                     <ChevronRight
                                       aria-hidden="true"
                                       className="h-4 w-4"
@@ -361,7 +377,7 @@ function SettingsContent() {
                                       className="h-8 w-8 text-muted-foreground hover:text-status-critical"
                                       onClick={() => requestDelete(file.id)}
                                       disabled={deleting}
-                                      aria-label="Sil"
+                                      aria-label={tc("delete")}
                                     >
                                       <Trash2 className="h-3.5 w-3.5" />
                                     </Button>
@@ -388,7 +404,7 @@ function SettingsContent() {
                           : "text-muted-foreground hover:text-foreground"
                       }`}
                     >
-                      Tahlil Tarihi{" "}
+                      {t("testDate")}{" "}
                       {sortColumn === "sample_date" &&
                         (sortDirection === "desc" ? "↓" : "↑")}
                     </button>
@@ -401,7 +417,7 @@ function SettingsContent() {
                           : "text-muted-foreground hover:text-foreground"
                       }`}
                     >
-                      Yüklenme{" "}
+                      {t("uploadDate")}{" "}
                       {sortColumn === "created_at" &&
                         (sortDirection === "desc" ? "↓" : "↑")}
                     </button>
@@ -433,13 +449,16 @@ function SettingsContent() {
                             <div className="flex items-center gap-3 mt-1.5 text-xs text-muted-foreground">
                               {file.sample_date ? (
                                 <span>
-                                  Tahlil: {formatDateTR(file.sample_date)}
+                                  {t("testPrefix")}{" "}
+                                  {formatDateTR(file.sample_date, locale)}
                                 </span>
                               ) : (
-                                <span>Tahlil tarihi yok</span>
+                                <span>{t("noTestDate")}</span>
                               )}
                               <span>·</span>
-                              <span>{formatDateTimeTR(file.created_at)}</span>
+                              <span>
+                                {formatDateTimeTR(file.created_at, locale)}
+                              </span>
                             </div>
                           </div>
                           {!isDeleting && (
@@ -454,7 +473,7 @@ function SettingsContent() {
                                     requestDelete(file.id);
                                   }}
                                   disabled={deleting}
-                                  aria-label="Sil"
+                                  aria-label={tc("delete")}
                                 >
                                   <Trash2 className="h-3 w-3" />
                                 </Button>
@@ -472,13 +491,15 @@ function SettingsContent() {
                               <div className="flex items-center gap-2">
                                 <Loader2 className="h-3 w-3 animate-spin text-muted-foreground" />
                                 <span className="text-sm text-muted-foreground">
-                                  Siliniyor...
+                                  {tc("deleting")}
                                 </span>
                               </div>
                             ) : (
                               <div className="flex items-center gap-2">
                                 <span className="text-sm text-status-critical">
-                                  {file.metric_count} metrik silinecek.
+                                  {t("metricsWillBeDeleted", {
+                                    count: file.metric_count,
+                                  })}
                                 </span>
                                 <Button
                                   variant="ghost"
@@ -486,7 +507,7 @@ function SettingsContent() {
                                   className="h-7 text-status-critical hover:text-status-critical"
                                   onClick={() => confirmDelete(file.id)}
                                 >
-                                  Onayla
+                                  {tc("confirm")}
                                 </Button>
                                 <Button
                                   variant="ghost"
@@ -494,7 +515,7 @@ function SettingsContent() {
                                   className="h-7"
                                   onClick={() => setDeletingId(null)}
                                 >
-                                  İptal
+                                  {tc("cancel")}
                                 </Button>
                               </div>
                             )}

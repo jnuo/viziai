@@ -15,6 +15,8 @@ import { useToast } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
 import { Loader2, Scale, TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { formatTrackingDate, type TrackingMeasurement } from "@/lib/tracking";
+import { useTranslations } from "next-intl";
+import { useLocale } from "next-intl";
 
 interface AddWeightDialogProps {
   open: boolean;
@@ -33,6 +35,9 @@ export function AddWeightDialog({
   recentMeasurements = [],
   onSaved,
 }: AddWeightDialogProps) {
+  const t = useTranslations("tracking");
+  const tc = useTranslations("common");
+  const locale = useLocale();
   const { addToast } = useToast();
   const [weight, setWeight] = useState("");
   const [notes, setNotes] = useState("");
@@ -77,10 +82,10 @@ export function AddWeightDialog({
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Kayıt başarısız");
+        throw new Error(data.error || t("registrationFailed"));
       }
 
-      addToast({ type: "success", message: "Kilo kaydedildi", duration: 3000 });
+      addToast({ type: "success", message: t("weightSaved"), duration: 3000 });
       setWeight("");
       setNotes("");
       setExistingEntry(null);
@@ -89,7 +94,7 @@ export function AddWeightDialog({
     } catch (err) {
       addToast({
         type: "error",
-        message: (err as Error).message || "Bir hata oluştu",
+        message: (err as Error).message || tc("errorOccurred"),
         duration: 5000,
       });
     } finally {
@@ -109,11 +114,10 @@ export function AddWeightDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Scale className="h-5 w-5 text-primary" />
-            Kilo Ekle
+            {t("addWeightTitle")}
           </DialogTitle>
           <DialogDescription>
-            <span className="font-medium text-foreground">{profileName}</span>{" "}
-            için ölçüm ekliyorsunuz
+            {t("addingMeasurementFor", { profileName })}
           </DialogDescription>
         </DialogHeader>
 
@@ -126,7 +130,7 @@ export function AddWeightDialog({
                   htmlFor="weight"
                   className="text-xs text-muted-foreground"
                 >
-                  Kilo
+                  {t("weightLabel")}
                 </Label>
                 <Input
                   id="weight"
@@ -166,8 +170,9 @@ export function AddWeightDialog({
                 ) : (
                   <Minus className="h-4 w-4" />
                 )}
-                {diff > 0 ? "+" : ""}
-                {diff.toFixed(1)} kg son ölçümden
+                {t("kgFromLast", {
+                  diff: `${diff > 0 ? "+" : ""}${diff.toFixed(1)}`,
+                })}
               </div>
             )}
           </div>
@@ -175,12 +180,12 @@ export function AddWeightDialog({
           {/* Notes (optional) */}
           <div className="space-y-1.5">
             <Label htmlFor="notes" className="text-xs text-muted-foreground">
-              Not (isteğe bağlı)
+              {t("noteOptional")}
             </Label>
             <Input
               id="notes"
               type="text"
-              placeholder="Sabah aç karnına…"
+              placeholder={t("weightPlaceholder")}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               className="h-10"
@@ -190,13 +195,13 @@ export function AddWeightDialog({
           {/* Existing entry warning */}
           {existingEntry && (
             <div className="rounded-lg border border-status-warning/30 bg-status-warning/10 px-3 py-2.5 text-sm text-status-warning">
-              Bugün zaten kayıt var (
-              {new Date(existingEntry.measured_at).toLocaleTimeString("tr-TR", {
-                hour: "2-digit",
-                minute: "2-digit",
+              {t("existingWeightWarning", {
+                time: new Date(existingEntry.measured_at).toLocaleTimeString(
+                  locale === "tr" ? "tr-TR" : "en-US",
+                  { hour: "2-digit", minute: "2-digit" },
+                ),
+                weight: Number(existingEntry.weight_kg).toFixed(1),
               })}
-              &apos;de {Number(existingEntry.weight_kg).toFixed(1)} kg).
-              Değiştirmek ister misin?
             </div>
           )}
 
@@ -211,9 +216,9 @@ export function AddWeightDialog({
             {saving ? (
               <Loader2 className="h-5 w-5 animate-spin" />
             ) : existingEntry ? (
-              "Değiştir"
+              t("replace")
             ) : (
-              "Kaydet"
+              tc("save")
             )}
           </Button>
 
@@ -221,7 +226,7 @@ export function AddWeightDialog({
           {recent.length > 0 && (
             <div className="space-y-2">
               <div className="text-xs text-muted-foreground font-medium">
-                Son ölçümler
+                {t("recentMeasurements")}
               </div>
               <div className="space-y-1.5">
                 {recent.map((m, i) => {
@@ -236,7 +241,7 @@ export function AddWeightDialog({
                       className="flex items-center justify-between text-sm py-1.5 px-2 rounded-md bg-muted/50"
                     >
                       <span className="text-muted-foreground text-xs">
-                        {formatTrackingDate(m.measured_at)}
+                        {formatTrackingDate(m.measured_at, locale)}
                       </span>
                       <div className="flex items-center gap-2">
                         <span className="font-medium tabular-nums">

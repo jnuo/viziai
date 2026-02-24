@@ -1,17 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { FileText, Sparkles, Brain } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const MESSAGES = [
-  "PDF okunuyor…",
-  "Sayfalar taranıyor…",
-  "Tahlil değerleri bulunuyor…",
-  "Referans aralıkları kontrol ediliyor…",
-  "Metrik isimleri normalize ediliyor…",
-  "Veriler yapılandırılıyor…",
-];
+const MESSAGE_KEYS = [
+  "readingPdf",
+  "scanningPages",
+  "findingValues",
+  "checkingRanges",
+  "normalizingNames",
+  "structuringData",
+] as const;
 
 interface ExtractionLoadingProps {
   fileName?: string;
@@ -25,11 +26,13 @@ export function ExtractionLoading({
   onCancel,
 }: ExtractionLoadingProps): React.ReactElement {
   const [messageIndex, setMessageIndex] = useState(0);
+  const t = useTranslations("components.extraction");
+  const tc = useTranslations("common");
 
   // Cycle through messages
   useEffect(() => {
     const interval = setInterval(() => {
-      setMessageIndex((prev) => (prev + 1) % MESSAGES.length);
+      setMessageIndex((prev) => (prev + 1) % MESSAGE_KEYS.length);
     }, 3000);
     return () => clearInterval(interval);
   }, []);
@@ -76,13 +79,13 @@ export function ExtractionLoading({
 
       {/* Main message */}
       <h3 className="text-xl font-semibold text-foreground mb-2">
-        AI Analiz Ediyor
+        {t("aiAnalyzing")}
       </h3>
 
       {/* Cycling status message */}
       <div className="h-6 flex items-center justify-center mb-4">
         <p className="text-muted-foreground animate-fade-in" key={messageIndex}>
-          {MESSAGES[messageIndex]}
+          {t(MESSAGE_KEYS[messageIndex])}
         </p>
       </div>
 
@@ -121,7 +124,7 @@ export function ExtractionLoading({
           onClick={onCancel}
           className="mt-4 px-4 py-2 text-sm text-muted-foreground hover:text-foreground border border-border hover:border-foreground/30 rounded-lg transition-colors"
         >
-          İptal
+          {tc("cancel")}
         </button>
       )}
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { FileText, Sparkles, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -15,6 +16,7 @@ export function EmptyState({
   profileName,
 }: EmptyStateProps): React.ReactElement {
   const router = useRouter();
+  const t = useTranslations("components.emptyState");
 
   return (
     <div className="flex flex-col items-center justify-center py-16 px-4">
@@ -40,18 +42,18 @@ export function EmptyState({
 
         {/* Text content */}
         <h2 className="text-2xl font-semibold text-foreground mb-2">
-          Henüz tahlil raporu yok
+          {t("noReports")}
         </h2>
         <p className="text-muted-foreground mb-8 leading-relaxed">
           {profileName ? (
             <>
               <span className="font-medium text-foreground">{profileName}</span>{" "}
-              için ilk tahlil raporunu yükleyerek başlayın.
+              {t("startByUploadingFor")}
             </>
           ) : (
-            "İlk raporunuzu yükleyerek başlayın."
+            t("startByUploading")
           )}{" "}
-          AI destekli sistemimiz PDF&apos;lerden verileri otomatik çıkarır.
+          {t("aiExtracts")}
         </p>
 
         {/* Upload button */}
@@ -61,7 +63,7 @@ export function EmptyState({
           className="gap-2"
         >
           <Upload className="w-5 h-5" />
-          İlk Tahlilini Yükle
+          {t("uploadFirst")}
         </Button>
       </div>
     </div>

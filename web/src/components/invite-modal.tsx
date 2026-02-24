@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Check, Copy, Loader2, UserCheck } from "lucide-react";
 import {
   Dialog,
@@ -41,6 +42,10 @@ export function InviteModal({
   onOpenChange,
   knownUsers = [],
 }: InviteModalProps) {
+  const t = useTranslations("components.inviteModal");
+  const tc = useTranslations("common");
+  const ti = useTranslations("pages.invite");
+
   const [step, setStep] = useState<Step>("form");
   const [email, setEmail] = useState("");
   const [accessLevel, setAccessLevel] = useState("viewer");
@@ -65,7 +70,7 @@ export function InviteModal({
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || "Davet gönderilemedi");
+        setError(data.error || t("sendFailed"));
         return;
       }
 
@@ -77,7 +82,7 @@ export function InviteModal({
         setStep("success");
       }
     } catch {
-      setError("Bir hata oluştu");
+      setError(tc("errorOccurred"));
     } finally {
       setLoading(false);
     }
@@ -90,7 +95,7 @@ export function InviteModal({
   };
 
   const handleWhatsApp = () => {
-    const text = `${profileName} profilini seninle paylaşmak istiyorum. Bu bağlantıyla erişim sağlayabilirsin: ${inviteUrl}`;
+    const text = t("whatsAppMessage", { profileName, url: inviteUrl });
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
   };
 
@@ -114,10 +119,10 @@ export function InviteModal({
         <DialogHeader>
           <DialogTitle>
             {step === "form"
-              ? `${profileName} — Davet Et`
+              ? t("inviteTitle", { profileName })
               : step === "direct"
-                ? "Erişim Verildi"
-                : "Davet Bağlantısı"}
+                ? ti("accessGranted")
+                : ti("inviteLink")}
           </DialogTitle>
         </DialogHeader>
 
@@ -127,19 +132,20 @@ export function InviteModal({
               <UserCheck className="h-6 w-6 text-primary" />
             </div>
             <p className="text-sm">
-              <span className="font-medium">{grantedName}</span> artık{" "}
-              <span className="font-medium">{profileName}</span> profiline
-              erişebilir.
+              {t("directAccessGranted", {
+                name: grantedName ?? "",
+                profileName,
+              })}
             </p>
             <Button className="w-full" onClick={() => handleClose(false)}>
-              Tamam
+              {tc("ok")}
             </Button>
           </div>
         ) : step === "form" ? (
           <form onSubmit={handleSubmit} className="space-y-4">
             {knownUsers.length > 0 && (
               <div className="space-y-2">
-                <Label>Mevcut Kişiler</Label>
+                <Label>{t("knownUsers")}</Label>
                 <div className="flex flex-wrap gap-2">
                   {knownUsers.map((user) => (
                     <button
@@ -171,7 +177,7 @@ export function InviteModal({
 
             <div className="space-y-2">
               <Label htmlFor="invite-email">
-                {knownUsers.length > 0 ? "Veya e-posta girin" : "E-posta"}
+                {knownUsers.length > 0 ? t("orEnterEmail") : t("emailLabel")}
               </Label>
               <Input
                 id="invite-email"
@@ -184,14 +190,18 @@ export function InviteModal({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="invite-level">Erişim Seviyesi</Label>
+              <Label htmlFor="invite-level">{t("accessLevelLabel")}</Label>
               <Select value={accessLevel} onValueChange={setAccessLevel}>
                 <SelectTrigger id="invite-level">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="viewer">Görüntüleyici</SelectItem>
-                  <SelectItem value="editor">Düzenleyici</SelectItem>
+                  <SelectItem value="viewer">
+                    {tc("accessLevel.viewer")}
+                  </SelectItem>
+                  <SelectItem value="editor">
+                    {tc("accessLevel.editor")}
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -202,14 +212,12 @@ export function InviteModal({
               {loading ? (
                 <Loader2 className="h-4 w-4 animate-spin mr-2" />
               ) : null}
-              Davet Et
+              {t("invite")}
             </Button>
           </form>
         ) : (
           <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">
-              Bu bağlantıyı davet edilen kişiyle paylaşın:
-            </p>
+            <p className="text-sm text-muted-foreground">{t("shareLink")}</p>
 
             <div className="flex gap-2">
               <Input value={inviteUrl} readOnly className="text-xs" />
@@ -224,7 +232,7 @@ export function InviteModal({
                 ) : (
                   <Copy className="h-4 w-4" />
                 )}
-                {copied ? "Kopyalandı" : "Kopyala"}
+                {copied ? tc("copied") : tc("copy")}
               </Button>
             </div>
 
@@ -233,7 +241,7 @@ export function InviteModal({
               className="w-full"
               onClick={handleWhatsApp}
             >
-              WhatsApp ile Paylaş
+              {t("shareOnWhatsApp")}
             </Button>
           </div>
         )}

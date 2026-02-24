@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import {
   Check,
   ChevronDown,
@@ -44,6 +45,8 @@ export function ProfileSwitcher({
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
   const [switching, setSwitching] = useState(false);
+  const t = useTranslations("components.profileSwitcher");
+  const tc = useTranslations("common");
 
   // Fetch profiles on mount
   useEffect(() => {
@@ -94,7 +97,7 @@ export function ProfileSwitcher({
 
   // Always show the switcher so users can add new profiles
 
-  const displayName = currentProfileName || "Profil Seç";
+  const displayName = currentProfileName || t("selectProfile");
 
   return (
     <DropdownMenu>
@@ -117,7 +120,7 @@ export function ProfileSwitcher({
       <DropdownMenuContent align="end" className="w-56">
         {loading ? (
           <DropdownMenuItem disabled>
-            <span className="text-muted-foreground">Yükleniyor...</span>
+            <span className="text-muted-foreground">{tc("loading")}</span>
           </DropdownMenuItem>
         ) : (
           <>
@@ -149,7 +152,7 @@ export function ProfileSwitcher({
               className="cursor-pointer"
             >
               <Plus className="h-4 w-4 mr-2" />
-              <span>Yeni Profil Ekle</span>
+              <span>{t("addProfile")}</span>
             </DropdownMenuItem>
           </>
         )}
@@ -159,26 +162,27 @@ export function ProfileSwitcher({
 }
 
 function AccessBadge({ level }: { level: string }) {
+  const t = useTranslations("common.accessLevel");
   switch (level) {
     case "owner":
       return (
         <span className="inline-flex items-center gap-0.5 text-[10px] text-primary">
           <Crown className="h-3 w-3" />
-          Sahip
+          {t("owner")}
         </span>
       );
     case "editor":
       return (
         <span className="inline-flex items-center gap-0.5 text-[10px] text-muted-foreground">
           <Pencil className="h-3 w-3" />
-          Düzenleyici
+          {t("editor")}
         </span>
       );
     case "viewer":
       return (
         <span className="inline-flex items-center gap-0.5 text-[10px] text-muted-foreground">
           <Eye className="h-3 w-3" />
-          Görüntüleyici
+          {t("viewer")}
         </span>
       );
     default:

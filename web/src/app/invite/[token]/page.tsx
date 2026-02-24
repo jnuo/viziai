@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import {
   Loader2,
   CheckCircle2,
@@ -31,12 +32,9 @@ interface InviteData {
   inviteEmail?: string;
 }
 
-const ACCESS_LABELS: Record<string, string> = {
-  editor: "Düzenleyici",
-  viewer: "Görüntüleyici",
-};
-
 export default function InviteClaimPage() {
+  const t = useTranslations("pages.invite");
+  const tc = useTranslations("common");
   const params = useParams();
   const router = useRouter();
   const { data: session, status: sessionStatus } = useSession();
@@ -92,7 +90,7 @@ export default function InviteClaimPage() {
         if (res.status === 403 && data.inviteEmail) {
           setEmailMismatch(data.inviteEmail);
         } else {
-          setClaimError(data.error || "Davet kabul edilemedi");
+          setClaimError(data.error || t("claimFailed"));
         }
         return;
       }
@@ -100,7 +98,7 @@ export default function InviteClaimPage() {
       // Success — redirect to dashboard
       router.push("/dashboard");
     } catch {
-      setClaimError("Bir hata oluştu");
+      setClaimError(tc("errorOccurred"));
     } finally {
       setClaiming(false);
     }
@@ -125,8 +123,8 @@ export default function InviteClaimPage() {
       <PageWrapper>
         <StatusCard
           icon={<XCircle className="h-8 w-8 text-destructive" />}
-          title="Davet Bulunamadı"
-          description="Bu bağlantı geçerli değil."
+          title={t("inviteNotFound")}
+          description={t("linkInvalid")}
         />
       </PageWrapper>
     );
@@ -138,8 +136,10 @@ export default function InviteClaimPage() {
       <PageWrapper>
         <StatusCard
           icon={<XCircle className="h-8 w-8 text-destructive" />}
-          title="Davet İptal Edilmiş"
-          description={`${inviteData.profileName} profiline erişim daveti iptal edilmiş.`}
+          title={t("inviteCancelled")}
+          description={t("revokedDescription", {
+            profileName: inviteData.profileName ?? "",
+          })}
         />
       </PageWrapper>
     );
@@ -151,8 +151,8 @@ export default function InviteClaimPage() {
       <PageWrapper>
         <StatusCard
           icon={<CheckCircle2 className="h-8 w-8 text-primary" />}
-          title="Davet Zaten Kullanılmış"
-          description="Bu davet daha önce kabul edilmiş."
+          title={t("inviteAlreadyUsed")}
+          description={t("inviteAlreadyAccepted")}
         />
       </PageWrapper>
     );
@@ -164,8 +164,10 @@ export default function InviteClaimPage() {
       <PageWrapper>
         <StatusCard
           icon={<Clock className="h-8 w-8 text-muted-foreground" />}
-          title="Davet Süresi Dolmuş"
-          description={`${inviteData.profileName} profiline erişim davetinin süresi dolmuş.`}
+          title={t("inviteExpired")}
+          description={t("expiredDescription", {
+            profileName: inviteData.profileName ?? "",
+          })}
         />
       </PageWrapper>
     );
@@ -177,8 +179,8 @@ export default function InviteClaimPage() {
       <PageWrapper>
         <StatusCard
           icon={<AlertTriangle className="h-8 w-8 text-destructive" />}
-          title="Hata"
-          description="Davet bilgileri yüklenirken bir hata oluştu."
+          title={tc("error")}
+          description={t("inviteLoadError")}
         />
       </PageWrapper>
     );
@@ -194,19 +196,22 @@ export default function InviteClaimPage() {
           <div className="mb-2">
             <ViziAILogo className="text-3xl" />
           </div>
-          <CardTitle className="text-xl">Profil Daveti</CardTitle>
+          <CardTitle className="text-xl">{t("profileInvite")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="bg-muted rounded-lg p-4 text-center space-y-1">
             <p className="text-sm text-muted-foreground">
-              Sizi aşağıdaki profile davet etti:
+              {t("invitedToProfile")}
             </p>
             <p className="font-semibold text-lg">{inviteData.profileName}</p>
             <p className="text-sm text-muted-foreground">
-              Erişim seviyesi:{" "}
+              {t("accessLevelLabel")}{" "}
               <span className="font-medium text-foreground">
-                {ACCESS_LABELS[inviteData.accessLevel || ""] ||
-                  inviteData.accessLevel}
+                {tc(
+                  `accessLevel.${inviteData.accessLevel}` as Parameters<
+                    typeof tc
+                  >[0],
+                )}
               </span>
             </p>
           </div>
@@ -271,12 +276,15 @@ function PendingAction({
   onLogin,
   onClaim,
 }: PendingActionProps) {
+  const t = useTranslations("pages.invite");
+  const tl = useTranslations("pages.login");
+
   if (!isLoggedIn) {
     return (
       <Button onClick={onLogin} className="w-full h-12" variant="outline">
         <span className="flex items-center gap-3">
           <GoogleIcon />
-          Google ile Giriş Yap
+          {tl("signInWithGoogle")}
         </span>
       </Button>
     );
@@ -285,14 +293,12 @@ function PendingAction({
   if (emailMismatch) {
     return (
       <div className="bg-muted rounded-lg p-4 text-center space-y-2">
-        <p className="text-sm font-medium">E-posta adresi uyuşmuyor</p>
+        <p className="text-sm font-medium">{t("emailMismatchTitle")}</p>
         <p className="text-sm text-muted-foreground">
-          Bu davet <span className="font-medium">{emailMismatch}</span> için
-          gönderildi.
+          {t("emailMismatchDescription", { email: emailMismatch })}
         </p>
         <p className="text-xs text-muted-foreground">
-          Şu anda <span className="font-medium">{sessionEmail}</span> ile giriş
-          yapmış durumdasınız.
+          {t("loggedInAs", { email: sessionEmail ?? "" })}
         </p>
       </div>
     );
@@ -305,7 +311,7 @@ function PendingAction({
       )}
       <Button onClick={onClaim} className="w-full" disabled={claiming}>
         {claiming && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-        Daveti Kabul Et
+        {t("acceptInvite")}
       </Button>
     </>
   );

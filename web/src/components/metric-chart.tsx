@@ -16,6 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useLocale, useTranslations } from "next-intl";
 import type { Metric, MetricValue } from "@/lib/sheets";
 import { compareDateAsc, parseToISO, formatTR } from "@/lib/date";
 import { cn, friendlyMetricName } from "@/lib/utils";
@@ -102,6 +103,8 @@ export function MetricChart({
   className,
 }: MetricChartProps): React.ReactElement {
   const colors = useChartColors();
+  const t = useTranslations("components.metricChart");
+  const locale = useLocale();
 
   // Sort values by date and create chart data
   const chartData: ChartData[] = values
@@ -122,14 +125,14 @@ export function MetricChart({
               size="sm"
               onClick={onRemove}
               className="h-6 w-6 p-0"
-              aria-label="Grafiği kaldır"
+              aria-label={t("removeChart")}
             >
               <X className="h-3 w-3" />
             </Button>
           </div>
         </CardHeader>
         <CardContent className="!px-3 pt-0 pb-2">
-          <div className="text-sm text-muted-foreground">Veri bulunamadı</div>
+          <div className="text-sm text-muted-foreground">{t("noData")}</div>
         </CardContent>
       </Card>
     );
@@ -176,7 +179,7 @@ export function MetricChart({
             >
               {latestValue !== null
                 ? `${latestValue} ${metric.unit}`
-                : "Veri yok"}
+                : t("noValue")}
             </Badge>
           </div>
           <Button
@@ -184,7 +187,7 @@ export function MetricChart({
             size="sm"
             onClick={onRemove}
             className="h-6 w-6 p-0"
-            aria-label="Grafiği kaldır"
+            aria-label={t("removeChart")}
           >
             <X className="h-3 w-3" />
           </Button>
@@ -227,7 +230,7 @@ export function MetricChart({
                   strokeDasharray="2 2"
                   strokeOpacity={0.6}
                   label={{
-                    value: `Min: ${metric.ref_min}`,
+                    value: `${t("refMin")}: ${metric.ref_min}`,
                     position: "insideTopRight",
                     fill: colors.statusNormal,
                     fontSize: 10,
@@ -241,7 +244,7 @@ export function MetricChart({
                   strokeDasharray="2 2"
                   strokeOpacity={0.6}
                   label={{
-                    value: `Max: ${metric.ref_max}`,
+                    value: `${t("refMax")}: ${metric.ref_max}`,
                     position: "insideBottomRight",
                     fill: colors.statusNormal,
                     fontSize: 10,
@@ -251,7 +254,7 @@ export function MetricChart({
 
               <XAxis
                 dataKey="date"
-                tickFormatter={(value: string) => formatTR(value)}
+                tickFormatter={(value: string) => formatTR(value, locale)}
                 tick={{ fontSize: 10 }}
                 tickLine={false}
                 axisLine={false}
@@ -293,14 +296,14 @@ export function MetricChart({
                         >
                           {data.value !== null
                             ? `${data.value} ${metric.unit}`
-                            : "Veri yok"}
+                            : t("noValue")}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          {formatTR(label as string)}
+                          {formatTR(label as string, locale)}
                         </p>
                         {metric.ref_min !== null && metric.ref_max !== null && (
                           <p className="mt-1 text-xs text-status-normal">
-                            Aralık: {metric.ref_min} - {metric.ref_max}{" "}
+                            {t("range")}: {metric.ref_min} - {metric.ref_max}{" "}
                             {metric.unit}
                           </p>
                         )}

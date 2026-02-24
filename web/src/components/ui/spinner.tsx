@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 
 interface SpinnerProps {
@@ -17,6 +18,7 @@ export function Spinner({
   className,
   size = "md",
 }: SpinnerProps): React.ReactElement {
+  const t = useTranslations("common");
   return (
     <div
       className={cn(
@@ -27,7 +29,7 @@ export function Spinner({
       role="status"
       aria-label="Loading"
     >
-      <span className="sr-only">Yükleniyor...</span>
+      <span className="sr-only">{t("loading")}</span>
     </div>
   );
 }
@@ -38,9 +40,10 @@ interface LoadingStateProps {
 }
 
 export function LoadingState({
-  message = "Yükleniyor...",
+  message,
   className,
 }: LoadingStateProps): React.ReactElement {
+  const t = useTranslations("common");
   return (
     <div
       className={cn(
@@ -49,7 +52,9 @@ export function LoadingState({
       )}
     >
       <Spinner size="lg" />
-      <p className="text-sm text-muted-foreground animate-pulse">{message}</p>
+      <p className="text-sm text-muted-foreground animate-pulse">
+        {message || t("loading")}
+      </p>
     </div>
   );
 }
@@ -62,11 +67,12 @@ interface ErrorStateProps {
 }
 
 export function ErrorState({
-  title = "Bir şeyler yanlış gitti",
+  title,
   message,
   onRetry,
   className,
 }: ErrorStateProps): React.ReactElement {
+  const t = useTranslations("common");
   return (
     <div
       role="alert"
@@ -91,7 +97,9 @@ export function ErrorState({
         </svg>
       </div>
       <div className="space-y-1">
-        <h3 className="font-medium text-foreground">{title}</h3>
+        <h3 className="font-medium text-foreground">
+          {title || t("somethingWentWrong")}
+        </h3>
         <p className="text-sm text-muted-foreground max-w-md">{message}</p>
       </div>
       {onRetry && (
@@ -99,7 +107,7 @@ export function ErrorState({
           onClick={onRetry}
           className="mt-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-sm px-2 py-1"
         >
-          Tekrar dene
+          {t("errorRetry")}
         </button>
       )}
     </div>
