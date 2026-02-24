@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { signIn, useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { reportError } from "@/lib/error-reporting";
 import { ViziAILogo } from "@/components/viziai-logo";
 
@@ -15,17 +16,19 @@ function LoginContent(): React.ReactElement {
   const { data: session, status } = useSession();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const t = useTranslations("pages.login");
+  const tLanding = useTranslations("pages.landing");
 
   useEffect(() => {
     const errorParam = searchParams.get("error");
     if (errorParam) {
       if (errorParam === "AccessDenied") {
-        setError("Bu e-posta adresiyle giriş izniniz bulunmamaktadır.");
+        setError(t("accessDenied"));
       } else {
         setError(errorParam);
       }
     }
-  }, [searchParams]);
+  }, [searchParams, t]);
 
   const redirectTo = searchParams.get("redirect") || "/dashboard";
 
@@ -43,7 +46,7 @@ function LoginContent(): React.ReactElement {
       await signIn("google", { callbackUrl: redirectTo });
     } catch (err) {
       reportError(err, { op: "login.googleSignIn" });
-      setError("Giriş yapılırken bir hata oluştu");
+      setError(t("loginError"));
       setIsLoading(false);
     }
   };
@@ -60,10 +63,9 @@ function LoginContent(): React.ReactElement {
             <ViziAILogo className="text-3xl" />
           </Link>
         </div>
-        <CardTitle className="text-2xl">Tahlil Sonuçları</CardTitle>
-        <p className="text-sm text-muted-foreground mt-2">
-          Google hesabınızla giriş yapın
-        </p>
+        <CardTitle className="text-2xl">
+          {tLanding.rich("heroTitle", { highlight: (chunks) => chunks })}
+        </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {error && (
@@ -101,7 +103,7 @@ function LoginContent(): React.ReactElement {
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                 ></path>
               </svg>
-              Yönlendiriliyor…
+              {t("signingIn")}
             </span>
           ) : (
             <span className="flex items-center gap-3">
@@ -128,16 +130,13 @@ function LoginContent(): React.ReactElement {
                   d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                 />
               </svg>
-              Google ile Giriş Yap
+              {t("signInWithGoogle")}
             </span>
           )}
         </Button>
 
         <div className="mt-6 text-xs text-muted-foreground text-center">
-          <p>
-            Giriş yaparak Kullanım Koşulları ve Gizlilik Politikası&apos;nı
-            kabul etmiş olursunuz.
-          </p>
+          <p>{t("termsAgreement")}</p>
         </div>
       </CardContent>
     </Card>
@@ -145,14 +144,18 @@ function LoginContent(): React.ReactElement {
 }
 
 function LoginFallback(): React.ReactElement {
+  const tLanding = useTranslations("pages.landing");
+  const tc = useTranslations("common");
   return (
     <Card className="w-full max-w-md">
       <CardHeader className="text-center">
         <div className="mb-4">
           <ViziAILogo className="text-3xl" />
         </div>
-        <CardTitle className="text-2xl">Tahlil Sonuçları</CardTitle>
-        <p className="text-sm text-muted-foreground mt-2">Yükleniyor…</p>
+        <CardTitle className="text-2xl">
+          {tLanding.rich("heroTitle", { highlight: (chunks) => chunks })}
+        </CardTitle>
+        <p className="text-sm text-muted-foreground mt-2">{tc("loading")}</p>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="h-12 bg-muted animate-pulse rounded-md" />

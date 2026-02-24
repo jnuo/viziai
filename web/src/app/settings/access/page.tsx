@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import {
   Loader2,
   UserPlus,
@@ -66,12 +67,6 @@ interface ProfileAccess {
   allowedEmails: AllowedEmail[];
 }
 
-const ACCESS_LABELS: Record<string, string> = {
-  owner: "Sahip",
-  editor: "Düzenleyici",
-  viewer: "Görüntüleyici",
-};
-
 function getInitials(name: string | null, email: string): string {
   if (name) {
     return name
@@ -85,6 +80,8 @@ function getInitials(name: string | null, email: string): string {
 }
 
 export default function AccessPage() {
+  const t = useTranslations("pages.access");
+  const tc = useTranslations("common");
   const router = useRouter();
   const { profiles, loading: profilesLoading } = useActiveProfile();
   const [accessData, setAccessData] = useState<ProfileAccess[]>([]);
@@ -253,7 +250,7 @@ export default function AccessPage() {
         aria-live="polite"
       >
         <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-        <span className="sr-only">Yükleniyor…</span>
+        <span className="sr-only">{tc("loading")}</span>
       </div>
     );
   }
@@ -262,7 +259,7 @@ export default function AccessPage() {
   if (profiles.length === 0) {
     return (
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold">Erişim Yönetimi</h1>
+        <h1 className="text-2xl font-bold">{t("accessManagement")}</h1>
         <Card>
           <CardContent className="py-12">
             <div className="flex flex-col items-center text-center space-y-4">
@@ -273,13 +270,9 @@ export default function AccessPage() {
                 />
               </div>
               <div className="space-y-2">
-                <h2 className="text-lg font-semibold">
-                  Henüz hiç profiliniz yok
-                </h2>
+                <h2 className="text-lg font-semibold">{t("noProfilesYet")}</h2>
                 <p className="text-sm text-muted-foreground max-w-sm">
-                  Takip etmek istediğiniz kişi için yeni bir profil oluşturun.
-                  Tahlil sonuçlarını yükleyip zaman içindeki değişimleri takip
-                  edebilirsiniz.
+                  {t("createProfileDescription")}
                 </p>
               </div>
               <Button
@@ -287,7 +280,7 @@ export default function AccessPage() {
                 className="mt-2"
               >
                 <FolderPlus aria-hidden="true" className="h-4 w-4 mr-1.5" />
-                Yeni Profil Oluştur
+                {t("createProfile")}
               </Button>
             </div>
           </CardContent>
@@ -301,7 +294,7 @@ export default function AccessPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Erişim Yönetimi</h1>
+      <h1 className="text-2xl font-bold">{t("accessManagement")}</h1>
 
       {/* Shared profiles: read-only view with leave option */}
       {sharedProfiles.map((profile) => (
@@ -318,13 +311,17 @@ export default function AccessPage() {
                 ) : (
                   <Pencil aria-hidden="true" className="h-3 w-3" />
                 )}
-                {ACCESS_LABELS[profile.accessLevel] || profile.accessLevel}
+                {tc(
+                  `accessLevel.${profile.accessLevel}` as Parameters<
+                    typeof tc
+                  >[0],
+                )}
               </Badge>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              Erişimi Olanlar
+              {t("membersWithAccess")}
             </p>
             <div className="space-y-2">
               {profile.members.map((member) => (
@@ -336,8 +333,7 @@ export default function AccessPage() {
               {confirmLeave === profile.profileId ? (
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                   <p className="text-sm text-destructive flex-1">
-                    Bu profilden ayrılmak istediğinize emin misiniz? Tekrar
-                    erişim için yeni bir davet gerekir.
+                    {t("leaveConfirm")}
                   </p>
                   <div className="flex gap-2 shrink-0">
                     <Button
@@ -349,14 +345,14 @@ export default function AccessPage() {
                       {leavingProfile === profile.profileId && (
                         <Loader2 className="h-4 w-4 animate-spin mr-1.5" />
                       )}
-                      Evet, Ayrıl
+                      {t("yesLeave")}
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => setConfirmLeave(null)}
                     >
-                      İptal
+                      {tc("cancel")}
                     </Button>
                   </div>
                 </div>
@@ -368,7 +364,7 @@ export default function AccessPage() {
                   onClick={() => setConfirmLeave(profile.profileId)}
                 >
                   <LogOut aria-hidden="true" className="h-4 w-4 mr-1.5" />
-                  Profilden Ayrıl
+                  {t("leaveProfile")}
                 </Button>
               )}
             </div>
@@ -396,7 +392,7 @@ export default function AccessPage() {
                 }
               >
                 <UserPlus aria-hidden="true" className="h-4 w-4 mr-1.5" />
-                Davet Et
+                {t("invite")}
               </Button>
             </div>
           </CardHeader>
@@ -416,7 +412,7 @@ export default function AccessPage() {
             {profile.invites.length > 0 && (
               <div className="space-y-2">
                 <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                  Bekleyen Davetler
+                  {t("pendingInvites")}
                 </p>
                 {profile.invites.map((invite) => (
                   <InviteRow
@@ -432,7 +428,7 @@ export default function AccessPage() {
             {profile.allowedEmails.length > 0 && (
               <div className="space-y-2">
                 <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                  Henüz Katılmadı
+                  {t("notYetJoined")}
                 </p>
                 {profile.allowedEmails.map((ae) => (
                   <AllowedEmailRow key={ae.id} allowedEmail={ae} />
@@ -444,8 +440,7 @@ export default function AccessPage() {
               {confirmDelete === profile.profileId ? (
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                   <p className="text-sm text-destructive flex-1">
-                    Bu profili silmek istediğinize emin misiniz? Bu işlem geri
-                    alınamaz.
+                    {t("deleteConfirm")}
                   </p>
                   <div className="flex gap-2 shrink-0">
                     <Button
@@ -457,14 +452,14 @@ export default function AccessPage() {
                       {deletingProfile === profile.profileId && (
                         <Loader2 className="h-4 w-4 animate-spin mr-1.5" />
                       )}
-                      Evet, Sil
+                      {tc("yesDelete")}
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => setConfirmDelete(null)}
                     >
-                      İptal
+                      {tc("cancel")}
                     </Button>
                   </div>
                 </div>
@@ -476,7 +471,7 @@ export default function AccessPage() {
                   onClick={() => setConfirmDelete(profile.profileId)}
                 >
                   <Trash2 aria-hidden="true" className="h-4 w-4 mr-1.5" />
-                  Profili Sil
+                  {t("deleteProfile")}
                 </Button>
               )}
             </div>
@@ -524,6 +519,8 @@ export default function AccessPage() {
 
 // Read-only member row for non-owners
 function ReadOnlyMemberRow({ member }: { member: Member }) {
+  const tc = useTranslations("common");
+
   return (
     <div className="flex items-center gap-3 p-3 rounded-lg border">
       <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-xs font-medium shrink-0">
@@ -554,7 +551,7 @@ function ReadOnlyMemberRow({ member }: { member: Member }) {
         {member.access_level === "viewer" && (
           <Eye aria-hidden="true" className="h-3 w-3" />
         )}
-        {ACCESS_LABELS[member.access_level] || member.access_level}
+        {tc(`accessLevel.${member.access_level}` as Parameters<typeof tc>[0])}
       </Badge>
     </div>
   );
@@ -573,6 +570,9 @@ function MemberRow({
   onChangeAccess,
   onRemoveAccess,
 }: MemberRowProps) {
+  const tc = useTranslations("common");
+  const t = useTranslations("pages.access");
+
   return (
     <div className="flex flex-wrap items-center gap-3 p-3 rounded-lg border">
       <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-xs font-medium shrink-0">
@@ -593,7 +593,7 @@ function MemberRow({
       {member.access_level === "owner" ? (
         <Badge variant="default" className="gap-1 shrink-0">
           <Crown aria-hidden="true" className="h-3 w-3" />
-          {ACCESS_LABELS.owner}
+          {tc("accessLevel.owner")}
         </Badge>
       ) : (
         <div className="flex items-center gap-2 w-full sm:w-auto sm:ml-0 ml-11">
@@ -610,13 +610,13 @@ function MemberRow({
               <SelectItem value="viewer">
                 <span className="flex items-center gap-1.5">
                   <Eye aria-hidden="true" className="h-3.5 w-3.5" />
-                  Görüntüleyici
+                  {tc("accessLevel.viewer")}
                 </span>
               </SelectItem>
               <SelectItem value="editor">
                 <span className="flex items-center gap-1.5">
                   <Pencil aria-hidden="true" className="h-3.5 w-3.5" />
-                  Düzenleyici
+                  {tc("accessLevel.editor")}
                 </span>
               </SelectItem>
             </SelectContent>
@@ -626,7 +626,7 @@ function MemberRow({
             size="sm"
             onClick={() => onRemoveAccess(profileId, member.user_id)}
             className="text-destructive hover:text-destructive"
-            aria-label="Üyeyi kaldır"
+            aria-label={t("removeMember")}
           >
             <X aria-hidden="true" className="h-4 w-4" />
           </Button>
@@ -643,6 +643,8 @@ interface InviteRowProps {
 }
 
 function InviteRow({ invite, profileId, onRevoke }: InviteRowProps) {
+  const tc = useTranslations("common");
+  const t = useTranslations("pages.access");
   const [copied, setCopied] = useState(false);
 
   const handleCopyLink = async () => {
@@ -661,18 +663,18 @@ function InviteRow({ invite, profileId, onRevoke }: InviteRowProps) {
       <div className="flex-1 min-w-0">
         <p className="text-sm truncate">{invite.email}</p>
         <p className="text-xs text-muted-foreground">
-          {ACCESS_LABELS[invite.access_level] || invite.access_level}
+          {tc(`accessLevel.${invite.access_level}` as Parameters<typeof tc>[0])}
         </p>
       </div>
       <div className="flex items-center gap-2 w-full sm:w-auto sm:ml-0 ml-11">
         <Badge variant="outline" className="shrink-0">
-          Bekliyor
+          {t("pending")}
         </Badge>
         <Button
           variant="outline"
           size="sm"
           onClick={handleCopyLink}
-          aria-label="Bağlantıyı kopyala"
+          aria-label={t("copyLink")}
         >
           {copied ? (
             <Check aria-hidden="true" className="h-4 w-4 text-primary" />
@@ -685,7 +687,7 @@ function InviteRow({ invite, profileId, onRevoke }: InviteRowProps) {
           size="sm"
           onClick={() => onRevoke(profileId, invite.id)}
           className="text-destructive hover:text-destructive"
-          aria-label="Daveti iptal et"
+          aria-label={t("revokeInvite")}
         >
           <X aria-hidden="true" className="h-4 w-4" />
         </Button>
@@ -695,6 +697,8 @@ function InviteRow({ invite, profileId, onRevoke }: InviteRowProps) {
 }
 
 function AllowedEmailRow({ allowedEmail }: { allowedEmail: AllowedEmail }) {
+  const t = useTranslations("pages.access");
+
   return (
     <div className="flex items-center gap-3 p-3 rounded-lg border border-dashed opacity-60">
       <div className="h-8 w-8 rounded-full bg-muted/50 flex items-center justify-center text-xs font-medium text-muted-foreground shrink-0">
@@ -702,10 +706,12 @@ function AllowedEmailRow({ allowedEmail }: { allowedEmail: AllowedEmail }) {
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-sm truncate">{allowedEmail.email}</p>
-        <p className="text-xs text-muted-foreground">Hesap oluşturmamış</p>
+        <p className="text-xs text-muted-foreground">
+          {t("accountNotCreated")}
+        </p>
       </div>
       <Badge variant="outline" className="text-muted-foreground shrink-0">
-        Kayıt Bekleniyor
+        {t("awaitingRegistration")}
       </Badge>
     </div>
   );

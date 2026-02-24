@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { useLocale } from "next-intl";
 import { ChevronLeft, FileText, Loader2, Check, Pencil, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -51,6 +53,10 @@ export default function FileDetailPage(): React.ReactElement {
   const params = useParams();
   const router = useRouter();
   const { addToast } = useToast();
+  const t = useTranslations("pages.settings");
+  const tc = useTranslations("common");
+  const tu = useTranslations("pages.upload");
+  const locale = useLocale();
   const fileId = params.id as string;
 
   const [file, setFile] = useState<FileData | null>(null);
@@ -76,9 +82,9 @@ export default function FileDetailPage(): React.ReactElement {
 
         if (!response.ok) {
           if (response.status === 404) {
-            throw new Error("Dosya bulunamadı");
+            throw new Error(t("fileNotFound"));
           }
-          throw new Error("Dosya detayları yüklenemedi");
+          throw new Error(t("fileDetailsFailed"));
         }
 
         const data = await response.json();
@@ -86,7 +92,7 @@ export default function FileDetailPage(): React.ReactElement {
         setMetrics(data.metrics || []);
       } catch (err) {
         console.error("Failed to fetch file details:", err);
-        setError(err instanceof Error ? err.message : "Bir hata oluştu");
+        setError(err instanceof Error ? err.message : tc("errorOccurred"));
       } finally {
         setLoading(false);
       }
@@ -124,7 +130,7 @@ export default function FileDetailPage(): React.ReactElement {
     // Validate value is not empty
     const parsedValue = parseFloat(editForm.value);
     if (!editForm.value.trim() || isNaN(parsedValue)) {
-      addToast({ message: "Değer boş olamaz", type: "error" });
+      addToast({ message: t("valueRequired"), type: "error" });
       return;
     }
 
@@ -143,7 +149,7 @@ export default function FileDetailPage(): React.ReactElement {
       });
 
       if (!response.ok) {
-        throw new Error("Kaydetme başarısız");
+        throw new Error(tc("saveFailed"));
       }
 
       // Update local state
@@ -164,10 +170,10 @@ export default function FileDetailPage(): React.ReactElement {
       );
 
       setEditingId(null);
-      addToast({ message: "Metrik güncellendi", type: "success" });
+      addToast({ message: t("metricUpdated"), type: "success" });
     } catch (err) {
       console.error("Failed to save metric:", err);
-      addToast({ message: "Kaydetme başarısız", type: "error" });
+      addToast({ message: tc("saveFailed"), type: "error" });
     } finally {
       setSaving(false);
     }
@@ -181,7 +187,7 @@ export default function FileDetailPage(): React.ReactElement {
         aria-live="polite"
       >
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-        <span className="sr-only">Yükleniyor…</span>
+        <span className="sr-only">{tc("loading")}</span>
       </div>
     );
   }
@@ -192,10 +198,10 @@ export default function FileDetailPage(): React.ReactElement {
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="sm" onClick={() => router.back()}>
             <ChevronLeft aria-hidden="true" className="h-4 w-4 mr-1" />
-            Geri
+            {tc("back")}
           </Button>
         </div>
-        <p className="text-status-critical">{error || "Dosya bulunamadı"}</p>
+        <p className="text-status-critical">{error || t("fileNotFound")}</p>
       </div>
     );
   }
@@ -205,7 +211,7 @@ export default function FileDetailPage(): React.ReactElement {
       <div className="flex items-center gap-2">
         <Button variant="ghost" size="sm" onClick={() => router.back()}>
           <ChevronLeft aria-hidden="true" className="h-4 w-4 mr-1" />
-          Geri
+          {tc("back")}
         </Button>
       </div>
 
@@ -217,14 +223,16 @@ export default function FileDetailPage(): React.ReactElement {
           </CardTitle>
           {file.sample_date && (
             <p className="text-sm text-muted-foreground">
-              Tahlil tarihi: {formatDateTR(file.sample_date)}
+              {t("testDateLabel", {
+                date: formatDateTR(file.sample_date, locale),
+              })}
             </p>
           )}
         </CardHeader>
         <CardContent>
           {metrics.length === 0 ? (
             <p className="text-sm text-muted-foreground py-4">
-              Bu dosyada metrik bulunamadı.
+              {t("noMetricsFound")}
             </p>
           ) : (
             <>
@@ -234,12 +242,20 @@ export default function FileDetailPage(): React.ReactElement {
                   <table className="w-full text-sm">
                     <thead className="bg-muted sticky top-0">
                       <tr>
-                        <th className="text-left p-3 font-medium">Test Adı</th>
-                        <th className="text-right p-3 font-medium">Değer</th>
-                        <th className="text-right p-3 font-medium">Birim</th>
-                        <th className="text-right p-3 font-medium">Referans</th>
+                        <th className="text-left p-3 font-medium">
+                          {t("testName")}
+                        </th>
+                        <th className="text-right p-3 font-medium">
+                          {tu("value")}
+                        </th>
+                        <th className="text-right p-3 font-medium">
+                          {tu("unit")}
+                        </th>
+                        <th className="text-right p-3 font-medium">
+                          {t("reference")}
+                        </th>
                         <th className="w-24">
-                          <span className="sr-only">İşlemler</span>
+                          <span className="sr-only">{tc("edit")}</span>
                         </th>
                       </tr>
                     </thead>
@@ -275,7 +291,7 @@ export default function FileDetailPage(): React.ReactElement {
                                       }))
                                     }
                                     className="h-8 text-sm text-right w-24"
-                                    aria-label="Değer"
+                                    aria-label={tu("value")}
                                   />
                                 </td>
                                 <td className="p-2">
@@ -289,7 +305,7 @@ export default function FileDetailPage(): React.ReactElement {
                                     }
                                     className="h-8 text-sm text-right w-20"
                                     placeholder="-"
-                                    aria-label="Birim"
+                                    aria-label={tu("unit")}
                                   />
                                 </td>
                                 <td className="p-2">
@@ -305,7 +321,7 @@ export default function FileDetailPage(): React.ReactElement {
                                       }
                                       className="h-8 text-sm text-right w-16"
                                       placeholder="Min"
-                                      aria-label="Referans minimum"
+                                      aria-label={tu("refMinAria")}
                                     />
                                     <span className="text-muted-foreground">
                                       -
@@ -321,7 +337,7 @@ export default function FileDetailPage(): React.ReactElement {
                                       }
                                       className="h-8 text-sm text-right w-16"
                                       placeholder="Max"
-                                      aria-label="Referans maksimum"
+                                      aria-label={tu("refMaxAria")}
                                     />
                                   </div>
                                 </td>
@@ -333,7 +349,7 @@ export default function FileDetailPage(): React.ReactElement {
                                       className="h-8 w-8"
                                       onClick={() => saveMetric(metric.id)}
                                       disabled={saving}
-                                      aria-label="Kaydet"
+                                      aria-label={tc("save")}
                                     >
                                       {saving ? (
                                         <Loader2 className="h-4 w-4 animate-spin" />
@@ -346,7 +362,7 @@ export default function FileDetailPage(): React.ReactElement {
                                       size="icon"
                                       className="h-8 w-8"
                                       onClick={cancelEditing}
-                                      aria-label="İptal"
+                                      aria-label={tc("cancel")}
                                     >
                                       <X className="h-4 w-4" />
                                     </Button>
@@ -387,7 +403,7 @@ export default function FileDetailPage(): React.ReactElement {
                                       aria-hidden="true"
                                       className="h-3 w-3"
                                     />
-                                    Düzenle
+                                    {tc("edit")}
                                   </Button>
                                 </td>
                               </>
@@ -425,7 +441,7 @@ export default function FileDetailPage(): React.ReactElement {
                           <div className="grid grid-cols-2 gap-2">
                             <div>
                               <label className="text-xs text-muted-foreground mb-1 block">
-                                Değer
+                                {tu("value")}
                               </label>
                               <Input
                                 type="number"
@@ -437,12 +453,12 @@ export default function FileDetailPage(): React.ReactElement {
                                   }))
                                 }
                                 className="h-8 text-sm"
-                                aria-label="Değer"
+                                aria-label={tu("value")}
                               />
                             </div>
                             <div>
                               <label className="text-xs text-muted-foreground mb-1 block">
-                                Birim
+                                {tu("unit")}
                               </label>
                               <Input
                                 value={editForm.unit}
@@ -454,12 +470,12 @@ export default function FileDetailPage(): React.ReactElement {
                                 }
                                 className="h-8 text-sm"
                                 placeholder="-"
-                                aria-label="Birim"
+                                aria-label={tu("unit")}
                               />
                             </div>
                             <div>
                               <label className="text-xs text-muted-foreground mb-1 block">
-                                Ref. Min
+                                {t("refMinLabel")}
                               </label>
                               <Input
                                 type="number"
@@ -472,12 +488,12 @@ export default function FileDetailPage(): React.ReactElement {
                                 }
                                 className="h-8 text-sm"
                                 placeholder="-"
-                                aria-label="Referans minimum"
+                                aria-label={tu("refMinAria")}
                               />
                             </div>
                             <div>
                               <label className="text-xs text-muted-foreground mb-1 block">
-                                Ref. Max
+                                {t("refMaxLabel")}
                               </label>
                               <Input
                                 type="number"
@@ -490,7 +506,7 @@ export default function FileDetailPage(): React.ReactElement {
                                 }
                                 className="h-8 text-sm"
                                 placeholder="-"
-                                aria-label="Referans maksimum"
+                                aria-label={tu("refMaxAria")}
                               />
                             </div>
                           </div>
@@ -509,14 +525,14 @@ export default function FileDetailPage(): React.ReactElement {
                                   className="h-4 w-4 mr-1.5"
                                 />
                               )}
-                              Kaydet
+                              {tc("save")}
                             </Button>
                             <Button
                               variant="outline"
                               size="sm"
                               onClick={cancelEditing}
                             >
-                              İptal
+                              {tc("cancel")}
                             </Button>
                           </div>
                         </div>
@@ -551,7 +567,7 @@ export default function FileDetailPage(): React.ReactElement {
                             {(metric.ref_low != null ||
                               metric.ref_high != null) && (
                               <span className="text-xs text-muted-foreground ml-auto">
-                                Ref:{" "}
+                                {t("refPrefix")}{" "}
                                 {formatRefRange(
                                   metric.ref_low,
                                   metric.ref_high,

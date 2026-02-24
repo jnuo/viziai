@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
 import { Loader2, Heart } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
 import {
   getBPStatus,
   formatTrackingDateTime,
@@ -38,6 +39,9 @@ export function AddBloodPressureDialog({
   onSaved,
 }: AddBloodPressureDialogProps): React.ReactElement {
   const { addToast } = useToast();
+  const t = useTranslations("tracking");
+  const tc = useTranslations("common");
+  const locale = useLocale();
   const [systolic, setSystolic] = useState("110");
   const [diastolic, setDiastolic] = useState("70");
   const [pulse, setPulse] = useState("");
@@ -84,12 +88,12 @@ export function AddBloodPressureDialog({
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Kayıt başarısız");
+        throw new Error(data.error || t("registrationFailed"));
       }
 
       addToast({
         type: "success",
-        message: "Tansiyon kaydedildi",
+        message: t("bpSaved"),
         duration: 3000,
       });
       setSystolic("");
@@ -101,7 +105,7 @@ export function AddBloodPressureDialog({
     } catch (err) {
       addToast({
         type: "error",
-        message: (err as Error).message || "Bir hata oluştu",
+        message: (err as Error).message || tc("errorOccurred"),
         duration: 5000,
       });
     } finally {
@@ -125,11 +129,10 @@ export function AddBloodPressureDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Heart className="h-5 w-5 text-status-critical" />
-            Tansiyon Ekle
+            {t("addBPTitle")}
           </DialogTitle>
           <DialogDescription>
-            <span className="font-medium text-foreground">{profileName}</span>{" "}
-            için ölçüm ekliyorsunuz
+            {t("addingMeasurementFor", { profileName })}
           </DialogDescription>
         </DialogHeader>
 
@@ -142,7 +145,7 @@ export function AddBloodPressureDialog({
                   htmlFor="systolic"
                   className="text-xs text-muted-foreground"
                 >
-                  Sistolik (büyük)
+                  {t("systolicUpper")}
                 </Label>
                 <Input
                   id="systolic"
@@ -165,7 +168,7 @@ export function AddBloodPressureDialog({
                   htmlFor="diastolic"
                   className="text-xs text-muted-foreground"
                 >
-                  Diastolik (küçük)
+                  {t("diastolicLower")}
                 </Label>
                 <Input
                   id="diastolic"
@@ -192,7 +195,7 @@ export function AddBloodPressureDialog({
                 )}
               >
                 <span className="inline-block w-2 h-2 rounded-full bg-current" />
-                {status.label} — {systolicNum}/{diastolicNum}
+                {tc(status.key)} — {systolicNum}/{diastolicNum}
               </div>
             )}
           </div>
@@ -200,7 +203,7 @@ export function AddBloodPressureDialog({
           {/* Pulse (optional) */}
           <div className="space-y-1.5">
             <Label htmlFor="pulse" className="text-xs text-muted-foreground">
-              Nabız (isteğe bağlı)
+              {t("pulseOptional")}
             </Label>
             <div className="flex items-center gap-2">
               <Input
@@ -221,13 +224,13 @@ export function AddBloodPressureDialog({
           {/* Existing entry warning */}
           {existingEntry && (
             <div className="rounded-lg border border-status-warning/30 bg-status-warning/10 px-3 py-2.5 text-sm text-status-warning">
-              Bugün zaten kayıt var (
-              {new Date(existingEntry.measured_at).toLocaleTimeString("tr-TR", {
-                hour: "2-digit",
-                minute: "2-digit",
+              {t("existingEntryWarning", {
+                time: new Date(existingEntry.measured_at).toLocaleTimeString(
+                  locale === "tr" ? "tr-TR" : "en-US",
+                  { hour: "2-digit", minute: "2-digit" },
+                ),
+                values: `${existingEntry.systolic}/${existingEntry.diastolic}`,
               })}
-              &apos;de {existingEntry.systolic}/{existingEntry.diastolic}).
-              Değiştirmek ister misin?
             </div>
           )}
 
@@ -242,9 +245,9 @@ export function AddBloodPressureDialog({
             {saving ? (
               <Loader2 className="h-5 w-5 animate-spin" />
             ) : existingEntry ? (
-              "Değiştir"
+              t("replace")
             ) : (
-              "Kaydet"
+              tc("save")
             )}
           </Button>
 
@@ -252,7 +255,7 @@ export function AddBloodPressureDialog({
           {recent.length > 0 && (
             <div className="space-y-2">
               <div className="text-xs text-muted-foreground font-medium">
-                Son ölçümler
+                {t("recentMeasurements")}
               </div>
               <div className="space-y-1.5">
                 {recent.map((m) => {
@@ -263,7 +266,7 @@ export function AddBloodPressureDialog({
                       className="flex items-center justify-between text-sm py-1.5 px-2 rounded-md bg-muted/50"
                     >
                       <span className="text-muted-foreground text-xs">
-                        {formatTrackingDateTime(m.measured_at)}
+                        {formatTrackingDateTime(m.measured_at, locale)}
                       </span>
                       <div className="flex items-center gap-2">
                         <span className="font-medium tabular-nums">
@@ -275,7 +278,7 @@ export function AddBloodPressureDialog({
                           </span>
                         )}
                         <span className={cn("text-xs font-medium", s.color)}>
-                          {s.label}
+                          {tc(s.key)}
                         </span>
                       </div>
                     </div>

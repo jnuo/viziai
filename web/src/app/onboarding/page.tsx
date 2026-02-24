@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useDropzone } from "react-dropzone";
+import { useTranslations } from "next-intl";
 import { User, Upload, ArrowRight, Check, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,6 +24,9 @@ type Step = "welcome" | "create-profile" | "upload-prompt" | "complete";
 function OnboardingContent(): React.ReactElement {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const t = useTranslations("pages.onboarding");
+  const tc = useTranslations("common");
+  const tu = useTranslations("pages.upload");
   const isAddMode = searchParams.get("mode") === "add";
 
   // Check if user already has profiles (handles stale onboarding cookie)
@@ -66,7 +70,7 @@ function OnboardingContent(): React.ReactElement {
       if (!file || !createdProfileId) return;
 
       if (file.type !== "application/pdf") {
-        setError("Sadece PDF dosyaları kabul edilir");
+        setError(tu("onlyPdf"));
         return;
       }
 
@@ -88,9 +92,9 @@ function OnboardingContent(): React.ReactElement {
 
         if (!uploadResponse.ok) {
           if (uploadResponse.status === 409) {
-            setError(`Bu dosya zaten yüklenmiş`);
+            setError(uploadData.message || tu("uploadFailed"));
           } else {
-            setError(uploadData.message || "Yükleme başarısız");
+            setError(uploadData.message || tu("uploadFailed"));
           }
           setIsUploading(false);
           return;
@@ -100,7 +104,7 @@ function OnboardingContent(): React.ReactElement {
         router.push(`/upload?uploadId=${uploadData.uploadId}`);
       } catch (err) {
         reportError(err, { op: "onboarding.upload" });
-        setError("Bir hata oluştu. Lütfen tekrar deneyin.");
+        setError(tc("errorRetry"));
         setIsUploading(false);
       }
     },
@@ -116,7 +120,7 @@ function OnboardingContent(): React.ReactElement {
 
   const handleCreateProfile = async () => {
     if (!profileName.trim()) {
-      setError("Profil adı gerekli");
+      setError(t("profileNameRequired"));
       return;
     }
 
@@ -133,7 +137,7 @@ function OnboardingContent(): React.ReactElement {
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data.message || "Profil oluşturulamadı");
+        setError(data.message || t("profileCreateFailed"));
         return;
       }
 
@@ -147,7 +151,7 @@ function OnboardingContent(): React.ReactElement {
       setStep("upload-prompt");
     } catch (err) {
       reportError(err, { op: "onboarding.createProfile" });
-      setError("Bir hata oluştu. Lütfen tekrar deneyin.");
+      setError(tc("errorRetry"));
     } finally {
       setIsCreating(false);
     }
@@ -172,12 +176,9 @@ function OnboardingContent(): React.ReactElement {
               <div className="mx-auto w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                 <span className="text-3xl">🩺</span>
               </div>
-              <CardTitle className="text-2xl">
-                ViziAI&apos;ya Hoş Geldiniz
-              </CardTitle>
+              <CardTitle className="text-2xl">{t("welcomeTitle")}</CardTitle>
               <CardDescription className="text-base">
-                Tahlil sonuçlarınızı görselleştirin ve sağlık trendlerinizi
-                takip edin
+                {t("visualize")}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4 pb-6">
@@ -187,9 +188,9 @@ function OnboardingContent(): React.ReactElement {
                     <span className="text-xs">1</span>
                   </div>
                   <div>
-                    <p className="font-medium">Profil oluşturun</p>
+                    <p className="font-medium">{t("step1Title")}</p>
                     <p className="text-sm text-muted-foreground">
-                      Kendiniz veya aile üyeleriniz için
+                      {t("step1Description")}
                     </p>
                   </div>
                 </div>
@@ -198,9 +199,9 @@ function OnboardingContent(): React.ReactElement {
                     <span className="text-xs">2</span>
                   </div>
                   <div>
-                    <p className="font-medium">PDF yükleyin</p>
+                    <p className="font-medium">{t("step2Title")}</p>
                     <p className="text-sm text-muted-foreground">
-                      AI tahlil raporlarınızı otomatik analiz eder
+                      {t("step2Description")}
                     </p>
                   </div>
                 </div>
@@ -209,9 +210,9 @@ function OnboardingContent(): React.ReactElement {
                     <span className="text-xs">3</span>
                   </div>
                   <div>
-                    <p className="font-medium">Trendleri takip edin</p>
+                    <p className="font-medium">{t("step3Title")}</p>
                     <p className="text-sm text-muted-foreground">
-                      Zaman içinde değişimleri görselleştirin
+                      {t("step3Description")}
                     </p>
                   </div>
                 </div>
@@ -221,7 +222,7 @@ function OnboardingContent(): React.ReactElement {
                 onClick={() => setStep("create-profile")}
                 className="w-full gap-2"
               >
-                Başlayın
+                {t("getStarted")}
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Button>
             </CardContent>
@@ -236,18 +237,18 @@ function OnboardingContent(): React.ReactElement {
                 <User className="h-6 w-6 text-primary" />
               </div>
               <CardTitle className="text-center">
-                {isAddMode ? "Yeni Profil Ekle" : "Profil Oluşturun"}
+                {isAddMode ? t("addProfile") : t("createProfileTitle")}
               </CardTitle>
               <CardDescription className="text-center">
-                Tahlil sonuçlarını takip etmek istediğiniz kişinin adını girin
+                {t("enterPersonName")}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="profileName">Profil Adı</Label>
+                <Label htmlFor="profileName">{t("profileNameLabel")}</Label>
                 <Input
                   id="profileName"
-                  placeholder="örn: Yüksel O."
+                  placeholder={t("profileNamePlaceholder")}
                   value={profileName}
                   onChange={(e) => setProfileName(e.target.value)}
                   onKeyDown={(e) => {
@@ -256,10 +257,7 @@ function OnboardingContent(): React.ReactElement {
                     }
                   }}
                 />
-                <p className="text-xs text-muted-foreground">
-                  Bu ad sadece size görünür ve istediğiniz zaman
-                  değiştirebilirsiniz
-                </p>
+                <p className="text-xs text-muted-foreground">{t("nameHint")}</p>
               </div>
 
               {error && <p className="text-sm text-status-critical">{error}</p>}
@@ -271,7 +269,7 @@ function OnboardingContent(): React.ReactElement {
                     onClick={() => router.back()}
                     className="flex-1"
                   >
-                    İptal
+                    {tc("cancel")}
                   </Button>
                 )}
                 <Button
@@ -279,7 +277,7 @@ function OnboardingContent(): React.ReactElement {
                   disabled={!profileName.trim() || isCreating}
                   className="flex-1"
                 >
-                  {isCreating ? "Oluşturuluyor…" : "Profil Oluştur"}
+                  {isCreating ? tc("creating") : t("createProfileTitle")}
                 </Button>
               </div>
             </CardContent>
@@ -293,10 +291,8 @@ function OnboardingContent(): React.ReactElement {
               <div className="mx-auto w-12 h-12 rounded-full bg-status-normal/10 flex items-center justify-center mb-2">
                 <Check className="h-6 w-6 text-status-normal" />
               </div>
-              <CardTitle>Profil Oluşturuldu</CardTitle>
-              <CardDescription>
-                Şimdi ilk tahlil raporunuzu yükleyebilirsiniz
-              </CardDescription>
+              <CardTitle>{t("profileCreated")}</CardTitle>
+              <CardDescription>{t("uploadPromptDescription")}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {/* Dropzone */}
@@ -310,23 +306,23 @@ function OnboardingContent(): React.ReactElement {
                   isUploading && "opacity-50 cursor-wait",
                 )}
               >
-                <input {...getInputProps()} aria-label="PDF dosyası seç" />
+                <input {...getInputProps()} aria-label={tu("selectPdf")} />
                 {isUploading ? (
                   <>
                     <Loader2 className="h-10 w-10 mx-auto mb-3 text-primary animate-spin" />
-                    <p className="font-medium">Yükleniyor…</p>
+                    <p className="font-medium">{tc("loading")}</p>
                   </>
                 ) : isDragActive ? (
                   <>
                     <Upload className="h-10 w-10 mx-auto mb-3 text-primary" />
-                    <p className="font-medium">PDF dosyasını buraya bırakın</p>
+                    <p className="font-medium">{t("dropHere")}</p>
                   </>
                 ) : (
                   <>
                     <Upload className="h-10 w-10 mx-auto mb-3 text-muted-foreground" />
-                    <p className="font-medium">PDF Yükle</p>
+                    <p className="font-medium">{t("uploadPdf")}</p>
                     <p className="text-sm text-muted-foreground">
-                      Sürükleyip bırakın veya tıklayın
+                      {t("dragOrClick")}
                     </p>
                   </>
                 )}
@@ -340,7 +336,7 @@ function OnboardingContent(): React.ReactElement {
                 className="w-full text-muted-foreground"
                 disabled={isUploading}
               >
-                Şimdilik Atla
+                {t("skipForNow")}
               </Button>
             </CardContent>
           </Card>

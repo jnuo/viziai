@@ -2,19 +2,16 @@
 
 import { useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { useToast } from "@/components/ui/toast";
 import { reportError } from "@/lib/error-reporting";
-
-const ACCESS_LABELS: Record<string, string> = {
-  owner: "sahip",
-  editor: "düzenleyici",
-  viewer: "görüntüleyici",
-};
 
 export function NotificationChecker() {
   const { status } = useSession();
   const { addToast } = useToast();
   const checked = useRef(false);
+  const t = useTranslations("common.accessLevel");
+  const tn = useTranslations("components.notification");
 
   useEffect(() => {
     if (status !== "authenticated" || checked.current) return;
@@ -26,14 +23,18 @@ export function NotificationChecker() {
         if (!data.notifications?.length) return;
 
         for (const n of data.notifications) {
-          const grantor = n.granted_by_name || "Birisi";
-          const level = ACCESS_LABELS[n.access_level] || n.access_level;
+          const grantor = n.granted_by_name || tn("someone");
+          const level = t(n.access_level as "owner" | "editor" | "viewer");
           addToast({
-            message: `${grantor} seni ${n.profile_name} profiline ${level} olarak ekledi.`,
+            message: tn("addedToProfile", {
+              grantor,
+              profileName: n.profile_name,
+              level,
+            }),
             type: "info",
             duration: 10000,
             action: {
-              label: "Profilleri gör",
+              label: tn("viewProfiles"),
               href: "/settings/access",
             },
           });
@@ -42,7 +43,7 @@ export function NotificationChecker() {
         fetch("/api/notifications", { method: "POST" });
       })
       .catch((err) => reportError(err, { op: "notifications.check" }));
-  }, [status, addToast]);
+  }, [status, addToast, t, tn]);
 
   return null;
 }

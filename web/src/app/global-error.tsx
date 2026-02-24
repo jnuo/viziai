@@ -18,9 +18,9 @@ export default function GlobalError({
     <html>
       <body>
         <div style={{ padding: "2rem", textAlign: "center" }}>
-          <h2>Bir şeyler ters gitti</h2>
+          <h2>Something went wrong</h2>
           <p style={{ color: "#666", margin: "1rem 0" }}>
-            Hata kaydedildi. Lütfen tekrar deneyin.
+            Error logged. Please try again.
           </p>
           <button
             onClick={reset}
@@ -33,7 +33,7 @@ export default function GlobalError({
               cursor: "pointer",
             }}
           >
-            Tekrar Dene
+            Try again
           </button>
         </div>
       </body>
