@@ -19,6 +19,8 @@ import {
   ChevronLeft,
   ArrowRight,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { useLocale } from "next-intl";
 import { ExtractionLoading } from "@/components/extraction-loading";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -65,6 +67,9 @@ type UploadStatus =
   | "error";
 
 function UploadPageContent(): React.ReactElement {
+  const t = useTranslations("pages.upload");
+  const tc = useTranslations("common");
+  const locale = useLocale();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [profiles, setProfiles] = useState<Profile[]>([]);
@@ -146,7 +151,7 @@ function UploadPageContent(): React.ReactElement {
           Date.now() - pollStartTimeRef.current > POLL_TIMEOUT_MS
         ) {
           stopPolling();
-          setError("5 dakika içinde tamamlanamadı. Lütfen tekrar deneyin.");
+          setError(t("timeout"));
           setStatus("error");
           return;
         }
@@ -171,7 +176,7 @@ function UploadPageContent(): React.ReactElement {
           (upload.status === "pending" && upload.error_message)
         ) {
           stopPolling();
-          setError(upload.error_message || "Veri çıkarma başarısız");
+          setError(upload.error_message || t("extractionFailed"));
           setStatus("error");
         }
       } catch (err) {
@@ -247,7 +252,7 @@ function UploadPageContent(): React.ReactElement {
       }
     } catch (err) {
       reportError(err, { op: "upload.loadExtractedData", uploadId: id });
-      setError("Veri yüklenemedi");
+      setError(t("dataLoadFailed"));
       setStatus("error");
     }
   }
@@ -267,7 +272,7 @@ function UploadPageContent(): React.ReactElement {
       startPolling(id);
     } catch (err) {
       reportError(err, { op: "upload.startExtraction", uploadId: id });
-      setError("Veri çıkarma başarısız");
+      setError(t("extractionFailed"));
       setStatus("error");
     }
   }
@@ -310,12 +315,12 @@ function UploadPageContent(): React.ReactElement {
       if (!file) return;
 
       if (!selectedProfileId) {
-        setError("Lütfen bir profil seçin");
+        setError(t("selectProfile"));
         return;
       }
 
       if (file.type !== "application/pdf") {
-        setError("Sadece PDF dosyaları kabul edilir");
+        setError(t("onlyPdf"));
         return;
       }
 
@@ -338,10 +343,12 @@ function UploadPageContent(): React.ReactElement {
         if (!uploadResponse.ok) {
           if (uploadResponse.status === 409) {
             setError(
-              `Bu dosya zaten yüklenmiş: ${uploadData.existingSampleDate || "tarih bilinmiyor"}`,
+              t("alreadyUploaded", {
+                date: uploadData.existingSampleDate || "?",
+              }),
             );
           } else {
-            setError(uploadData.message || "Yükleme başarısız");
+            setError(uploadData.message || t("uploadFailed"));
           }
           setStatus("error");
           return;
@@ -361,7 +368,7 @@ function UploadPageContent(): React.ReactElement {
         const extractData = await extractResponse.json();
 
         if (!extractResponse.ok) {
-          setError(extractData.message || "Veri çıkarma başarısız");
+          setError(extractData.message || t("extractionFailed"));
           setStatus("error");
           return;
         }
@@ -369,12 +376,12 @@ function UploadPageContent(): React.ReactElement {
         startPolling(uploadData.uploadId);
       } catch (err) {
         reportError(err, { op: "upload.onDrop" });
-        setError("Bir hata oluştu. Lütfen tekrar deneyin.");
+        setError(tc("errorRetry"));
         setStatus("error");
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps -- startPolling uses refs and is stable
-    [selectedProfileId],
+    [selectedProfileId, t, tc],
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -417,7 +424,7 @@ function UploadPageContent(): React.ReactElement {
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data.message || "Onaylama başarısız");
+        setError(data.message || t("confirmFailed"));
         setStatus("review");
         return;
       }
@@ -425,7 +432,7 @@ function UploadPageContent(): React.ReactElement {
       setStatus("success");
     } catch (err) {
       reportError(err, { op: "upload.confirm", uploadId });
-      setError("Bir hata oluştu. Lütfen tekrar deneyin.");
+      setError(tc("errorRetry"));
       setStatus("review");
     }
   }
@@ -483,25 +490,25 @@ function UploadPageContent(): React.ReactElement {
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="sm" onClick={() => router.back()}>
             <ChevronLeft className="h-4 w-4 mr-1" />
-            Geri
+            {tc("back")}
           </Button>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle>Tahlil Raporu Yükle</CardTitle>
+            <CardTitle>{t("title")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Profile Selection */}
             {status === "idle" && (
               <div className="space-y-2">
-                <Label htmlFor="profile">Profil</Label>
+                <Label htmlFor="profile">{tc("profile")}</Label>
                 <Select
                   value={selectedProfileId}
                   onValueChange={setSelectedProfileId}
                 >
                   <SelectTrigger id="profile">
-                    <SelectValue placeholder="Profil seçin" />
+                    <SelectValue placeholder={tc("selectProfile")} />
                   </SelectTrigger>
                   <SelectContent>
                     {profiles.map((profile) => (
@@ -526,19 +533,15 @@ function UploadPageContent(): React.ReactElement {
                   !selectedProfileId && "opacity-50 cursor-not-allowed",
                 )}
               >
-                <input {...getInputProps()} aria-label="PDF dosyası seç" />
+                <input {...getInputProps()} aria-label={t("selectPdf")} />
                 <Upload className="h-10 w-10 mx-auto mb-4 text-muted-foreground" />
                 {isDragActive ? (
-                  <p className="text-lg font-medium">
-                    PDF dosyasını buraya bırakın
-                  </p>
+                  <p className="text-lg font-medium">{t("dropHere")}</p>
                 ) : (
                   <>
-                    <p className="text-lg font-medium">
-                      PDF dosyasını sürükleyin veya tıklayın
-                    </p>
+                    <p className="text-lg font-medium">{t("dragOrClick")}</p>
                     <p className="text-sm text-muted-foreground mt-1">
-                      Sadece PDF dosyaları kabul edilir
+                      {t("onlyPdf")}
                     </p>
                   </>
                 )}
@@ -549,7 +552,7 @@ function UploadPageContent(): React.ReactElement {
             {status === "uploading" && (
               <div className="flex flex-col items-center py-8">
                 <Loader2 className="h-10 w-10 animate-spin text-primary mb-4" />
-                <p className="text-lg font-medium">Dosya yükleniyor…</p>
+                <p className="text-lg font-medium">{t("uploading")}</p>
                 <p className="text-sm text-muted-foreground">{fileName}</p>
               </div>
             )}
@@ -558,7 +561,7 @@ function UploadPageContent(): React.ReactElement {
             {status === "extracting" && (
               <ExtractionLoading
                 fileName={fileName || undefined}
-                uploadTime={formatDateTimeTR(uploadCreatedAt)}
+                uploadTime={formatDateTimeTR(uploadCreatedAt, locale)}
                 onCancel={handleCancel}
               />
             )}
@@ -571,14 +574,14 @@ function UploadPageContent(): React.ReactElement {
                   <span className="font-medium">{fileName}</span>
                   {uploadCreatedAt && (
                     <span className="text-muted-foreground text-sm">
-                      - {formatDateTimeTR(uploadCreatedAt)}
+                      - {formatDateTimeTR(uploadCreatedAt, locale)}
                     </span>
                   )}
                 </div>
 
                 {/* Sample Date */}
                 <div className="space-y-2">
-                  <Label htmlFor="sampleDate">Tahlil Tarihi</Label>
+                  <Label htmlFor="sampleDate">{t("testDate")}</Label>
                   <Input
                     id="sampleDate"
                     type="date"
@@ -590,26 +593,26 @@ function UploadPageContent(): React.ReactElement {
 
                 {/* Metrics Table */}
                 <div className="space-y-2">
-                  <Label>Metrikler ({editedMetrics.length})</Label>
+                  <Label>{t("metrics", { count: editedMetrics.length })}</Label>
                   <div className="border rounded-lg overflow-hidden">
                     <div className="max-h-96 overflow-y-auto">
                       <table className="w-full text-sm">
                         <thead className="bg-muted sticky top-0">
                           <tr>
                             <th className="text-left p-2 font-medium">
-                              Metrik
+                              {t("metric")}
                             </th>
                             <th className="text-right p-2 font-medium">
-                              Değer
+                              {t("value")}
                             </th>
                             <th className="text-right p-2 font-medium">
-                              Birim
+                              {t("unit")}
                             </th>
                             <th className="text-right p-2 font-medium">
-                              Ref Min
+                              {t("refMin")}
                             </th>
                             <th className="text-right p-2 font-medium">
-                              Ref Max
+                              {t("refMax")}
                             </th>
                             <th className="w-10"></th>
                           </tr>
@@ -644,7 +647,7 @@ function UploadPageContent(): React.ReactElement {
                                         )
                                       }
                                       className="h-8 text-sm"
-                                      aria-label="Metrik adı"
+                                      aria-label={t("metricName")}
                                     />
                                   </td>
                                   <td className="p-2">
@@ -663,7 +666,7 @@ function UploadPageContent(): React.ReactElement {
                                         isOutOfRange &&
                                           "text-status-critical font-medium",
                                       )}
-                                      aria-label="Değer"
+                                      aria-label={t("value")}
                                     />
                                   </td>
                                   <td className="p-2">
@@ -677,7 +680,7 @@ function UploadPageContent(): React.ReactElement {
                                         )
                                       }
                                       className="h-8 text-sm text-right w-20"
-                                      aria-label="Birim"
+                                      aria-label={t("unit")}
                                     />
                                   </td>
                                   <td className="p-2">
@@ -695,7 +698,7 @@ function UploadPageContent(): React.ReactElement {
                                       }
                                       className="h-8 text-sm text-right w-20"
                                       placeholder="-"
-                                      aria-label="Referans minimum"
+                                      aria-label={t("refMinAria")}
                                     />
                                   </td>
                                   <td className="p-2">
@@ -713,7 +716,7 @@ function UploadPageContent(): React.ReactElement {
                                       }
                                       className="h-8 text-sm text-right w-20"
                                       placeholder="-"
-                                      aria-label="Referans maksimum"
+                                      aria-label={t("refMaxAria")}
                                     />
                                   </td>
                                   <td className="p-2">
@@ -722,7 +725,7 @@ function UploadPageContent(): React.ReactElement {
                                       size="icon"
                                       className="h-8 w-8"
                                       onClick={() => handleRemoveMetric(index)}
-                                      aria-label="Metriği sil"
+                                      aria-label={t("deleteMetric")}
                                     >
                                       <X className="h-4 w-4" />
                                     </Button>
@@ -754,14 +757,14 @@ function UploadPageContent(): React.ReactElement {
                                               <span className="font-medium text-primary">
                                                 {renameInfo.canonical}
                                               </span>{" "}
-                                              olarak eklenecek
+                                              {t("willBeAddedAs")}
                                             </>
                                           ) : (
                                             <>
                                               <span className="font-medium">
                                                 {renameInfo.original}
                                               </span>{" "}
-                                              olarak kalacak
+                                              {t("willStayAs")}
                                             </>
                                           )}
                                         </span>
@@ -781,13 +784,13 @@ function UploadPageContent(): React.ReactElement {
                 {/* Actions */}
                 <div className="flex gap-3 justify-end">
                   <Button variant="outline" onClick={handleCancel}>
-                    İptal
+                    {tc("cancel")}
                   </Button>
                   <Button
                     onClick={handleConfirm}
                     disabled={!sampleDate || editedMetrics.length === 0}
                   >
-                    Onayla ve Kaydet
+                    {t("confirmSave")}
                   </Button>
                 </div>
               </div>
@@ -797,7 +800,7 @@ function UploadPageContent(): React.ReactElement {
             {status === "confirming" && (
               <div className="flex flex-col items-center py-8">
                 <Loader2 className="h-10 w-10 animate-spin text-primary mb-4" />
-                <p className="text-lg font-medium">Kaydediliyor…</p>
+                <p className="text-lg font-medium">{t("saving")}</p>
               </div>
             )}
 
@@ -807,16 +810,16 @@ function UploadPageContent(): React.ReactElement {
                 <div className="h-16 w-16 rounded-full bg-status-normal/10 flex items-center justify-center mb-4">
                   <Check className="h-8 w-8 text-status-normal" />
                 </div>
-                <p className="text-lg font-medium">Başarıyla Kaydedildi</p>
+                <p className="text-lg font-medium">{t("savedSuccessfully")}</p>
                 <p className="text-sm text-muted-foreground mb-6">
-                  Tahlil sonuçları profilinize eklendi
+                  {t("resultsAdded")}
                 </p>
                 <div className="flex gap-3">
                   <Button variant="outline" onClick={handleCancel}>
-                    Başka Dosya Yükle
+                    {t("uploadAnother")}
                   </Button>
                   <Button onClick={handleGoToDashboard}>
-                    Dashboard&apos;a Git
+                    {t("goToDashboard")}
                   </Button>
                 </div>
               </div>
@@ -831,14 +834,14 @@ function UploadPageContent(): React.ReactElement {
                     <p className="text-sm">{error}</p>
                     {fileName && uploadCreatedAt && (
                       <p className="text-xs mt-1 opacity-70">
-                        {fileName} - {formatDateTimeTR(uploadCreatedAt)}
+                        {fileName} - {formatDateTimeTR(uploadCreatedAt, locale)}
                       </p>
                     )}
                   </div>
                 </div>
                 {uploadId && (
                   <Button variant="outline" size="sm" onClick={handleCancel}>
-                    Yeni Dosya Yükle
+                    {t("uploadNewFile")}
                   </Button>
                 )}
               </div>
