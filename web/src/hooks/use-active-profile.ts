@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { reportError } from "@/lib/error-reporting";
 
 interface Profile {
@@ -28,6 +29,7 @@ const NEEDS_ONBOARDING_COOKIE = "viziai_needs_onboarding";
  */
 export function useActiveProfile() {
   const { status } = useSession();
+  const t = useTranslations("tracking");
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [activeProfileId, setActiveProfileId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -109,7 +111,7 @@ export function useActiveProfile() {
       } catch (err) {
         reportError(err, { op: "useActiveProfile.fetch" });
         if (mounted) {
-          setError("Profiller yüklenemedi");
+          setError(t("profilesLoadFailed"));
         }
       } finally {
         if (mounted) {

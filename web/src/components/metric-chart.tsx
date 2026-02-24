@@ -187,7 +187,7 @@ export function MetricChart({
             size="sm"
             onClick={onRemove}
             className="h-6 w-6 p-0"
-            aria-label="Grafiği kaldır"
+            aria-label={t("removeChart")}
           >
             <X className="h-3 w-3" />
           </Button>
