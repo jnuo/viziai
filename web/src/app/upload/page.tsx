@@ -502,7 +502,11 @@ function UploadPageContent(): React.ReactElement {
 
         <Card>
           <CardHeader>
-            <CardTitle>{t("title")}</CardTitle>
+            <CardTitle>
+              {status === "review" || status === "confirming"
+                ? t("reviewTitle")
+                : t("title")}
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Profile Selection */}
@@ -575,14 +579,16 @@ function UploadPageContent(): React.ReactElement {
             {/* Review State */}
             {status === "review" && extractedData && (
               <div className="space-y-6">
-                <div className="flex items-center gap-2 text-status-normal">
-                  <FileText className="h-5 w-5" />
-                  <span className="font-medium">{fileName}</span>
-                  {uploadCreatedAt && (
-                    <span className="text-muted-foreground text-sm">
-                      - {formatDateTimeTR(uploadCreatedAt, locale)}
-                    </span>
-                  )}
+                <div className="flex items-start gap-2 text-status-normal">
+                  <FileText className="h-5 w-5 shrink-0 mt-0.5" />
+                  <div className="min-w-0">
+                    <p className="font-medium text-sm truncate">{fileName}</p>
+                    {uploadCreatedAt && (
+                      <p className="text-muted-foreground text-xs mt-0.5">
+                        {formatDateTimeTR(uploadCreatedAt, locale)}
+                      </p>
+                    )}
+                  </div>
                 </div>
 
                 {/* Sample Date */}

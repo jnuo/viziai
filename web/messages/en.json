@@ -79,6 +79,7 @@
       "metricName": "Metric name",
       "value": "Value",
       "deleteMetric": "Delete metric",
+      "reviewTitle": "Review Results",
       "confirmSave": "Confirm & Save",
       "resultsAdded": "Test results added to your profile",
       "selectProfile": "Please select a profile",

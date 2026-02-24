@@ -79,6 +79,7 @@
       "metricName": "Metrik adı",
       "value": "Değer",
       "deleteMetric": "Metriği sil",
+      "reviewTitle": "Sonuçları İncele",
       "confirmSave": "Onayla ve Kaydet",
       "resultsAdded": "Tahlil sonuçları profilinize eklendi",
       "selectProfile": "Lütfen bir profil seçin",
