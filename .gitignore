@@ -41,3 +41,5 @@ token_*.json
 .env.test
 .obsidian/
 .vercel
+.env.prod
+test-results/
