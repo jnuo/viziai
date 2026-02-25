@@ -1,0 +1,250 @@
+{
+  "sample_date": "2026-01-11",
+  "metrics": [
+    {
+      "name": "Eritrosit",
+      "value": 2.76,
+      "unit": "10^3/µL",
+      "ref_low": 4.63,
+      "ref_high": 6.08
+    },
+    {
+      "name": "Hemoglobin",
+      "value": 9,
+      "unit": "gr/dL",
+      "ref_low": 13.7,
+      "ref_high": 17.5
+    },
+    {
+      "name": "Hematokrit",
+      "value": 26.8,
+      "unit": "L",
+      "ref_low": 40.1,
+      "ref_high": 55.7
+    },
+    {
+      "name": "MCV",
+      "value": 97.1,
+      "unit": "fL",
+      "ref_low": 79,
+      "ref_high": 92.2
+    },
+    {
+      "name": "MCH",
+      "value": 32.6,
+      "unit": "pg",
+      "ref_low": 25.7,
+      "ref_high": 32.2
+    },
+    {
+      "name": "MCHC",
+      "value": 33.6,
+      "unit": "g/dL",
+      "ref_low": 31.5,
+      "ref_high": 36.5
+    },
+    {
+      "name": "RDW",
+      "value": 16.9,
+      "unit": "H",
+      "ref_low": 11.6,
+      "ref_high": 14.4
+    },
+    {
+      "name": "Lökosit",
+      "value": 2.01,
+      "unit": "10^3/µL",
+      "ref_low": 4.23,
+      "ref_high": 9.07
+    },
+    {
+      "name": "Nötrofil%",
+      "value": 13.9,
+      "unit": "%",
+      "ref_low": 34,
+      "ref_high": 67.9
+    },
+    {
+      "name": "Nötrofil#",
+      "value": 0.28,
+      "unit": "10^3/µL",
+      "ref_low": 1.78,
+      "ref_high": 5.38
+    },
+    {
+      "name": "Lenfosit%",
+      "value": 79.6,
+      "unit": "%",
+      "ref_low": 21.8,
+      "ref_high": 53.1
+    },
+    {
+      "name": "Lenfosit#",
+      "value": 1.6,
+      "unit": "10^3/µL",
+      "ref_low": 1.32,
+      "ref_high": 3.57
+    },
+    {
+      "name": "Monosit%",
+      "value": 6,
+      "unit": "%",
+      "ref_low": 5.3,
+      "ref_high": 12.2
+    },
+    {
+      "name": "Monosit#",
+      "value": 0.12,
+      "unit": "10^3/µL",
+      "ref_low": 0.3,
+      "ref_high": 0.82
+    },
+    {
+      "name": "Eozinofil%",
+      "value": 0.5,
+      "unit": "%",
+      "ref_low": 0.8,
+      "ref_high": 7
+    },
+    {
+      "name": "Eozinofil#",
+      "value": 0.01,
+      "unit": "10^3/µL",
+      "ref_low": 0.04,
+      "ref_high": 0.54
+    },
+    {
+      "name": "Bazofil%",
+      "value": 0.1,
+      "unit": "%",
+      "ref_low": 0.2,
+      "ref_high": 1.2
+    },
+    {
+      "name": "Bazofil#",
+      "value": 0,
+      "unit": "10^3/µL",
+      "ref_low": 0.01,
+      "ref_high": 0.08
+    },
+    {
+      "name": "Trombosit",
+      "value": 24,
+      "unit": "10^3/µL",
+      "ref_low": 160,
+      "ref_high": 340
+    },
+    {
+      "name": "PCT",
+      "value": 0.03,
+      "unit": "%",
+      "ref_low": 0.17,
+      "ref_high": 0.32
+    },
+    {
+      "name": "MPV",
+      "value": 11.9,
+      "unit": "fL",
+      "ref_low": 9.4,
+      "ref_high": 12.4
+    },
+    {
+      "name": "PDW",
+      "value": 14,
+      "unit": null,
+      "ref_low": 10,
+      "ref_high": 16.1
+    },
+    {
+      "name": "Üre",
+      "value": 58,
+      "unit": "mg/dL",
+      "ref_low": 13,
+      "ref_high": 43
+    },
+    {
+      "name": "BUN",
+      "value": 27.1,
+      "unit": "mg/dL",
+      "ref_low": 6,
+      "ref_high": 20
+    },
+    {
+      "name": "Kreatinin",
+      "value": 1.23,
+      "unit": "mg/dL",
+      "ref_low": 0.72,
+      "ref_high": 1.25
+    },
+    {
+      "name": "Sodyum",
+      "value": 137,
+      "unit": "mmol/L",
+      "ref_low": 136,
+      "ref_high": 145
+    },
+    {
+      "name": "Potasyum",
+      "value": 4.4,
+      "unit": "mmol/L",
+      "ref_low": 3.5,
+      "ref_high": 5.1
+    },
+    {
+      "name": "Kalsiyum",
+      "value": 8,
+      "unit": "mg/dL",
+      "ref_low": 8.4,
+      "ref_high": 10.2
+    },
+    {
+      "name": "Magnezyum",
+      "value": 1.8,
+      "unit": "mg/dL",
+      "ref_low": 1.6,
+      "ref_high": 2.6
+    },
+    {
+      "name": "eGFR",
+      "value": 56.67,
+      "unit": "mL/dk/1.73 m2",
+      "ref_low": null,
+      "ref_high": null
+    },
+    {
+      "name": "AST",
+      "value": 25,
+      "unit": "U/L",
+      "ref_low": 5,
+      "ref_high": 34
+    },
+    {
+      "name": "ALT",
+      "value": 26,
+      "unit": "U/L",
+      "ref_low": null,
+      "ref_high": 55
+    },
+    {
+      "name": "GGT",
+      "value": 36,
+      "unit": "U/L",
+      "ref_low": 9,
+      "ref_high": 36
+    },
+    {
+      "name": "ALP",
+      "value": 113,
+      "unit": "U/L",
+      "ref_low": 40,
+      "ref_high": 150
+    },
+    {
+      "name": "LDH",
+      "value": 192,
+      "unit": "U/L",
+      "ref_low": 125,
+      "ref_high": 243
+    }
+  ]
+}
