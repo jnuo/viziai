@@ -1,0 +1,320 @@
+{
+  "sample_date": "2025-11-21",
+  "metrics": [
+    {
+      "name": "Eritrosit",
+      "value": 5.22,
+      "unit": "x10^6/mm^3",
+      "ref_low": 4.5,
+      "ref_high": 5.5
+    },
+    {
+      "name": "Hemoglobin",
+      "value": 14.8,
+      "unit": "g/dL",
+      "ref_low": 13,
+      "ref_high": 17
+    },
+    {
+      "name": "Hematokrit",
+      "value": 44.3,
+      "unit": "%",
+      "ref_low": 40,
+      "ref_high": 50
+    },
+    {
+      "name": "MCV",
+      "value": 84.9,
+      "unit": "fl",
+      "ref_low": 83,
+      "ref_high": 97
+    },
+    {
+      "name": "MCH",
+      "value": 28.4,
+      "unit": "PG",
+      "ref_low": 27,
+      "ref_high": 33
+    },
+    {
+      "name": "MCHC",
+      "value": 33.4,
+      "unit": "g/dL",
+      "ref_low": 32,
+      "ref_high": 35
+    },
+    {
+      "name": "RDW",
+      "value": 12.2,
+      "unit": "%",
+      "ref_low": 11.8,
+      "ref_high": 14.3
+    },
+    {
+      "name": "Micro R",
+      "value": 1.7,
+      "unit": "%",
+      "ref_low": 0.3,
+      "ref_high": 3.3
+    },
+    {
+      "name": "Macro R",
+      "value": 4.1,
+      "unit": "%",
+      "ref_low": 3.1,
+      "ref_high": 4.5
+    },
+    {
+      "name": "Lökosit",
+      "value": 7.25,
+      "unit": "x10^3/mm^3",
+      "ref_low": 3.7,
+      "ref_high": 9.2
+    },
+    {
+      "name": "Nötrofil%",
+      "value": 54,
+      "unit": "%",
+      "ref_low": 37.1,
+      "ref_high": 68.4
+    },
+    {
+      "name": "Eozinofil%",
+      "value": 0.6,
+      "unit": "%",
+      "ref_low": null,
+      "ref_high": 6.7
+    },
+    {
+      "name": "Bazofil%",
+      "value": 0.3,
+      "unit": "%",
+      "ref_low": null,
+      "ref_high": 1.4
+    },
+    {
+      "name": "Lenfosit%",
+      "value": 38.3,
+      "unit": "%",
+      "ref_low": 21,
+      "ref_high": 50
+    },
+    {
+      "name": "Monosit%",
+      "value": 6.8,
+      "unit": "%",
+      "ref_low": null,
+      "ref_high": 11.3
+    },
+    {
+      "name": "Nötrofil#",
+      "value": 3.92,
+      "unit": "x10^3/mm^3",
+      "ref_low": 1.5,
+      "ref_high": 5.7
+    },
+    {
+      "name": "Eozinofil#",
+      "value": 0.04,
+      "unit": "x10^3/mm^3",
+      "ref_low": null,
+      "ref_high": 0.4
+    },
+    {
+      "name": "Bazofil#",
+      "value": 0.02,
+      "unit": "x10^3/mm^3",
+      "ref_low": null,
+      "ref_high": 0.1
+    },
+    {
+      "name": "Lenfosit#",
+      "value": 2.78,
+      "unit": "x10^3/mm^3",
+      "ref_low": 1.3,
+      "ref_high": 3.4
+    },
+    {
+      "name": "Monosit#",
+      "value": 0.49,
+      "unit": "x10^3/mm^3",
+      "ref_low": null,
+      "ref_high": 0.93
+    },
+    {
+      "name": "Trombosit",
+      "value": 252,
+      "unit": "x10^3/mm^3",
+      "ref_low": 153,
+      "ref_high": 368
+    },
+    {
+      "name": "MPV",
+      "value": 10.6,
+      "unit": "fl",
+      "ref_low": 9.3,
+      "ref_high": 12.7
+    },
+    {
+      "name": "Eritrosit Sedimentasyon Hızı",
+      "value": 16,
+      "unit": "mm/h",
+      "ref_low": 0,
+      "ref_high": 15
+    },
+    {
+      "name": "Glukoz",
+      "value": 101,
+      "unit": "mg/dL",
+      "ref_low": 74,
+      "ref_high": 100
+    },
+    {
+      "name": "Kreatinin",
+      "value": 177,
+      "unit": "mg/dL",
+      "ref_low": null,
+      "ref_high": null
+    },
+    {
+      "name": "Filtrasyon Glomerüler CKD",
+      "value": 88.98,
+      "unit": "mL/min/1,73m2",
+      "ref_low": null,
+      "ref_high": null
+    },
+    {
+      "name": "Ürik Asit",
+      "value": 8.5,
+      "unit": "mg/dL",
+      "ref_low": 3.7,
+      "ref_high": 9.2
+    },
+    {
+      "name": "Kolesterol",
+      "value": 237,
+      "unit": "mg/dL",
+      "ref_low": null,
+      "ref_high": 200
+    },
+    {
+      "name": "HDL Kolesterol",
+      "value": 42,
+      "unit": "mg/dL",
+      "ref_low": 40,
+      "ref_high": null
+    },
+    {
+      "name": "Non-HDL Kolesterol",
+      "value": 195,
+      "unit": "mg/dL",
+      "ref_low": null,
+      "ref_high": 160
+    },
+    {
+      "name": "LDL Kolesterol (Friedewald Hesabı)",
+      "value": 155,
+      "unit": "mg/dL",
+      "ref_low": null,
+      "ref_high": 130
+    },
+    {
+      "name": "Trigliserit",
+      "value": 200,
+      "unit": "mg/dL",
+      "ref_low": null,
+      "ref_high": 150
+    },
+    {
+      "name": "Total Protein",
+      "value": 7.2,
+      "unit": "g/dL",
+      "ref_low": 5.7,
+      "ref_high": 8.2
+    },
+    {
+      "name": "Total Bilirubin",
+      "value": 0.3,
+      "unit": "mg/dL",
+      "ref_low": 0.3,
+      "ref_high": 1.2
+    },
+    {
+      "name": "C-Reaktif Protein",
+      "value": 1.8,
+      "unit": "mg/L",
+      "ref_low": 0,
+      "ref_high": 5
+    },
+    {
+      "name": "AST",
+      "value": 28,
+      "unit": "U/L",
+      "ref_low": 0,
+      "ref_high": 37
+    },
+    {
+      "name": "ALT",
+      "value": 46,
+      "unit": "U/L",
+      "ref_low": 10,
+      "ref_high": 49
+    },
+    {
+      "name": "GGT",
+      "value": 23,
+      "unit": "U/L",
+      "ref_low": 0,
+      "ref_high": 73
+    },
+    {
+      "name": "Alkalen Fosfataz",
+      "value": 92,
+      "unit": "U/L",
+      "ref_low": 56,
+      "ref_high": 119
+    },
+    {
+      "name": "Sodyum",
+      "value": 139,
+      "unit": "mmol/L",
+      "ref_low": 136,
+      "ref_high": 146
+    },
+    {
+      "name": "Potasyum",
+      "value": 4.4,
+      "unit": "mmol/L",
+      "ref_low": 3.5,
+      "ref_high": 5.1
+    },
+    {
+      "name": "TSH",
+      "value": 1.52,
+      "unit": "μUI/mL",
+      "ref_low": 0.35,
+      "ref_high": 4.94
+    },
+    {
+      "name": "Romatoid Faktör",
+      "value": 7,
+      "unit": "UI/mL",
+      "ref_low": 0,
+      "ref_high": 14
+    },
+    {
+      "name": "Albümün",
+      "value": 7,
+      "unit": "mg/L",
+      "ref_low": null,
+      "ref_high": null
+    },
+    {
+      "name": "Albümün/Kreatinin Oranı",
+      "value": 4,
+      "unit": "mg/g creat",
+      "ref_low": 0,
+      "ref_high": 30
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "sample_date": "2025-09-29",
+  "metrics": [
+    {
+      "name": "CRP",
+      "value": 4.8,
+      "unit": "mg/L",
+      "ref_low": null,
+      "ref_high": 5
+    }
+  ]
+}
