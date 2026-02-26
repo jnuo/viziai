@@ -10,9 +10,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { locales, localeLabels } from "@/i18n/config";
 import { useLocaleSwitch } from "@/hooks/use-locale-switch";
+import { useTranslations } from "next-intl";
 
 export function LocaleSwitcher() {
   const { locale, isPending, switchTo } = useLocaleSwitch();
+  const t = useTranslations("components.header");
 
   return (
     <DropdownMenu>
@@ -22,7 +24,7 @@ export function LocaleSwitcher() {
           size="sm"
           disabled={isPending}
           className="gap-1.5 text-muted-foreground hover:text-foreground"
-          aria-label="Change language"
+          aria-label={t("changeLanguage")}
         >
           {isPending ? (
             <Loader2 className="h-4 w-4 animate-spin" />

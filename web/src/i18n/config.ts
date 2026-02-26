@@ -3,9 +3,9 @@ export type Locale = (typeof locales)[number];
 export const defaultLocale: Locale = "tr";
 
 export const localeLabels: Record<Locale, string> = {
-  tr: "Turkce",
+  tr: "Türkçe",
   en: "English",
-  es: "Espanol",
+  es: "Español",
 };
 
 export const bcp47: Record<Locale, string> = {
