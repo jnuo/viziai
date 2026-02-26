@@ -298,13 +298,27 @@ async function main() {
     console.log();
   }
 
-  // Save run
+  // Save settings (prompt + model + pipeline) for reproducibility
+  const settings = {
+    model,
+    date: new Date().toISOString(),
+    pipeline: "pdf → mupdf (png, scale 2.5x) → base64 → openai vision api",
+    pdf_renderer: "mupdf",
+    pdf_scale: 2.5,
+    image_format: "png",
+    max_tokens: 4000,
+    prompt_hash: simpleHash(EXTRACTION_PROMPT),
+    prompt: EXTRACTION_PROMPT,
+  };
+  fs.writeFileSync(path.join(runDir, "settings.json"), JSON.stringify(settings, null, 2));
+
+  // Save run results
   const runData = {
-    config: { model, prompt_hash: simpleHash(EXTRACTION_PROMPT), date: new Date().toISOString() },
+    config: { model, prompt_hash: settings.prompt_hash, date: settings.date },
     results,
   };
   fs.writeFileSync(path.join(runDir, "results.json"), JSON.stringify(runData, null, 2));
-  console.log(`Results saved to evals/runs/${runId}/results.json`);
+  console.log(`Results saved to evals/runs/${runId}/`);
 }
 
 function simpleHash(str) {
