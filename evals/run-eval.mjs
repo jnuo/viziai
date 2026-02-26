@@ -1,8 +1,12 @@
 /**
  * Eval runner for PDF extraction.
  *
- * Mirrors production flow: PDF → images (mupdf) → GPT → JSON.
- * No queue, no DB, no auth.
+ * Pipeline: PDF → mupdf (png) → GPT Vision → JSON.
+ *
+ * Image-based pages (large embedded JPEG, e.g. hospital HBYS exports) are
+ * detected automatically and processed differently:
+ *   - Vector pages: scale 2.5x, detail=auto (1 image per page)
+ *   - Image-based pages: scale 5x, split into top/bottom halves, detail=high
  *
  * Usage:
  *   node evals/run-eval.mjs
@@ -20,7 +24,10 @@ const require = createRequire(path.join(__dirname, "..", "web", "package.json"))
 const TEST_CASES_DIR = path.join(__dirname, "test-cases");
 const RUNS_DIR = path.join(__dirname, "runs");
 
-// Same prompt as production
+const VECTOR_SCALE = 2.5;
+const IMAGE_SCALE = 5;
+const IMAGE_PIXEL_THRESHOLD = 1_000_000; // >1M pixels = full-page embedded image
+
 const EXTRACTION_PROMPT = `Aşağıdaki laboratuvar sayfasından TÜM güncel 'Sonuç' değerlerini çıkar.
 
 Kurallar:
@@ -81,18 +88,54 @@ Kurallar:
 
 ÇIKTI: sadece JSON -> {"sample_date": "<YYYY-MM-DD|null>", "tests": { "<Türkçe Ad>": { "value": <number>, "unit": "<unit|null>", "flag": "<H|L|N|null>", "ref_low": <number|null>, "ref_high": <number|null> } } }}`;
 
-// --- PDF to images (same as production) ---
+// --- Page type detection ---
+
+function isImageBasedPage(pdfDoc, pageIndex) {
+  const pageObj = pdfDoc.findPage(pageIndex);
+  const resources = pageObj.get("Resources");
+  const xobjects = resources?.get("XObject");
+  if (!xobjects) return { imageBased: false, largestImage: null };
+
+  let largest = null;
+  xobjects.forEach((val, key) => {
+    const resolved = val.resolve();
+    const subtype = resolved.get("Subtype")?.asName();
+    if (subtype === "Image") {
+      const w = resolved.get("Width")?.asNumber() || 0;
+      const h = resolved.get("Height")?.asNumber() || 0;
+      const pixels = w * h;
+      if (!largest || pixels > largest.pixels) {
+        largest = { key, w, h, pixels };
+      }
+    }
+  });
+
+  return {
+    imageBased: largest ? largest.pixels > IMAGE_PIXEL_THRESHOLD : false,
+    largestImage: largest,
+  };
+}
+
+// --- PDF to images ---
 
 async function pdfToImages(buffer) {
   const mupdfPath = require.resolve("mupdf");
   const mupdf = await import(mupdfPath);
-  const images = [];
+  const sharpPath = require.resolve("sharp");
+  const sharp = (await import(sharpPath)).default;
+
   const doc = mupdf.Document.openDocument(buffer, "application/pdf");
+  const pdfDoc = mupdf.PDFDocument.openDocument(buffer, "application/pdf");
   const pageCount = doc.countPages();
 
+  const pages = [];
+
   for (let i = 0; i < pageCount; i++) {
+    const { imageBased, largestImage } = isImageBasedPage(pdfDoc, i);
     const page = doc.loadPage(i);
-    const scale = 2.5;
+    const scale = imageBased ? IMAGE_SCALE : VECTOR_SCALE;
+    const detail = imageBased ? "high" : "auto";
+
     const pixmap = page.toPixmap(
       mupdf.Matrix.scale(scale, scale),
       mupdf.ColorSpace.DeviceRGB,
@@ -100,19 +143,41 @@ async function pdfToImages(buffer) {
       true,
     );
     const pngData = pixmap.asPNG();
-    const base64 = Buffer.from(pngData).toString("base64");
-    images.push(`data:image/png;base64,${base64}`);
+
+    if (imageBased) {
+      // Split into top and bottom halves for better readability
+      const pngBuf = Buffer.from(pngData);
+      const meta = await sharp(pngBuf).metadata();
+      const halfH = Math.floor(meta.height / 2);
+
+      const topBuf = await sharp(pngBuf)
+        .extract({ left: 0, top: 0, width: meta.width, height: halfH })
+        .png()
+        .toBuffer();
+      const botBuf = await sharp(pngBuf)
+        .extract({ left: 0, top: halfH, width: meta.width, height: meta.height - halfH })
+        .png()
+        .toBuffer();
+
+      pages.push(
+        { dataUrl: `data:image/png;base64,${topBuf.toString("base64")}`, detail, pageIndex: i, crop: "top" },
+        { dataUrl: `data:image/png;base64,${botBuf.toString("base64")}`, detail, pageIndex: i, crop: "bottom" },
+      );
+    } else {
+      const base64 = Buffer.from(pngData).toString("base64");
+      pages.push({ dataUrl: `data:image/png;base64,${base64}`, detail, pageIndex: i, crop: null });
+    }
   }
 
-  return images;
+  return { pages, pageCount };
 }
 
-// --- Call GPT (same as production) ---
+// --- Call GPT ---
 
 async function extractFromImages(pageImages, model, apiKey) {
   const mergedResult = { sample_date: null, tests: {} };
 
-  for (let i = 0; i < pageImages.length; i++) {
+  for (const img of pageImages) {
     const response = await fetch(
       "https://api.openai.com/v1/chat/completions",
       {
@@ -128,7 +193,7 @@ async function extractFromImages(pageImages, model, apiKey) {
               role: "user",
               content: [
                 { type: "text", text: EXTRACTION_PROMPT },
-                { type: "image_url", image_url: { url: pageImages[i] } },
+                { type: "image_url", image_url: { url: img.dataUrl, detail: img.detail } },
               ],
             },
           ],
@@ -148,13 +213,21 @@ async function extractFromImages(pageImages, model, apiKey) {
     if (!content) continue;
 
     const pageData = JSON.parse(content);
-    if (pageData.tests) Object.assign(mergedResult.tests, pageData.tests);
+    if (pageData.tests) {
+      // First-writer-wins: don't let later pages overwrite earlier values
+      // (prevents hallucinated values from empty/footer pages from clobbering real data)
+      for (const [name, val] of Object.entries(pageData.tests)) {
+        if (!(name in mergedResult.tests)) {
+          mergedResult.tests[name] = val;
+        }
+      }
+    }
     if (!mergedResult.sample_date && pageData.sample_date) {
       mergedResult.sample_date = pageData.sample_date;
     }
   }
 
-  // Convert to flat metrics array (same as production)
+  // Convert to flat metrics array
   const metrics = Object.entries(mergedResult.tests).map(([name, test]) => ({
     name,
     value: test.value,
@@ -245,9 +318,15 @@ async function main() {
 
   console.log(`Running ${cases.length} test case(s) with model: ${model}\n`);
 
-  // Create run directory
-  const runId = `${new Date().toISOString().slice(0, 10)}_${model}`;
-  const runDir = path.join(RUNS_DIR, runId);
+  // Create run directory — append suffix if dir already exists
+  let runId = `${new Date().toISOString().slice(0, 10)}_${model}`;
+  let runDir = path.join(RUNS_DIR, runId);
+  let suffix = 2;
+  while (fs.existsSync(runDir)) {
+    runId = `${new Date().toISOString().slice(0, 10)}_${model}_${suffix}`;
+    runDir = path.join(RUNS_DIR, runId);
+    suffix++;
+  }
   fs.mkdirSync(runDir, { recursive: true });
 
   const results = [];
@@ -263,10 +342,13 @@ async function main() {
 
     console.log(`EXTRACTING ${caseName}...`);
     const pdfBuffer = fs.readFileSync(pdfPath);
-    const images = await pdfToImages(pdfBuffer);
-    console.log(`  ${images.length} page(s)`);
+    const { pages, pageCount } = await pdfToImages(pdfBuffer);
 
-    const output = await extractFromImages(images, model, apiKey);
+    const imageBasedPages = pages.filter((p) => p.detail === "high");
+    const pageType = imageBasedPages.length > 0 ? "image-based" : "vector";
+    console.log(`  ${pageCount} page(s), ${pages.length} image(s) → ${pageType}`);
+
+    const output = await extractFromImages(pages, model, apiKey);
     console.log(`  ${output.metrics.length} metrics extracted`);
 
     // Score against expected if available
@@ -294,18 +376,30 @@ async function main() {
       console.log(`  No expected.json — saving output for manual review`);
     }
 
-    results.push({ case: caseName, output, scores });
+    results.push({ case: caseName, pageType, output, scores });
     console.log();
   }
 
-  // Save settings (prompt + model + pipeline) for reproducibility
+  // Save settings
   const settings = {
     model,
     date: new Date().toISOString(),
-    pipeline: "pdf → mupdf (png, scale 2.5x) → base64 → openai vision api",
-    pdf_renderer: "mupdf",
-    pdf_scale: 2.5,
-    image_format: "png",
+    pipeline: {
+      pdf_renderer: "mupdf",
+      image_format: "png",
+      image_cropper: "sharp",
+      vector_pages: {
+        scale: VECTOR_SCALE,
+        detail: "auto",
+        strategy: "1 image per page",
+      },
+      image_based_pages: {
+        scale: IMAGE_SCALE,
+        detail: "high",
+        strategy: "split into top/bottom halves",
+        detection: `PDF XObject inspection: largest embedded image > ${IMAGE_PIXEL_THRESHOLD} pixels`,
+      },
+    },
     max_tokens: 4000,
     prompt_hash: simpleHash(EXTRACTION_PROMPT),
     prompt: EXTRACTION_PROMPT,
