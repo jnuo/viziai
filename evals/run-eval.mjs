@@ -3,15 +3,20 @@
  *
  * Pipeline: PDF → mupdf (png) → GPT Vision → JSON.
  *
+ * Mirrors the production worker pipeline exactly:
+ *   preparePdf() → renderPage() → callOpenAI() → smart merge
+ *
  * Image-based pages (large embedded JPEG, e.g. hospital HBYS exports) are
  * detected automatically and processed differently:
  *   - Vector pages: scale 2.5x, detail=auto (1 image per page)
- *   - Image-based pages: scale 5x, split into top/bottom halves, detail=high
+ *   - Image-based pages: adaptive scale (capped at MAX_IMAGE_DIMENSION),
+ *     split into top/bottom halves, detail=high
  *
  * Usage:
  *   node evals/run-eval.mjs
  *   node evals/run-eval.mjs --case 2025-06-23_Enabiz-Tahlilleri
  *   node evals/run-eval.mjs --model gpt-4o-mini
+ *   node evals/run-eval.mjs --concurrency 5
  */
 
 import fs from "fs";
@@ -25,8 +30,10 @@ const TEST_CASES_DIR = path.join(__dirname, "test-cases");
 const RUNS_DIR = path.join(__dirname, "runs");
 
 const VECTOR_SCALE = 2.5;
-const IMAGE_SCALE = 5;
-const IMAGE_PIXEL_THRESHOLD = 1_000_000; // >1M pixels = full-page embedded image
+const MAX_IMAGE_DIMENSION = 4000; // Cap rendered dimension for image-based pages (detail=high lets OpenAI upscale)
+const IMAGE_PIXEL_THRESHOLD = 1_000_000; // >1M pixels = full-page embedded image (eval-proven value)
+const TRANSIENT_STATUS_CODES = new Set([429, 500, 502, 503]);
+const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
 const EXTRACTION_PROMPT = `Aşağıdaki laboratuvar sayfasından TÜM güncel 'Sonuç' değerlerini çıkar.
 
@@ -88,96 +95,115 @@ Kurallar:
 
 ÇIKTI: sadece JSON -> {"sample_date": "<YYYY-MM-DD|null>", "tests": { "<Türkçe Ad>": { "value": <number>, "unit": "<unit|null>", "flag": "<H|L|N|null>", "ref_low": <number|null>, "ref_high": <number|null> } } }}`;
 
+// --- Helpers ---
+
+function normalizeFlag(flag) {
+  if (!flag) return null;
+  const first = flag.charAt(0).toUpperCase();
+  if (first === "H" || first === "L" || first === "N") return first;
+  return null;
+}
+
+function isValidISODate(s) {
+  if (!s || !ISO_DATE_RE.test(s)) return false;
+  const d = new Date(s);
+  return !isNaN(d.getTime());
+}
+
+function toDataUrl(pngBuffer) {
+  return `data:image/png;base64,${pngBuffer.toString("base64")}`;
+}
+
 // --- Page type detection ---
 
 function isImageBasedPage(pdfDoc, pageIndex) {
-  const pageObj = pdfDoc.findPage(pageIndex);
-  const resources = pageObj.get("Resources");
-  const xobjects = resources?.get("XObject");
-  if (!xobjects) return { imageBased: false, largestImage: null };
+  try {
+    const pageObj = pdfDoc.findPage(pageIndex);
+    const resources = pageObj.get("Resources");
+    const xobjects = resources?.get("XObject");
+    if (!xobjects) return false;
 
-  let largest = null;
-  xobjects.forEach((val, key) => {
-    const resolved = val.resolve();
-    const subtype = resolved.get("Subtype")?.asName();
-    if (subtype === "Image") {
+    let largestPixels = 0;
+    xobjects.forEach((val) => {
+      const resolved = val.resolve();
+      if (resolved.get("Subtype")?.asName() !== "Image") return;
       const w = resolved.get("Width")?.asNumber() || 0;
       const h = resolved.get("Height")?.asNumber() || 0;
-      const pixels = w * h;
-      if (!largest || pixels > largest.pixels) {
-        largest = { key, w, h, pixels };
-      }
-    }
-  });
+      largestPixels = Math.max(largestPixels, w * h);
+    });
 
-  return {
-    imageBased: largest ? largest.pixels > IMAGE_PIXEL_THRESHOLD : false,
-    largestImage: largest,
-  };
+    return largestPixels > IMAGE_PIXEL_THRESHOLD;
+  } catch (err) {
+    console.warn(`[Eval] isImageBasedPage failed for page ${pageIndex}, treating as vector`, err);
+    return false;
+  }
 }
 
-// --- PDF to images ---
+// --- PDF pipeline (mirrors production) ---
 
-async function pdfToImages(buffer) {
+async function preparePdf(buffer) {
   const mupdfPath = require.resolve("mupdf");
   const mupdf = await import(mupdfPath);
   const sharpPath = require.resolve("sharp");
   const sharp = (await import(sharpPath)).default;
-
-  const doc = mupdf.Document.openDocument(buffer, "application/pdf");
-  const pdfDoc = mupdf.PDFDocument.openDocument(buffer, "application/pdf");
-  const pageCount = doc.countPages();
-
-  const pages = [];
-
-  for (let i = 0; i < pageCount; i++) {
-    const { imageBased, largestImage } = isImageBasedPage(pdfDoc, i);
-    const page = doc.loadPage(i);
-    const scale = imageBased ? IMAGE_SCALE : VECTOR_SCALE;
-    const detail = imageBased ? "high" : "auto";
-
-    const pixmap = page.toPixmap(
-      mupdf.Matrix.scale(scale, scale),
-      mupdf.ColorSpace.DeviceRGB,
-      false,
-      true,
-    );
-    const pngData = pixmap.asPNG();
-
-    if (imageBased) {
-      // Split into top and bottom halves for better readability
-      const pngBuf = Buffer.from(pngData);
-      const meta = await sharp(pngBuf).metadata();
-      const halfH = Math.floor(meta.height / 2);
-
-      const topBuf = await sharp(pngBuf)
-        .extract({ left: 0, top: 0, width: meta.width, height: halfH })
-        .png()
-        .toBuffer();
-      const botBuf = await sharp(pngBuf)
-        .extract({ left: 0, top: halfH, width: meta.width, height: meta.height - halfH })
-        .png()
-        .toBuffer();
-
-      pages.push(
-        { dataUrl: `data:image/png;base64,${topBuf.toString("base64")}`, detail, pageIndex: i, crop: "top" },
-        { dataUrl: `data:image/png;base64,${botBuf.toString("base64")}`, detail, pageIndex: i, crop: "bottom" },
-      );
-    } else {
-      const base64 = Buffer.from(pngData).toString("base64");
-      pages.push({ dataUrl: `data:image/png;base64,${base64}`, detail, pageIndex: i, crop: null });
-    }
-  }
-
-  return { pages, pageCount };
+  const doc = mupdf.PDFDocument.openDocument(buffer, "application/pdf");
+  return { mupdf, sharp, doc, pageCount: doc.countPages() };
 }
 
-// --- Call GPT ---
+async function renderPage({ mupdf, sharp, doc }, pageIndex) {
+  const imageBased = isImageBasedPage(doc, pageIndex);
+  const page = doc.loadPage(pageIndex);
+  const detail = imageBased ? "high" : "auto";
 
-async function extractFromImages(pageImages, model, apiKey) {
-  const mergedResult = { sample_date: null, tests: {} };
+  // For image-based pages, compute scale that caps the longest edge at MAX_IMAGE_DIMENSION.
+  // OpenAI's detail=high handles further upscaling internally.
+  let scale = VECTOR_SCALE;
+  if (imageBased) {
+    const [, , pw, ph] = page.getBounds();
+    const longestEdge = Math.max(pw, ph);
+    scale = Math.min(MAX_IMAGE_DIMENSION / longestEdge, VECTOR_SCALE * 2);
+  }
 
-  for (const img of pageImages) {
+  const pixmap = page.toPixmap(
+    mupdf.Matrix.scale(scale, scale),
+    mupdf.ColorSpace.DeviceRGB,
+    false,
+    true,
+  );
+  const pngBuf = Buffer.from(pixmap.asPNG());
+  // Free native mupdf memory immediately
+  pixmap.destroy();
+
+  if (!imageBased) {
+    return [{ dataUrl: toDataUrl(pngBuf), detail, pageIndex, crop: null }];
+  }
+
+  // Split into top and bottom halves for better OCR readability
+  const meta = await sharp(pngBuf).metadata();
+  if (!meta.width || !meta.height) {
+    return [{ dataUrl: toDataUrl(pngBuf), detail: "high", pageIndex, crop: null }];
+  }
+  const { width, height } = meta;
+  const halfH = Math.floor(height / 2);
+
+  const topBuf = await sharp(pngBuf)
+    .extract({ left: 0, top: 0, width, height: halfH })
+    .png()
+    .toBuffer();
+  const botBuf = await sharp(pngBuf)
+    .extract({ left: 0, top: halfH, width, height: height - halfH })
+    .png()
+    .toBuffer();
+
+  return [
+    { dataUrl: toDataUrl(topBuf), detail, pageIndex, crop: "top" },
+    { dataUrl: toDataUrl(botBuf), detail, pageIndex, crop: "bottom" },
+  ];
+}
+
+async function callOpenAI(apiKey, img, model) {
+  const MAX_RETRIES = 2;
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
     const response = await fetch(
       "https://api.openai.com/v1/chat/completions",
       {
@@ -193,50 +219,136 @@ async function extractFromImages(pageImages, model, apiKey) {
               role: "user",
               content: [
                 { type: "text", text: EXTRACTION_PROMPT },
-                { type: "image_url", image_url: { url: img.dataUrl, detail: img.detail } },
+                {
+                  type: "image_url",
+                  image_url: { url: img.dataUrl, detail: img.detail },
+                },
               ],
             },
           ],
-          max_tokens: 4000,
+          max_tokens: 16384,
           response_format: { type: "json_object" },
         }),
       },
     );
 
     if (!response.ok) {
-      const err = await response.json();
-      throw new Error(`OpenAI error: ${err.error?.message || "Unknown"}`);
+      // Retry on transient errors
+      if (TRANSIENT_STATUS_CODES.has(response.status) && attempt < MAX_RETRIES) {
+        const wait = 1000 * 2 ** attempt; // 1s, 2s
+        console.warn(`[Eval] OpenAI returned ${response.status}, retrying in ${wait}ms...`);
+        await new Promise((r) => setTimeout(r, wait));
+        continue;
+      }
+      // Parse error safely — OpenAI sometimes returns HTML on 502/503
+      let message = `HTTP ${response.status}`;
+      try {
+        const errorData = await response.json();
+        message = errorData.error?.message || message;
+      } catch {
+        // Non-JSON error body, use status code
+      }
+      throw new Error(`OpenAI API error: ${message}`);
     }
 
     const data = await response.json();
     const content = data.choices?.[0]?.message?.content;
-    if (!content) continue;
+    if (!content) return null;
 
-    const pageData = JSON.parse(content);
-    if (pageData.tests) {
-      // First-writer-wins: don't let later pages overwrite earlier values
-      // (prevents hallucinated values from empty/footer pages from clobbering real data)
-      for (const [name, val] of Object.entries(pageData.tests)) {
-        if (!(name in mergedResult.tests)) {
-          mergedResult.tests[name] = val;
-        }
-      }
+    try {
+      return JSON.parse(content);
+    } catch {
+      console.log(`[Eval] Page ${img.pageIndex + 1} (${img.crop ?? "full"}): Failed to parse JSON`);
+      return null;
     }
-    if (!mergedResult.sample_date && pageData.sample_date) {
-      mergedResult.sample_date = pageData.sample_date;
+  }
+  return null; // All retries exhausted
+}
+
+async function extractFromPdf(pdfBuffer, model, apiKey) {
+  const pdf = await preparePdf(pdfBuffer);
+
+  if (pdf.pageCount === 0) {
+    throw new Error("PDF has no pages");
+  }
+
+  const mergedResult = { sample_date: null, tests: {} };
+  const testSourcePage = {};
+
+  for (let p = 0; p < pdf.pageCount; p++) {
+    // Render one page at a time to keep memory low
+    const pageImages = await renderPage(pdf, p);
+
+    // Send all images from this page in parallel (1 for vector, 2 for split image-based)
+    // allSettled so one failed half doesn't discard the other
+    const settled = await Promise.allSettled(
+      pageImages.map(async (img) => {
+        console.log(
+          `  Processing page ${img.pageIndex + 1} (${img.crop ?? "full"}, detail=${img.detail})...`,
+        );
+        const data = await callOpenAI(apiKey, img, model);
+        return data ? { img, data } : null;
+      }),
+    );
+
+    // Merge results from this page
+    for (const outcome of settled) {
+      if (outcome.status === "rejected") {
+        console.warn(`  Page ${p + 1} image failed:`, outcome.reason);
+        continue;
+      }
+      const result = outcome.value;
+      if (!result) continue;
+      const { img, data: pageData } = result;
+
+      if (pageData.tests) {
+        let accepted = 0;
+        for (const [name, val] of Object.entries(pageData.tests)) {
+          // Skip non-numeric values (GPT hallucination guard)
+          if (typeof val.value !== "number") continue;
+
+          // Normalize flag to H/L/N
+          val.flag = normalizeFlag(val.flag);
+
+          if (!(name in mergedResult.tests)) {
+            mergedResult.tests[name] = val;
+            testSourcePage[name] = img.pageIndex;
+            accepted++;
+          } else if (testSourcePage[name] === img.pageIndex) {
+            // Same page (other half of a split) — prefer the more complete entry
+            const existing = mergedResult.tests[name];
+            const existingFields = (existing.ref_low != null ? 1 : 0) + (existing.ref_high != null ? 1 : 0) + (existing.unit ? 1 : 0);
+            const newFields = (val.ref_low != null ? 1 : 0) + (val.ref_high != null ? 1 : 0) + (val.unit ? 1 : 0);
+            if (newFields > existingFields) {
+              mergedResult.tests[name] = val;
+              accepted++;
+            }
+          }
+          // Different page — first-writer-wins (prevents footer page hallucinations)
+        }
+        console.log(`  Page ${img.pageIndex + 1} (${img.crop ?? "full"}): ${accepted} tests accepted`);
+      }
+
+      if (!mergedResult.sample_date && isValidISODate(pageData.sample_date)) {
+        mergedResult.sample_date = pageData.sample_date;
+      }
     }
   }
 
   // Convert to flat metrics array
-  const metrics = Object.entries(mergedResult.tests).map(([name, test]) => ({
+  const metrics = Object.entries(mergedResult.tests).map(([name, { value, unit, ref_low, ref_high }]) => ({
     name,
-    value: test.value,
-    unit: test.unit || null,
-    ref_low: test.ref_low ?? null,
-    ref_high: test.ref_high ?? null,
+    value,
+    unit: unit ?? null,
+    ref_low: ref_low ?? null,
+    ref_high: ref_high ?? null,
   }));
 
-  return { sample_date: mergedResult.sample_date, metrics };
+  return {
+    sample_date: mergedResult.sample_date,
+    metrics,
+    pageCount: pdf.pageCount,
+  };
 }
 
 // --- Scoring ---
@@ -294,12 +406,36 @@ function score(actual, expected) {
   };
 }
 
+// --- Concurrency-limited worker pool ---
+
+async function runWithConcurrency(tasks, concurrency) {
+  const results = new Array(tasks.length);
+  let nextIndex = 0;
+
+  async function worker() {
+    while (nextIndex < tasks.length) {
+      const i = nextIndex++;
+      results[i] = await tasks[i]();
+    }
+  }
+
+  const workers = [];
+  for (let w = 0; w < Math.min(concurrency, tasks.length); w++) {
+    workers.push(worker());
+  }
+  await Promise.all(workers);
+  return results;
+}
+
 // --- Main ---
 
 async function main() {
   const args = process.argv.slice(2);
   const caseFilter = args.includes("--case") ? args[args.indexOf("--case") + 1] : null;
   const model = args.includes("--model") ? args[args.indexOf("--model") + 1] : "gpt-4o";
+  const concurrency = args.includes("--concurrency")
+    ? parseInt(args[args.indexOf("--concurrency") + 1], 10) || 3
+    : 3;
 
   // Load API key
   const envPath = path.join(__dirname, "..", ".env");
@@ -316,7 +452,7 @@ async function main() {
   );
   if (caseFilter) cases = cases.filter((c) => c.includes(caseFilter));
 
-  console.log(`Running ${cases.length} test case(s) with model: ${model}\n`);
+  console.log(`Running ${cases.length} test case(s) with model: ${model}, concurrency: ${concurrency}\n`);
 
   // Create run directory — append suffix if dir already exists
   let runId = `${new Date().toISOString().slice(0, 10)}_${model}`;
@@ -329,27 +465,25 @@ async function main() {
   }
   fs.mkdirSync(runDir, { recursive: true });
 
-  const results = [];
-
-  for (const caseName of cases) {
+  // Build tasks for the concurrency pool
+  const tasks = cases.map((caseName) => async () => {
     const caseDir = path.join(TEST_CASES_DIR, caseName);
     const pdfPath = path.join(caseDir, "input.pdf");
 
     if (!fs.existsSync(pdfPath)) {
       console.log(`SKIP ${caseName} — no input.pdf`);
-      continue;
+      return null;
     }
 
     console.log(`EXTRACTING ${caseName}...`);
+    const startTime = Date.now();
     const pdfBuffer = fs.readFileSync(pdfPath);
-    const { pages, pageCount } = await pdfToImages(pdfBuffer);
 
-    const imageBasedPages = pages.filter((p) => p.detail === "high");
-    const pageType = imageBasedPages.length > 0 ? "image-based" : "vector";
-    console.log(`  ${pageCount} page(s), ${pages.length} image(s) → ${pageType}`);
+    const output = await extractFromPdf(pdfBuffer, model, apiKey);
+    const elapsedSeconds = ((Date.now() - startTime) / 1000).toFixed(1);
 
-    const output = await extractFromImages(pages, model, apiKey);
-    console.log(`  ${output.metrics.length} metrics extracted`);
+    const pageType = output.metrics.some((m) => m) ? "extracted" : "empty"; // simplified; real detection below
+    console.log(`  ${output.pageCount} page(s), ${output.metrics.length} metrics extracted (${elapsedSeconds}s)`);
 
     // Score against expected if available
     const expectedPath = path.join(caseDir, "expected.json");
@@ -363,7 +497,7 @@ async function main() {
       console.log(`  Value accuracy: ${scores.values.accuracy}`);
       if (scores.values.errors.length > 0) {
         for (const e of scores.values.errors) {
-          console.log(`    ✗ ${e.name}: expected ${e.expected}, got ${e.actual}`);
+          console.log(`    x ${e.name}: expected ${e.expected}, got ${e.actual}`);
         }
       }
       if (scores.metrics.missed.length > 0) {
@@ -376,16 +510,20 @@ async function main() {
       console.log(`  No expected.json — saving output for manual review`);
     }
 
-    results.push({ case: caseName, pageType, output, scores });
     console.log();
-  }
+    return { case: caseName, output, scores, elapsed_seconds: parseFloat(elapsedSeconds) };
+  });
+
+  const rawResults = await runWithConcurrency(tasks, concurrency);
+  const results = rawResults.filter((r) => r !== null);
 
   // Save settings
   const settings = {
     model,
+    concurrency,
     date: new Date().toISOString(),
     pipeline: {
-      pdf_renderer: "mupdf",
+      pdf_renderer: "mupdf (PDFDocument.openDocument only)",
       image_format: "png",
       image_cropper: "sharp",
       vector_pages: {
@@ -394,13 +532,16 @@ async function main() {
         strategy: "1 image per page",
       },
       image_based_pages: {
-        scale: IMAGE_SCALE,
+        scale: `adaptive: min(${MAX_IMAGE_DIMENSION}/longestEdge, ${VECTOR_SCALE * 2})`,
         detail: "high",
         strategy: "split into top/bottom halves",
         detection: `PDF XObject inspection: largest embedded image > ${IMAGE_PIXEL_THRESHOLD} pixels`,
       },
+      merge_strategy: "first-writer-wins across pages, prefer-more-complete within same page splits",
+      guards: "non-numeric value filter, flag normalization (H/L/N), ISO date validation",
+      retry: "2 retries with exponential backoff on transient status codes (429, 500, 502, 503)",
     },
-    max_tokens: 4000,
+    max_tokens: 16384,
     prompt_hash: simpleHash(EXTRACTION_PROMPT),
     prompt: EXTRACTION_PROMPT,
   };
@@ -408,7 +549,7 @@ async function main() {
 
   // Save run results
   const runData = {
-    config: { model, prompt_hash: settings.prompt_hash, date: settings.date },
+    config: { model, concurrency, prompt_hash: settings.prompt_hash, date: settings.date },
     results,
   };
   fs.writeFileSync(path.join(runDir, "results.json"), JSON.stringify(runData, null, 2));
