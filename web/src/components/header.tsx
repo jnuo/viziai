@@ -216,17 +216,36 @@ export function Header({
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   {mounted && (
-                    <DropdownMenuItem
-                      onClick={() => setTheme(isDark ? "light" : "dark")}
-                      className="cursor-pointer"
-                    >
-                      {isDark ? (
-                        <Sun className="h-4 w-4 text-brand-secondary" />
-                      ) : (
-                        <Moon className="h-4 w-4 text-brand-primary" />
-                      )}
-                      {isDark ? t("lightTheme") : t("darkTheme")}
-                    </DropdownMenuItem>
+                    <DropdownMenuSub>
+                      <DropdownMenuSubTrigger className="gap-2 cursor-pointer">
+                        {isDark ? (
+                          <Moon className="h-4 w-4 text-brand-primary" />
+                        ) : (
+                          <Sun className="h-4 w-4 text-brand-secondary" />
+                        )}
+                        {isDark ? t("darkTheme") : t("lightTheme")}
+                      </DropdownMenuSubTrigger>
+                      <DropdownMenuSubContent>
+                        <DropdownMenuItem
+                          onClick={() => setTheme("light")}
+                          className="cursor-pointer"
+                        >
+                          <Check
+                            className={`h-4 w-4 ${!isDark ? "opacity-100" : "opacity-0"}`}
+                          />
+                          {t("lightTheme")}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => setTheme("dark")}
+                          className="cursor-pointer"
+                        >
+                          <Check
+                            className={`h-4 w-4 ${isDark ? "opacity-100" : "opacity-0"}`}
+                          />
+                          {t("darkTheme")}
+                        </DropdownMenuItem>
+                      </DropdownMenuSubContent>
+                    </DropdownMenuSub>
                   )}
                   <DropdownMenuSub>
                     <DropdownMenuSubTrigger className="gap-2 cursor-pointer">
