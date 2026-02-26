@@ -1,0 +1,191 @@
+{
+  "run_id": "2026-02-26_gpt-4o_7",
+  "scored_at": "2026-02-26T15:31:38.696Z",
+  "model": "gpt-4o",
+  "cases": 10,
+  "totals": {
+    "metric_match_rate": "368/414 (88.9%)",
+    "value_accuracy": "367/368 (99.7%)",
+    "missed": 46,
+    "hallucinated": 20
+  },
+  "per_case": [
+    {
+      "case": "2025-06-23_Enabiz-Tahlilleri",
+      "date_match": false,
+      "metrics": "44/57",
+      "value_accuracy": "100.0%",
+      "value_errors": [],
+      "missed": [
+        "Eozinofil#",
+        "Nötrofil#",
+        "Eozinofil%",
+        "Lenfosit#",
+        "Bazofil#",
+        "Bazofil%",
+        "Monosit#",
+        "SBC",
+        "BE-ecf",
+        "BE-b",
+        "Kan Gazı Hematokrit",
+        "Gap_K",
+        "CRP"
+      ],
+      "hallucinated": [
+        "Eozinofil",
+        "Nötrofil",
+        "Lenfosit",
+        "Bazofil",
+        "Monosit",
+        "CRP Türbidimetrik"
+      ]
+    },
+    {
+      "case": "2025-07-21_kan_2",
+      "date_match": true,
+      "metrics": "37/38",
+      "value_accuracy": "100.0%",
+      "value_errors": [],
+      "missed": [
+        "Ürik Asit"
+      ],
+      "hallucinated": [
+        "Ürik asit"
+      ]
+    },
+    {
+      "case": "2025-07-24_Enabiz-Tahlilleri",
+      "date_match": true,
+      "metrics": "38/40",
+      "value_accuracy": "100.0%",
+      "value_errors": [],
+      "missed": [
+        "IGRAN%",
+        "Total Protein"
+      ],
+      "hallucinated": [
+        "Protein (Serum/Plazma)"
+      ]
+    },
+    {
+      "case": "2025-08-29",
+      "date_match": true,
+      "metrics": "35/36",
+      "value_accuracy": "100.0%",
+      "value_errors": [],
+      "missed": [
+        "Alkalen Fosfataz"
+      ],
+      "hallucinated": [
+        "ALP"
+      ]
+    },
+    {
+      "case": "2025-09-29-2",
+      "date_match": true,
+      "metrics": "1/1",
+      "value_accuracy": "100.0%",
+      "value_errors": [],
+      "missed": [],
+      "hallucinated": [
+        "Glukoz",
+        "Üre",
+        "Kreatinin",
+        "Lökosit",
+        "Nötrofil%",
+        "Lenfosit%",
+        "Monosit%",
+        "Eritrosit",
+        "Hemoglobin"
+      ]
+    },
+    {
+      "case": "2026-01-11-Y_KSEL_OVALI_Sonuc",
+      "date_match": true,
+      "metrics": "27/35",
+      "value_accuracy": "100.0%",
+      "value_errors": [],
+      "missed": [
+        "Eozinofil#",
+        "Bazofil%",
+        "Bazofil#",
+        "Trombosit",
+        "PCT",
+        "MPV",
+        "PDW",
+        "Alkalen Fosfataz"
+      ],
+      "hallucinated": [
+        "ALP"
+      ]
+    },
+    {
+      "case": "informes_OVAL0860107001_20241014",
+      "date_match": false,
+      "metrics": "52/52",
+      "value_accuracy": "100.0%",
+      "value_errors": [],
+      "missed": [],
+      "hallucinated": [
+        "İdrar Nitrit"
+      ]
+    },
+    {
+      "case": "informes_OVAL0860107001_20250207",
+      "date_match": true,
+      "metrics": "37/52",
+      "value_accuracy": "100.0%",
+      "value_errors": [],
+      "missed": [
+        "Eritroblast%",
+        "Eritroblast#",
+        "İdrar Dansitesi",
+        "İdrar Glukoz",
+        "İdrar Asetoasetat",
+        "İdrar Bilirubin",
+        "İdrar Ürobilinojen",
+        "İdrar pH",
+        "İdrar Protein",
+        "İdrar Eritrosit",
+        "İdrar Lökosit Esteraz",
+        "İdrar Kreatinin",
+        "İdrar Albümin",
+        "İdrar Albümin/Kreatinin",
+        "Romatoid Faktör"
+      ],
+      "hallucinated": []
+    },
+    {
+      "case": "informes_OVAL0860107001_20250515",
+      "date_match": true,
+      "metrics": "51/53",
+      "value_accuracy": "98.0%",
+      "value_errors": [
+        {
+          "name": "Üre",
+          "expected": 28,
+          "actual": 25
+        }
+      ],
+      "missed": [
+        "İdrar Lökosit Esteraz",
+        "Klorür"
+      ],
+      "hallucinated": []
+    },
+    {
+      "case": "informes_OVAL0860107001_20251121",
+      "date_match": true,
+      "metrics": "46/50",
+      "value_accuracy": "100.0%",
+      "value_errors": [],
+      "missed": [
+        "Micro R",
+        "Macro R",
+        "Eritroblast%",
+        "Eritroblast#"
+      ],
+      "hallucinated": []
+    }
+  ]
+}
