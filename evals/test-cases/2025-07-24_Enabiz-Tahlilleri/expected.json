@@ -144,7 +144,7 @@
     {
       "name": "IGRAN%",
       "value": 4.2,
-      "unit": "%",
+      "unit": null,
       "ref_low": null,
       "ref_high": null
     },
@@ -179,7 +179,7 @@
     {
       "name": "Protein",
       "value": 55.82,
-      "unit": "g/L",
+      "unit": null,
       "ref_low": null,
       "ref_high": null
     },
@@ -207,7 +207,7 @@
     {
       "name": "Albümin",
       "value": 36.55,
-      "unit": "g/L",
+      "unit": null,
       "ref_low": null,
       "ref_high": null
     },
@@ -242,7 +242,7 @@
     {
       "name": "Ürik Asit",
       "value": 3.6,
-      "unit": "mg/dL",
+      "unit": null,
       "ref_low": null,
       "ref_high": null
     },
