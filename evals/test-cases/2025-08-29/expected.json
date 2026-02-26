@@ -18,13 +18,13 @@
     {
       "name": "Hematokrit",
       "value": 28.1,
-      "unit": "L",
+      "unit": "%",
       "ref_low": 40.1,
       "ref_high": 51
     },
     {
       "name": "MCV",
-      "value": 90,
+      "value": 90.9,
       "unit": "fL",
       "ref_low": 79,
       "ref_high": 92.2
@@ -45,14 +45,14 @@
     },
     {
       "name": "RDW",
-      "value": 11.4,
+      "value": 16.4,
       "unit": "%",
       "ref_low": 11.6,
       "ref_high": 14.4
     },
     {
       "name": "Lökosit",
-      "value": 0.8,
+      "value": 0.08,
       "unit": "10^3/uL",
       "ref_low": 4.23,
       "ref_high": 9.07
@@ -66,7 +66,7 @@
     },
     {
       "name": "Nötrofil#",
-      "value": 0.2,
+      "value": 0.02,
       "unit": "10^3/uL",
       "ref_low": 1.78,
       "ref_high": 5.38
@@ -80,7 +80,7 @@
     },
     {
       "name": "Lenfosit#",
-      "value": 0.5,
+      "value": 0.05,
       "unit": "10^3/uL",
       "ref_low": 1.32,
       "ref_high": 3.57
@@ -94,7 +94,7 @@
     },
     {
       "name": "Monosit#",
-      "value": 0.1,
+      "value": 0.01,
       "unit": "10^3/uL",
       "ref_low": 0.3,
       "ref_high": 0.82
@@ -104,7 +104,7 @@
       "value": 0,
       "unit": "%",
       "ref_low": 0.8,
-      "ref_high": 7.2
+      "ref_high": 7
     },
     {
       "name": "Eozinofil#",
@@ -129,7 +129,7 @@
     },
     {
       "name": "Trombosit",
-      "value": 171,
+      "value": 17,
       "unit": "10^3/uL",
       "ref_low": 160,
       "ref_high": 340
@@ -158,7 +158,7 @@
     {
       "name": "Kreatinin",
       "value": 1.63,
-      "unit": "H",
+      "unit": "mg/dL",
       "ref_low": 0.72,
       "ref_high": 1.25
     },
@@ -222,8 +222,8 @@
       "name": "AST",
       "value": 16,
       "unit": "U/L",
-      "ref_low": null,
-      "ref_high": 35
+      "ref_low": 5,
+      "ref_high": 34
     },
     {
       "name": "ALT",

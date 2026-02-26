@@ -2,18 +2,18 @@
   "sample_date": "2024-10-24",
   "metrics": [
     {
+      "name": "Eritrosit",
+      "value": 5.62,
+      "unit": "x10E12/L",
+      "ref_low": 4.5,
+      "ref_high": 5.9
+    },
+    {
       "name": "Hemoglobin",
       "value": 15.6,
       "unit": "g/dL",
       "ref_low": 13,
       "ref_high": 17
-    },
-    {
-      "name": "Eritrosit",
-      "value": 0,
-      "unit": "Eri/µL",
-      "ref_low": 0,
-      "ref_high": 10
     },
     {
       "name": "Hematokrit",
@@ -49,6 +49,20 @@
       "unit": "%",
       "ref_low": 11,
       "ref_high": 15
+    },
+    {
+      "name": "Eritroblast%",
+      "value": 0.0,
+      "unit": "%",
+      "ref_low": 0.0,
+      "ref_high": 2.0
+    },
+    {
+      "name": "Eritroblast#",
+      "value": 0.0,
+      "unit": "10E9/L",
+      "ref_low": null,
+      "ref_high": null
     },
     {
       "name": "Lökosit",
@@ -150,17 +164,17 @@
     },
     {
       "name": "Glukoz",
-      "value": 0,
+      "value": 98,
       "unit": "mg/dL",
-      "ref_low": 0,
-      "ref_high": 50
+      "ref_low": 74,
+      "ref_high": 106
     },
     {
       "name": "Kreatinin",
-      "value": 167,
+      "value": 0.93,
       "unit": "mg/dL",
-      "ref_low": null,
-      "ref_high": null
+      "ref_low": 0.6,
+      "ref_high": 1.1
     },
     {
       "name": "Glomerular Filtrasyon Hızı",
@@ -261,6 +275,20 @@
       "ref_high": 4.78
     },
     {
+      "name": "İdrar Dansitesi",
+      "value": 1.021,
+      "unit": null,
+      "ref_low": 1.005,
+      "ref_high": 1.035
+    },
+    {
+      "name": "İdrar Glukozu",
+      "value": 0,
+      "unit": "mg/dL",
+      "ref_low": 0,
+      "ref_high": 50
+    },
+    {
       "name": "Asetoasetat",
       "value": 0,
       "unit": "mg/dL",
@@ -282,6 +310,13 @@
       "ref_high": 1
     },
     {
+      "name": "İdrar pH",
+      "value": 5,
+      "unit": null,
+      "ref_low": 5,
+      "ref_high": 8
+    },
+    {
       "name": "Protein",
       "value": 0,
       "unit": "mg/dL",
@@ -289,11 +324,25 @@
       "ref_high": 20
     },
     {
+      "name": "İdrar Eritrosit",
+      "value": 0,
+      "unit": "Eri/µL",
+      "ref_low": 0,
+      "ref_high": 10
+    },
+    {
       "name": "Esteraza lökosit",
       "value": 0,
       "unit": "Leu/µL",
       "ref_low": 0,
       "ref_high": 25
+    },
+    {
+      "name": "İdrar Kreatinin",
+      "value": 167,
+      "unit": "mg/dL",
+      "ref_low": null,
+      "ref_high": null
     },
     {
       "name": "Albümin",

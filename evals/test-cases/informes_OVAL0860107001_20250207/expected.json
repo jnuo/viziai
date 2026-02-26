@@ -23,6 +23,48 @@
       "ref_high": 51
     },
     {
+      "name": "MCV (VGM)",
+      "value": 87.7,
+      "unit": "fL",
+      "ref_low": 80,
+      "ref_high": 98
+    },
+    {
+      "name": "MCH (HCM)",
+      "value": 28.6,
+      "unit": "pg",
+      "ref_low": 27,
+      "ref_high": 33.5
+    },
+    {
+      "name": "MCHC",
+      "value": 32.6,
+      "unit": "g/dL",
+      "ref_low": 31,
+      "ref_high": 36
+    },
+    {
+      "name": "RDW (ADE)",
+      "value": 11.9,
+      "unit": "%",
+      "ref_low": 11,
+      "ref_high": 15
+    },
+    {
+      "name": "Eritroblast%",
+      "value": 0.0,
+      "unit": "%",
+      "ref_low": 0.0,
+      "ref_high": 2.0
+    },
+    {
+      "name": "Eritroblast#",
+      "value": 0.0,
+      "unit": "10E9/L",
+      "ref_low": null,
+      "ref_high": null
+    },
+    {
       "name": "Lökosit",
       "value": 6.92,
       "unit": "x10E9/L",
@@ -238,6 +280,62 @@
       "unit": null,
       "ref_low": 1.005,
       "ref_high": 1.035
+    },
+    {
+      "name": "İdrar Glukozu",
+      "value": 0,
+      "unit": "mg/dL",
+      "ref_low": 0,
+      "ref_high": 50
+    },
+    {
+      "name": "Asetoasetat",
+      "value": 0,
+      "unit": "mg/dL",
+      "ref_low": 0,
+      "ref_high": 5
+    },
+    {
+      "name": "Bilirubin",
+      "value": 0,
+      "unit": "mg/dL",
+      "ref_low": 0,
+      "ref_high": 0.2
+    },
+    {
+      "name": "Ürobilinojen",
+      "value": 0,
+      "unit": "mg/dL",
+      "ref_low": 0,
+      "ref_high": 1
+    },
+    {
+      "name": "İdrar pH",
+      "value": 5,
+      "unit": null,
+      "ref_low": 5,
+      "ref_high": 8
+    },
+    {
+      "name": "Protein",
+      "value": 0,
+      "unit": "mg/dL",
+      "ref_low": 0,
+      "ref_high": 20
+    },
+    {
+      "name": "İdrar Eritrosit",
+      "value": 0,
+      "unit": "Eri/µL",
+      "ref_low": 0,
+      "ref_high": 10
+    },
+    {
+      "name": "Esteraza lökosit",
+      "value": 0,
+      "unit": "Leu/µL",
+      "ref_low": 0,
+      "ref_high": 25
     },
     {
       "name": "İdrar Kreatinin",

@@ -27,13 +27,13 @@
 - [x] `2025-06-23_Enabiz-Tahlilleri` — 52 metrics, 2 pages
 - [x] `2025-07-21_kan_2` — 38 metrics, 1 page (broken PDF, repaired)
 - [x] `2025-07-24_Enabiz-Tahlilleri` — 40 metrics, 2 pages
-- [ ] `2025-08-29` — 36 metrics, 1 page (broken PDF, repaired)
-- [ ] `2025-09-29-2` — 1 metric, 1 page (likely too corrupted — skip?)
-- [ ] `2026-01-11-Y_KSEL_OVALI_Sonuc` — 35 metrics, 1 page
-- [ ] `informes_OVAL0860107001_20241014` — 45 metrics, 4 pages (Spanish)
-- [ ] `informes_OVAL0860107001_20250207` — 38 metrics, 5 pages (Spanish)
-- [ ] `informes_OVAL0860107001_20250515` — 51 metrics, 5 pages (Spanish)
-- [ ] `informes_OVAL0860107001_20251121` — 45 metrics, 3 pages (Spanish)
+- [x] `2025-08-29` — 36 metrics, 1 page (broken PDF, repaired)
+- [x] `2025-09-29-2` — 1 metric, 1 page (likely too corrupted — skip?)
+- [x] `2026-01-11-Y_KSEL_OVALI_Sonuc` — 35 metrics, 1 page
+- [x] `informes_OVAL0860107001_20241014` — 45 metrics, 4 pages (Spanish)
+- [x] `informes_OVAL0860107001_20250207` — 38 metrics, 5 pages (Spanish)
+- [x] `informes_OVAL0860107001_20250515` — 51 metrics, 5 pages (Spanish)
+- [x] `informes_OVAL0860107001_20251121` — 45 metrics, 3 pages (Spanish)
 
 ### Tier 2 — Build next
 
