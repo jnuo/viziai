@@ -1,3 +1,6 @@
+import type { Locale } from "@/i18n/config";
+import { bcp47 } from "@/i18n/config";
+
 const TURKEY_TIMEZONE = "Europe/Istanbul";
 
 function isValidISODate(s: string): boolean {
@@ -33,7 +36,7 @@ export function formatTR(dateStr: string, locale = "tr"): string {
   if (!iso) return dateStr;
   const [year, month, day] = iso.split("-").map(Number);
   const dt = new Date(Date.UTC(year, month - 1, day));
-  return dt.toLocaleDateString(locale === "tr" ? "tr-TR" : "en-US", {
+  return dt.toLocaleDateString(bcp47[locale as Locale], {
     day: "2-digit",
     month: "2-digit",
     year: "2-digit",
@@ -47,7 +50,7 @@ export function formatTR(dateStr: string, locale = "tr"): string {
  */
 export function formatDateTR(dateString: string | null, locale = "tr"): string {
   if (!dateString) return "—";
-  const localeStr = locale === "tr" ? "tr-TR" : "en-US";
+  const localeStr = bcp47[locale as Locale];
 
   // For date-only strings like "2026-01-15", parse directly to avoid timezone shift
   if (!dateString.includes("T")) {
@@ -82,7 +85,7 @@ export function formatDateTimeTR(
   if (!dateString) return "—";
 
   const date = new Date(dateString);
-  return date.toLocaleString(locale === "tr" ? "tr-TR" : "en-US", {
+  return date.toLocaleString(bcp47[locale as Locale], {
     day: "numeric",
     month: "short",
     year: "numeric",

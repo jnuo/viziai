@@ -1,3 +1,6 @@
+import type { Locale } from "@/i18n/config";
+import { bcp47 } from "@/i18n/config";
+
 export type TrackingMeasurement = {
   id: string;
   profile_id: string;
@@ -63,7 +66,7 @@ export function getBPStatus(systolic: number, diastolic: number): BPStatus {
  */
 export function formatTrackingDate(dateStr: string, locale = "tr"): string {
   const date = new Date(dateStr);
-  return date.toLocaleDateString(locale === "tr" ? "tr-TR" : "en-US", {
+  return date.toLocaleDateString(bcp47[locale as Locale], {
     day: "numeric",
     month: "short",
   });
@@ -75,7 +78,7 @@ export function formatTrackingDate(dateStr: string, locale = "tr"): string {
  */
 export function formatTrackingDateTime(dateStr: string, locale = "tr"): string {
   const date = new Date(dateStr);
-  return date.toLocaleDateString(locale === "tr" ? "tr-TR" : "en-US", {
+  return date.toLocaleDateString(bcp47[locale as Locale], {
     day: "numeric",
     month: "short",
     hour: "2-digit",
@@ -106,7 +109,7 @@ export function formatRelativeDate(
   if (diffHours < 48) return { type: "key", key: "yesterday" };
   return {
     type: "date",
-    value: date.toLocaleDateString(locale === "tr" ? "tr-TR" : "en-US", {
+    value: date.toLocaleDateString(bcp47[locale as Locale], {
       day: "numeric",
       month: "short",
     }),
