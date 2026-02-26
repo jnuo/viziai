@@ -15,7 +15,7 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
-  serverExternalPackages: ["mupdf"],
+  serverExternalPackages: ["mupdf", "sharp"],
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },
