@@ -376,7 +376,41 @@
           }
         ]
       },
-      "scores": null
+      "scores": {
+        "date": {
+          "expected": "2025-06-23",
+          "actual": "2025-06-23",
+          "match": true
+        },
+        "metrics": {
+          "expected": 55,
+          "extracted": 52,
+          "matched": 52,
+          "missed": [
+            "Hct",
+            "Mg",
+            "K+"
+          ],
+          "hallucinated": []
+        },
+        "values": {
+          "correct": 50,
+          "wrong": 2,
+          "accuracy": "96.2%",
+          "errors": [
+            {
+              "name": "Glukoz",
+              "expected": 179,
+              "actual": 192
+            },
+            {
+              "name": "Hematokrit",
+              "expected": 29.7,
+              "actual": 13
+            }
+          ]
+        }
+      }
     },
     {
       "case": "2025-07-21_kan_2",
@@ -651,7 +685,32 @@
           }
         ]
       },
-      "scores": null
+      "scores": {
+        "date": {
+          "expected": "2025-07-21",
+          "actual": "2025-07-21",
+          "match": true
+        },
+        "metrics": {
+          "expected": 38,
+          "extracted": 38,
+          "matched": 38,
+          "missed": [],
+          "hallucinated": []
+        },
+        "values": {
+          "correct": 37,
+          "wrong": 1,
+          "accuracy": "97.4%",
+          "errors": [
+            {
+              "name": "Monosit%",
+              "expected": 18.4,
+              "actual": 17.3
+            }
+          ]
+        }
+      }
     },
     {
       "case": "2025-07-24_Enabiz-Tahlilleri",
@@ -940,7 +999,26 @@
           }
         ]
       },
-      "scores": null
+      "scores": {
+        "date": {
+          "expected": "2025-07-24",
+          "actual": "2025-07-24",
+          "match": true
+        },
+        "metrics": {
+          "expected": 40,
+          "extracted": 40,
+          "matched": 40,
+          "missed": [],
+          "hallucinated": []
+        },
+        "values": {
+          "correct": 40,
+          "wrong": 0,
+          "accuracy": "100.0%",
+          "errors": []
+        }
+      }
     },
     {
       "case": "2025-08-29",
@@ -1201,7 +1279,62 @@
           }
         ]
       },
-      "scores": null
+      "scores": {
+        "date": {
+          "expected": "2025-08-29",
+          "actual": "2025-08-29",
+          "match": true
+        },
+        "metrics": {
+          "expected": 36,
+          "extracted": 36,
+          "matched": 36,
+          "missed": [],
+          "hallucinated": []
+        },
+        "values": {
+          "correct": 29,
+          "wrong": 7,
+          "accuracy": "80.6%",
+          "errors": [
+            {
+              "name": "MCV",
+              "expected": 90.9,
+              "actual": 90
+            },
+            {
+              "name": "RDW",
+              "expected": 16.4,
+              "actual": 11.4
+            },
+            {
+              "name": "Lökosit",
+              "expected": 0.08,
+              "actual": 0.8
+            },
+            {
+              "name": "Nötrofil#",
+              "expected": 0.02,
+              "actual": 0.2
+            },
+            {
+              "name": "Lenfosit#",
+              "expected": 0.05,
+              "actual": 0.5
+            },
+            {
+              "name": "Monosit#",
+              "expected": 0.01,
+              "actual": 0.1
+            },
+            {
+              "name": "Trombosit",
+              "expected": 17,
+              "actual": 171
+            }
+          ]
+        }
+      }
     },
     {
       "case": "2025-09-29-2",
@@ -1217,7 +1350,26 @@
           }
         ]
       },
-      "scores": null
+      "scores": {
+        "date": {
+          "expected": "2025-09-29",
+          "actual": "2025-09-29",
+          "match": true
+        },
+        "metrics": {
+          "expected": 1,
+          "extracted": 1,
+          "matched": 1,
+          "missed": [],
+          "hallucinated": []
+        },
+        "values": {
+          "correct": 1,
+          "wrong": 0,
+          "accuracy": "100.0%",
+          "errors": []
+        }
+      }
     },
     {
       "case": "2026-01-11-Y_KSEL_OVALI_Sonuc",
@@ -1471,7 +1623,32 @@
           }
         ]
       },
-      "scores": null
+      "scores": {
+        "date": {
+          "expected": "2026-01-11",
+          "actual": "2026-01-11",
+          "match": true
+        },
+        "metrics": {
+          "expected": 35,
+          "extracted": 35,
+          "matched": 35,
+          "missed": [],
+          "hallucinated": []
+        },
+        "values": {
+          "correct": 34,
+          "wrong": 1,
+          "accuracy": "97.1%",
+          "errors": [
+            {
+              "name": "Bazofil%",
+              "expected": 0,
+              "actual": 0.1
+            }
+          ]
+        }
+      }
     },
     {
       "case": "informes_OVAL0860107001_20241014",
@@ -1795,7 +1972,50 @@
           }
         ]
       },
-      "scores": null
+      "scores": {
+        "date": {
+          "expected": "2024-10-24",
+          "actual": "2024-10-24",
+          "match": true
+        },
+        "metrics": {
+          "expected": 52,
+          "extracted": 45,
+          "matched": 45,
+          "missed": [
+            "Eritroblast%",
+            "Eritroblast#",
+            "İdrar Dansitesi",
+            "İdrar Glukozu",
+            "İdrar pH",
+            "İdrar Eritrosit",
+            "İdrar Kreatinin"
+          ],
+          "hallucinated": []
+        },
+        "values": {
+          "correct": 42,
+          "wrong": 3,
+          "accuracy": "93.3%",
+          "errors": [
+            {
+              "name": "Eritrosit",
+              "expected": 5.62,
+              "actual": 0
+            },
+            {
+              "name": "Glukoz",
+              "expected": 98,
+              "actual": 0
+            },
+            {
+              "name": "Kreatinin",
+              "expected": 0.93,
+              "actual": 167
+            }
+          ]
+        }
+      }
     },
     {
       "case": "informes_OVAL0860107001_20250207",
@@ -2070,7 +2290,41 @@
           }
         ]
       },
-      "scores": null
+      "scores": {
+        "date": {
+          "expected": "2025-02-07",
+          "actual": "2025-02-07",
+          "match": true
+        },
+        "metrics": {
+          "expected": 52,
+          "extracted": 38,
+          "matched": 38,
+          "missed": [
+            "MCV (VGM)",
+            "MCH (HCM)",
+            "MCHC",
+            "RDW (ADE)",
+            "Eritroblast%",
+            "Eritroblast#",
+            "İdrar Glukozu",
+            "Asetoasetat",
+            "Bilirubin",
+            "Ürobilinojen",
+            "İdrar pH",
+            "Protein",
+            "İdrar Eritrosit",
+            "Esteraza lökosit"
+          ],
+          "hallucinated": []
+        },
+        "values": {
+          "correct": 38,
+          "wrong": 0,
+          "accuracy": "100.0%",
+          "errors": []
+        }
+      }
     },
     {
       "case": "informes_OVAL0860107001_20250515",
@@ -2436,7 +2690,40 @@
           }
         ]
       },
-      "scores": null
+      "scores": {
+        "date": {
+          "expected": "2025-05-15",
+          "actual": "2025-05-15",
+          "match": true
+        },
+        "metrics": {
+          "expected": 53,
+          "extracted": 51,
+          "matched": 51,
+          "missed": [
+            "Eritroblast%",
+            "Eritroblast#"
+          ],
+          "hallucinated": []
+        },
+        "values": {
+          "correct": 49,
+          "wrong": 2,
+          "accuracy": "96.1%",
+          "errors": [
+            {
+              "name": "Sodyum",
+              "expected": 141,
+              "actual": 140
+            },
+            {
+              "name": "Potasyum",
+              "expected": 4.37,
+              "actual": 4.2
+            }
+          ]
+        }
+      }
     },
     {
       "case": "informes_OVAL0860107001_20251121",
@@ -2760,7 +3047,38 @@
           }
         ]
       },
-      "scores": null
+      "scores": {
+        "date": {
+          "expected": "2025-11-21",
+          "actual": "2025-11-21",
+          "match": true
+        },
+        "metrics": {
+          "expected": 50,
+          "extracted": 45,
+          "matched": 45,
+          "missed": [
+            "Eritroblast%",
+            "Eritroblast#",
+            "PDW",
+            "Plaquetòcrit",
+            "İdrar Kreatinin"
+          ],
+          "hallucinated": []
+        },
+        "values": {
+          "correct": 44,
+          "wrong": 1,
+          "accuracy": "97.8%",
+          "errors": [
+            {
+              "name": "Kreatinin",
+              "expected": 1.05,
+              "actual": 177
+            }
+          ]
+        }
+      }
     }
   ]
 }

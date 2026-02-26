@@ -51,6 +51,20 @@
       "ref_high": 15
     },
     {
+      "name": "Eritroblast%",
+      "value": 0.0,
+      "unit": "%",
+      "ref_low": 0.0,
+      "ref_high": 2.0
+    },
+    {
+      "name": "Eritroblast#",
+      "value": 0.0,
+      "unit": "10E9/L",
+      "ref_low": null,
+      "ref_high": null
+    },
+    {
       "name": "Lökosit",
       "value": 7.69,
       "unit": "x10E9/L",
@@ -178,14 +192,14 @@
     },
     {
       "name": "Sodyum",
-      "value": 140,
+      "value": 141,
       "unit": "mmol/L",
-      "ref_low": 135,
-      "ref_high": 145
+      "ref_low": 136,
+      "ref_high": 146
     },
     {
       "name": "Potasyum",
-      "value": 4.2,
+      "value": 4.37,
       "unit": "mmol/L",
       "ref_low": 3.5,
       "ref_high": 5.1

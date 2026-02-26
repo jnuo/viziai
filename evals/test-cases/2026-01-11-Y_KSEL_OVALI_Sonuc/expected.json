@@ -18,9 +18,9 @@
     {
       "name": "Hematokrit",
       "value": 26.8,
-      "unit": "L",
+      "unit": "%",
       "ref_low": 40.1,
-      "ref_high": 55.7
+      "ref_high": 51
     },
     {
       "name": "MCV",
@@ -46,7 +46,7 @@
     {
       "name": "RDW",
       "value": 16.9,
-      "unit": "H",
+      "unit": "%",
       "ref_low": 11.6,
       "ref_high": 14.4
     },
@@ -115,7 +115,7 @@
     },
     {
       "name": "Bazofil%",
-      "value": 0.1,
+      "value": 0.0,
       "unit": "%",
       "ref_low": 0.2,
       "ref_high": 1.2
@@ -152,7 +152,7 @@
       "name": "PDW",
       "value": 14,
       "unit": null,
-      "ref_low": 10,
+      "ref_low": 10.1,
       "ref_high": 16.1
     },
     {
