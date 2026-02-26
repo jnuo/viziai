@@ -25,16 +25,14 @@ import {
   Users,
   FileText,
   Globe,
-  Loader2,
 } from "lucide-react";
-import { useEffect, useRef, useState, useTransition } from "react";
-import { useLocale } from "next-intl";
-import { setLocale } from "@/app/actions/locale";
-import type { Locale } from "@/i18n/config";
+import { useEffect, useState } from "react";
+import { locales, localeLabels } from "@/i18n/config";
 import { ProfileSwitcher } from "@/components/profile-switcher";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { AddBloodPressureDialog } from "@/components/add-blood-pressure-dialog";
 import { AddWeightDialog } from "@/components/add-weight-dialog";
+import { useLocaleSwitch } from "@/hooks/use-locale-switch";
 
 interface HeaderProps {
   profileName?: string | null;
@@ -66,24 +64,7 @@ export function Header({
   const [bpDialogOpen, setBpDialogOpen] = useState(false);
   const [weightDialogOpen, setWeightDialogOpen] = useState(false);
   const t = useTranslations("components.header");
-  const locale = useLocale();
-  const [isLocalePending, startLocaleTransition] = useTransition();
-  const localeSwitching = useRef(false);
-
-  const nextLocale: Locale = locale === "tr" ? "en" : "tr";
-
-  function handleLocaleSwitch() {
-    if (localeSwitching.current) return;
-    localeSwitching.current = true;
-    startLocaleTransition(async () => {
-      try {
-        await setLocale(nextLocale);
-        router.refresh();
-      } finally {
-        localeSwitching.current = false;
-      }
-    });
-  }
+  const { locale, switchTo } = useLocaleSwitch();
 
   const isLoggedIn = status === "authenticated";
   const isDark = theme === "dark";
@@ -243,18 +224,18 @@ export function Header({
                       {isDark ? t("lightTheme") : t("darkTheme")}
                     </DropdownMenuItem>
                   )}
-                  <DropdownMenuItem
-                    onClick={handleLocaleSwitch}
-                    disabled={isLocalePending}
-                    className="cursor-pointer"
-                  >
-                    {isLocalePending ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <Globe className="h-4 w-4" />
-                    )}
-                    {nextLocale === "en" ? "English" : "Türkçe"}
-                  </DropdownMenuItem>
+                  {locales
+                    .filter((l) => l !== locale)
+                    .map((l) => (
+                      <DropdownMenuItem
+                        key={l}
+                        onClick={() => switchTo(l)}
+                        className="cursor-pointer"
+                      >
+                        <Globe className="h-4 w-4" />
+                        {localeLabels[l]}
+                      </DropdownMenuItem>
+                    ))}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     onClick={handleLogoutClick}
