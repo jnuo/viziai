@@ -229,7 +229,7 @@ export function Header({
                     </DropdownMenuItem>
                   )}
                   <DropdownMenuSub>
-                    <DropdownMenuSubTrigger className="cursor-pointer">
+                    <DropdownMenuSubTrigger className="gap-2 cursor-pointer">
                       <Globe className="h-4 w-4" />
                       {localeLabels[locale]}
                     </DropdownMenuSubTrigger>
