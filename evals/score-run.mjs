@@ -127,4 +127,36 @@ console.log(`Missed: ${totalMissed}, Hallucinated: ${totalHallucinated}`);
 
 // Save updated results with scores
 fs.writeFileSync(runPath, JSON.stringify(runData, null, 2));
+
+// Save summary.json
+const settingsPath = path.join(RUNS_DIR, runId, "settings.json");
+const settings = fs.existsSync(settingsPath)
+  ? JSON.parse(fs.readFileSync(settingsPath, "utf-8"))
+  : {};
+
+const summary = {
+  run_id: runId,
+  scored_at: new Date().toISOString(),
+  model: settings.model || runData.config?.model || "unknown",
+  cases: runData.results.length,
+  totals: {
+    metric_match_rate: `${totalMatched}/${totalExpected} (${((totalMatched / totalExpected) * 100).toFixed(1)}%)`,
+    value_accuracy: `${totalCorrect}/${totalMatched} (${((totalCorrect / totalMatched) * 100).toFixed(1)}%)`,
+    missed: totalMissed,
+    hallucinated: totalHallucinated,
+  },
+  per_case: runData.results.map((r) => ({
+    case: r.case,
+    date_match: r.scores?.date.match ?? null,
+    metrics: r.scores ? `${r.scores.metrics.matched}/${r.scores.metrics.expected}` : null,
+    value_accuracy: r.scores?.values.accuracy ?? null,
+    value_errors: r.scores?.values.errors ?? [],
+    missed: r.scores?.metrics.missed ?? [],
+    hallucinated: r.scores?.metrics.hallucinated ?? [],
+  })),
+};
+
+const summaryPath = path.join(RUNS_DIR, runId, "summary.json");
+fs.writeFileSync(summaryPath, JSON.stringify(summary, null, 2));
 console.log(`\nScores saved to ${runPath}`);
+console.log(`Summary saved to ${summaryPath}`);
