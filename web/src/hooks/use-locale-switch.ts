@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition } from "react";
+import { useRef, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
 import { setLocale } from "@/app/actions/locale";
@@ -10,12 +10,18 @@ export function useLocaleSwitch() {
   const locale = useLocale() as Locale;
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const switching = useRef(false);
 
   function switchTo(target: Locale) {
-    if (target === locale || isPending) return;
+    if (target === locale || switching.current) return;
+    switching.current = true;
     startTransition(async () => {
-      await setLocale(target);
-      router.refresh();
+      try {
+        await setLocale(target);
+        router.refresh();
+      } finally {
+        switching.current = false;
+      }
     });
   }
 

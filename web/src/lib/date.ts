@@ -31,12 +31,12 @@ export function compareDateAsc(a: string, b: string): number {
  * Format date as short format: "15.01.26"
  * Used in charts
  */
-export function formatTR(dateStr: string, locale = "tr"): string {
+export function formatTR(dateStr: string, locale: Locale = "tr"): string {
   const iso = parseToISO(dateStr);
   if (!iso) return dateStr;
   const [year, month, day] = iso.split("-").map(Number);
   const dt = new Date(Date.UTC(year, month - 1, day));
-  return dt.toLocaleDateString(bcp47[locale as Locale], {
+  return dt.toLocaleDateString(bcp47[locale], {
     day: "2-digit",
     month: "2-digit",
     year: "2-digit",
@@ -48,9 +48,12 @@ export function formatTR(dateStr: string, locale = "tr"): string {
  * Format date: "29 Oca 2025" (TR) / "Jan 29, 2025" (EN)
  * Always uses Turkey timezone
  */
-export function formatDateTR(dateString: string | null, locale = "tr"): string {
+export function formatDateTR(
+  dateString: string | null,
+  locale: Locale = "tr",
+): string {
   if (!dateString) return "—";
-  const localeStr = bcp47[locale as Locale];
+  const localeStr = bcp47[locale];
 
   // For date-only strings like "2026-01-15", parse directly to avoid timezone shift
   if (!dateString.includes("T")) {
@@ -80,12 +83,12 @@ export function formatDateTR(dateString: string | null, locale = "tr"): string {
  */
 export function formatDateTimeTR(
   dateString: string | null,
-  locale = "tr",
+  locale: Locale = "tr",
 ): string {
   if (!dateString) return "—";
 
   const date = new Date(dateString);
-  return date.toLocaleString(bcp47[locale as Locale], {
+  return date.toLocaleString(bcp47[locale], {
     day: "numeric",
     month: "short",
     year: "numeric",
