@@ -4,7 +4,7 @@
     {
       "name": "Sedimentasyon",
       "value": 42,
-      "unit": "H",
+      "unit": "mm/h",
       "ref_low": null,
       "ref_high": 20
     },
@@ -158,7 +158,7 @@
     {
       "name": "PDW",
       "value": 9.4,
-      "unit": "null",
+      "unit": null,
       "ref_low": 10.1,
       "ref_high": 16.1
     },
@@ -191,7 +191,7 @@
       "ref_high": 1.25
     },
     {
-      "name": "Ürik asit",
+      "name": "Ürik Asit",
       "value": 3.4,
       "unit": "mg/dL",
       "ref_low": 2.6,
@@ -233,7 +233,7 @@
       "ref_high": 83
     },
     {
-      "name": "Albumin",
+      "name": "Albümin",
       "value": 38,
       "unit": "g/L",
       "ref_low": 35,

@@ -163,7 +163,7 @@
       "ref_high": 1.25
     },
     {
-      "name": "Ürik asit",
+      "name": "Ürik Asit",
       "value": 2.5,
       "unit": "mg/dL",
       "ref_low": 2.6,
@@ -212,7 +212,7 @@
       "ref_high": 83
     },
     {
-      "name": "Albumin",
+      "name": "Albümin",
       "value": 29,
       "unit": "g/L",
       "ref_low": 35,
@@ -240,7 +240,7 @@
       "ref_high": 36
     },
     {
-      "name": "ALP",
+      "name": "Alkalen Fosfataz",
       "value": 62,
       "unit": "U/L",
       "ref_low": 40,
@@ -249,7 +249,7 @@
     {
       "name": "LDH",
       "value": 247,
-      "unit": "H/L",
+      "unit": "U/L",
       "ref_low": 125,
       "ref_high": 243
     }

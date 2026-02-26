@@ -30,7 +30,7 @@
       "ref_high": 150
     },
     {
-      "name": "Bilirubin",
+      "name": "Total Bilirubin",
       "value": 0.47,
       "unit": "mg/dL",
       "ref_low": 0.2,
@@ -61,7 +61,7 @@
       "name": "Hematokrit",
       "value": 29.7,
       "unit": "%",
-      "ref_low": 40.01,
+      "ref_low": 40.1,
       "ref_high": 51
     },
     {
@@ -142,7 +142,7 @@
       "ref_high": 53.1
     },
     {
-      "name": "Eozinofil",
+      "name": "Eozinofil#",
       "value": 0,
       "unit": "10^3/μL",
       "ref_low": 0.04,
@@ -156,7 +156,7 @@
       "ref_high": 12.2
     },
     {
-      "name": "Nötrofil",
+      "name": "Nötrofil#",
       "value": 4.45,
       "unit": "10^3/μL",
       "ref_low": 1.78,
@@ -170,14 +170,14 @@
       "ref_high": 7
     },
     {
-      "name": "Lenfosit",
+      "name": "Lenfosit#",
       "value": 56,
       "unit": "10^3/μL",
       "ref_low": 1.32,
       "ref_high": 3.57
     },
     {
-      "name": "Bazofil",
+      "name": "Bazofil#",
       "value": 0.02,
       "unit": "10^3/μL",
       "ref_low": 0.01,
@@ -191,14 +191,14 @@
       "ref_high": 1.2
     },
     {
-      "name": "Monosit",
+      "name": "Monosit#",
       "value": 0.12,
       "unit": "10^3/μL",
       "ref_low": 0.3,
       "ref_high": 0.82
     },
     {
-      "name": "Kalsiyum (Ca)",
+      "name": "Kalsiyum",
       "value": 8.2,
       "unit": "mg/dL",
       "ref_low": 8.4,
@@ -226,7 +226,7 @@
       "ref_high": null
     },
     {
-      "name": "Sodyum",
+      "name": "Kan Gazı Sodyum",
       "value": 133.6,
       "unit": "mmol/L",
       "ref_low": 136,
@@ -247,6 +247,13 @@
       "ref_high": 108
     },
     {
+      "name": "Kan Gazı Glukoz",
+      "value": 192,
+      "unit": "mg/dL",
+      "ref_low": 65,
+      "ref_high": 95
+    },
+    {
       "name": "Laktat",
       "value": 1.4,
       "unit": "mmol/L",
@@ -261,14 +268,14 @@
       "ref_high": 0
     },
     {
-      "name": "Kalsiyum",
+      "name": "Kan Gazı Kalsiyum",
       "value": 1.16,
       "unit": "mmol/L",
       "ref_low": 1.09,
       "ref_high": 1.3
     },
     {
-      "name": "Klorür",
+      "name": "Kan Gazı Klorür",
       "value": 107.6,
       "unit": "mmol/L",
       "ref_low": 98,
@@ -296,21 +303,21 @@
       "ref_high": 3
     },
     {
-      "name": "Hct",
+      "name": "Kan Gazı Hematokrit",
       "value": 13,
       "unit": "%",
       "ref_low": 39,
       "ref_high": 49
     },
     {
-      "name": "Mg",
+      "name": "Kan Gazı Magnezyum",
       "value": 1.4,
       "unit": "mg/dL",
       "ref_low": 1.09,
       "ref_high": 1.45
     },
     {
-      "name": "K+",
+      "name": "Kan Gazı Potasyum",
       "value": 5.35,
       "unit": "mmol/L",
       "ref_low": 3.5,
@@ -319,14 +326,14 @@
     {
       "name": "Gap_K",
       "value": 7.4,
-      "unit": "null",
+      "unit": null,
       "ref_low": null,
       "ref_high": null
     },
     {
       "name": "pH",
       "value": 7.379,
-      "unit": "null",
+      "unit": null,
       "ref_low": 7.35,
       "ref_high": 7.45
     },
@@ -380,7 +387,7 @@
       "ref_high": 5.1
     },
     {
-      "name": "Bilirubin (Direkt)",
+      "name": "Direkt Bilirubin",
       "value": 0.17,
       "unit": "mg/dL",
       "ref_low": 0,

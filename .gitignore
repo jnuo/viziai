@@ -14,6 +14,7 @@ supabase/.temp/
 # Local data/artifacts
 downloads/
 *.pdf
+!evals/test-cases/**/input.pdf
 *.labs.json
 data_backup.json
 
