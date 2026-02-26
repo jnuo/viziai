@@ -1,7 +1,7 @@
 ---
 title: "feat: Bilingual Localization (Turkish + English)"
 type: feat
-status: active
+status: completed
 date: 2026-02-24
 branch: feat/i18n-bilingual
 deepened: 2026-02-24

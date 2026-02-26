@@ -1,7 +1,7 @@
 ---
 title: "feat: Mobile card layout for upload review metrics"
 type: feat
-status: active
+status: completed
 date: 2026-02-24
 deepened: 2026-02-24
 ---
