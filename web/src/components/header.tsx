@@ -12,6 +12,9 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -25,9 +28,10 @@ import {
   Users,
   FileText,
   Globe,
+  Check,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { locales } from "@/i18n/config";
+import { locales, localeLabels } from "@/i18n/config";
 import { ProfileSwitcher } from "@/components/profile-switcher";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { AddBloodPressureDialog } from "@/components/add-blood-pressure-dialog";
@@ -224,25 +228,26 @@ export function Header({
                       {isDark ? t("lightTheme") : t("darkTheme")}
                     </DropdownMenuItem>
                   )}
-                  {/* Language — inline segmented control */}
-                  <div className="px-2 py-1.5 flex items-center gap-2">
-                    <Globe className="h-4 w-4 text-muted-foreground shrink-0" />
-                    <div className="flex gap-0.5 rounded-lg bg-muted p-0.5">
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger className="cursor-pointer">
+                      <Globe className="h-4 w-4" />
+                      {localeLabels[locale]}
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuSubContent>
                       {locales.map((l) => (
-                        <button
+                        <DropdownMenuItem
                           key={l}
                           onClick={() => switchTo(l)}
-                          className={`px-2.5 py-1 text-xs font-medium rounded-md transition-colors ${
-                            l === locale
-                              ? "bg-background text-foreground shadow-sm"
-                              : "text-muted-foreground hover:text-foreground cursor-pointer"
-                          }`}
+                          className="cursor-pointer"
                         >
-                          {l.toUpperCase()}
-                        </button>
+                          <Check
+                            className={`h-4 w-4 ${l === locale ? "opacity-100" : "opacity-0"}`}
+                          />
+                          {localeLabels[l]}
+                        </DropdownMenuItem>
                       ))}
-                    </div>
-                  </div>
+                    </DropdownMenuSubContent>
+                  </DropdownMenuSub>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     onClick={handleLogoutClick}
