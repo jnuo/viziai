@@ -8,8 +8,10 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 300; // QStash can wait up to 5 minutes
 
 const VECTOR_SCALE = 2.5;
-const IMAGE_SCALE = 5;
+const MAX_IMAGE_DIMENSION = 4000; // Cap rendered dimension for image-based pages (detail=high lets OpenAI upscale)
 const IMAGE_PIXEL_THRESHOLD = 2_000_000; // >2M pixels = full-page embedded image (avoids false positives on logos)
+const TRANSIENT_STATUS_CODES = new Set([429, 500, 502, 503]);
+const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
 const EXTRACTION_PROMPT = `Aşağıdaki laboratuvar sayfasından TÜM güncel 'Sonuç' değerlerini çıkar.
 
@@ -153,8 +155,16 @@ async function preparePdf(buffer: Buffer): Promise<PdfHandle> {
 async function renderPage({ mupdf, sharp, doc }: PdfHandle, pageIndex: number): Promise<PageImage[]> {
   const imageBased = isImageBasedPage(doc, pageIndex);
   const page = doc.loadPage(pageIndex);
-  const scale = imageBased ? IMAGE_SCALE : VECTOR_SCALE;
   const detail: PageImage["detail"] = imageBased ? "high" : "auto";
+
+  // For image-based pages, compute scale that caps the longest edge at MAX_IMAGE_DIMENSION.
+  // OpenAI's detail=high handles further upscaling internally.
+  let scale = VECTOR_SCALE;
+  if (imageBased) {
+    const [, , pw, ph] = page.getBounds();
+    const longestEdge = Math.max(pw, ph);
+    scale = Math.min(MAX_IMAGE_DIMENSION / longestEdge, VECTOR_SCALE * 2);
+  }
 
   const pixmap = page.toPixmap(
     mupdf.Matrix.scale(scale, scale),
@@ -163,6 +173,8 @@ async function renderPage({ mupdf, sharp, doc }: PdfHandle, pageIndex: number): 
     true,
   );
   const pngBuf = Buffer.from(pixmap.asPNG());
+  // Free native mupdf memory immediately
+  pixmap.destroy();
 
   if (!imageBased) {
     return [{ dataUrl: toDataUrl(pngBuf), detail, pageIndex, crop: null }];
@@ -189,6 +201,86 @@ async function renderPage({ mupdf, sharp, doc }: PdfHandle, pageIndex: number): 
     { dataUrl: toDataUrl(topBuf), detail, pageIndex, crop: "top" },
     { dataUrl: toDataUrl(botBuf), detail, pageIndex, crop: "bottom" },
   ];
+}
+
+async function callOpenAI(
+  apiKey: string,
+  img: PageImage,
+): Promise<PageExtractionResult | null> {
+  const MAX_RETRIES = 2;
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    const response = await fetch(
+      "https://api.openai.com/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: "gpt-4o",
+          messages: [
+            {
+              role: "user",
+              content: [
+                { type: "text", text: EXTRACTION_PROMPT },
+                {
+                  type: "image_url",
+                  image_url: { url: img.dataUrl, detail: img.detail },
+                },
+              ],
+            },
+          ],
+          max_tokens: 16384,
+          response_format: { type: "json_object" },
+        }),
+      },
+    );
+
+    if (!response.ok) {
+      // Retry on transient errors
+      if (TRANSIENT_STATUS_CODES.has(response.status) && attempt < MAX_RETRIES) {
+        const wait = 1000 * 2 ** attempt; // 1s, 2s
+        console.warn(`[Worker] OpenAI returned ${response.status}, retrying in ${wait}ms...`);
+        await new Promise((r) => setTimeout(r, wait));
+        continue;
+      }
+      // Parse error safely — OpenAI sometimes returns HTML on 502/503
+      let message = `HTTP ${response.status}`;
+      try {
+        const errorData = await response.json();
+        message = errorData.error?.message || message;
+      } catch {
+        // Non-JSON error body, use status code
+      }
+      throw new Error(`OpenAI API error: ${message}`);
+    }
+
+    const data = await response.json();
+    const content = data.choices?.[0]?.message?.content;
+    if (!content) return null;
+
+    try {
+      return JSON.parse(content) as PageExtractionResult;
+    } catch {
+      console.log(`[Worker] Page ${img.pageIndex + 1} (${img.crop ?? "full"}): Failed to parse JSON`);
+      return null;
+    }
+  }
+  return null; // All retries exhausted
+}
+
+function normalizeFlag(flag: string | null | undefined): "H" | "L" | "N" | null {
+  if (!flag) return null;
+  const first = flag.charAt(0).toUpperCase();
+  if (first === "H" || first === "L" || first === "N") return first;
+  return null;
+}
+
+function isValidISODate(s: string | null | undefined): boolean {
+  if (!s || !ISO_DATE_RE.test(s)) return false;
+  const d = new Date(s);
+  return !isNaN(d.getTime());
 }
 
 async function handler(
@@ -258,62 +350,24 @@ async function handler(
         const pageImages = await renderPage(pdf, p);
 
         // Send all images from this page in parallel (1 for vector, 2 for split image-based)
-        const apiResults = await Promise.all(
+        // allSettled so one failed half doesn't discard the other
+        const settled = await Promise.allSettled(
           pageImages.map(async (img) => {
             console.log(
               `[Worker] Processing page ${img.pageIndex + 1} (${img.crop ?? "full"}, detail=${img.detail})...`,
             );
-
-            const openaiResponse = await fetch(
-              "https://api.openai.com/v1/chat/completions",
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${openaiApiKey}`,
-                },
-                body: JSON.stringify({
-                  model: "gpt-4o",
-                  messages: [
-                    {
-                      role: "user",
-                      content: [
-                        { type: "text", text: EXTRACTION_PROMPT },
-                        {
-                          type: "image_url",
-                          image_url: { url: img.dataUrl, detail: img.detail },
-                        },
-                      ],
-                    },
-                  ],
-                  max_tokens: 4000,
-                  response_format: { type: "json_object" },
-                }),
-              },
-            );
-
-            if (!openaiResponse.ok) {
-              const errorData = await openaiResponse.json();
-              throw new Error(
-                `OpenAI API error: ${errorData.error?.message || "Unknown error"}`,
-              );
-            }
-
-            const openaiData = await openaiResponse.json();
-            const content = openaiData.choices?.[0]?.message?.content;
-            if (!content) return null;
-
-            try {
-              return { img, data: JSON.parse(content) as PageExtractionResult };
-            } catch {
-              console.log(`[Worker] Page ${img.pageIndex + 1} (${img.crop ?? "full"}): Failed to parse JSON`);
-              return null;
-            }
+            const data = await callOpenAI(openaiApiKey, img);
+            return data ? { img, data } : null;
           }),
         );
 
         // Merge results from this page
-        for (const result of apiResults) {
+        for (const outcome of settled) {
+          if (outcome.status === "rejected") {
+            console.warn(`[Worker] Page ${p + 1} image failed:`, outcome.reason);
+            continue;
+          }
+          const result = outcome.value;
           if (!result) continue;
           const { img, data: pageData } = result;
 
@@ -322,6 +376,9 @@ async function handler(
             for (const [name, val] of Object.entries(pageData.tests)) {
               // Skip non-numeric values (GPT hallucination guard)
               if (typeof val.value !== "number") continue;
+
+              // Normalize flag to H/L/N
+              val.flag = normalizeFlag(val.flag);
 
               if (!(name in mergedResult.tests)) {
                 mergedResult.tests[name] = val;
@@ -342,7 +399,7 @@ async function handler(
             console.log(`[Worker] Page ${img.pageIndex + 1} (${img.crop ?? "full"}): ${accepted} tests accepted`);
           }
 
-          if (!mergedResult.sample_date && pageData.sample_date) {
+          if (!mergedResult.sample_date && isValidISODate(pageData.sample_date)) {
             mergedResult.sample_date = pageData.sample_date;
           }
         }
