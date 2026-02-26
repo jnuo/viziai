@@ -7,6 +7,10 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 300; // QStash can wait up to 5 minutes
 
+const VECTOR_SCALE = 2.5;
+const IMAGE_SCALE = 5;
+const IMAGE_PIXEL_THRESHOLD = 1_000_000; // >1M pixels = full-page embedded image
+
 const EXTRACTION_PROMPT = `Aşağıdaki laboratuvar sayfasından TÜM güncel 'Sonuç' değerlerini çıkar.
 
 Kurallar:
@@ -18,27 +22,51 @@ Kurallar:
 - Her test için mümkünse referans aralığını çıkar: alt sınır ve üst sınır.
 - Referans aralığı mevcutsa 'ref_low' ve 'ref_high' alanlarını doldur. Yoksa boş bırak.
 
+ÖNEMLİ - Bölüm Farkındalığı:
+- PDF'ler İspanyolca, İngilizce, Türkçe veya başka dillerde olabilir. Bölüm başlıklarını tanı:
+  - İspanyolca: Hemograma (Hemogram), Bioquímica/Sangre (Biyokimya), Orina (İdrar), Gasometría (Kan Gazı)
+  - İngilizce: CBC/Hematology, Chemistry, Urinalysis, Blood Gas
+  - Türkçe: Hemogram, Biyokimya, İdrar, Kan Gazları
+- İspanyolca önekleri silip Türkçe karşılığını kullan: Srm-Glukoz → Glukoz, San-/S- (Sangre) → serum testi.
+- HİÇBİR bölümü atlama — İdrar (Orina), Eritroblast, Sedimentasyon dahil TÜM bölümleri çıkar.
+- UYARI: Serum ve idrar değerlerini karıştırma! Örneğin serum Kreatinin (mg/dL, ~0.7-1.3) ile İdrar Kreatinin (mg/dL, ~24-392) farklı testlerdir.
+
+ÖNEMLİ - İdrar Testleri:
+- İdrar/Orina bölümündeki testleri 'İdrar' öneki ile adlandır.
+- İdrar Glukoz, İdrar Kreatinin, İdrar pH, İdrar Protein, İdrar Eritrosit, İdrar Dansitesi, İdrar Bilirubin, İdrar Ürobilinojen, İdrar Asetoasetat, İdrar Lökosit Esteraz, İdrar Albümin, İdrar Albümin/Kreatinin, İdrar Nitrit.
+
+ÖNEMLİ - Kan Gazı Testleri:
+- Kan gazı bölümünde serumla ortak olan testleri 'Kan Gazı' öneki ile adlandır.
+- Kan Gazı Glukoz, Kan Gazı Sodyum, Kan Gazı Potasyum, Kan Gazı Kalsiyum, Kan Gazı Klorür, Kan Gazı Hematokrit, Kan Gazı Magnezyum.
+- Kan gazına özgü testler (pH, PCO2, PO2, HCO3, Laktat vb.) önek almaz.
+
 ÖNEMLİ - Test İsimlerini Türkçeye Çevir:
 - Rapor hangi dilde olursa olsun (İspanyolca, İngilizce, Almanca vb.), test isimlerini Türkçe tıbbi terminolojiye çevir.
-- Örnek çeviriler:
-  - Hemoglobin → Hemoglobin
-  - Hematocrit/Hematocrito → Hematokrit
-  - Red Blood Cells/Eritrocitos → Eritrosit
-  - White Blood Cells/Leucocitos → Lökosit
-  - Platelets/Plaquetas → Trombosit
-  - Glucose/Glucosa → Glukoz
-  - Cholesterol/Colesterol → Kolesterol
-  - Triglycerides/Triglicéridos → Trigliserit
-  - Urea → Üre
-  - Creatinine/Creatinina → Kreatinin
-  - ALT/GPT → ALT
-  - AST/GOT → AST
-  - TSH → TSH
-  - T3/T4 → T3/T4
-  - Iron/Hierro → Demir
-  - Ferritin/Ferritina → Ferritin
-  - Vitamin D → D Vitamini
-  - Vitamin B12 → B12 Vitamini
+- Kanonik isimler (bu isimleri AYNEN kullan):
+  Hemogram:
+  - Eritrosit, Hemoglobin, Hematokrit, MCV, MCH, MCHC, RDW, RDW-SD
+  - Lökosit, Nötrofil%, Nötrofil#, Lenfosit%, Lenfosit#, Monosit%, Monosit#, Eozinofil%, Eozinofil#, Bazofil%, Bazofil#
+  - Eritroblast%, Eritroblast# (Eritroblastos/NRBC)
+  - Trombosit, MPV, PDW, PCT
+  - Sedimentasyon (ESR/VSG/Velocidad de sedimentación)
+  Biyokimya:
+  - Glukoz (Glucosa), Üre (Urea), BUN, Kreatinin (Creatinina)
+  - eGFR (Glomerüler Filtrasyon Hızı / Filtrado Glomerular / GFR / CKD-EPI)
+  - Ürik Asit (Ácido Úrico / Ürat)
+  - Total Protein, Albümin (Albumina), Globulin
+  - AST (GOT), ALT (GPT), GGT, Alkalen Fosfataz (Fosfatasa Alcalina / ALP), LDH
+  - Total Bilirubin (Bilirrubina Total), Direkt Bilirubin (Bilirrubina Directa)
+  Elektrolitler:
+  - Sodyum (Sodio), Potasyum (Potasio), Kalsiyum (Calcio), Magnezyum (Magnesio), Klorür (Cloruro / Klor)
+  Lipid Panel:
+  - Kolesterol (Colesterol), HDL Kolesterol, LDL Kolesterol, Non-HDL Kolesterol, Trigliserit (Triglicéridos)
+  İnflamatuar:
+  - CRP (Proteína C Reactiva / C-reaktif Protein)
+  Hormonlar:
+  - TSH, T3, T4
+  Diğer:
+  - Demir (Hierro), Ferritin (Ferritina), D Vitamini, B12 Vitamini
+  - Romatoid Faktör (Factor Reumatoide)
 - Bilinmeyen testler için orijinal ismi koru.
 
 ÇIKTI: sadece JSON -> {"sample_date": "<YYYY-MM-DD|null>", "tests": { "<Türkçe Ad>": { "value": <number>, "unit": "<unit|null>", "flag": "<H|L|N|null>", "ref_low": <number|null>, "ref_high": <number|null> } } }}`;
@@ -69,27 +97,86 @@ interface ExtractionResult {
   metrics: ExtractedMetric[];
 }
 
-async function pdfToImages(buffer: Buffer): Promise<string[]> {
+interface PageImage {
+  dataUrl: string;
+  detail: "auto" | "high";
+  pageIndex: number;
+  crop: "top" | "bottom" | null;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function isImageBasedPage(pdfDoc: any, pageIndex: number): boolean {
+  const pageObj = pdfDoc.findPage(pageIndex);
+  const resources = pageObj.get("Resources");
+  const xobjects = resources?.get("XObject");
+  if (!xobjects) return false;
+
+  let largestPixels = 0;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  xobjects.forEach((val: any) => {
+    const resolved = val.resolve();
+    if (resolved.get("Subtype")?.asName() !== "Image") return;
+    const w = resolved.get("Width")?.asNumber() || 0;
+    const h = resolved.get("Height")?.asNumber() || 0;
+    largestPixels = Math.max(largestPixels, w * h);
+  });
+
+  return largestPixels > IMAGE_PIXEL_THRESHOLD;
+}
+
+function toDataUrl(pngBuffer: Buffer): string {
+  return `data:image/png;base64,${pngBuffer.toString("base64")}`;
+}
+
+async function pdfToImages(buffer: Buffer): Promise<PageImage[]> {
   const mupdf = await import("mupdf");
-  const images: string[] = [];
+  const sharp = (await import("sharp")).default;
+
   const doc = mupdf.Document.openDocument(buffer, "application/pdf");
+  const pdfDoc = mupdf.PDFDocument.openDocument(buffer, "application/pdf");
   const pageCount = doc.countPages();
 
+  const pages: PageImage[] = [];
+
   for (let i = 0; i < pageCount; i++) {
+    const imageBased = isImageBasedPage(pdfDoc, i);
     const page = doc.loadPage(i);
-    const scale = 2.5;
+    const scale = imageBased ? IMAGE_SCALE : VECTOR_SCALE;
+    const detail: PageImage["detail"] = imageBased ? "high" : "auto";
+
     const pixmap = page.toPixmap(
       mupdf.Matrix.scale(scale, scale),
       mupdf.ColorSpace.DeviceRGB,
       false,
       true,
     );
-    const pngData = pixmap.asPNG();
-    const base64 = Buffer.from(pngData).toString("base64");
-    images.push(`data:image/png;base64,${base64}`);
+    const pngBuf = Buffer.from(pixmap.asPNG());
+
+    if (!imageBased) {
+      pages.push({ dataUrl: toDataUrl(pngBuf), detail, pageIndex: i, crop: null });
+      continue;
+    }
+
+    // Split into top and bottom halves for better OCR readability
+    const { width, height } = await sharp(pngBuf).metadata() as { width: number; height: number };
+    const halfH = Math.floor(height / 2);
+
+    const topBuf = await sharp(pngBuf)
+      .extract({ left: 0, top: 0, width, height: halfH })
+      .png()
+      .toBuffer();
+    const botBuf = await sharp(pngBuf)
+      .extract({ left: 0, top: halfH, width, height: height - halfH })
+      .png()
+      .toBuffer();
+
+    pages.push(
+      { dataUrl: toDataUrl(topBuf), detail, pageIndex: i, crop: "top" },
+      { dataUrl: toDataUrl(botBuf), detail, pageIndex: i, crop: "bottom" },
+    );
   }
 
-  return images;
+  return pages;
 }
 
 async function handler(
@@ -154,8 +241,9 @@ async function handler(
       };
 
       for (let i = 0; i < pageImages.length; i++) {
+        const img = pageImages[i];
         console.log(
-          `[Worker] Processing page ${i + 1}/${pageImages.length}...`,
+          `[Worker] Processing image ${i + 1}/${pageImages.length} (page ${img.pageIndex + 1}, ${img.crop ?? "full"}, detail=${img.detail})...`,
         );
 
         const openaiResponse = await fetch(
@@ -175,7 +263,7 @@ async function handler(
                     { type: "text", text: EXTRACTION_PROMPT },
                     {
                       type: "image_url",
-                      image_url: { url: pageImages[i] },
+                      image_url: { url: img.dataUrl, detail: img.detail },
                     },
                   ],
                 },
@@ -197,7 +285,7 @@ async function handler(
         const content = openaiData.choices?.[0]?.message?.content;
 
         if (!content) {
-          console.log(`[Worker] Page ${i + 1}: No content returned`);
+          console.log(`[Worker] Image ${i + 1}: No content returned`);
           continue;
         }
 
@@ -205,14 +293,20 @@ async function handler(
         try {
           pageData = JSON.parse(content);
         } catch {
-          console.log(`[Worker] Page ${i + 1}: Failed to parse JSON`);
+          console.log(`[Worker] Image ${i + 1}: Failed to parse JSON`);
           continue;
         }
 
         if (pageData.tests) {
           const testCount = Object.keys(pageData.tests).length;
-          console.log(`[Worker] Page ${i + 1}: Found ${testCount} tests`);
-          Object.assign(mergedResult.tests, pageData.tests);
+          console.log(`[Worker] Image ${i + 1}: Found ${testCount} tests`);
+          // First-writer-wins: don't let later pages overwrite earlier values
+          // (prevents hallucinated values from empty/footer pages from clobbering real data)
+          for (const [name, val] of Object.entries(pageData.tests)) {
+            if (!(name in mergedResult.tests)) {
+              mergedResult.tests[name] = val;
+            }
+          }
         }
 
         if (!mergedResult.sample_date && pageData.sample_date) {
@@ -221,12 +315,12 @@ async function handler(
       }
 
       const metrics: ExtractedMetric[] = Object.entries(mergedResult.tests).map(
-        ([name, test]) => ({
+        ([name, { value, unit, ref_low, ref_high }]) => ({
           name,
-          value: test.value,
-          unit: test.unit || undefined,
-          ref_low: test.ref_low,
-          ref_high: test.ref_high,
+          value,
+          unit: unit || undefined,
+          ref_low,
+          ref_high,
         }),
       );
 
@@ -279,19 +373,18 @@ async function handler(
 }
 
 const isLocalDev = process.env.NODE_ENV === "development";
+const hasSigningKey = !!process.env.QSTASH_CURRENT_SIGNING_KEY;
 
-// In production, verify QStash signature. During build or local dev, skip.
 // verifySignatureAppRouter reads keys at import time, so only call it when keys exist.
-export const POST =
-  isLocalDev || !process.env.QSTASH_CURRENT_SIGNING_KEY
-    ? async (...args: Parameters<typeof handler>) => {
-        // Fail-closed: if running in production without signing key, reject
-        if (!isLocalDev && !process.env.QSTASH_CURRENT_SIGNING_KEY) {
-          return NextResponse.json(
-            { error: "Server misconfigured" },
-            { status: 500 },
-          );
-        }
-        return handler(...args);
+// In local dev, skip verification. In production without keys, fail closed.
+export const POST = hasSigningKey
+  ? verifySignatureAppRouter(handler)
+  : async (...args: Parameters<typeof handler>) => {
+      if (!isLocalDev) {
+        return NextResponse.json(
+          { error: "Server misconfigured" },
+          { status: 500 },
+        );
       }
-    : verifySignatureAppRouter(handler);
+      return handler(...args);
+    };
