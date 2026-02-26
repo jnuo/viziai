@@ -12,6 +12,9 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -25,16 +28,15 @@ import {
   Users,
   FileText,
   Globe,
-  Loader2,
+  Check,
 } from "lucide-react";
-import { useEffect, useRef, useState, useTransition } from "react";
-import { useLocale } from "next-intl";
-import { setLocale } from "@/app/actions/locale";
-import type { Locale } from "@/i18n/config";
+import { useEffect, useState } from "react";
+import { locales, localeLabels } from "@/i18n/config";
 import { ProfileSwitcher } from "@/components/profile-switcher";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { AddBloodPressureDialog } from "@/components/add-blood-pressure-dialog";
 import { AddWeightDialog } from "@/components/add-weight-dialog";
+import { useLocaleSwitch } from "@/hooks/use-locale-switch";
 
 interface HeaderProps {
   profileName?: string | null;
@@ -66,24 +68,7 @@ export function Header({
   const [bpDialogOpen, setBpDialogOpen] = useState(false);
   const [weightDialogOpen, setWeightDialogOpen] = useState(false);
   const t = useTranslations("components.header");
-  const locale = useLocale();
-  const [isLocalePending, startLocaleTransition] = useTransition();
-  const localeSwitching = useRef(false);
-
-  const nextLocale: Locale = locale === "tr" ? "en" : "tr";
-
-  function handleLocaleSwitch() {
-    if (localeSwitching.current) return;
-    localeSwitching.current = true;
-    startLocaleTransition(async () => {
-      try {
-        await setLocale(nextLocale);
-        router.refresh();
-      } finally {
-        localeSwitching.current = false;
-      }
-    });
-  }
+  const { locale, switchTo } = useLocaleSwitch();
 
   const isLoggedIn = status === "authenticated";
   const isDark = theme === "dark";
@@ -231,30 +216,57 @@ export function Header({
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   {mounted && (
-                    <DropdownMenuItem
-                      onClick={() => setTheme(isDark ? "light" : "dark")}
-                      className="cursor-pointer"
-                    >
-                      {isDark ? (
-                        <Sun className="h-4 w-4 text-brand-secondary" />
-                      ) : (
-                        <Moon className="h-4 w-4 text-brand-primary" />
-                      )}
-                      {isDark ? t("lightTheme") : t("darkTheme")}
-                    </DropdownMenuItem>
+                    <DropdownMenuSub>
+                      <DropdownMenuSubTrigger className="gap-2 cursor-pointer">
+                        {isDark ? (
+                          <Moon className="h-4 w-4 text-brand-primary" />
+                        ) : (
+                          <Sun className="h-4 w-4 text-brand-secondary" />
+                        )}
+                        {isDark ? t("darkTheme") : t("lightTheme")}
+                      </DropdownMenuSubTrigger>
+                      <DropdownMenuSubContent>
+                        <DropdownMenuItem
+                          onClick={() => setTheme("light")}
+                          className="cursor-pointer"
+                        >
+                          <Check
+                            className={`h-4 w-4 ${!isDark ? "opacity-100" : "opacity-0"}`}
+                          />
+                          {t("lightTheme")}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => setTheme("dark")}
+                          className="cursor-pointer"
+                        >
+                          <Check
+                            className={`h-4 w-4 ${isDark ? "opacity-100" : "opacity-0"}`}
+                          />
+                          {t("darkTheme")}
+                        </DropdownMenuItem>
+                      </DropdownMenuSubContent>
+                    </DropdownMenuSub>
                   )}
-                  <DropdownMenuItem
-                    onClick={handleLocaleSwitch}
-                    disabled={isLocalePending}
-                    className="cursor-pointer"
-                  >
-                    {isLocalePending ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger className="gap-2 cursor-pointer">
                       <Globe className="h-4 w-4" />
-                    )}
-                    {nextLocale === "en" ? "English" : "Türkçe"}
-                  </DropdownMenuItem>
+                      {localeLabels[locale]}
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuSubContent>
+                      {locales.map((l) => (
+                        <DropdownMenuItem
+                          key={l}
+                          onClick={() => switchTo(l)}
+                          className="cursor-pointer"
+                        >
+                          <Check
+                            className={`h-4 w-4 ${l === locale ? "opacity-100" : "opacity-0"}`}
+                          />
+                          {localeLabels[l]}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuSubContent>
+                  </DropdownMenuSub>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     onClick={handleLogoutClick}

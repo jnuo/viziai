@@ -1,3 +1,6 @@
+import type { Locale } from "@/i18n/config";
+import { bcp47 } from "@/i18n/config";
+
 export type TrackingMeasurement = {
   id: string;
   profile_id: string;
@@ -59,11 +62,14 @@ export function getBPStatus(systolic: number, diastolic: number): BPStatus {
 
 /**
  * Format a date string for display in tracking dialogs.
- * @param locale - "tr" or "en"
+ * @param locale - Locale code ("tr", "en", "es")
  */
-export function formatTrackingDate(dateStr: string, locale = "tr"): string {
+export function formatTrackingDate(
+  dateStr: string,
+  locale: Locale = "tr",
+): string {
   const date = new Date(dateStr);
-  return date.toLocaleDateString(locale === "tr" ? "tr-TR" : "en-US", {
+  return date.toLocaleDateString(bcp47[locale], {
     day: "numeric",
     month: "short",
   });
@@ -71,11 +77,14 @@ export function formatTrackingDate(dateStr: string, locale = "tr"): string {
 
 /**
  * Format a date string with time for blood pressure dialog.
- * @param locale - "tr" or "en"
+ * @param locale - Locale code ("tr", "en", "es")
  */
-export function formatTrackingDateTime(dateStr: string, locale = "tr"): string {
+export function formatTrackingDateTime(
+  dateStr: string,
+  locale: Locale = "tr",
+): string {
   const date = new Date(dateStr);
-  return date.toLocaleDateString(locale === "tr" ? "tr-TR" : "en-US", {
+  return date.toLocaleDateString(bcp47[locale], {
     day: "numeric",
     month: "short",
     hour: "2-digit",
@@ -89,7 +98,7 @@ export function formatTrackingDateTime(dateStr: string, locale = "tr"): string {
  */
 export function formatRelativeDate(
   dateStr: string,
-  locale = "tr",
+  locale: Locale = "tr",
 ):
   | { type: "key"; key: "justNow" | "yesterday" }
   | { type: "key"; key: "hoursAgo"; count: number }
@@ -106,7 +115,7 @@ export function formatRelativeDate(
   if (diffHours < 48) return { type: "key", key: "yesterday" };
   return {
     type: "date",
-    value: date.toLocaleDateString(locale === "tr" ? "tr-TR" : "en-US", {
+    value: date.toLocaleDateString(bcp47[locale], {
       day: "numeric",
       month: "short",
     }),

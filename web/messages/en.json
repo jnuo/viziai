@@ -263,7 +263,8 @@
       "lightTheme": "Light Theme",
       "darkTheme": "Dark Theme",
       "logout": "Sign Out",
-      "login": "Sign In"
+      "login": "Sign In",
+      "changeLanguage": "Change language"
     },
     "extraction": {
       "readingPdf": "Reading PDF…",

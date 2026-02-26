@@ -13,6 +13,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
+import type { Locale } from "@/i18n/config";
+import { bcp47 } from "@/i18n/config";
 import { Loader2, Heart } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import {
@@ -226,7 +228,7 @@ export function AddBloodPressureDialog({
             <div className="rounded-lg border border-status-warning/30 bg-status-warning/10 px-3 py-2.5 text-sm text-status-warning">
               {t("existingEntryWarning", {
                 time: new Date(existingEntry.measured_at).toLocaleTimeString(
-                  locale === "tr" ? "tr-TR" : "en-US",
+                  bcp47[locale as Locale],
                   { hour: "2-digit", minute: "2-digit" },
                 ),
                 values: `${existingEntry.systolic}/${existingEntry.diastolic}`,
