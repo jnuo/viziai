@@ -1,0 +1,423 @@
+{
+  "config": {
+    "model": "gpt-4o",
+    "prompt_hash": "-73b61fee",
+    "date": "2026-02-26T13:12:24.083Z"
+  },
+  "results": [
+    {
+      "case": "informes_OVAL0860107001_20250515",
+      "pageType": "vector",
+      "output": {
+        "sample_date": "2025-05-15",
+        "metrics": [
+          {
+            "name": "Eritrosit",
+            "value": 5.25,
+            "unit": "x10E12/L",
+            "ref_low": 4.5,
+            "ref_high": 5.9
+          },
+          {
+            "name": "Hemoglobin",
+            "value": 15,
+            "unit": "g/dL",
+            "ref_low": 13,
+            "ref_high": 17
+          },
+          {
+            "name": "Hematokrit",
+            "value": 47.2,
+            "unit": "%",
+            "ref_low": 39,
+            "ref_high": 51
+          },
+          {
+            "name": "MCV",
+            "value": 89.9,
+            "unit": "fL",
+            "ref_low": 80,
+            "ref_high": 98
+          },
+          {
+            "name": "MCH",
+            "value": 28.6,
+            "unit": "pg",
+            "ref_low": 27,
+            "ref_high": 33.5
+          },
+          {
+            "name": "MCHC",
+            "value": 31.8,
+            "unit": "g/dL",
+            "ref_low": 31,
+            "ref_high": 36
+          },
+          {
+            "name": "RDW",
+            "value": 12.8,
+            "unit": "%",
+            "ref_low": 11,
+            "ref_high": 15
+          },
+          {
+            "name": "Eritroblast%",
+            "value": 0,
+            "unit": "%",
+            "ref_low": 0,
+            "ref_high": 2
+          },
+          {
+            "name": "Eritroblast#",
+            "value": 0,
+            "unit": "10E9/L",
+            "ref_low": null,
+            "ref_high": null
+          },
+          {
+            "name": "Lökosit",
+            "value": 7.69,
+            "unit": "x10E9/L",
+            "ref_low": 4,
+            "ref_high": 11
+          },
+          {
+            "name": "Nötrofil%",
+            "value": 48.8,
+            "unit": "%",
+            "ref_low": 40,
+            "ref_high": 80
+          },
+          {
+            "name": "Lenfosit%",
+            "value": 41,
+            "unit": "%",
+            "ref_low": 20,
+            "ref_high": 50
+          },
+          {
+            "name": "Monosit%",
+            "value": 9.2,
+            "unit": "%",
+            "ref_low": 2,
+            "ref_high": 11
+          },
+          {
+            "name": "Eozinofil%",
+            "value": 0.5,
+            "unit": "%",
+            "ref_low": 0,
+            "ref_high": 5
+          },
+          {
+            "name": "Bazofil%",
+            "value": 0.5,
+            "unit": "%",
+            "ref_low": 0,
+            "ref_high": 2
+          },
+          {
+            "name": "Nötrofil#",
+            "value": 3.8,
+            "unit": "x10E9/L",
+            "ref_low": 2,
+            "ref_high": 7
+          },
+          {
+            "name": "Lenfosit#",
+            "value": 3.2,
+            "unit": "x10E9/L",
+            "ref_low": 1.2,
+            "ref_high": 3.5
+          },
+          {
+            "name": "Monosit#",
+            "value": 0.7,
+            "unit": "x10E9/L",
+            "ref_low": 0.1,
+            "ref_high": 1
+          },
+          {
+            "name": "Eozinofil#",
+            "value": 0,
+            "unit": "x10E9/L",
+            "ref_low": 0,
+            "ref_high": 0.5
+          },
+          {
+            "name": "Bazofil#",
+            "value": 0,
+            "unit": "x10E9/L",
+            "ref_low": 0,
+            "ref_high": 0.2
+          },
+          {
+            "name": "Trombosit",
+            "value": 249,
+            "unit": "x10E9/L",
+            "ref_low": 140,
+            "ref_high": 400
+          },
+          {
+            "name": "MPV",
+            "value": 10.8,
+            "unit": "fL",
+            "ref_low": 9.5,
+            "ref_high": 12
+          },
+          {
+            "name": "Glukoz",
+            "value": 92,
+            "unit": "mg/dL",
+            "ref_low": 74,
+            "ref_high": 106
+          },
+          {
+            "name": "Kreatinin",
+            "value": 1.04,
+            "unit": "mg/dL",
+            "ref_low": 0.6,
+            "ref_high": 1.1
+          },
+          {
+            "name": "eGFR",
+            "value": 90,
+            "unit": "ml/min/1.73 m2",
+            "ref_low": null,
+            "ref_high": null
+          },
+          {
+            "name": "Ürik Asit",
+            "value": 9.5,
+            "unit": "mg/dL",
+            "ref_low": 3.7,
+            "ref_high": 9.2
+          },
+          {
+            "name": "Total Bilirubin",
+            "value": 0.63,
+            "unit": "mg/dL",
+            "ref_low": 0.3,
+            "ref_high": 1.2
+          },
+          {
+            "name": "Sodyum",
+            "value": 141,
+            "unit": "mmol/L",
+            "ref_low": 136,
+            "ref_high": 146
+          },
+          {
+            "name": "Potasyum",
+            "value": 4.37,
+            "unit": "mmol/L",
+            "ref_low": 3.5,
+            "ref_high": 5.1
+          },
+          {
+            "name": "AST",
+            "value": 38,
+            "unit": "U/L",
+            "ref_low": 8,
+            "ref_high": 34
+          },
+          {
+            "name": "ALT",
+            "value": 80,
+            "unit": "U/L",
+            "ref_low": 10,
+            "ref_high": 49
+          },
+          {
+            "name": "Alkalen Fosfataz",
+            "value": 79,
+            "unit": "U/L",
+            "ref_low": 46,
+            "ref_high": 116
+          },
+          {
+            "name": "GGT",
+            "value": 27,
+            "unit": "U/L",
+            "ref_low": 7,
+            "ref_high": 73
+          },
+          {
+            "name": "Kolesterol",
+            "value": 251,
+            "unit": "mg/dL",
+            "ref_low": null,
+            "ref_high": 240
+          },
+          {
+            "name": "HDL Kolesterol",
+            "value": 55,
+            "unit": "mg/dL",
+            "ref_low": 40,
+            "ref_high": null
+          },
+          {
+            "name": "LDL Kolesterol",
+            "value": 172,
+            "unit": "mg/dL",
+            "ref_low": null,
+            "ref_high": 130
+          },
+          {
+            "name": "Trigliserit",
+            "value": 119,
+            "unit": "mg/dL",
+            "ref_low": null,
+            "ref_high": 150
+          },
+          {
+            "name": "TSH",
+            "value": 2.238,
+            "unit": "mU/L",
+            "ref_low": 0.55,
+            "ref_high": 4.78
+          },
+          {
+            "name": "İdrar Dansitesi",
+            "value": 1.021,
+            "unit": null,
+            "ref_low": 1.005,
+            "ref_high": 1.035
+          },
+          {
+            "name": "İdrar Glukoz",
+            "value": 0,
+            "unit": "mg/dL",
+            "ref_low": 0,
+            "ref_high": 50
+          },
+          {
+            "name": "İdrar Asetoasetat",
+            "value": 0,
+            "unit": "mg/dL",
+            "ref_low": 0,
+            "ref_high": 5
+          },
+          {
+            "name": "İdrar Bilirubin",
+            "value": 0,
+            "unit": "mg/dL",
+            "ref_low": 0,
+            "ref_high": 0.2
+          },
+          {
+            "name": "İdrar Ürobilinojen",
+            "value": 0,
+            "unit": "mg/dL",
+            "ref_low": 0,
+            "ref_high": 1
+          },
+          {
+            "name": "İdrar pH",
+            "value": 5,
+            "unit": null,
+            "ref_low": 5,
+            "ref_high": 8
+          },
+          {
+            "name": "İdrar Protein",
+            "value": 0,
+            "unit": "mg/dL",
+            "ref_low": 0,
+            "ref_high": 20
+          },
+          {
+            "name": "İdrar Eritrosit",
+            "value": 0,
+            "unit": "Eri/µL",
+            "ref_low": 0,
+            "ref_high": 10
+          },
+          {
+            "name": "İdrar Esteraz",
+            "value": 0,
+            "unit": "Leu/µL",
+            "ref_low": 0,
+            "ref_high": 25
+          },
+          {
+            "name": "İdrar Kreatinin",
+            "value": 134,
+            "unit": "mg/dL",
+            "ref_low": 24,
+            "ref_high": 392
+          },
+          {
+            "name": "İdrar Albümin",
+            "value": 5,
+            "unit": "mg/L",
+            "ref_low": 0,
+            "ref_high": 20
+          },
+          {
+            "name": "İdrar Albümin/Kreatinin",
+            "value": 4,
+            "unit": "mg/g crea",
+            "ref_low": 0,
+            "ref_high": 30
+          },
+          {
+            "name": "Üre",
+            "value": 40,
+            "unit": "mg/dL",
+            "ref_low": 15,
+            "ref_high": 39
+          },
+          {
+            "name": "Kalsiyum",
+            "value": 9.3,
+            "unit": "mg/dL",
+            "ref_low": 8.6,
+            "ref_high": 10.2
+          },
+          {
+            "name": "Demir",
+            "value": 85,
+            "unit": "ug/dL",
+            "ref_low": 60,
+            "ref_high": 160
+          }
+        ]
+      },
+      "scores": {
+        "date": {
+          "expected": "2025-05-15",
+          "actual": "2025-05-15",
+          "match": true
+        },
+        "metrics": {
+          "expected": 53,
+          "extracted": 53,
+          "matched": 50,
+          "missed": [
+            "İdrar Nitrit",
+            "İdrar Lökosit Esteraz",
+            "Klorür"
+          ],
+          "hallucinated": [
+            "İdrar Esteraz",
+            "Kalsiyum",
+            "Demir"
+          ]
+        },
+        "values": {
+          "correct": 49,
+          "wrong": 1,
+          "accuracy": "98.0%",
+          "errors": [
+            {
+              "name": "Üre",
+              "expected": 28,
+              "actual": 40
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

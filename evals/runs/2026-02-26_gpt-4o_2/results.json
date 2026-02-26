@@ -1,12 +1,13 @@
 {
   "config": {
     "model": "gpt-4o",
-    "prompt_hash": "-37c88cbb",
-    "date": "2026-02-25T22:20:58.230Z"
+    "prompt_hash": "-73b61fee",
+    "date": "2026-02-26T12:28:58.011Z"
   },
   "results": [
     {
       "case": "2025-06-23_Enabiz-Tahlilleri",
+      "pageType": "vector",
       "output": {
         "sample_date": "2025-06-23",
         "metrics": [
@@ -39,7 +40,7 @@
             "ref_high": 150
           },
           {
-            "name": "Bilirubin",
+            "name": "Total Bilirubin",
             "value": 0.47,
             "unit": "mg/dL",
             "ref_low": 0.2,
@@ -47,22 +48,22 @@
           },
           {
             "name": "Glukoz",
-            "value": 192,
+            "value": 179,
             "unit": "mg/dL",
-            "ref_low": 65,
-            "ref_high": 95
+            "ref_low": 70,
+            "ref_high": 105
           },
           {
             "name": "Lökosit",
             "value": 60.59,
-            "unit": "10^3/μL",
+            "unit": "10^3/µL",
             "ref_low": 4.23,
             "ref_high": 9.07
           },
           {
             "name": "Eritrosit",
             "value": 2.87,
-            "unit": "10^3/μL",
+            "unit": "10^3/µL",
             "ref_low": 4.63,
             "ref_high": 6.08
           },
@@ -76,7 +77,7 @@
           {
             "name": "Trombosit",
             "value": 72,
-            "unit": "10^3/μL",
+            "unit": "10^3/µL",
             "ref_low": 160,
             "ref_high": 340
           },
@@ -153,7 +154,7 @@
           {
             "name": "Eozinofil",
             "value": 0,
-            "unit": "10^3/μL",
+            "unit": "10^3/µL",
             "ref_low": 0.04,
             "ref_high": 0.54
           },
@@ -167,7 +168,7 @@
           {
             "name": "Nötrofil",
             "value": 4.45,
-            "unit": "10^3/μL",
+            "unit": "10^3/µL",
             "ref_low": 1.78,
             "ref_high": 5.38
           },
@@ -181,14 +182,14 @@
           {
             "name": "Lenfosit",
             "value": 56,
-            "unit": "10^3/μL",
+            "unit": "10^3/µL",
             "ref_low": 1.32,
             "ref_high": 3.57
           },
           {
             "name": "Bazofil",
             "value": 0.02,
-            "unit": "10^3/μL",
+            "unit": "10^3/µL",
             "ref_low": 0.01,
             "ref_high": 0.08
           },
@@ -202,12 +203,12 @@
           {
             "name": "Monosit",
             "value": 0.12,
-            "unit": "10^3/μL",
+            "unit": "10^3/µL",
             "ref_low": 0.3,
             "ref_high": 0.82
           },
           {
-            "name": "Kalsiyum (Ca)",
+            "name": "Kalsiyum",
             "value": 8.2,
             "unit": "mg/dL",
             "ref_low": 8.4,
@@ -235,11 +236,11 @@
             "ref_high": null
           },
           {
-            "name": "Sodyum",
-            "value": 136,
+            "name": "Kan Gazı Sodyum",
+            "value": 133.6,
             "unit": "mmol/L",
             "ref_low": 136,
-            "ref_high": 145
+            "ref_high": 146
           },
           {
             "name": "PCO2",
@@ -256,6 +257,13 @@
             "ref_high": 108
           },
           {
+            "name": "Kan Gazı Glukoz",
+            "value": 192,
+            "unit": "mg/dL",
+            "ref_low": 65,
+            "ref_high": 95
+          },
+          {
             "name": "Laktat",
             "value": 1.4,
             "unit": "mmol/L",
@@ -263,21 +271,21 @@
             "ref_high": 2.5
           },
           {
-            "name": "SBC",
+            "name": "HCO3",
             "value": 23.9,
             "unit": "mmol/L",
-            "ref_low": 0,
-            "ref_high": 0
+            "ref_low": 21,
+            "ref_high": 28
           },
           {
-            "name": "Kalsiyum",
+            "name": "Kan Gazı Kalsiyum",
             "value": 1.16,
             "unit": "mmol/L",
             "ref_low": 1.09,
             "ref_high": 1.3
           },
           {
-            "name": "Klorür",
+            "name": "Kan Gazı Klorür",
             "value": 107.6,
             "unit": "mmol/L",
             "ref_low": 98,
@@ -291,53 +299,25 @@
             "ref_high": 29
           },
           {
-            "name": "BE-ecf",
-            "value": -1.4,
-            "unit": "mmol/L",
-            "ref_low": 0,
-            "ref_high": 0
-          },
-          {
-            "name": "BE-b",
-            "value": -0.4,
-            "unit": "mmol/L",
-            "ref_low": -2,
-            "ref_high": 3
-          },
-          {
-            "name": "Magnezyum",
-            "value": 1.98,
+            "name": "Kan Gazı Magnezyum",
+            "value": 1.4,
             "unit": "mg/dL",
-            "ref_low": 1.6,
-            "ref_high": 2.6
+            "ref_low": 1.09,
+            "ref_high": 1.45
           },
           {
-            "name": "Potasyum",
-            "value": 5.4,
+            "name": "Kan Gazı Potasyum",
+            "value": 5.35,
             "unit": "mmol/L",
             "ref_low": 3.5,
             "ref_high": 5.1
           },
           {
-            "name": "Gap_K",
-            "value": 7.4,
-            "unit": "null",
-            "ref_low": null,
-            "ref_high": null
-          },
-          {
             "name": "pH",
             "value": 7.379,
-            "unit": "null",
+            "unit": null,
             "ref_low": 7.35,
             "ref_high": 7.45
-          },
-          {
-            "name": "HCO3",
-            "value": 23.9,
-            "unit": "mmol/L",
-            "ref_low": 21,
-            "ref_high": 28
           },
           {
             "name": "Üre",
@@ -354,6 +334,13 @@
             "ref_high": 20
           },
           {
+            "name": "Magnezyum",
+            "value": 1.98,
+            "unit": "mg/dL",
+            "ref_low": 1.6,
+            "ref_high": 2.6
+          },
+          {
             "name": "Ürik Asit",
             "value": 4.6,
             "unit": "mg/dL",
@@ -361,7 +348,21 @@
             "ref_high": 6
           },
           {
-            "name": "Bilirubin (Direkt)",
+            "name": "Sodyum",
+            "value": 136,
+            "unit": "mmol/L",
+            "ref_low": 136,
+            "ref_high": 145
+          },
+          {
+            "name": "Potasyum",
+            "value": 5.4,
+            "unit": "mmol/L",
+            "ref_low": 3.5,
+            "ref_high": 5.1
+          },
+          {
+            "name": "Direkt Bilirubin",
             "value": 0.17,
             "unit": "mg/dL",
             "ref_low": 0,
@@ -383,27 +384,34 @@
           "match": true
         },
         "metrics": {
-          "expected": 56,
+          "expected": 57,
           "extracted": 52,
-          "matched": 52,
+          "matched": 47,
           "missed": [
-            "Kan Gazı Sodyum",
+            "Eozinofil#",
+            "Nötrofil#",
+            "Lenfosit#",
+            "Bazofil#",
+            "Monosit#",
+            "SBC",
+            "BE-ecf",
+            "BE-b",
             "Kan Gazı Hematokrit",
-            "Kan Gazı Magnezyum",
-            "Kan Gazı Potasyum"
+            "Gap_K"
           ],
-          "hallucinated": []
+          "hallucinated": [
+            "Eozinofil",
+            "Nötrofil",
+            "Lenfosit",
+            "Bazofil",
+            "Monosit"
+          ]
         },
         "values": {
-          "correct": 50,
-          "wrong": 2,
-          "accuracy": "96.2%",
+          "correct": 46,
+          "wrong": 1,
+          "accuracy": "97.9%",
           "errors": [
-            {
-              "name": "Glukoz",
-              "expected": 179,
-              "actual": 192
-            },
             {
               "name": "Hematokrit",
               "expected": 29.7,
@@ -415,27 +423,28 @@
     },
     {
       "case": "2025-07-21_kan_2",
+      "pageType": "image-based",
       "output": {
         "sample_date": "2025-07-21",
         "metrics": [
           {
             "name": "Sedimentasyon",
             "value": 42,
-            "unit": "H",
+            "unit": "mm/h",
             "ref_low": null,
             "ref_high": 20
           },
           {
             "name": "Eritrosit",
             "value": 3.11,
-            "unit": "10^3/uL",
+            "unit": "10^3/µL",
             "ref_low": 4.63,
             "ref_high": 6.08
           },
           {
             "name": "Hemoglobin",
             "value": 10,
-            "unit": "g/dL",
+            "unit": "gr/dL",
             "ref_low": 13.7,
             "ref_high": 17.5
           },
@@ -456,7 +465,7 @@
           {
             "name": "MCH",
             "value": 32.2,
-            "unit": "pL",
+            "unit": "pg",
             "ref_low": 25.7,
             "ref_high": 32.2
           },
@@ -477,7 +486,7 @@
           {
             "name": "Lökosit",
             "value": 1.25,
-            "unit": "10^3/uL",
+            "unit": "10^3/µL",
             "ref_low": 4.23,
             "ref_high": 9.07
           },
@@ -491,7 +500,7 @@
           {
             "name": "Nötrofil#",
             "value": 0.82,
-            "unit": "10^3/uL",
+            "unit": "10^3/µL",
             "ref_low": 1.78,
             "ref_high": 5.38
           },
@@ -499,19 +508,19 @@
             "name": "Lenfosit%",
             "value": 14.4,
             "unit": "%",
-            "ref_low": 18.1,
-            "ref_high": 35.1
+            "ref_low": 21.8,
+            "ref_high": 53.1
           },
           {
             "name": "Lenfosit#",
             "value": 0.18,
-            "unit": "10^3/uL",
+            "unit": "10^3/µL",
             "ref_low": 1.32,
             "ref_high": 3.57
           },
           {
             "name": "Monosit%",
-            "value": 17.3,
+            "value": 18.4,
             "unit": "%",
             "ref_low": 5.3,
             "ref_high": 12.2
@@ -519,21 +528,21 @@
           {
             "name": "Monosit#",
             "value": 0.23,
-            "unit": "10^3/uL",
-            "ref_low": 0.29,
-            "ref_high": 0.85
+            "unit": "10^3/μL",
+            "ref_low": 0.3,
+            "ref_high": 0.82
           },
           {
             "name": "Eozinofil%",
             "value": 0.8,
             "unit": "%",
-            "ref_low": 0.8,
-            "ref_high": 7
+            "ref_low": 0,
+            "ref_high": 7.8
           },
           {
             "name": "Eozinofil#",
             "value": 0.01,
-            "unit": "10^3/uL",
+            "unit": "10^3/μL",
             "ref_low": 0.04,
             "ref_high": 0.54
           },
@@ -547,21 +556,21 @@
           {
             "name": "Bazofil#",
             "value": 0.01,
-            "unit": "10^3/uL",
+            "unit": "10^3/μL",
             "ref_low": 0.01,
             "ref_high": 0.08
           },
           {
             "name": "Trombosit",
             "value": 100,
-            "unit": "10^3/uL",
+            "unit": "10^3/μL",
             "ref_low": 160,
             "ref_high": 340
           },
           {
             "name": "PCT",
             "value": 0.1,
-            "unit": "L",
+            "unit": "%",
             "ref_low": 0.17,
             "ref_high": 0.32
           },
@@ -575,40 +584,40 @@
           {
             "name": "PDW",
             "value": 9.4,
-            "unit": "L",
+            "unit": null,
             "ref_low": 10.1,
             "ref_high": 16.1
           },
           {
             "name": "Glukoz",
             "value": 136,
-            "unit": "H",
+            "unit": "mg/dL",
             "ref_low": 70,
             "ref_high": 105
           },
           {
             "name": "Üre",
             "value": 61,
-            "unit": "H",
+            "unit": "mg/dL",
             "ref_low": 13,
             "ref_high": 43
           },
           {
             "name": "BUN",
             "value": 28.5,
-            "unit": "H",
+            "unit": "mg/dL",
             "ref_low": 6,
             "ref_high": 20
           },
           {
             "name": "Kreatinin",
             "value": 1.98,
-            "unit": "H",
+            "unit": "mg/dL",
             "ref_low": 0.72,
             "ref_high": 1.25
           },
           {
-            "name": "Ürik asit",
+            "name": "Ürik Asit",
             "value": 3.4,
             "unit": "mg/dL",
             "ref_low": 2.6,
@@ -617,7 +626,7 @@
           {
             "name": "Sodyum",
             "value": 135,
-            "unit": "L",
+            "unit": "mmol/L",
             "ref_low": 136,
             "ref_high": 145
           },
@@ -645,12 +654,12 @@
           {
             "name": "Total Protein",
             "value": 54,
-            "unit": "L",
+            "unit": "g/L",
             "ref_low": 64,
             "ref_high": 83
           },
           {
-            "name": "Albumin",
+            "name": "Albümin",
             "value": 38,
             "unit": "g/L",
             "ref_low": 35,
@@ -700,21 +709,16 @@
           "hallucinated": []
         },
         "values": {
-          "correct": 37,
-          "wrong": 1,
-          "accuracy": "97.4%",
-          "errors": [
-            {
-              "name": "Monosit%",
-              "expected": 18.4,
-              "actual": 17.3
-            }
-          ]
+          "correct": 38,
+          "wrong": 0,
+          "accuracy": "100.0%",
+          "errors": []
         }
       }
     },
     {
       "case": "2025-07-24_Enabiz-Tahlilleri",
+      "pageType": "vector",
       "output": {
         "sample_date": "2025-07-24",
         "metrics": [
@@ -736,7 +740,7 @@
             "name": "BASO%",
             "value": 0.2,
             "unit": "%",
-            "ref_low": 0.2,
+            "ref_low": 0,
             "ref_high": 1.2
           },
           {
@@ -775,14 +779,14 @@
             "ref_high": 42.3
           },
           {
-            "name": "EOS%",
+            "name": "Eozinofil%",
             "value": 0.1,
             "unit": "%",
             "ref_low": 0.8,
             "ref_high": 7
           },
           {
-            "name": "MON#",
+            "name": "Monosit#",
             "value": 0.96,
             "unit": "10^9/L",
             "ref_low": 0.3,
@@ -803,7 +807,7 @@
             "ref_high": 43.9
           },
           {
-            "name": "EOS#",
+            "name": "Eozinofil#",
             "value": 0.01,
             "unit": "10^9/L",
             "ref_low": 0.04,
@@ -831,21 +835,21 @@
             "ref_high": 12.4
           },
           {
-            "name": "NEU%",
+            "name": "Nötrofil%",
             "value": 85.2,
             "unit": "%",
             "ref_low": 34,
             "ref_high": 67.9
           },
           {
-            "name": "LYM#",
+            "name": "Lenfosit#",
             "value": 0.99,
             "unit": "10^9/L",
             "ref_low": 1.32,
             "ref_high": 3.57
           },
           {
-            "name": "LYM%",
+            "name": "Lenfosit%",
             "value": 7.4,
             "unit": "%",
             "ref_low": 21.8,
@@ -859,7 +863,7 @@
             "ref_high": 32.2
           },
           {
-            "name": "IGRAN%",
+            "name": "İGRAN%",
             "value": 4.2,
             "unit": "%",
             "ref_low": null,
@@ -873,14 +877,14 @@
             "ref_high": 14.4
           },
           {
-            "name": "MON%",
+            "name": "Monosit%",
             "value": 7.1,
             "unit": "%",
             "ref_low": 5.3,
             "ref_high": 12.2
           },
           {
-            "name": "NEU#",
+            "name": "Nötrofil#",
             "value": 11.45,
             "unit": "10^9/L",
             "ref_low": 1.78,
@@ -896,7 +900,7 @@
           {
             "name": "Protein",
             "value": 55.82,
-            "unit": "g/L",
+            "unit": null,
             "ref_low": null,
             "ref_high": null
           },
@@ -915,7 +919,7 @@
             "ref_high": 10.6
           },
           {
-            "name": "Ggt (Gamma Glutamil Transferaz)",
+            "name": "GGT",
             "value": 15,
             "unit": "U/L",
             "ref_low": 0,
@@ -924,19 +928,19 @@
           {
             "name": "Albümin",
             "value": 36.55,
-            "unit": "g/L",
+            "unit": null,
             "ref_low": null,
             "ref_high": null
           },
           {
-            "name": "Üre",
+            "name": "BUN",
             "value": 63,
             "unit": "mg/dL",
             "ref_low": 17,
             "ref_high": 43
           },
           {
-            "name": "Ldh (Laktik Dehidrogenaz)",
+            "name": "LDH",
             "value": 260,
             "unit": "U/L",
             "ref_low": 0,
@@ -971,7 +975,7 @@
             "ref_high": 5.1
           },
           {
-            "name": "Bilirubin",
+            "name": "Total Bilirubin",
             "value": 0.67,
             "unit": "mg/dL",
             "ref_low": 0.3,
@@ -1009,12 +1013,26 @@
         "metrics": {
           "expected": 40,
           "extracted": 40,
-          "matched": 40,
-          "missed": [],
-          "hallucinated": []
+          "matched": 34,
+          "missed": [
+            "Bazofil%",
+            "Bazofil#",
+            "IGRAN%",
+            "Total Protein",
+            "Direkt Bilirubin",
+            "Üre"
+          ],
+          "hallucinated": [
+            "BASO%",
+            "BASO#",
+            "İGRAN%",
+            "Protein",
+            "Bilirubin (Direkt)",
+            "BUN"
+          ]
         },
         "values": {
-          "correct": 40,
+          "correct": 34,
           "wrong": 0,
           "accuracy": "100.0%",
           "errors": []
@@ -1023,13 +1041,14 @@
     },
     {
       "case": "2025-08-29",
+      "pageType": "image-based",
       "output": {
         "sample_date": "2025-08-29",
         "metrics": [
           {
             "name": "Eritrosit",
             "value": 3.09,
-            "unit": "10^3/uL",
+            "unit": "10^3/µL",
             "ref_low": 4.63,
             "ref_high": 6.08
           },
@@ -1043,13 +1062,13 @@
           {
             "name": "Hematokrit",
             "value": 28.1,
-            "unit": "L",
+            "unit": "%",
             "ref_low": 40.1,
             "ref_high": 51
           },
           {
             "name": "MCV",
-            "value": 90,
+            "value": 90.9,
             "unit": "fL",
             "ref_low": 79,
             "ref_high": 92.2
@@ -1070,15 +1089,15 @@
           },
           {
             "name": "RDW",
-            "value": 11.4,
+            "value": 16.4,
             "unit": "%",
             "ref_low": 11.6,
             "ref_high": 14.4
           },
           {
             "name": "Lökosit",
-            "value": 0.8,
-            "unit": "10^3/uL",
+            "value": 0.08,
+            "unit": "10^3/µL",
             "ref_low": 4.23,
             "ref_high": 9.07
           },
@@ -1091,8 +1110,8 @@
           },
           {
             "name": "Nötrofil#",
-            "value": 0.2,
-            "unit": "10^3/uL",
+            "value": 0.02,
+            "unit": "10^3/µL",
             "ref_low": 1.78,
             "ref_high": 5.38
           },
@@ -1105,8 +1124,8 @@
           },
           {
             "name": "Lenfosit#",
-            "value": 0.5,
-            "unit": "10^3/uL",
+            "value": 0.05,
+            "unit": "10^3/µL",
             "ref_low": 1.32,
             "ref_high": 3.57
           },
@@ -1115,12 +1134,12 @@
             "value": 12.5,
             "unit": "%",
             "ref_low": 5.3,
-            "ref_high": 12.2
+            "ref_high": 12.3
           },
           {
             "name": "Monosit#",
-            "value": 0.1,
-            "unit": "10^3/uL",
+            "value": 0.01,
+            "unit": "10^3/µL",
             "ref_low": 0.3,
             "ref_high": 0.82
           },
@@ -1128,36 +1147,8 @@
             "name": "Eozinofil%",
             "value": 0,
             "unit": "%",
-            "ref_low": 0.8,
-            "ref_high": 7.2
-          },
-          {
-            "name": "Eozinofil#",
-            "value": 0,
-            "unit": "10^3/uL",
-            "ref_low": 0.04,
-            "ref_high": 0.54
-          },
-          {
-            "name": "Bazofil%",
-            "value": 0,
-            "unit": "%",
-            "ref_low": 0.2,
-            "ref_high": 1.2
-          },
-          {
-            "name": "Bazofil#",
-            "value": 0,
-            "unit": "10^3/uL",
-            "ref_low": 0.01,
-            "ref_high": 0.08
-          },
-          {
-            "name": "Trombosit",
-            "value": 171,
-            "unit": "10^3/uL",
-            "ref_low": 160,
-            "ref_high": 340
+            "ref_low": null,
+            "ref_high": null
           },
           {
             "name": "Glukoz",
@@ -1183,12 +1174,12 @@
           {
             "name": "Kreatinin",
             "value": 1.63,
-            "unit": "H",
+            "unit": "mg/dL",
             "ref_low": 0.72,
             "ref_high": 1.25
           },
           {
-            "name": "Ürik asit",
+            "name": "Ürik Asit",
             "value": 2.5,
             "unit": "mg/dL",
             "ref_low": 2.6,
@@ -1237,7 +1228,7 @@
             "ref_high": 83
           },
           {
-            "name": "Albumin",
+            "name": "Albümin",
             "value": 29,
             "unit": "g/L",
             "ref_low": 35,
@@ -1247,8 +1238,8 @@
             "name": "AST",
             "value": 16,
             "unit": "U/L",
-            "ref_low": null,
-            "ref_high": 35
+            "ref_low": 5,
+            "ref_high": 34
           },
           {
             "name": "ALT",
@@ -1274,7 +1265,7 @@
           {
             "name": "LDH",
             "value": 247,
-            "unit": "H/L",
+            "unit": "U/L",
             "ref_low": 125,
             "ref_high": 243
           }
@@ -1288,57 +1279,30 @@
         },
         "metrics": {
           "expected": 36,
-          "extracted": 36,
-          "matched": 36,
-          "missed": [],
-          "hallucinated": []
+          "extracted": 32,
+          "matched": 31,
+          "missed": [
+            "Eozinofil#",
+            "Bazofil%",
+            "Bazofil#",
+            "Trombosit",
+            "Alkalen Fosfataz"
+          ],
+          "hallucinated": [
+            "ALP"
+          ]
         },
         "values": {
-          "correct": 29,
-          "wrong": 7,
-          "accuracy": "80.6%",
-          "errors": [
-            {
-              "name": "MCV",
-              "expected": 90.9,
-              "actual": 90
-            },
-            {
-              "name": "RDW",
-              "expected": 16.4,
-              "actual": 11.4
-            },
-            {
-              "name": "Lökosit",
-              "expected": 0.08,
-              "actual": 0.8
-            },
-            {
-              "name": "Nötrofil#",
-              "expected": 0.02,
-              "actual": 0.2
-            },
-            {
-              "name": "Lenfosit#",
-              "expected": 0.05,
-              "actual": 0.5
-            },
-            {
-              "name": "Monosit#",
-              "expected": 0.01,
-              "actual": 0.1
-            },
-            {
-              "name": "Trombosit",
-              "expected": 17,
-              "actual": 171
-            }
-          ]
+          "correct": 31,
+          "wrong": 0,
+          "accuracy": "100.0%",
+          "errors": []
         }
       }
     },
     {
       "case": "2025-09-29-2",
+      "pageType": "image-based",
       "output": {
         "sample_date": "2025-09-29",
         "metrics": [
@@ -1347,7 +1311,119 @@
             "value": 4.8,
             "unit": "mg/L",
             "ref_low": null,
-            "ref_high": 5
+            "ref_high": 18
+          },
+          {
+            "name": "Lökosit",
+            "value": 10.7,
+            "unit": "10^3/uL",
+            "ref_low": 4,
+            "ref_high": 10
+          },
+          {
+            "name": "Eritrosit",
+            "value": 5.02,
+            "unit": "mil/uL",
+            "ref_low": 4.2,
+            "ref_high": 6.3
+          },
+          {
+            "name": "Hemoglobin",
+            "value": 13.5,
+            "unit": "g/dL",
+            "ref_low": 13,
+            "ref_high": 18
+          },
+          {
+            "name": "Hematokrit",
+            "value": 39.5,
+            "unit": "%",
+            "ref_low": 39,
+            "ref_high": 52
+          },
+          {
+            "name": "MCV",
+            "value": 78.7,
+            "unit": "fL",
+            "ref_low": 80,
+            "ref_high": 96
+          },
+          {
+            "name": "MCH",
+            "value": 26.9,
+            "unit": "pg",
+            "ref_low": 27,
+            "ref_high": 33
+          },
+          {
+            "name": "MCHC",
+            "value": 34.1,
+            "unit": "g/dL",
+            "ref_low": 33,
+            "ref_high": 36
+          },
+          {
+            "name": "RDW",
+            "value": 14,
+            "unit": "%",
+            "ref_low": 11.5,
+            "ref_high": 14.5
+          },
+          {
+            "name": "Trombosit",
+            "value": 270,
+            "unit": "mil/uL",
+            "ref_low": 150,
+            "ref_high": 450
+          },
+          {
+            "name": "MPV",
+            "value": 9.5,
+            "unit": "fL",
+            "ref_low": 7.5,
+            "ref_high": 11.5
+          },
+          {
+            "name": "Glukoz",
+            "value": 96,
+            "unit": "mg/dL",
+            "ref_low": 70,
+            "ref_high": 110
+          },
+          {
+            "name": "Üre",
+            "value": 28,
+            "unit": "mg/dL",
+            "ref_low": 15,
+            "ref_high": 50
+          },
+          {
+            "name": "Kreatinin",
+            "value": 1.1,
+            "unit": "mg/dL",
+            "ref_low": 0.7,
+            "ref_high": 1.3
+          },
+          {
+            "name": "Sodyum",
+            "value": 140,
+            "unit": "mmol/L",
+            "ref_low": 136,
+            "ref_high": 145
+          },
+          {
+            "name": "Potasyum",
+            "value": 4.5,
+            "unit": "mmol/L",
+            "ref_low": 3.5,
+            "ref_high": 5.1
+          },
+          {
+            "name": "Klorür",
+            "value": 102,
+            "unit": "mmol/L",
+            "ref_low": 98,
+            "ref_high": 107
           }
         ]
       },
@@ -1359,10 +1435,27 @@
         },
         "metrics": {
           "expected": 1,
-          "extracted": 1,
+          "extracted": 17,
           "matched": 1,
           "missed": [],
-          "hallucinated": []
+          "hallucinated": [
+            "Lökosit",
+            "Eritrosit",
+            "Hemoglobin",
+            "Hematokrit",
+            "MCV",
+            "MCH",
+            "MCHC",
+            "RDW",
+            "Trombosit",
+            "MPV",
+            "Glukoz",
+            "Üre",
+            "Kreatinin",
+            "Sodyum",
+            "Potasyum",
+            "Klorür"
+          ]
         },
         "values": {
           "correct": 1,
@@ -1374,6 +1467,7 @@
     },
     {
       "case": "2026-01-11-Y_KSEL_OVALI_Sonuc",
+      "pageType": "image-based",
       "output": {
         "sample_date": "2026-01-11",
         "metrics": [
@@ -1394,9 +1488,9 @@
           {
             "name": "Hematokrit",
             "value": 26.8,
-            "unit": "L",
+            "unit": "%",
             "ref_low": 40.1,
-            "ref_high": 55.7
+            "ref_high": 51
           },
           {
             "name": "MCV",
@@ -1422,7 +1516,7 @@
           {
             "name": "RDW",
             "value": 16.9,
-            "unit": "H",
+            "unit": "%",
             "ref_low": 11.6,
             "ref_high": 14.4
           },
@@ -1479,57 +1573,8 @@
             "name": "Eozinofil%",
             "value": 0.5,
             "unit": "%",
-            "ref_low": 0.8,
-            "ref_high": 7
-          },
-          {
-            "name": "Eozinofil#",
-            "value": 0.01,
-            "unit": "10^3/µL",
-            "ref_low": 0.04,
-            "ref_high": 0.54
-          },
-          {
-            "name": "Bazofil%",
-            "value": 0.1,
-            "unit": "%",
-            "ref_low": 0.2,
-            "ref_high": 1.2
-          },
-          {
-            "name": "Bazofil#",
-            "value": 0,
-            "unit": "10^3/µL",
-            "ref_low": 0.01,
-            "ref_high": 0.08
-          },
-          {
-            "name": "Trombosit",
-            "value": 24,
-            "unit": "10^3/µL",
-            "ref_low": 160,
-            "ref_high": 340
-          },
-          {
-            "name": "PCT",
-            "value": 0.03,
-            "unit": "%",
-            "ref_low": 0.17,
-            "ref_high": 0.32
-          },
-          {
-            "name": "MPV",
-            "value": 11.9,
-            "unit": "fL",
-            "ref_low": 9.4,
-            "ref_high": 12.4
-          },
-          {
-            "name": "PDW",
-            "value": 14,
-            "unit": null,
-            "ref_low": 10,
-            "ref_high": 16.1
+            "ref_low": 0,
+            "ref_high": 6.4
           },
           {
             "name": "Üre",
@@ -1632,43 +1677,49 @@
         },
         "metrics": {
           "expected": 35,
-          "extracted": 35,
-          "matched": 35,
-          "missed": [],
-          "hallucinated": []
+          "extracted": 28,
+          "matched": 27,
+          "missed": [
+            "Eozinofil#",
+            "Bazofil%",
+            "Bazofil#",
+            "Trombosit",
+            "PCT",
+            "MPV",
+            "PDW",
+            "Alkalen Fosfataz"
+          ],
+          "hallucinated": [
+            "ALP"
+          ]
         },
         "values": {
-          "correct": 34,
-          "wrong": 1,
-          "accuracy": "97.1%",
-          "errors": [
-            {
-              "name": "Bazofil%",
-              "expected": 0,
-              "actual": 0.1
-            }
-          ]
+          "correct": 27,
+          "wrong": 0,
+          "accuracy": "100.0%",
+          "errors": []
         }
       }
     },
     {
       "case": "informes_OVAL0860107001_20241014",
+      "pageType": "vector",
       "output": {
-        "sample_date": "2024-10-24",
+        "sample_date": "2023-10-24",
         "metrics": [
+          {
+            "name": "Eritrosit",
+            "value": 5.62,
+            "unit": "×10E12/L",
+            "ref_low": 4.5,
+            "ref_high": 5.9
+          },
           {
             "name": "Hemoglobin",
             "value": 15.6,
             "unit": "g/dL",
             "ref_low": 13,
             "ref_high": 17
-          },
-          {
-            "name": "Eritrosit",
-            "value": 0,
-            "unit": "Eri/µL",
-            "ref_low": 0,
-            "ref_high": 10
           },
           {
             "name": "Hematokrit",
@@ -1678,14 +1729,14 @@
             "ref_high": 51
           },
           {
-            "name": "MCV (VGM)",
+            "name": "MCV",
             "value": 85.4,
             "unit": "fL",
             "ref_low": 80,
             "ref_high": 98
           },
           {
-            "name": "MCH (HCM)",
+            "name": "MCH",
             "value": 27.8,
             "unit": "pg",
             "ref_low": 27,
@@ -1699,11 +1750,25 @@
             "ref_high": 36
           },
           {
-            "name": "RDW (ADE)",
+            "name": "RDW",
             "value": 11.9,
             "unit": "%",
             "ref_low": 11,
             "ref_high": 15
+          },
+          {
+            "name": "Eritroblast%",
+            "value": 0,
+            "unit": "%",
+            "ref_low": 0,
+            "ref_high": 2
+          },
+          {
+            "name": "Eritroblast#",
+            "value": 0,
+            "unit": "10E9/L",
+            "ref_low": 0,
+            "ref_high": 1
           },
           {
             "name": "Lökosit",
@@ -1797,7 +1862,7 @@
             "ref_high": 12
           },
           {
-            "name": "ESR (Sedimantasyon)",
+            "name": "Sedimentasyon",
             "value": 18,
             "unit": "mm/h",
             "ref_low": 0,
@@ -1805,21 +1870,21 @@
           },
           {
             "name": "Glukoz",
-            "value": 0,
+            "value": 98,
             "unit": "mg/dL",
-            "ref_low": 0,
-            "ref_high": 50
+            "ref_low": 74,
+            "ref_high": 106
           },
           {
             "name": "Kreatinin",
-            "value": 167,
+            "value": 0.93,
             "unit": "mg/dL",
-            "ref_low": null,
-            "ref_high": null
+            "ref_low": 0.6,
+            "ref_high": 1.1
           },
           {
-            "name": "Glomerular Filtrasyon Hızı",
-            "value": 90,
+            "name": "eGFR",
+            "value": null,
             "unit": "ml/min/1.73 m2",
             "ref_low": null,
             "ref_high": null
@@ -1878,7 +1943,7 @@
             "value": 242,
             "unit": "mg/dL",
             "ref_low": null,
-            "ref_high": null
+            "ref_high": 200
           },
           {
             "name": "HDL Kolesterol",
@@ -1899,10 +1964,10 @@
             "value": 140,
             "unit": "mg/dL",
             "ref_low": null,
-            "ref_high": 150
+            "ref_high": 200
           },
           {
-            "name": "C-reaktif Protein",
+            "name": "CRP",
             "value": 0.28,
             "unit": "mg/dL",
             "ref_low": 0,
@@ -1916,49 +1981,84 @@
             "ref_high": 4.78
           },
           {
-            "name": "Asetoasetat",
+            "name": "İdrar Dansitesi",
+            "value": 1.021,
+            "unit": null,
+            "ref_low": 1.005,
+            "ref_high": 1.035
+          },
+          {
+            "name": "İdrar Glukoz",
+            "value": 0,
+            "unit": "mg/dL",
+            "ref_low": 0,
+            "ref_high": 50
+          },
+          {
+            "name": "İdrar Asetoasetat",
             "value": 0,
             "unit": "mg/dL",
             "ref_low": 0,
             "ref_high": 5
           },
           {
-            "name": "Bilirubin",
+            "name": "İdrar Bilirubin",
             "value": 0,
             "unit": "mg/dL",
             "ref_low": 0,
             "ref_high": 0.2
           },
           {
-            "name": "Ürobilinojen",
+            "name": "İdrar Ürobilinojen",
             "value": 0,
             "unit": "mg/dL",
             "ref_low": 0,
             "ref_high": 1
           },
           {
-            "name": "Protein",
+            "name": "İdrar pH",
+            "value": 5,
+            "unit": null,
+            "ref_low": 5,
+            "ref_high": 8
+          },
+          {
+            "name": "İdrar Protein",
             "value": 0,
             "unit": "mg/dL",
             "ref_low": 0,
             "ref_high": 20
           },
           {
-            "name": "Esteraza lökosit",
+            "name": "İdrar Eritrosit",
+            "value": 0,
+            "unit": "Eri/µL",
+            "ref_low": 0,
+            "ref_high": 10
+          },
+          {
+            "name": "İdrar Esteraz Lökosit",
             "value": 0,
             "unit": "Leu/µL",
             "ref_low": 0,
             "ref_high": 25
           },
           {
-            "name": "Albümin",
+            "name": "İdrar Kreatinin",
+            "value": 167,
+            "unit": "mg/dL",
+            "ref_low": null,
+            "ref_high": null
+          },
+          {
+            "name": "İdrar Albümin",
             "value": 8,
             "unit": "mg/L",
             "ref_low": 0,
             "ref_high": 20
           },
           {
-            "name": "Albümin / Kreatinin",
+            "name": "İdrar Albümin/Kreatinin",
             "value": 5,
             "unit": "mg/g crea",
             "ref_low": 0,
@@ -1975,44 +2075,30 @@
       },
       "scores": {
         "date": {
-          "expected": "2024-10-24",
-          "actual": "2024-10-24",
-          "match": true
+          "expected": "2024-10-14",
+          "actual": "2023-10-24",
+          "match": false
         },
         "metrics": {
           "expected": 52,
-          "extracted": 45,
-          "matched": 45,
+          "extracted": 52,
+          "matched": 51,
           "missed": [
-            "Eritroblast%",
-            "Eritroblast#",
-            "İdrar Dansitesi",
-            "İdrar Glukozu",
-            "İdrar pH",
-            "İdrar Eritrosit",
-            "İdrar Kreatinin"
+            "İdrar Lökosit Esteraz"
           ],
-          "hallucinated": []
+          "hallucinated": [
+            "İdrar Esteraz Lökosit"
+          ]
         },
         "values": {
-          "correct": 42,
-          "wrong": 3,
-          "accuracy": "93.3%",
+          "correct": 50,
+          "wrong": 1,
+          "accuracy": "98.0%",
           "errors": [
             {
-              "name": "Eritrosit",
-              "expected": 5.62,
-              "actual": 0
-            },
-            {
-              "name": "Glukoz",
-              "expected": 98,
-              "actual": 0
-            },
-            {
-              "name": "Kreatinin",
-              "expected": 0.93,
-              "actual": 167
+              "name": "eGFR",
+              "expected": 90,
+              "actual": null
             }
           ]
         }
@@ -2020,8 +2106,9 @@
     },
     {
       "case": "informes_OVAL0860107001_20250207",
+      "pageType": "vector",
       "output": {
-        "sample_date": "2025-02-07",
+        "sample_date": "2025-07-02",
         "metrics": [
           {
             "name": "Eritrosit",
@@ -2043,6 +2130,34 @@
             "unit": "%",
             "ref_low": 39,
             "ref_high": 51
+          },
+          {
+            "name": "MCV",
+            "value": 87.7,
+            "unit": "fL",
+            "ref_low": 80,
+            "ref_high": 98
+          },
+          {
+            "name": "MCH",
+            "value": 28.6,
+            "unit": "pg",
+            "ref_low": 27,
+            "ref_high": 33.5
+          },
+          {
+            "name": "MCHC",
+            "value": 32.6,
+            "unit": "g/dL",
+            "ref_low": 31,
+            "ref_high": 36
+          },
+          {
+            "name": "RDW",
+            "value": 11.9,
+            "unit": "%",
+            "ref_low": 11,
+            "ref_high": 15
           },
           {
             "name": "Lökosit",
@@ -2129,21 +2244,21 @@
             "ref_high": 400
           },
           {
-            "name": "Ortalama Trombosit Hacmi",
+            "name": "MPV",
             "value": 11.5,
             "unit": "fL",
             "ref_low": 9.5,
             "ref_high": 12
           },
           {
-            "name": "Santrifüj Hızı (ESR)",
+            "name": "Sedimentasyon",
             "value": 16,
             "unit": "mm/h",
             "ref_low": 0,
             "ref_high": 15
           },
           {
-            "name": "Srm-Glukoz",
+            "name": "Glukoz",
             "value": 89,
             "unit": "mg/dL",
             "ref_low": 74,
@@ -2157,14 +2272,14 @@
             "ref_high": 1.1
           },
           {
-            "name": "Glomerüler Filtrasyon Hızı",
+            "name": "eGFR",
             "value": 86,
             "unit": "ml/min/1.73 m2",
             "ref_low": null,
             "ref_high": null
           },
           {
-            "name": "Ürat",
+            "name": "Ürik Asit",
             "value": 10.1,
             "unit": "mg/dL",
             "ref_low": 3.7,
@@ -2216,22 +2331,22 @@
             "name": "Kolesterol",
             "value": 247,
             "unit": "mg/dL",
-            "ref_low": null,
+            "ref_low": 200,
             "ref_high": 240
           },
           {
-            "name": "Kolesterol HDL",
+            "name": "Kolesterol d'HDL",
             "value": 42,
             "unit": "mg/dL",
             "ref_low": 40,
             "ref_high": null
           },
           {
-            "name": "Kolesterol LDL",
+            "name": "Kolesterol d'LDL",
             "value": 175,
             "unit": "mg/dL",
             "ref_low": null,
-            "ref_high": null
+            "ref_high": 130
           },
           {
             "name": "Trigliserit",
@@ -2241,7 +2356,7 @@
             "ref_high": 150
           },
           {
-            "name": "Protein C reaktif",
+            "name": "CRP",
             "value": 0.05,
             "unit": "mg/dL",
             "ref_low": 0,
@@ -2260,6 +2375,13 @@
             "unit": null,
             "ref_low": 1.005,
             "ref_high": 1.035
+          },
+          {
+            "name": "İdrar pH",
+            "value": 5,
+            "unit": null,
+            "ref_low": 5,
+            "ref_high": 8
           },
           {
             "name": "İdrar Kreatinin",
@@ -2294,33 +2416,33 @@
       "scores": {
         "date": {
           "expected": "2025-02-07",
-          "actual": "2025-02-07",
-          "match": true
+          "actual": "2025-07-02",
+          "match": false
         },
         "metrics": {
           "expected": 52,
-          "extracted": 38,
-          "matched": 38,
+          "extracted": 43,
+          "matched": 41,
           "missed": [
-            "MCV (VGM)",
-            "MCH (HCM)",
-            "MCHC",
-            "RDW (ADE)",
             "Eritroblast%",
             "Eritroblast#",
-            "İdrar Glukozu",
-            "Asetoasetat",
-            "Bilirubin",
-            "Ürobilinojen",
-            "İdrar pH",
-            "Protein",
+            "HDL Kolesterol",
+            "LDL Kolesterol",
+            "İdrar Glukoz",
+            "İdrar Asetoasetat",
+            "İdrar Bilirubin",
+            "İdrar Ürobilinojen",
+            "İdrar Protein",
             "İdrar Eritrosit",
-            "Esteraza lökosit"
+            "İdrar Lökosit Esteraz"
           ],
-          "hallucinated": []
+          "hallucinated": [
+            "Kolesterol d'HDL",
+            "Kolesterol d'LDL"
+          ]
         },
         "values": {
-          "correct": 38,
+          "correct": 41,
           "wrong": 0,
           "accuracy": "100.0%",
           "errors": []
@@ -2329,144 +2451,159 @@
     },
     {
       "case": "informes_OVAL0860107001_20250515",
+      "pageType": "vector",
       "output": {
         "sample_date": "2025-05-15",
         "metrics": [
           {
             "name": "Eritrosit",
-            "value": 5.25,
-            "unit": "x10E12/L",
+            "value": 5.1,
+            "unit": "x10^6/uL",
             "ref_low": 4.5,
             "ref_high": 5.9
           },
           {
             "name": "Hemoglobin",
-            "value": 15,
+            "value": 15.2,
             "unit": "g/dL",
-            "ref_low": 13,
-            "ref_high": 17
+            "ref_low": 13.5,
+            "ref_high": 17.5
           },
           {
             "name": "Hematokrit",
-            "value": 47.2,
+            "value": 45.3,
             "unit": "%",
-            "ref_low": 39,
-            "ref_high": 51
+            "ref_low": 41,
+            "ref_high": 53
           },
           {
-            "name": "VCM",
-            "value": 89.9,
+            "name": "MCV",
+            "value": 88.8,
             "unit": "fL",
             "ref_low": 80,
-            "ref_high": 98
+            "ref_high": 100
           },
           {
-            "name": "HCM",
-            "value": 28.6,
+            "name": "MCH",
+            "value": 29.5,
             "unit": "pg",
             "ref_low": 27,
-            "ref_high": 33.5
+            "ref_high": 33
           },
           {
-            "name": "Konsantrasyon HGB Küresel",
-            "value": 31.8,
+            "name": "MCHC",
+            "value": 33.9,
             "unit": "g/dL",
-            "ref_low": 31,
+            "ref_low": 32,
             "ref_high": 36
           },
           {
-            "name": "ADE",
-            "value": 12.8,
+            "name": "RDW",
+            "value": 13.5,
             "unit": "%",
-            "ref_low": 11,
-            "ref_high": 15
+            "ref_low": 11.5,
+            "ref_high": 14.5
+          },
+          {
+            "name": "Eritroblast%",
+            "value": 0,
+            "unit": "%",
+            "ref_low": 0,
+            "ref_high": 2
+          },
+          {
+            "name": "Eritroblast#",
+            "value": 0,
+            "unit": "10E9/L",
+            "ref_low": null,
+            "ref_high": null
           },
           {
             "name": "Lökosit",
-            "value": 7.69,
-            "unit": "x10E9/L",
+            "value": 7.4,
+            "unit": "x10^3/uL",
             "ref_low": 4,
-            "ref_high": 11
+            "ref_high": 10
           },
           {
             "name": "Nötrofil%",
-            "value": 48.8,
+            "value": 60,
             "unit": "%",
             "ref_low": 40,
-            "ref_high": 80
+            "ref_high": 70
           },
           {
             "name": "Lenfosit%",
-            "value": 41,
+            "value": 30,
             "unit": "%",
             "ref_low": 20,
-            "ref_high": 50
+            "ref_high": 45
           },
           {
             "name": "Monosit%",
-            "value": 9.2,
+            "value": 5,
             "unit": "%",
             "ref_low": 2,
-            "ref_high": 11
+            "ref_high": 8
           },
           {
             "name": "Eozinofil%",
-            "value": 0.5,
+            "value": 3,
             "unit": "%",
-            "ref_low": 0,
-            "ref_high": 5
+            "ref_low": 1,
+            "ref_high": 3
           },
           {
             "name": "Bazofil%",
             "value": 0.5,
             "unit": "%",
             "ref_low": 0,
-            "ref_high": 2
+            "ref_high": 1
           },
           {
             "name": "Nötrofil#",
             "value": 3.8,
-            "unit": "x10E9/L",
+            "unit": "x10^9/L",
             "ref_low": 2,
             "ref_high": 7
           },
           {
             "name": "Lenfosit#",
             "value": 3.2,
-            "unit": "x10E9/L",
+            "unit": "x10^9/L",
             "ref_low": 1.2,
             "ref_high": 3.5
           },
           {
             "name": "Monosit#",
             "value": 0.7,
-            "unit": "x10E9/L",
+            "unit": "x10^9/L",
             "ref_low": 0.1,
             "ref_high": 1
           },
           {
             "name": "Eozinofil#",
             "value": 0,
-            "unit": "x10E9/L",
+            "unit": "x10^9/L",
             "ref_low": 0,
             "ref_high": 0.5
           },
           {
             "name": "Bazofil#",
             "value": 0,
-            "unit": "x10E9/L",
+            "unit": "x10^9/L",
             "ref_low": 0,
             "ref_high": 0.2
           },
           {
             "name": "Trombosit",
-            "value": 249,
-            "unit": "x10E9/L",
-            "ref_low": 140,
-            "ref_high": 400
+            "value": 250,
+            "unit": "x10^3/uL",
+            "ref_low": 150,
+            "ref_high": 450
           },
           {
-            "name": "Volum Platelet",
+            "name": "MPV",
             "value": 10.8,
             "unit": "fL",
             "ref_low": 9.5,
@@ -2474,34 +2611,34 @@
           },
           {
             "name": "Glukoz",
-            "value": 92,
+            "value": 90,
             "unit": "mg/dL",
             "ref_low": 70,
             "ref_high": 100
           },
           {
             "name": "Kreatinin",
-            "value": 1.1,
+            "value": 1,
             "unit": "mg/dL",
-            "ref_low": 0.6,
+            "ref_low": 0.7,
             "ref_high": 1.3
           },
           {
-            "name": "Filtre GFR (CKD-EPI)",
-            "value": 90,
+            "name": "eGFR",
+            "value": null,
             "unit": "ml/min/1.73 m2",
             "ref_low": null,
             "ref_high": null
           },
           {
-            "name": "Ürat",
+            "name": "Ürik Asit",
             "value": 9.5,
             "unit": "mg/dL",
             "ref_low": 3.7,
             "ref_high": 9.2
           },
           {
-            "name": "Bilirubin",
+            "name": "Total Bilirubin",
             "value": 0.63,
             "unit": "mg/dL",
             "ref_low": 0.3,
@@ -2554,17 +2691,17 @@
             "value": 251,
             "unit": "mg/dL",
             "ref_low": null,
-            "ref_high": 200
+            "ref_high": 240
           },
           {
-            "name": "Kolesterol HDL",
+            "name": "HDL Kolesterol",
             "value": 55,
             "unit": "mg/dL",
             "ref_low": 40,
             "ref_high": null
           },
           {
-            "name": "Kolesterol LDL",
+            "name": "LDL Kolesterol",
             "value": 172,
             "unit": "mg/dL",
             "ref_low": null,
@@ -2579,13 +2716,13 @@
           },
           {
             "name": "TSH",
-            "value": 2.238,
-            "unit": "mU/L",
-            "ref_low": 0.55,
-            "ref_high": 4.78
+            "value": 2.5,
+            "unit": "uIU/mL",
+            "ref_low": 0.35,
+            "ref_high": 4.94
           },
           {
-            "name": "İdrar Yoğunluğu",
+            "name": "İdrar Dansitesi",
             "value": 1.021,
             "unit": null,
             "ref_low": 1.005,
@@ -2641,14 +2778,7 @@
             "ref_high": 10
           },
           {
-            "name": "İdrar Nitrit",
-            "value": 0,
-            "unit": null,
-            "ref_low": null,
-            "ref_high": null
-          },
-          {
-            "name": "İdrar Esteraz Lökosit",
+            "name": "İdrar Lökosit Esteraz",
             "value": 0,
             "unit": "Leu/µL",
             "ref_low": 0,
@@ -2677,17 +2807,31 @@
           },
           {
             "name": "Üre",
-            "value": 28,
+            "value": 40,
             "unit": "mg/dL",
-            "ref_low": 10,
-            "ref_high": 50
+            "ref_low": 15,
+            "ref_high": 45
           },
           {
-            "name": "Klor",
-            "value": 104,
+            "name": "Klorür",
+            "value": 102,
             "unit": "mmol/L",
             "ref_low": 98,
-            "ref_high": 107
+            "ref_high": 106
+          },
+          {
+            "name": "Kalsiyum",
+            "value": 9.5,
+            "unit": "mg/dL",
+            "ref_low": 8.5,
+            "ref_high": 10.5
+          },
+          {
+            "name": "CRP",
+            "value": 0.3,
+            "unit": "mg/dL",
+            "ref_low": 0,
+            "ref_high": 0.5
           }
         ]
       },
@@ -2699,19 +2843,101 @@
         },
         "metrics": {
           "expected": 53,
-          "extracted": 51,
-          "matched": 51,
+          "extracted": 54,
+          "matched": 52,
           "missed": [
-            "Eritroblast%",
-            "Eritroblast#"
+            "İdrar Nitrit"
           ],
-          "hallucinated": []
+          "hallucinated": [
+            "Kalsiyum",
+            "CRP"
+          ]
         },
         "values": {
-          "correct": 49,
-          "wrong": 2,
-          "accuracy": "96.1%",
+          "correct": 31,
+          "wrong": 21,
+          "accuracy": "59.6%",
           "errors": [
+            {
+              "name": "Eritrosit",
+              "expected": 5.25,
+              "actual": 5.1
+            },
+            {
+              "name": "Hemoglobin",
+              "expected": 15,
+              "actual": 15.2
+            },
+            {
+              "name": "Hematokrit",
+              "expected": 47.2,
+              "actual": 45.3
+            },
+            {
+              "name": "MCV",
+              "expected": 89.9,
+              "actual": 88.8
+            },
+            {
+              "name": "MCH",
+              "expected": 28.6,
+              "actual": 29.5
+            },
+            {
+              "name": "MCHC",
+              "expected": 31.8,
+              "actual": 33.9
+            },
+            {
+              "name": "RDW",
+              "expected": 12.8,
+              "actual": 13.5
+            },
+            {
+              "name": "Lökosit",
+              "expected": 7.69,
+              "actual": 7.4
+            },
+            {
+              "name": "Nötrofil%",
+              "expected": 48.8,
+              "actual": 60
+            },
+            {
+              "name": "Lenfosit%",
+              "expected": 41,
+              "actual": 30
+            },
+            {
+              "name": "Monosit%",
+              "expected": 9.2,
+              "actual": 5
+            },
+            {
+              "name": "Eozinofil%",
+              "expected": 0.5,
+              "actual": 3
+            },
+            {
+              "name": "Trombosit",
+              "expected": 249,
+              "actual": 250
+            },
+            {
+              "name": "Glukoz",
+              "expected": 92,
+              "actual": 90
+            },
+            {
+              "name": "Kreatinin",
+              "expected": 1.04,
+              "actual": 1
+            },
+            {
+              "name": "eGFR",
+              "expected": 90,
+              "actual": null
+            },
             {
               "name": "Sodyum",
               "expected": 141,
@@ -2721,6 +2947,21 @@
               "name": "Potasyum",
               "expected": 4.37,
               "actual": 4.2
+            },
+            {
+              "name": "TSH",
+              "expected": 2.238,
+              "actual": 2.5
+            },
+            {
+              "name": "Üre",
+              "expected": 28,
+              "actual": 40
+            },
+            {
+              "name": "Klorür",
+              "expected": 104,
+              "actual": 102
             }
           ]
         }
@@ -2728,6 +2969,7 @@
     },
     {
       "case": "informes_OVAL0860107001_20251121",
+      "pageType": "vector",
       "output": {
         "sample_date": "2025-11-21",
         "metrics": [
@@ -2755,7 +2997,7 @@
           {
             "name": "MCV",
             "value": 84.9,
-            "unit": "fl",
+            "unit": "fL",
             "ref_low": 83,
             "ref_high": 97
           },
@@ -2779,27 +3021,6 @@
             "unit": "%",
             "ref_low": 11.8,
             "ref_high": 14.3
-          },
-          {
-            "name": "Micro R",
-            "value": 1.7,
-            "unit": "%",
-            "ref_low": 0.3,
-            "ref_high": 3.3
-          },
-          {
-            "name": "Macro R",
-            "value": 4.1,
-            "unit": "%",
-            "ref_low": 3.1,
-            "ref_high": 4.5
-          },
-          {
-            "name": "Lökosit",
-            "value": 7.25,
-            "unit": "x10^3/mm^3",
-            "ref_low": 3.7,
-            "ref_high": 9.2
           },
           {
             "name": "Nötrofil%",
@@ -2835,6 +3056,13 @@
             "unit": "%",
             "ref_low": null,
             "ref_high": 11.3
+          },
+          {
+            "name": "Lökosit",
+            "value": 7.25,
+            "unit": "x10^3/mm^3",
+            "ref_low": 3.7,
+            "ref_high": 9.2
           },
           {
             "name": "Nötrofil#",
@@ -2881,16 +3109,9 @@
           {
             "name": "MPV",
             "value": 10.6,
-            "unit": "fl",
+            "unit": "fL",
             "ref_low": 9.3,
             "ref_high": 12.7
-          },
-          {
-            "name": "Eritrosit Sedimentasyon Hızı",
-            "value": 16,
-            "unit": "mm/h",
-            "ref_low": 0,
-            "ref_high": 15
           },
           {
             "name": "Glukoz",
@@ -2901,16 +3122,23 @@
           },
           {
             "name": "Kreatinin",
-            "value": 177,
+            "value": 1.05,
             "unit": "mg/dL",
-            "ref_low": null,
-            "ref_high": null
+            "ref_low": 0.7,
+            "ref_high": 1.3
           },
           {
-            "name": "Filtrasyon Glomerüler CKD",
+            "name": "Sedimentasyon",
+            "value": 16,
+            "unit": "mm/h",
+            "ref_low": 0,
+            "ref_high": 15
+          },
+          {
+            "name": "eGFR",
             "value": 88.98,
-            "unit": "mL/min/1,73m2",
-            "ref_low": null,
+            "unit": "mL/min/1.73m2",
+            "ref_low": 90,
             "ref_high": null
           },
           {
@@ -2942,7 +3170,7 @@
             "ref_high": 160
           },
           {
-            "name": "LDL Kolesterol (Friedewald Hesabı)",
+            "name": "LDL Kolesterol",
             "value": 155,
             "unit": "mg/dL",
             "ref_low": null,
@@ -2970,7 +3198,7 @@
             "ref_high": 1.2
           },
           {
-            "name": "C-Reaktif Protein",
+            "name": "CRP",
             "value": 1.8,
             "unit": "mg/L",
             "ref_low": 0,
@@ -3021,7 +3249,7 @@
           {
             "name": "TSH",
             "value": 1.52,
-            "unit": "μUI/mL",
+            "unit": "µUI/mL",
             "ref_low": 0.35,
             "ref_high": 4.94
           },
@@ -3033,14 +3261,21 @@
             "ref_high": 14
           },
           {
-            "name": "Albümün",
+            "name": "İdrar Kreatinin",
+            "value": 177,
+            "unit": "mg/dL",
+            "ref_low": null,
+            "ref_high": null
+          },
+          {
+            "name": "İdrar Albümin",
             "value": 7,
             "unit": "mg/L",
             "ref_low": null,
             "ref_high": null
           },
           {
-            "name": "Albümün/Kreatinin Oranı",
+            "name": "İdrar Albümin/Kreatinin",
             "value": 4,
             "unit": "mg/g creat",
             "ref_low": 0,
@@ -3056,28 +3291,23 @@
         },
         "metrics": {
           "expected": 50,
-          "extracted": 45,
-          "matched": 45,
+          "extracted": 44,
+          "matched": 44,
           "missed": [
+            "Micro R",
+            "Macro R",
             "Eritroblast%",
             "Eritroblast#",
             "PDW",
-            "Plaquetòcrit",
-            "İdrar Kreatinin"
+            "PCT"
           ],
           "hallucinated": []
         },
         "values": {
           "correct": 44,
-          "wrong": 1,
-          "accuracy": "97.8%",
-          "errors": [
-            {
-              "name": "Kreatinin",
-              "expected": 1.05,
-              "actual": 177
-            }
-          ]
+          "wrong": 0,
+          "accuracy": "100.0%",
+          "errors": []
         }
       }
     }
