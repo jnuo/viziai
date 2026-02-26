@@ -16,7 +16,7 @@
       "ref_high": 36.5
     },
     {
-      "name": "BASO%",
+      "name": "Bazofil%",
       "value": 0.2,
       "unit": "%",
       "ref_low": 0.2,
@@ -30,7 +30,7 @@
       "ref_high": 6.08
     },
     {
-      "name": "BASO#",
+      "name": "Bazofil#",
       "value": 0.03,
       "unit": "10^9/L",
       "ref_low": 0.01,
@@ -58,14 +58,14 @@
       "ref_high": 42.3
     },
     {
-      "name": "EOS%",
+      "name": "Eozinofil%",
       "value": 0.1,
       "unit": "%",
       "ref_low": 0.8,
       "ref_high": 7
     },
     {
-      "name": "MON#",
+      "name": "Monosit#",
       "value": 0.96,
       "unit": "10^9/L",
       "ref_low": 0.3,
@@ -82,11 +82,11 @@
       "name": "RDW-SD",
       "value": 48.8,
       "unit": "fL",
-      "ref_low": 35,
+      "ref_low": 35.1,
       "ref_high": 43.9
     },
     {
-      "name": "EOS#",
+      "name": "Eozinofil#",
       "value": 0.01,
       "unit": "10^9/L",
       "ref_low": 0.04,
@@ -96,7 +96,7 @@
       "name": "Hematokrit",
       "value": 30,
       "unit": "%",
-      "ref_low": 40,
+      "ref_low": 40.1,
       "ref_high": 51
     },
     {
@@ -114,21 +114,21 @@
       "ref_high": 12.4
     },
     {
-      "name": "NEU%",
+      "name": "Nötrofil%",
       "value": 85.2,
       "unit": "%",
       "ref_low": 34,
       "ref_high": 67.9
     },
     {
-      "name": "LYM#",
+      "name": "Lenfosit#",
       "value": 0.99,
       "unit": "10^9/L",
       "ref_low": 1.32,
       "ref_high": 3.57
     },
     {
-      "name": "LYM%",
+      "name": "Lenfosit%",
       "value": 7.4,
       "unit": "%",
       "ref_low": 21.8,
@@ -156,14 +156,14 @@
       "ref_high": 14.4
     },
     {
-      "name": "MON%",
+      "name": "Monosit%",
       "value": 7.1,
       "unit": "%",
       "ref_low": 5.3,
       "ref_high": 12.2
     },
     {
-      "name": "NEU#",
+      "name": "Nötrofil#",
       "value": 11.45,
       "unit": "10^9/L",
       "ref_low": 1.78,
@@ -177,14 +177,14 @@
       "ref_high": 340
     },
     {
-      "name": "Protein",
+      "name": "Total Protein",
       "value": 55.82,
       "unit": null,
       "ref_low": null,
       "ref_high": null
     },
     {
-      "name": "Bilirubin (Direkt)",
+      "name": "Direkt Bilirubin",
       "value": 0.13,
       "unit": "mg/dL",
       "ref_low": 0,
@@ -198,7 +198,7 @@
       "ref_high": 10.6
     },
     {
-      "name": "Ggt (Gamma Glutamil Transferaz)",
+      "name": "GGT",
       "value": 15,
       "unit": "U/L",
       "ref_low": 0,
@@ -219,7 +219,7 @@
       "ref_high": 43
     },
     {
-      "name": "Ldh (Laktik Dehidrogenaz)",
+      "name": "LDH",
       "value": 260,
       "unit": "U/L",
       "ref_low": 0,
@@ -254,7 +254,7 @@
       "ref_high": 5.1
     },
     {
-      "name": "Bilirubin",
+      "name": "Total Bilirubin",
       "value": 0.67,
       "unit": "mg/dL",
       "ref_low": 0.3,

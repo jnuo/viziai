@@ -1,5 +1,5 @@
 {
-  "sample_date": "2024-10-24",
+  "sample_date": "2024-10-14",
   "metrics": [
     {
       "name": "Eritrosit",
@@ -23,14 +23,14 @@
       "ref_high": 51
     },
     {
-      "name": "MCV (VGM)",
+      "name": "MCV",
       "value": 85.4,
       "unit": "fL",
       "ref_low": 80,
       "ref_high": 98
     },
     {
-      "name": "MCH (HCM)",
+      "name": "MCH",
       "value": 27.8,
       "unit": "pg",
       "ref_low": 27,
@@ -44,7 +44,7 @@
       "ref_high": 36
     },
     {
-      "name": "RDW (ADE)",
+      "name": "RDW",
       "value": 11.9,
       "unit": "%",
       "ref_low": 11,
@@ -156,7 +156,7 @@
       "ref_high": 12
     },
     {
-      "name": "ESR (Sedimantasyon)",
+      "name": "Sedimentasyon",
       "value": 18,
       "unit": "mm/h",
       "ref_low": 0,
@@ -177,7 +177,7 @@
       "ref_high": 1.1
     },
     {
-      "name": "Glomerular Filtrasyon Hızı",
+      "name": "eGFR",
       "value": 90,
       "unit": "ml/min/1.73 m2",
       "ref_low": null,
@@ -261,7 +261,7 @@
       "ref_high": 150
     },
     {
-      "name": "C-reaktif Protein",
+      "name": "CRP",
       "value": 0.28,
       "unit": "mg/dL",
       "ref_low": 0,
@@ -282,28 +282,28 @@
       "ref_high": 1.035
     },
     {
-      "name": "İdrar Glukozu",
+      "name": "İdrar Glukoz",
       "value": 0,
       "unit": "mg/dL",
       "ref_low": 0,
       "ref_high": 50
     },
     {
-      "name": "Asetoasetat",
+      "name": "İdrar Asetoasetat",
       "value": 0,
       "unit": "mg/dL",
       "ref_low": 0,
       "ref_high": 5
     },
     {
-      "name": "Bilirubin",
+      "name": "İdrar Bilirubin",
       "value": 0,
       "unit": "mg/dL",
       "ref_low": 0,
       "ref_high": 0.2
     },
     {
-      "name": "Ürobilinojen",
+      "name": "İdrar Ürobilinojen",
       "value": 0,
       "unit": "mg/dL",
       "ref_low": 0,
@@ -317,7 +317,7 @@
       "ref_high": 8
     },
     {
-      "name": "Protein",
+      "name": "İdrar Protein",
       "value": 0,
       "unit": "mg/dL",
       "ref_low": 0,
@@ -331,7 +331,7 @@
       "ref_high": 10
     },
     {
-      "name": "Esteraza lökosit",
+      "name": "İdrar Lökosit Esteraz",
       "value": 0,
       "unit": "Leu/µL",
       "ref_low": 0,
@@ -345,14 +345,14 @@
       "ref_high": null
     },
     {
-      "name": "Albümin",
+      "name": "İdrar Albümin",
       "value": 8,
       "unit": "mg/L",
       "ref_low": 0,
       "ref_high": 20
     },
     {
-      "name": "Albümin / Kreatinin",
+      "name": "İdrar Albümin/Kreatinin",
       "value": 5,
       "unit": "mg/g crea",
       "ref_low": 0,

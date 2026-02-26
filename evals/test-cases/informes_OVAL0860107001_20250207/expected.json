@@ -23,14 +23,14 @@
       "ref_high": 51
     },
     {
-      "name": "MCV (VGM)",
+      "name": "MCV",
       "value": 87.7,
       "unit": "fL",
       "ref_low": 80,
       "ref_high": 98
     },
     {
-      "name": "MCH (HCM)",
+      "name": "MCH",
       "value": 28.6,
       "unit": "pg",
       "ref_low": 27,
@@ -44,7 +44,7 @@
       "ref_high": 36
     },
     {
-      "name": "RDW (ADE)",
+      "name": "RDW",
       "value": 11.9,
       "unit": "%",
       "ref_low": 11,
@@ -149,21 +149,21 @@
       "ref_high": 400
     },
     {
-      "name": "Ortalama Trombosit Hacmi",
+      "name": "MPV",
       "value": 11.5,
       "unit": "fL",
       "ref_low": 9.5,
       "ref_high": 12
     },
     {
-      "name": "Santrifüj Hızı (ESR)",
+      "name": "Sedimentasyon",
       "value": 16,
       "unit": "mm/h",
       "ref_low": 0,
       "ref_high": 15
     },
     {
-      "name": "Srm-Glukoz",
+      "name": "Glukoz",
       "value": 89,
       "unit": "mg/dL",
       "ref_low": 74,
@@ -177,14 +177,14 @@
       "ref_high": 1.1
     },
     {
-      "name": "Glomerüler Filtrasyon Hızı",
+      "name": "eGFR",
       "value": 86,
       "unit": "ml/min/1.73 m2",
       "ref_low": null,
       "ref_high": null
     },
     {
-      "name": "Ürat",
+      "name": "Ürik Asit",
       "value": 10.1,
       "unit": "mg/dL",
       "ref_low": 3.7,
@@ -240,14 +240,14 @@
       "ref_high": 240
     },
     {
-      "name": "Kolesterol HDL",
+      "name": "HDL Kolesterol",
       "value": 42,
       "unit": "mg/dL",
       "ref_low": 40,
       "ref_high": null
     },
     {
-      "name": "Kolesterol LDL",
+      "name": "LDL Kolesterol",
       "value": 175,
       "unit": "mg/dL",
       "ref_low": null,
@@ -261,7 +261,7 @@
       "ref_high": 150
     },
     {
-      "name": "Protein C reaktif",
+      "name": "CRP",
       "value": 0.05,
       "unit": "mg/dL",
       "ref_low": 0,
@@ -282,28 +282,28 @@
       "ref_high": 1.035
     },
     {
-      "name": "İdrar Glukozu",
+      "name": "İdrar Glukoz",
       "value": 0,
       "unit": "mg/dL",
       "ref_low": 0,
       "ref_high": 50
     },
     {
-      "name": "Asetoasetat",
+      "name": "İdrar Asetoasetat",
       "value": 0,
       "unit": "mg/dL",
       "ref_low": 0,
       "ref_high": 5
     },
     {
-      "name": "Bilirubin",
+      "name": "İdrar Bilirubin",
       "value": 0,
       "unit": "mg/dL",
       "ref_low": 0,
       "ref_high": 0.2
     },
     {
-      "name": "Ürobilinojen",
+      "name": "İdrar Ürobilinojen",
       "value": 0,
       "unit": "mg/dL",
       "ref_low": 0,
@@ -317,7 +317,7 @@
       "ref_high": 8
     },
     {
-      "name": "Protein",
+      "name": "İdrar Protein",
       "value": 0,
       "unit": "mg/dL",
       "ref_low": 0,
@@ -331,7 +331,7 @@
       "ref_high": 10
     },
     {
-      "name": "Esteraza lökosit",
+      "name": "İdrar Lökosit Esteraz",
       "value": 0,
       "unit": "Leu/µL",
       "ref_low": 0,

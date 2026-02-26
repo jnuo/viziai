@@ -32,27 +32,51 @@ Kurallar:
 - Her test için mümkünse referans aralığını çıkar: alt sınır ve üst sınır.
 - Referans aralığı mevcutsa 'ref_low' ve 'ref_high' alanlarını doldur. Yoksa boş bırak.
 
+ÖNEMLİ - Bölüm Farkındalığı:
+- PDF'ler İspanyolca, İngilizce, Türkçe veya başka dillerde olabilir. Bölüm başlıklarını tanı:
+  - İspanyolca: Hemograma (Hemogram), Bioquímica/Sangre (Biyokimya), Orina (İdrar), Gasometría (Kan Gazı)
+  - İngilizce: CBC/Hematology, Chemistry, Urinalysis, Blood Gas
+  - Türkçe: Hemogram, Biyokimya, İdrar, Kan Gazları
+- İspanyolca önekleri silip Türkçe karşılığını kullan: Srm-Glukoz → Glukoz, San-/S- (Sangre) → serum testi.
+- HİÇBİR bölümü atlama — İdrar (Orina), Eritroblast, Sedimentasyon dahil TÜM bölümleri çıkar.
+- UYARI: Serum ve idrar değerlerini karıştırma! Örneğin serum Kreatinin (mg/dL, ~0.7-1.3) ile İdrar Kreatinin (mg/dL, ~24-392) farklı testlerdir.
+
+ÖNEMLİ - İdrar Testleri:
+- İdrar/Orina bölümündeki testleri 'İdrar' öneki ile adlandır.
+- İdrar Glukoz, İdrar Kreatinin, İdrar pH, İdrar Protein, İdrar Eritrosit, İdrar Dansitesi, İdrar Bilirubin, İdrar Ürobilinojen, İdrar Asetoasetat, İdrar Lökosit Esteraz, İdrar Albümin, İdrar Albümin/Kreatinin, İdrar Nitrit.
+
+ÖNEMLİ - Kan Gazı Testleri:
+- Kan gazı bölümünde serumla ortak olan testleri 'Kan Gazı' öneki ile adlandır.
+- Kan Gazı Glukoz, Kan Gazı Sodyum, Kan Gazı Potasyum, Kan Gazı Kalsiyum, Kan Gazı Klorür, Kan Gazı Hematokrit, Kan Gazı Magnezyum.
+- Kan gazına özgü testler (pH, PCO2, PO2, HCO3, Laktat vb.) önek almaz.
+
 ÖNEMLİ - Test İsimlerini Türkçeye Çevir:
 - Rapor hangi dilde olursa olsun (İspanyolca, İngilizce, Almanca vb.), test isimlerini Türkçe tıbbi terminolojiye çevir.
-- Örnek çeviriler:
-  - Hemoglobin → Hemoglobin
-  - Hematocrit/Hematocrito → Hematokrit
-  - Red Blood Cells/Eritrocitos → Eritrosit
-  - White Blood Cells/Leucocitos → Lökosit
-  - Platelets/Plaquetas → Trombosit
-  - Glucose/Glucosa → Glukoz
-  - Cholesterol/Colesterol → Kolesterol
-  - Triglycerides/Triglicéridos → Trigliserit
-  - Urea → Üre
-  - Creatinine/Creatinina → Kreatinin
-  - ALT/GPT → ALT
-  - AST/GOT → AST
-  - TSH → TSH
-  - T3/T4 → T3/T4
-  - Iron/Hierro → Demir
-  - Ferritin/Ferritina → Ferritin
-  - Vitamin D → D Vitamini
-  - Vitamin B12 → B12 Vitamini
+- Kanonik isimler (bu isimleri AYNEN kullan):
+  Hemogram:
+  - Eritrosit, Hemoglobin, Hematokrit, MCV, MCH, MCHC, RDW, RDW-SD
+  - Lökosit, Nötrofil%, Nötrofil#, Lenfosit%, Lenfosit#, Monosit%, Monosit#, Eozinofil%, Eozinofil#, Bazofil%, Bazofil#
+  - Eritroblast%, Eritroblast# (Eritroblastos/NRBC)
+  - Trombosit, MPV, PDW, PCT
+  - Sedimentasyon (ESR/VSG/Velocidad de sedimentación)
+  Biyokimya:
+  - Glukoz (Glucosa), Üre (Urea), BUN, Kreatinin (Creatinina)
+  - eGFR (Glomerüler Filtrasyon Hızı / Filtrado Glomerular / GFR / CKD-EPI)
+  - Ürik Asit (Ácido Úrico / Ürat)
+  - Total Protein, Albümin (Albumina), Globulin
+  - AST (GOT), ALT (GPT), GGT, Alkalen Fosfataz (Fosfatasa Alcalina / ALP), LDH
+  - Total Bilirubin (Bilirrubina Total), Direkt Bilirubin (Bilirrubina Directa)
+  Elektrolitler:
+  - Sodyum (Sodio), Potasyum (Potasio), Kalsiyum (Calcio), Magnezyum (Magnesio), Klorür (Cloruro / Klor)
+  Lipid Panel:
+  - Kolesterol (Colesterol), HDL Kolesterol, LDL Kolesterol, Non-HDL Kolesterol, Trigliserit (Triglicéridos)
+  İnflamatuar:
+  - CRP (Proteína C Reactiva / C-reaktif Protein)
+  Hormonlar:
+  - TSH, T3, T4
+  Diğer:
+  - Demir (Hierro), Ferritin (Ferritina), D Vitamini, B12 Vitamini
+  - Romatoid Faktör (Factor Reumatoide)
 - Bilinmeyen testler için orijinal ismi koru.
 
 ÇIKTI: sadece JSON -> {"sample_date": "<YYYY-MM-DD|null>", "tests": { "<Türkçe Ad>": { "value": <number>, "unit": "<unit|null>", "flag": "<H|L|N|null>", "ref_low": <number|null>, "ref_high": <number|null> } } }}`;
