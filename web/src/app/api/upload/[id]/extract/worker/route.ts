@@ -9,7 +9,7 @@ export const maxDuration = 300; // QStash can wait up to 5 minutes
 
 const VECTOR_SCALE = 2.5;
 const IMAGE_SCALE = 5;
-const IMAGE_PIXEL_THRESHOLD = 1_000_000; // >1M pixels = full-page embedded image
+const IMAGE_PIXEL_THRESHOLD = 2_000_000; // >2M pixels = full-page embedded image (avoids false positives on logos)
 
 const EXTRACTION_PROMPT = `Aşağıdaki laboratuvar sayfasından TÜM güncel 'Sonuç' değerlerini çıkar.
 
@@ -106,77 +106,89 @@ interface PageImage {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function isImageBasedPage(pdfDoc: any, pageIndex: number): boolean {
-  const pageObj = pdfDoc.findPage(pageIndex);
-  const resources = pageObj.get("Resources");
-  const xobjects = resources?.get("XObject");
-  if (!xobjects) return false;
+  try {
+    const pageObj = pdfDoc.findPage(pageIndex);
+    const resources = pageObj.get("Resources");
+    const xobjects = resources?.get("XObject");
+    if (!xobjects) return false;
 
-  let largestPixels = 0;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  xobjects.forEach((val: any) => {
-    const resolved = val.resolve();
-    if (resolved.get("Subtype")?.asName() !== "Image") return;
-    const w = resolved.get("Width")?.asNumber() || 0;
-    const h = resolved.get("Height")?.asNumber() || 0;
-    largestPixels = Math.max(largestPixels, w * h);
-  });
+    let largestPixels = 0;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    xobjects.forEach((val: any) => {
+      const resolved = val.resolve();
+      if (resolved.get("Subtype")?.asName() !== "Image") return;
+      const w = resolved.get("Width")?.asNumber() || 0;
+      const h = resolved.get("Height")?.asNumber() || 0;
+      largestPixels = Math.max(largestPixels, w * h);
+    });
 
-  return largestPixels > IMAGE_PIXEL_THRESHOLD;
+    return largestPixels > IMAGE_PIXEL_THRESHOLD;
+  } catch (err) {
+    console.warn(`[Worker] isImageBasedPage failed for page ${pageIndex}, treating as vector`, err);
+    return false;
+  }
 }
 
 function toDataUrl(pngBuffer: Buffer): string {
   return `data:image/png;base64,${pngBuffer.toString("base64")}`;
 }
 
-async function pdfToImages(buffer: Buffer): Promise<PageImage[]> {
+interface PdfHandle {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  mupdf: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  sharp: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  doc: any;
+  pageCount: number;
+}
+
+async function preparePdf(buffer: Buffer): Promise<PdfHandle> {
   const mupdf = await import("mupdf");
   const sharp = (await import("sharp")).default;
+  const doc = mupdf.PDFDocument.openDocument(buffer, "application/pdf");
+  return { mupdf, sharp, doc, pageCount: doc.countPages() };
+}
 
-  const doc = mupdf.Document.openDocument(buffer, "application/pdf");
-  const pdfDoc = mupdf.PDFDocument.openDocument(buffer, "application/pdf");
-  const pageCount = doc.countPages();
+async function renderPage({ mupdf, sharp, doc }: PdfHandle, pageIndex: number): Promise<PageImage[]> {
+  const imageBased = isImageBasedPage(doc, pageIndex);
+  const page = doc.loadPage(pageIndex);
+  const scale = imageBased ? IMAGE_SCALE : VECTOR_SCALE;
+  const detail: PageImage["detail"] = imageBased ? "high" : "auto";
 
-  const pages: PageImage[] = [];
+  const pixmap = page.toPixmap(
+    mupdf.Matrix.scale(scale, scale),
+    mupdf.ColorSpace.DeviceRGB,
+    false,
+    true,
+  );
+  const pngBuf = Buffer.from(pixmap.asPNG());
 
-  for (let i = 0; i < pageCount; i++) {
-    const imageBased = isImageBasedPage(pdfDoc, i);
-    const page = doc.loadPage(i);
-    const scale = imageBased ? IMAGE_SCALE : VECTOR_SCALE;
-    const detail: PageImage["detail"] = imageBased ? "high" : "auto";
-
-    const pixmap = page.toPixmap(
-      mupdf.Matrix.scale(scale, scale),
-      mupdf.ColorSpace.DeviceRGB,
-      false,
-      true,
-    );
-    const pngBuf = Buffer.from(pixmap.asPNG());
-
-    if (!imageBased) {
-      pages.push({ dataUrl: toDataUrl(pngBuf), detail, pageIndex: i, crop: null });
-      continue;
-    }
-
-    // Split into top and bottom halves for better OCR readability
-    const { width, height } = await sharp(pngBuf).metadata() as { width: number; height: number };
-    const halfH = Math.floor(height / 2);
-
-    const topBuf = await sharp(pngBuf)
-      .extract({ left: 0, top: 0, width, height: halfH })
-      .png()
-      .toBuffer();
-    const botBuf = await sharp(pngBuf)
-      .extract({ left: 0, top: halfH, width, height: height - halfH })
-      .png()
-      .toBuffer();
-
-    pages.push(
-      { dataUrl: toDataUrl(topBuf), detail, pageIndex: i, crop: "top" },
-      { dataUrl: toDataUrl(botBuf), detail, pageIndex: i, crop: "bottom" },
-    );
+  if (!imageBased) {
+    return [{ dataUrl: toDataUrl(pngBuf), detail, pageIndex, crop: null }];
   }
 
-  return pages;
+  // Split into top and bottom halves for better OCR readability
+  const meta = await sharp(pngBuf).metadata();
+  if (!meta.width || !meta.height) {
+    return [{ dataUrl: toDataUrl(pngBuf), detail: "high", pageIndex, crop: null }];
+  }
+  const { width, height } = meta;
+  const halfH = Math.floor(height / 2);
+
+  const topBuf = await sharp(pngBuf)
+    .extract({ left: 0, top: 0, width, height: halfH })
+    .png()
+    .toBuffer();
+  const botBuf = await sharp(pngBuf)
+    .extract({ left: 0, top: halfH, width, height: height - halfH })
+    .png()
+    .toBuffer();
+
+  return [
+    { dataUrl: toDataUrl(topBuf), detail, pageIndex, crop: "top" },
+    { dataUrl: toDataUrl(botBuf), detail, pageIndex, crop: "bottom" },
+  ];
 }
 
 async function handler(
@@ -222,11 +234,11 @@ async function handler(
         pdfBuffer = Buffer.from(await pdfResponse.arrayBuffer());
       }
 
-      console.log(`[Worker] Converting PDF to images...`);
-      const pageImages = await pdfToImages(pdfBuffer);
-      console.log(`[Worker] Got ${pageImages.length} page(s)`);
+      console.log(`[Worker] Opening PDF...`);
+      const pdf = await preparePdf(pdfBuffer);
+      console.log(`[Worker] PDF has ${pdf.pageCount} page(s)`);
 
-      if (pageImages.length === 0) {
+      if (pdf.pageCount === 0) {
         throw new Error("PDF has no pages");
       }
 
@@ -239,78 +251,100 @@ async function handler(
         sample_date: null,
         tests: {},
       };
+      const testSourcePage: Record<string, number> = {};
 
-      for (let i = 0; i < pageImages.length; i++) {
-        const img = pageImages[i];
-        console.log(
-          `[Worker] Processing image ${i + 1}/${pageImages.length} (page ${img.pageIndex + 1}, ${img.crop ?? "full"}, detail=${img.detail})...`,
-        );
+      for (let p = 0; p < pdf.pageCount; p++) {
+        // Render one page at a time to keep memory low
+        const pageImages = await renderPage(pdf, p);
 
-        const openaiResponse = await fetch(
-          "https://api.openai.com/v1/chat/completions",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${openaiApiKey}`,
-            },
-            body: JSON.stringify({
-              model: "gpt-4o",
-              messages: [
-                {
-                  role: "user",
-                  content: [
-                    { type: "text", text: EXTRACTION_PROMPT },
+        // Send all images from this page in parallel (1 for vector, 2 for split image-based)
+        const apiResults = await Promise.all(
+          pageImages.map(async (img) => {
+            console.log(
+              `[Worker] Processing page ${img.pageIndex + 1} (${img.crop ?? "full"}, detail=${img.detail})...`,
+            );
+
+            const openaiResponse = await fetch(
+              "https://api.openai.com/v1/chat/completions",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${openaiApiKey}`,
+                },
+                body: JSON.stringify({
+                  model: "gpt-4o",
+                  messages: [
                     {
-                      type: "image_url",
-                      image_url: { url: img.dataUrl, detail: img.detail },
+                      role: "user",
+                      content: [
+                        { type: "text", text: EXTRACTION_PROMPT },
+                        {
+                          type: "image_url",
+                          image_url: { url: img.dataUrl, detail: img.detail },
+                        },
+                      ],
                     },
                   ],
-                },
-              ],
-              max_tokens: 4000,
-              response_format: { type: "json_object" },
-            }),
-          },
+                  max_tokens: 4000,
+                  response_format: { type: "json_object" },
+                }),
+              },
+            );
+
+            if (!openaiResponse.ok) {
+              const errorData = await openaiResponse.json();
+              throw new Error(
+                `OpenAI API error: ${errorData.error?.message || "Unknown error"}`,
+              );
+            }
+
+            const openaiData = await openaiResponse.json();
+            const content = openaiData.choices?.[0]?.message?.content;
+            if (!content) return null;
+
+            try {
+              return { img, data: JSON.parse(content) as PageExtractionResult };
+            } catch {
+              console.log(`[Worker] Page ${img.pageIndex + 1} (${img.crop ?? "full"}): Failed to parse JSON`);
+              return null;
+            }
+          }),
         );
 
-        if (!openaiResponse.ok) {
-          const errorData = await openaiResponse.json();
-          throw new Error(
-            `OpenAI API error: ${errorData.error?.message || "Unknown error"}`,
-          );
-        }
+        // Merge results from this page
+        for (const result of apiResults) {
+          if (!result) continue;
+          const { img, data: pageData } = result;
 
-        const openaiData = await openaiResponse.json();
-        const content = openaiData.choices?.[0]?.message?.content;
+          if (pageData.tests) {
+            let accepted = 0;
+            for (const [name, val] of Object.entries(pageData.tests)) {
+              // Skip non-numeric values (GPT hallucination guard)
+              if (typeof val.value !== "number") continue;
 
-        if (!content) {
-          console.log(`[Worker] Image ${i + 1}: No content returned`);
-          continue;
-        }
-
-        let pageData: PageExtractionResult;
-        try {
-          pageData = JSON.parse(content);
-        } catch {
-          console.log(`[Worker] Image ${i + 1}: Failed to parse JSON`);
-          continue;
-        }
-
-        if (pageData.tests) {
-          const testCount = Object.keys(pageData.tests).length;
-          console.log(`[Worker] Image ${i + 1}: Found ${testCount} tests`);
-          // First-writer-wins: don't let later pages overwrite earlier values
-          // (prevents hallucinated values from empty/footer pages from clobbering real data)
-          for (const [name, val] of Object.entries(pageData.tests)) {
-            if (!(name in mergedResult.tests)) {
-              mergedResult.tests[name] = val;
+              if (!(name in mergedResult.tests)) {
+                mergedResult.tests[name] = val;
+                testSourcePage[name] = img.pageIndex;
+                accepted++;
+              } else if (testSourcePage[name] === img.pageIndex) {
+                // Same page (other half of a split) — prefer the more complete entry
+                const existing = mergedResult.tests[name];
+                const existingFields = (existing.ref_low != null ? 1 : 0) + (existing.ref_high != null ? 1 : 0) + (existing.unit ? 1 : 0);
+                const newFields = (val.ref_low != null ? 1 : 0) + (val.ref_high != null ? 1 : 0) + (val.unit ? 1 : 0);
+                if (newFields > existingFields) {
+                  mergedResult.tests[name] = val;
+                  accepted++;
+                }
+              }
+              // Different page — first-writer-wins (prevents footer page hallucinations)
             }
+            console.log(`[Worker] Page ${img.pageIndex + 1} (${img.crop ?? "full"}): ${accepted} tests accepted`);
           }
-        }
 
-        if (!mergedResult.sample_date && pageData.sample_date) {
-          mergedResult.sample_date = pageData.sample_date;
+          if (!mergedResult.sample_date && pageData.sample_date) {
+            mergedResult.sample_date = pageData.sample_date;
+          }
         }
       }
 
@@ -318,7 +352,7 @@ async function handler(
         ([name, { value, unit, ref_low, ref_high }]) => ({
           name,
           value,
-          unit: unit || undefined,
+          unit: unit ?? undefined,
           ref_low,
           ref_high,
         }),
@@ -381,6 +415,7 @@ export const POST = hasSigningKey
   ? verifySignatureAppRouter(handler)
   : async (...args: Parameters<typeof handler>) => {
       if (!isLocalDev) {
+        console.error("[Worker] Production deploy missing QSTASH_CURRENT_SIGNING_KEY");
         return NextResponse.json(
           { error: "Server misconfigured" },
           { status: 500 },
