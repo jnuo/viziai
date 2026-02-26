@@ -263,7 +263,8 @@
       "lightTheme": "Açık Tema",
       "darkTheme": "Koyu Tema",
       "logout": "Çıkış",
-      "login": "Giriş Yap"
+      "login": "Giriş Yap",
+      "changeLanguage": "Dili değiştir"
     },
     "extraction": {
       "readingPdf": "PDF okunuyor…",
