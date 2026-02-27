@@ -126,7 +126,10 @@ function isImageBasedPage(pdfDoc: any, pageIndex: number): boolean {
 
     return largestPixels > IMAGE_PIXEL_THRESHOLD;
   } catch (err) {
-    console.warn(`[Worker] isImageBasedPage failed for page ${pageIndex}, treating as vector`, err);
+    console.warn(
+      `[Worker] isImageBasedPage failed for page ${pageIndex}, treating as vector`,
+      err,
+    );
     return false;
   }
 }
@@ -152,7 +155,10 @@ async function preparePdf(buffer: Buffer): Promise<PdfHandle> {
   return { mupdf, sharp, doc, pageCount: doc.countPages() };
 }
 
-async function renderPage({ mupdf, sharp, doc }: PdfHandle, pageIndex: number): Promise<PageImage[]> {
+async function renderPage(
+  { mupdf, sharp, doc }: PdfHandle,
+  pageIndex: number,
+): Promise<PageImage[]> {
   const imageBased = isImageBasedPage(doc, pageIndex);
   const page = doc.loadPage(pageIndex);
   const detail: PageImage["detail"] = imageBased ? "high" : "auto";
@@ -183,7 +189,9 @@ async function renderPage({ mupdf, sharp, doc }: PdfHandle, pageIndex: number): 
   // Split into top and bottom halves for better OCR readability
   const meta = await sharp(pngBuf).metadata();
   if (!meta.width || !meta.height) {
-    return [{ dataUrl: toDataUrl(pngBuf), detail: "high", pageIndex, crop: null }];
+    return [
+      { dataUrl: toDataUrl(pngBuf), detail: "high", pageIndex, crop: null },
+    ];
   }
   const { width, height } = meta;
   const halfH = Math.floor(height / 2);
@@ -209,39 +217,41 @@ async function callOpenAI(
 ): Promise<PageExtractionResult | null> {
   const MAX_RETRIES = 2;
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
-    const response = await fetch(
-      "https://api.openai.com/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify({
-          model: "gpt-4o",
-          messages: [
-            {
-              role: "user",
-              content: [
-                { type: "text", text: EXTRACTION_PROMPT },
-                {
-                  type: "image_url",
-                  image_url: { url: img.dataUrl, detail: img.detail },
-                },
-              ],
-            },
-          ],
-          max_tokens: 16384,
-          response_format: { type: "json_object" },
-        }),
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
       },
-    );
+      body: JSON.stringify({
+        model: "gpt-5-mini",
+        messages: [
+          {
+            role: "user",
+            content: [
+              { type: "text", text: EXTRACTION_PROMPT },
+              {
+                type: "image_url",
+                image_url: { url: img.dataUrl, detail: img.detail },
+              },
+            ],
+          },
+        ],
+        max_completion_tokens: 16384,
+        response_format: { type: "json_object" },
+      }),
+    });
 
     if (!response.ok) {
       // Retry on transient errors
-      if (TRANSIENT_STATUS_CODES.has(response.status) && attempt < MAX_RETRIES) {
+      if (
+        TRANSIENT_STATUS_CODES.has(response.status) &&
+        attempt < MAX_RETRIES
+      ) {
         const wait = 1000 * 2 ** attempt; // 1s, 2s
-        console.warn(`[Worker] OpenAI returned ${response.status}, retrying in ${wait}ms...`);
+        console.warn(
+          `[Worker] OpenAI returned ${response.status}, retrying in ${wait}ms...`,
+        );
         await new Promise((r) => setTimeout(r, wait));
         continue;
       }
@@ -263,14 +273,18 @@ async function callOpenAI(
     try {
       return JSON.parse(content) as PageExtractionResult;
     } catch {
-      console.log(`[Worker] Page ${img.pageIndex + 1} (${img.crop ?? "full"}): Failed to parse JSON`);
+      console.log(
+        `[Worker] Page ${img.pageIndex + 1} (${img.crop ?? "full"}): Failed to parse JSON`,
+      );
       return null;
     }
   }
   return null; // All retries exhausted
 }
 
-function normalizeFlag(flag: string | null | undefined): "H" | "L" | "N" | null {
+function normalizeFlag(
+  flag: string | null | undefined,
+): "H" | "L" | "N" | null {
   if (!flag) return null;
   const first = flag.charAt(0).toUpperCase();
   if (first === "H" || first === "L" || first === "N") return first;
@@ -364,7 +378,10 @@ async function handler(
         // Merge results from this page
         for (const outcome of settled) {
           if (outcome.status === "rejected") {
-            console.warn(`[Worker] Page ${p + 1} image failed:`, outcome.reason);
+            console.warn(
+              `[Worker] Page ${p + 1} image failed:`,
+              outcome.reason,
+            );
             continue;
           }
           const result = outcome.value;
@@ -387,8 +404,14 @@ async function handler(
               } else if (testSourcePage[name] === img.pageIndex) {
                 // Same page (other half of a split) — prefer the more complete entry
                 const existing = mergedResult.tests[name];
-                const existingFields = (existing.ref_low != null ? 1 : 0) + (existing.ref_high != null ? 1 : 0) + (existing.unit ? 1 : 0);
-                const newFields = (val.ref_low != null ? 1 : 0) + (val.ref_high != null ? 1 : 0) + (val.unit ? 1 : 0);
+                const existingFields =
+                  (existing.ref_low != null ? 1 : 0) +
+                  (existing.ref_high != null ? 1 : 0) +
+                  (existing.unit ? 1 : 0);
+                const newFields =
+                  (val.ref_low != null ? 1 : 0) +
+                  (val.ref_high != null ? 1 : 0) +
+                  (val.unit ? 1 : 0);
                 if (newFields > existingFields) {
                   mergedResult.tests[name] = val;
                   accepted++;
@@ -396,10 +419,15 @@ async function handler(
               }
               // Different page — first-writer-wins (prevents footer page hallucinations)
             }
-            console.log(`[Worker] Page ${img.pageIndex + 1} (${img.crop ?? "full"}): ${accepted} tests accepted`);
+            console.log(
+              `[Worker] Page ${img.pageIndex + 1} (${img.crop ?? "full"}): ${accepted} tests accepted`,
+            );
           }
 
-          if (!mergedResult.sample_date && isValidISODate(pageData.sample_date)) {
+          if (
+            !mergedResult.sample_date &&
+            isValidISODate(pageData.sample_date)
+          ) {
             mergedResult.sample_date = pageData.sample_date;
           }
         }
@@ -472,7 +500,9 @@ export const POST = hasSigningKey
   ? verifySignatureAppRouter(handler)
   : async (...args: Parameters<typeof handler>) => {
       if (!isLocalDev) {
-        console.error("[Worker] Production deploy missing QSTASH_CURRENT_SIGNING_KEY");
+        console.error(
+          "[Worker] Production deploy missing QSTASH_CURRENT_SIGNING_KEY",
+        );
         return NextResponse.json(
           { error: "Server misconfigured" },
           { status: 500 },

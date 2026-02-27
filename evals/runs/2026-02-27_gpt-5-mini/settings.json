@@ -1,0 +1,27 @@
+{
+  "model": "gpt-5-mini",
+  "concurrency": 3,
+  "date": "2026-02-27T08:31:41.359Z",
+  "pipeline": {
+    "pdf_renderer": "mupdf (PDFDocument.openDocument only)",
+    "image_format": "png",
+    "image_cropper": "sharp",
+    "vector_pages": {
+      "scale": 2.5,
+      "detail": "auto",
+      "strategy": "1 image per page"
+    },
+    "image_based_pages": {
+      "scale": "adaptive: min(4000/longestEdge, 5)",
+      "detail": "high",
+      "strategy": "split into top/bottom halves",
+      "detection": "PDF XObject inspection: largest embedded image > 1000000 pixels"
+    },
+    "merge_strategy": "first-writer-wins across pages, prefer-more-complete within same page splits",
+    "guards": "non-numeric value filter, flag normalization (H/L/N), ISO date validation",
+    "retry": "2 retries with exponential backoff on transient status codes (429, 500, 502, 503)"
+  },
+  "max_tokens": 16384,
+  "prompt_hash": "-73b61fee",
+  "prompt": "Aşağıdaki laboratuvar sayfasından TÜM güncel 'Sonuç' değerlerini çıkar.\n\nKurallar:\n- Parantezli eski sonuçları alma.\n- 10,7 → 10.7 nokta yap.\n- H/L bayrağını 'flag' alanına yaz.\n- % ve # ayrı anahtar (örn: Nötrofil% / Nötrofil#).\n- 'Numune Alım Tarihi'ni tespit et ve sadece tarihi ISO 'YYYY-MM-DD' formatında ver (saatleri atla).\n- Her test için mümkünse referans aralığını çıkar: alt sınır ve üst sınır.\n- Referans aralığı mevcutsa 'ref_low' ve 'ref_high' alanlarını doldur. Yoksa boş bırak.\n\nÖNEMLİ - Bölüm Farkındalığı:\n- PDF'ler İspanyolca, İngilizce, Türkçe veya başka dillerde olabilir. Bölüm başlıklarını tanı:\n  - İspanyolca: Hemograma (Hemogram), Bioquímica/Sangre (Biyokimya), Orina (İdrar), Gasometría (Kan Gazı)\n  - İngilizce: CBC/Hematology, Chemistry, Urinalysis, Blood Gas\n  - Türkçe: Hemogram, Biyokimya, İdrar, Kan Gazları\n- İspanyolca önekleri silip Türkçe karşılığını kullan: Srm-Glukoz → Glukoz, San-/S- (Sangre) → serum testi.\n- HİÇBİR bölümü atlama — İdrar (Orina), Eritroblast, Sedimentasyon dahil TÜM bölümleri çıkar.\n- UYARI: Serum ve idrar değerlerini karıştırma! Örneğin serum Kreatinin (mg/dL, ~0.7-1.3) ile İdrar Kreatinin (mg/dL, ~24-392) farklı testlerdir.\n\nÖNEMLİ - İdrar Testleri:\n- İdrar/Orina bölümündeki testleri 'İdrar' öneki ile adlandır.\n- İdrar Glukoz, İdrar Kreatinin, İdrar pH, İdrar Protein, İdrar Eritrosit, İdrar Dansitesi, İdrar Bilirubin, İdrar Ürobilinojen, İdrar Asetoasetat, İdrar Lökosit Esteraz, İdrar Albümin, İdrar Albümin/Kreatinin, İdrar Nitrit.\n\nÖNEMLİ - Kan Gazı Testleri:\n- Kan gazı bölümünde serumla ortak olan testleri 'Kan Gazı' öneki ile adlandır.\n- Kan Gazı Glukoz, Kan Gazı Sodyum, Kan Gazı Potasyum, Kan Gazı Kalsiyum, Kan Gazı Klorür, Kan Gazı Hematokrit, Kan Gazı Magnezyum.\n- Kan gazına özgü testler (pH, PCO2, PO2, HCO3, Laktat vb.) önek almaz.\n\nÖNEMLİ - Test İsimlerini Türkçeye Çevir:\n- Rapor hangi dilde olursa olsun (İspanyolca, İngilizce, Almanca vb.), test isimlerini Türkçe tıbbi terminolojiye çevir.\n- Kanonik isimler (bu isimleri AYNEN kullan):\n  Hemogram:\n  - Eritrosit, Hemoglobin, Hematokrit, MCV, MCH, MCHC, RDW, RDW-SD\n  - Lökosit, Nötrofil%, Nötrofil#, Lenfosit%, Lenfosit#, Monosit%, Monosit#, Eozinofil%, Eozinofil#, Bazofil%, Bazofil#\n  - Eritroblast%, Eritroblast# (Eritroblastos/NRBC)\n  - Trombosit, MPV, PDW, PCT\n  - Sedimentasyon (ESR/VSG/Velocidad de sedimentación)\n  Biyokimya:\n  - Glukoz (Glucosa), Üre (Urea), BUN, Kreatinin (Creatinina)\n  - eGFR (Glomerüler Filtrasyon Hızı / Filtrado Glomerular / GFR / CKD-EPI)\n  - Ürik Asit (Ácido Úrico / Ürat)\n  - Total Protein, Albümin (Albumina), Globulin\n  - AST (GOT), ALT (GPT), GGT, Alkalen Fosfataz (Fosfatasa Alcalina / ALP), LDH\n  - Total Bilirubin (Bilirrubina Total), Direkt Bilirubin (Bilirrubina Directa)\n  Elektrolitler:\n  - Sodyum (Sodio), Potasyum (Potasio), Kalsiyum (Calcio), Magnezyum (Magnesio), Klorür (Cloruro / Klor)\n  Lipid Panel:\n  - Kolesterol (Colesterol), HDL Kolesterol, LDL Kolesterol, Non-HDL Kolesterol, Trigliserit (Triglicéridos)\n  İnflamatuar:\n  - CRP (Proteína C Reactiva / C-reaktif Protein)\n  Hormonlar:\n  - TSH, T3, T4\n  Diğer:\n  - Demir (Hierro), Ferritin (Ferritina), D Vitamini, B12 Vitamini\n  - Romatoid Faktör (Factor Reumatoide)\n- Bilinmeyen testler için orijinal ismi koru.\n\nÇIKTI: sadece JSON -> {\"sample_date\": \"<YYYY-MM-DD|null>\", \"tests\": { \"<Türkçe Ad>\": { \"value\": <number>, \"unit\": \"<unit|null>\", \"flag\": \"<H|L|N|null>\", \"ref_low\": <number|null>, \"ref_high\": <number|null> } } }}"
+}

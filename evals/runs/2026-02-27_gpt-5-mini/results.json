@@ -1,0 +1,724 @@
+{
+  "config": {
+    "model": "gpt-5-mini",
+    "concurrency": 3,
+    "prompt_hash": "-73b61fee",
+    "date": "2026-02-27T08:31:41.359Z"
+  },
+  "results": [
+    {
+      "case": "2025-06-23_Enabiz-Tahlilleri",
+      "output": {
+        "sample_date": null,
+        "metrics": [],
+        "pageCount": 2
+      },
+      "scores": {
+        "date": {
+          "expected": "2025-06-23",
+          "actual": null,
+          "match": false
+        },
+        "metrics": {
+          "expected": 57,
+          "extracted": 0,
+          "matched": 0,
+          "missed": [
+            "AST",
+            "ALT",
+            "GGT",
+            "Alkalen Fosfataz",
+            "Total Bilirubin",
+            "Glukoz",
+            "Lökosit",
+            "Eritrosit",
+            "Hematokrit",
+            "Trombosit",
+            "Hemoglobin",
+            "MCV",
+            "MPV",
+            "RDW",
+            "MCH",
+            "PDW",
+            "Nötrofil%",
+            "PCT",
+            "MCHC",
+            "Lenfosit%",
+            "Eozinofil#",
+            "Monosit%",
+            "Nötrofil#",
+            "Eozinofil%",
+            "Lenfosit#",
+            "Bazofil#",
+            "Bazofil%",
+            "Monosit#",
+            "Kalsiyum",
+            "LDH",
+            "Kreatinin",
+            "eGFR",
+            "Kan Gazı Sodyum",
+            "PCO2",
+            "PO2",
+            "Kan Gazı Glukoz",
+            "Laktat",
+            "SBC",
+            "Kan Gazı Kalsiyum",
+            "Kan Gazı Klorür",
+            "TCO2",
+            "BE-ecf",
+            "BE-b",
+            "Kan Gazı Hematokrit",
+            "Kan Gazı Magnezyum",
+            "Kan Gazı Potasyum",
+            "Gap_K",
+            "pH",
+            "HCO3",
+            "Üre",
+            "BUN",
+            "Magnezyum",
+            "Ürik Asit",
+            "Sodyum",
+            "Potasyum",
+            "Direkt Bilirubin",
+            "CRP"
+          ],
+          "hallucinated": []
+        },
+        "values": {
+          "correct": 0,
+          "wrong": 0,
+          "accuracy": "N/A",
+          "errors": []
+        }
+      },
+      "elapsed_seconds": 3.6
+    },
+    {
+      "case": "2025-07-21_kan_2",
+      "output": {
+        "sample_date": null,
+        "metrics": [],
+        "pageCount": 1
+      },
+      "scores": {
+        "date": {
+          "expected": "2025-07-21",
+          "actual": null,
+          "match": false
+        },
+        "metrics": {
+          "expected": 38,
+          "extracted": 0,
+          "matched": 0,
+          "missed": [
+            "Sedimentasyon",
+            "Eritrosit",
+            "Hemoglobin",
+            "Hematokrit",
+            "MCV",
+            "MCH",
+            "MCHC",
+            "RDW",
+            "Lökosit",
+            "Nötrofil%",
+            "Nötrofil#",
+            "Lenfosit%",
+            "Lenfosit#",
+            "Monosit%",
+            "Monosit#",
+            "Eozinofil%",
+            "Eozinofil#",
+            "Bazofil%",
+            "Bazofil#",
+            "Trombosit",
+            "PCT",
+            "MPV",
+            "PDW",
+            "Glukoz",
+            "Üre",
+            "BUN",
+            "Kreatinin",
+            "Ürik Asit",
+            "Sodyum",
+            "Potasyum",
+            "Kalsiyum",
+            "eGFR",
+            "Total Protein",
+            "Albümin",
+            "Globulin",
+            "AST",
+            "ALT",
+            "LDH"
+          ],
+          "hallucinated": []
+        },
+        "values": {
+          "correct": 0,
+          "wrong": 0,
+          "accuracy": "N/A",
+          "errors": []
+        }
+      },
+      "elapsed_seconds": 2.1
+    },
+    {
+      "case": "2025-07-24_Enabiz-Tahlilleri",
+      "output": {
+        "sample_date": null,
+        "metrics": [],
+        "pageCount": 2
+      },
+      "scores": {
+        "date": {
+          "expected": "2025-07-24",
+          "actual": null,
+          "match": false
+        },
+        "metrics": {
+          "expected": 40,
+          "extracted": 0,
+          "matched": 0,
+          "missed": [
+            "MCV",
+            "MCHC",
+            "Bazofil%",
+            "Eritrosit",
+            "Bazofil#",
+            "PCT",
+            "Hemoglobin",
+            "P-LCR",
+            "Eozinofil%",
+            "Monosit#",
+            "PDW",
+            "RDW-SD",
+            "Eozinofil#",
+            "Hematokrit",
+            "Lökosit",
+            "MPV",
+            "Nötrofil%",
+            "Lenfosit#",
+            "Lenfosit%",
+            "MCH",
+            "IGRAN%",
+            "RDW-CV",
+            "Monosit%",
+            "Nötrofil#",
+            "Trombosit",
+            "Total Protein",
+            "Direkt Bilirubin",
+            "Kalsiyum",
+            "GGT",
+            "Albümin",
+            "Üre",
+            "LDH",
+            "Glukoz",
+            "AST",
+            "Ürik Asit",
+            "Potasyum",
+            "Total Bilirubin",
+            "ALT",
+            "Sodyum",
+            "Kreatinin"
+          ],
+          "hallucinated": []
+        },
+        "values": {
+          "correct": 0,
+          "wrong": 0,
+          "accuracy": "N/A",
+          "errors": []
+        }
+      },
+      "elapsed_seconds": 3.7
+    },
+    {
+      "case": "2025-08-29",
+      "output": {
+        "sample_date": null,
+        "metrics": [],
+        "pageCount": 1
+      },
+      "scores": {
+        "date": {
+          "expected": "2025-08-29",
+          "actual": null,
+          "match": false
+        },
+        "metrics": {
+          "expected": 36,
+          "extracted": 0,
+          "matched": 0,
+          "missed": [
+            "Eritrosit",
+            "Hemoglobin",
+            "Hematokrit",
+            "MCV",
+            "MCH",
+            "MCHC",
+            "RDW",
+            "Lökosit",
+            "Nötrofil%",
+            "Nötrofil#",
+            "Lenfosit%",
+            "Lenfosit#",
+            "Monosit%",
+            "Monosit#",
+            "Eozinofil%",
+            "Eozinofil#",
+            "Bazofil%",
+            "Bazofil#",
+            "Trombosit",
+            "Glukoz",
+            "Üre",
+            "BUN",
+            "Kreatinin",
+            "Ürik Asit",
+            "Sodyum",
+            "Potasyum",
+            "Kalsiyum",
+            "Magnezyum",
+            "eGFR",
+            "Total Protein",
+            "Albümin",
+            "AST",
+            "ALT",
+            "GGT",
+            "Alkalen Fosfataz",
+            "LDH"
+          ],
+          "hallucinated": []
+        },
+        "values": {
+          "correct": 0,
+          "wrong": 0,
+          "accuracy": "N/A",
+          "errors": []
+        }
+      },
+      "elapsed_seconds": 2.4
+    },
+    {
+      "case": "2025-09-29-2",
+      "output": {
+        "sample_date": null,
+        "metrics": [],
+        "pageCount": 1
+      },
+      "scores": {
+        "date": {
+          "expected": "2025-09-29",
+          "actual": null,
+          "match": false
+        },
+        "metrics": {
+          "expected": 1,
+          "extracted": 0,
+          "matched": 0,
+          "missed": [
+            "CRP"
+          ],
+          "hallucinated": []
+        },
+        "values": {
+          "correct": 0,
+          "wrong": 0,
+          "accuracy": "N/A",
+          "errors": []
+        }
+      },
+      "elapsed_seconds": 1.4
+    },
+    {
+      "case": "2026-01-11-Y_KSEL_OVALI_Sonuc",
+      "output": {
+        "sample_date": null,
+        "metrics": [],
+        "pageCount": 1
+      },
+      "scores": {
+        "date": {
+          "expected": "2026-01-11",
+          "actual": null,
+          "match": false
+        },
+        "metrics": {
+          "expected": 35,
+          "extracted": 0,
+          "matched": 0,
+          "missed": [
+            "Eritrosit",
+            "Hemoglobin",
+            "Hematokrit",
+            "MCV",
+            "MCH",
+            "MCHC",
+            "RDW",
+            "Lökosit",
+            "Nötrofil%",
+            "Nötrofil#",
+            "Lenfosit%",
+            "Lenfosit#",
+            "Monosit%",
+            "Monosit#",
+            "Eozinofil%",
+            "Eozinofil#",
+            "Bazofil%",
+            "Bazofil#",
+            "Trombosit",
+            "PCT",
+            "MPV",
+            "PDW",
+            "Üre",
+            "BUN",
+            "Kreatinin",
+            "Sodyum",
+            "Potasyum",
+            "Kalsiyum",
+            "Magnezyum",
+            "eGFR",
+            "AST",
+            "ALT",
+            "GGT",
+            "Alkalen Fosfataz",
+            "LDH"
+          ],
+          "hallucinated": []
+        },
+        "values": {
+          "correct": 0,
+          "wrong": 0,
+          "accuracy": "N/A",
+          "errors": []
+        }
+      },
+      "elapsed_seconds": 1.9
+    },
+    {
+      "case": "informes_OVAL0860107001_20241014",
+      "output": {
+        "sample_date": null,
+        "metrics": [],
+        "pageCount": 4
+      },
+      "scores": {
+        "date": {
+          "expected": "2024-10-14",
+          "actual": null,
+          "match": false
+        },
+        "metrics": {
+          "expected": 52,
+          "extracted": 0,
+          "matched": 0,
+          "missed": [
+            "Eritrosit",
+            "Hemoglobin",
+            "Hematokrit",
+            "MCV",
+            "MCH",
+            "MCHC",
+            "RDW",
+            "Eritroblast%",
+            "Eritroblast#",
+            "Lökosit",
+            "Nötrofil%",
+            "Lenfosit%",
+            "Monosit%",
+            "Eozinofil%",
+            "Bazofil%",
+            "Nötrofil#",
+            "Lenfosit#",
+            "Monosit#",
+            "Eozinofil#",
+            "Bazofil#",
+            "Trombosit",
+            "MPV",
+            "Sedimentasyon",
+            "Glukoz",
+            "Kreatinin",
+            "eGFR",
+            "Ürik Asit",
+            "Sodyum",
+            "Potasyum",
+            "AST",
+            "ALT",
+            "Alkalen Fosfataz",
+            "GGT",
+            "Kolesterol",
+            "HDL Kolesterol",
+            "LDL Kolesterol",
+            "Trigliserit",
+            "CRP",
+            "TSH",
+            "İdrar Dansitesi",
+            "İdrar Glukoz",
+            "İdrar Asetoasetat",
+            "İdrar Bilirubin",
+            "İdrar Ürobilinojen",
+            "İdrar pH",
+            "İdrar Protein",
+            "İdrar Eritrosit",
+            "İdrar Lökosit Esteraz",
+            "İdrar Kreatinin",
+            "İdrar Albümin",
+            "İdrar Albümin/Kreatinin",
+            "Romatoid Faktör"
+          ],
+          "hallucinated": []
+        },
+        "values": {
+          "correct": 0,
+          "wrong": 0,
+          "accuracy": "N/A",
+          "errors": []
+        }
+      },
+      "elapsed_seconds": 3.3
+    },
+    {
+      "case": "informes_OVAL0860107001_20250207",
+      "output": {
+        "sample_date": null,
+        "metrics": [],
+        "pageCount": 5
+      },
+      "scores": {
+        "date": {
+          "expected": "2025-02-07",
+          "actual": null,
+          "match": false
+        },
+        "metrics": {
+          "expected": 52,
+          "extracted": 0,
+          "matched": 0,
+          "missed": [
+            "Eritrosit",
+            "Hemoglobin",
+            "Hematokrit",
+            "MCV",
+            "MCH",
+            "MCHC",
+            "RDW",
+            "Eritroblast%",
+            "Eritroblast#",
+            "Lökosit",
+            "Nötrofil%",
+            "Lenfosit%",
+            "Monosit%",
+            "Eozinofil%",
+            "Bazofil%",
+            "Nötrofil#",
+            "Lenfosit#",
+            "Monosit#",
+            "Eozinofil#",
+            "Bazofil#",
+            "Trombosit",
+            "MPV",
+            "Sedimentasyon",
+            "Glukoz",
+            "Kreatinin",
+            "eGFR",
+            "Ürik Asit",
+            "Sodyum",
+            "Potasyum",
+            "AST",
+            "ALT",
+            "Alkalen Fosfataz",
+            "GGT",
+            "Kolesterol",
+            "HDL Kolesterol",
+            "LDL Kolesterol",
+            "Trigliserit",
+            "CRP",
+            "TSH",
+            "İdrar Dansitesi",
+            "İdrar Glukoz",
+            "İdrar Asetoasetat",
+            "İdrar Bilirubin",
+            "İdrar Ürobilinojen",
+            "İdrar pH",
+            "İdrar Protein",
+            "İdrar Eritrosit",
+            "İdrar Lökosit Esteraz",
+            "İdrar Kreatinin",
+            "İdrar Albümin",
+            "İdrar Albümin/Kreatinin",
+            "Romatoid Faktör"
+          ],
+          "hallucinated": []
+        },
+        "values": {
+          "correct": 0,
+          "wrong": 0,
+          "accuracy": "N/A",
+          "errors": []
+        }
+      },
+      "elapsed_seconds": 3.9
+    },
+    {
+      "case": "informes_OVAL0860107001_20250515",
+      "output": {
+        "sample_date": null,
+        "metrics": [],
+        "pageCount": 5
+      },
+      "scores": {
+        "date": {
+          "expected": "2025-05-15",
+          "actual": null,
+          "match": false
+        },
+        "metrics": {
+          "expected": 53,
+          "extracted": 0,
+          "matched": 0,
+          "missed": [
+            "Eritrosit",
+            "Hemoglobin",
+            "Hematokrit",
+            "MCV",
+            "MCH",
+            "MCHC",
+            "RDW",
+            "Eritroblast%",
+            "Eritroblast#",
+            "Lökosit",
+            "Nötrofil%",
+            "Lenfosit%",
+            "Monosit%",
+            "Eozinofil%",
+            "Bazofil%",
+            "Nötrofil#",
+            "Lenfosit#",
+            "Monosit#",
+            "Eozinofil#",
+            "Bazofil#",
+            "Trombosit",
+            "MPV",
+            "Glukoz",
+            "Kreatinin",
+            "eGFR",
+            "Ürik Asit",
+            "Total Bilirubin",
+            "Sodyum",
+            "Potasyum",
+            "AST",
+            "ALT",
+            "Alkalen Fosfataz",
+            "GGT",
+            "Kolesterol",
+            "HDL Kolesterol",
+            "LDL Kolesterol",
+            "Trigliserit",
+            "TSH",
+            "İdrar Dansitesi",
+            "İdrar Glukoz",
+            "İdrar Asetoasetat",
+            "İdrar Bilirubin",
+            "İdrar Ürobilinojen",
+            "İdrar pH",
+            "İdrar Protein",
+            "İdrar Eritrosit",
+            "İdrar Nitrit",
+            "İdrar Lökosit Esteraz",
+            "İdrar Kreatinin",
+            "İdrar Albümin",
+            "İdrar Albümin/Kreatinin",
+            "Üre",
+            "Klorür"
+          ],
+          "hallucinated": []
+        },
+        "values": {
+          "correct": 0,
+          "wrong": 0,
+          "accuracy": "N/A",
+          "errors": []
+        }
+      },
+      "elapsed_seconds": 2.8
+    },
+    {
+      "case": "informes_OVAL0860107001_20251121",
+      "output": {
+        "sample_date": null,
+        "metrics": [],
+        "pageCount": 3
+      },
+      "scores": {
+        "date": {
+          "expected": "2025-11-21",
+          "actual": null,
+          "match": false
+        },
+        "metrics": {
+          "expected": 50,
+          "extracted": 0,
+          "matched": 0,
+          "missed": [
+            "Eritrosit",
+            "Hemoglobin",
+            "Hematokrit",
+            "MCV",
+            "MCH",
+            "MCHC",
+            "RDW",
+            "Micro R",
+            "Macro R",
+            "Eritroblast%",
+            "Eritroblast#",
+            "Lökosit",
+            "Nötrofil%",
+            "Eozinofil%",
+            "Bazofil%",
+            "Lenfosit%",
+            "Monosit%",
+            "Nötrofil#",
+            "Eozinofil#",
+            "Bazofil#",
+            "Lenfosit#",
+            "Monosit#",
+            "Trombosit",
+            "MPV",
+            "PDW",
+            "PCT",
+            "Sedimentasyon",
+            "Glukoz",
+            "Kreatinin",
+            "eGFR",
+            "Ürik Asit",
+            "Kolesterol",
+            "HDL Kolesterol",
+            "Non-HDL Kolesterol",
+            "LDL Kolesterol",
+            "Trigliserit",
+            "Total Protein",
+            "Total Bilirubin",
+            "CRP",
+            "AST",
+            "ALT",
+            "GGT",
+            "Alkalen Fosfataz",
+            "Sodyum",
+            "Potasyum",
+            "TSH",
+            "Romatoid Faktör",
+            "İdrar Kreatinin",
+            "İdrar Albümin",
+            "İdrar Albümin/Kreatinin"
+          ],
+          "hallucinated": []
+        },
+        "values": {
+          "correct": 0,
+          "wrong": 0,
+          "accuracy": "N/A",
+          "errors": []
+        }
+      },
+      "elapsed_seconds": 1.8
+    }
+  ]
+}
