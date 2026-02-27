@@ -226,7 +226,7 @@ async function callOpenAI(apiKey, img, model) {
               ],
             },
           ],
-          max_tokens: 16384,
+          ...(model.startsWith("gpt-5") ? { max_completion_tokens: 16384 } : { max_tokens: 16384 }),
           response_format: { type: "json_object" },
         }),
       },
