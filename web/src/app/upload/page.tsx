@@ -39,6 +39,7 @@ import { Header } from "@/components/header";
 import { cn } from "@/lib/utils";
 import { formatDateTimeTR } from "@/lib/date";
 import { reportError } from "@/lib/error-reporting";
+import { trackEvent } from "@/lib/analytics";
 import {
   checkOutOfRange,
   type ExtractedMetric,
@@ -350,6 +351,7 @@ function UploadPageContent(): React.ReactElement {
         setUploadId(uploadData.uploadId);
         setUploadCreatedAt(new Date().toISOString());
         setStatus("extracting");
+        trackEvent({ action: "upload_started", category: "engagement" });
 
         const extractResponse = await fetch(
           `/api/upload/${uploadData.uploadId}/extract`,

@@ -8,6 +8,7 @@ import Link from "next/link";
 import { signIn, useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { reportError } from "@/lib/error-reporting";
+import { trackEvent } from "@/lib/analytics";
 import { ViziAILogo } from "@/components/viziai-logo";
 
 function LoginContent(): React.ReactElement {
@@ -34,6 +35,7 @@ function LoginContent(): React.ReactElement {
 
   useEffect(() => {
     if (status === "authenticated" && session) {
+      trackEvent({ action: "login_completed", category: "conversion" });
       router.push(redirectTo);
     }
   }, [status, session, router, redirectTo]);

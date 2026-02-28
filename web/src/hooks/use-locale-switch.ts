@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
 import { setLocale } from "@/app/actions/locale";
 import type { Locale } from "@/i18n/config";
+import { trackEvent } from "@/lib/analytics";
 
 export function useLocaleSwitch() {
   const locale = useLocale() as Locale;
@@ -18,6 +19,11 @@ export function useLocaleSwitch() {
     startTransition(async () => {
       try {
         await setLocale(target);
+        trackEvent({
+          action: "locale_switched",
+          category: "engagement",
+          label: target,
+        });
         router.refresh();
       } finally {
         switching.current = false;
