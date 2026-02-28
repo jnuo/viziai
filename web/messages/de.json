@@ -352,6 +352,14 @@
     "noteOptional": "Notiz (optional)",
     "existingWeightWarning": "Heute gibt es bereits einen Eintrag ({weight} kg um {time}). Möchten Sie ihn ersetzen?"
   },
+  "seo": {
+    "siteTitle": "ViziAI",
+    "titleTemplate": "{page} | ViziAI",
+    "defaultDescription": "Laden Sie Ihre Bluttestergebnisse hoch und erhalten Sie KI-gestützte Analysen mit visuellen Gesundheitseinblicken. Verfolgen Sie Trends über die Zeit.",
+    "landingTitle": "KI-gestützte Bluttest-Verfolgung",
+    "landingDescription": "Laden Sie Bluttest-PDFs in jeder Sprache hoch und erhalten Sie sofortige KI-Analyse. Verfolgen Sie Gesundheitstrends, vergleichen Sie Ergebnisse und verwalten Sie Familienprofile — alles kostenlos.",
+    "ogImageAlt": "ViziAI — KI-gestützte Bluttest-Verfolgung"
+  },
   "api": {
     "profileNotFound": "Profil nicht gefunden",
     "profileDeleteFailed": "Profil konnte nicht gelöscht werden",

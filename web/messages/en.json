@@ -352,6 +352,14 @@
     "noteOptional": "Note (optional)",
     "existingWeightWarning": "An entry already exists today ({weight} kg at {time}). Would you like to replace it?"
   },
+  "seo": {
+    "siteTitle": "ViziAI",
+    "titleTemplate": "{page} | ViziAI",
+    "defaultDescription": "Upload your blood test results and get AI-powered analysis with visual health insights. Track trends across time and languages.",
+    "landingTitle": "AI-Powered Blood Test Tracking",
+    "landingDescription": "Upload blood test PDFs in any language and get instant AI analysis. Track health trends, compare results over time, and manage family profiles — all for free.",
+    "ogImageAlt": "ViziAI — AI-Powered Blood Test Tracking"
+  },
   "api": {
     "profileNotFound": "Profile not found",
     "profileDeleteFailed": "Failed to delete profile",

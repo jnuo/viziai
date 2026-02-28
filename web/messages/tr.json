@@ -352,6 +352,14 @@
     "noteOptional": "Not (isteğe bağlı)",
     "existingWeightWarning": "Bugün zaten kayıt var ({time}'de {weight} kg). Değiştirmek ister misin?"
   },
+  "seo": {
+    "siteTitle": "ViziAI",
+    "titleTemplate": "{page} | ViziAI",
+    "defaultDescription": "Kan testi sonuçlarınızı yükleyin ve yapay zeka destekli analizlerle görsel sağlık bilgileri edinin. Zaman içindeki değişimleri takip edin.",
+    "landingTitle": "Yapay Zeka Destekli Kan Testi Takibi",
+    "landingDescription": "Herhangi bir dildeki kan testi PDF'lerinizi yükleyin ve anında yapay zeka analizi alın. Sağlık trendlerini takip edin, sonuçları karşılaştırın ve aile profillerini yönetin — tamamen ücretsiz.",
+    "ogImageAlt": "ViziAI — Yapay Zeka Destekli Kan Testi Takibi"
+  },
   "api": {
     "profileNotFound": "Profil bulunamadı",
     "profileDeleteFailed": "Profil silinemedi",

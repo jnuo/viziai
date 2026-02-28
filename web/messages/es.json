@@ -352,6 +352,14 @@
     "noteOptional": "Nota (opcional)",
     "existingWeightWarning": "Ya existe un registro hoy ({weight} kg a las {time}). ¿Desea reemplazarlo?"
   },
+  "seo": {
+    "siteTitle": "ViziAI",
+    "titleTemplate": "{page} | ViziAI",
+    "defaultDescription": "Sube tus resultados de análisis de sangre y obtén análisis con inteligencia artificial e información visual de salud. Sigue las tendencias a lo largo del tiempo.",
+    "landingTitle": "Seguimiento de análisis de sangre con IA",
+    "landingDescription": "Sube tus análisis de sangre en PDF en cualquier idioma y obtén análisis instantáneo con IA. Sigue tendencias de salud, compara resultados y gestiona perfiles familiares — todo gratis.",
+    "ogImageAlt": "ViziAI — Seguimiento de análisis de sangre con IA"
+  },
   "api": {
     "profileNotFound": "Perfil no encontrado",
     "profileDeleteFailed": "Error al eliminar perfil",
