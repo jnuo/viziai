@@ -8,23 +8,78 @@ tags: ["kan testi", "sağlık takibi", "uluslararası"]
 canonicalLocale: "en"
 ---
 
-Ülkeler arasında taşınmak, sağlık verilerinizi kaybetmeniz anlamına gelmemelidir. İster gurbetçi olun, ister sık seyahat eden biri, isterse farklı ülkelerde laboratuvar tetkiki yaptıran biri olun, kan testi sonuçlarınızın birleşik bir görünümünü tutmak zorlu olabilir.
+Ülkeler arasında taşındıysanız ya da uzun süre yurt dışında bulunduysanız bu durumu iyi bilirsiniz: yurt dışında kan tahlili yaptırırsınız ve rapor, alışkın olduğunuzdan tamamen farklı görünür. Farklı metrik isimleri, farklı birimler, farklı biçimlendirme. Sağlığınızın zaman içindeki seyrini birleşik bir şekilde takip etmek, parçaları birbirine uymayan bir yapboza dönüşür.
 
-## Sorun: Aynı Şey İçin Farklı İsimler
+ViziAI tam olarak bu sorunu çözmek için geliştirildi.
 
-Her ülkenin laboratuvar metrikleri için kendi adlandırma kuralları vardır. İngilizce konuşulan bir laboratuvarda "Potassium" olarak adlandırılan şey, Türkiye'de "Potasyum", Almanya'da "Kalium", Fransa'da ise "Potassium" (farklı biçimlendirmeyle) olarak görünebilir.
+## Kan Testlerini Ülkeler Arası Takip Etmek Neden Zor?
 
-Bu durum, farklı ülkelerden gelen raporları yan yana karşılaştırıyorsanız, zaman içindeki eğilimleri takip etmeyi neredeyse imkansız hale getirir.
+Kan testi raporları ülkeden ülkeye büyük farklılıklar gösterir. İşte en sık karşılaşılan zorluklar:
 
-## ViziAI Bunu Nasıl Çözüyor
+### Metrik İsimleri Dile Göre Değişiyor
 
-ViziAI, farklı dillerdeki metrik isimlerini normalleştirmek için yapay zeka destekli PDF çıkarma ve küratörlü bir takma ad sistemi kullanır. Dili ne olursa olsun bir kan testi PDF'i yüklediğinizde ViziAI:
+Aynı laboratuvar değeri, ülkeye ve dile göre farklı isimlerle karşınıza çıkabilir. Örneğin:
 
-1. Yapay zeka ile PDF'den **değerleri çıkarır**
-2. Varyantları standart isimlere eşleyen takma ad veritabanımızı kullanarak **metrik isimlerini normalleştirir**
-3. Kontrolün sizde kalması için inceleme adımında **öneriler gösterir**
-4. Birleşik bir panoda tüm raporlarınız genelinde **eğilimleri takip eder**
+- **Potassium** İngilizce'de bu şekilde yazılırken, Türkçe'de **Potasyum**, Almanca'da **Kalium**, İspanyolca'da ise **Potasio** olur
+- **Beyaz Kan Hücresi Sayımı** bazı raporlarda **WBC**, bazılarında **Lökosit**, Almanca raporlarda **Leukozyten**, İspanyolca'da ise **Leucocitos** olarak görünebilir
+- **Tiroid Stimülan Hormon** bazen **TSH**, bazen **Tiroid Stimülan Hormon**, Almanca'da ise **Thyreotropin** olarak listelenebilir
 
-## Başlayın
+Aynı dil içinde bile farklı laboratuvarlar farklı kurallar kullanır. Bir Türk laboratuvarı "ALT" yazarken, bir diğeri "Alanin Aminotransferaz (ALT)" şeklinde uzun haliyle rapor edebilir.
 
-İlk kan testi PDF'inizi ücretsiz yükleyin ve ViziAI'nin sonuçlarınızı hangi ülkeden gelirse gelsin nasıl işlediğini görün.
+### Birimler Farklılık Gösterebilir
+
+Bazı ülkeler glikoz için mg/dL tercih ederken, diğerleri mmol/L kullanır. Referans aralıkları da laboratuvarın yöntemine ve bölgesel popülasyon normlarına göre değişir. Dikkatli olmazsanız, bir değerin dramatik şekilde değiştiğini düşünebilirsiniz; oysa sadece farklı bir birimle ölçülmüştür.
+
+### PDF Formatları Tutarsız
+
+Her laboratuvarın kendi PDF şablonu var. Tablolar, sütunlar, başlıklar ve dipnotlar farklı şekilde düzenlenir. Bazı laboratuvarlar dijital metin yerine taranmış görsel kullanır, bu da veri çıkarmayı daha da zorlaştırır. Bu PDF'lerden değerleri elle bir tabloya aktarmak hem zaman alıcı hem de hata yapmaya açıktır.
+
+## ViziAI Çok Ülkeli Kan Testlerini Nasıl Yönetiyor?
+
+ViziAI, yapay zeka destekli PDF çıkarma ile küratörlü bir takma ad sistemini birleştirerek kan testinizin nerede yapıldığından bağımsız, kesintisiz bir deneyim sunar.
+
+### Adım 1: Herhangi Bir Laboratuvar PDF'i Yükleyin
+
+Kan testi PDF'inizi yüklemeniz yeterli — ister İstanbul'daki bir klinikten, ister Berlin'deki bir hastaneden, ister Madrid'deki bir laboratuvardan olsun. ViziAI her dilde PDF kabul eder. Yükleme birkaç saniye sürer.
+
+### Adım 2: Yapay Zeka Sonuçlarınızı Çıkarır
+
+ViziAI, gelişmiş yapay zeka kullanarak PDF'inizi okur ve her metriği, değeri, birimi ve referans aralığını çıkarır. Yapay zeka birden fazla dili anlar ve hem dijital hem de taranmış PDF'lerle çalışabilir. Karmaşık tablo düzenlerinden bile metrik isimlerini, sayısal değerleri ve referans aralıklarını doğru şekilde tanır.
+
+### Adım 3: Akıllı İsim Normalizasyonu
+
+İşin sihri burada gerçekleşir. ViziAI, yüzlerce eşleme içeren küratörlü bir metrik takma ad veritabanı barındırır — bu eşlemeler, farklı isimlendirmeleri tek bir standart isme bağlar. Almanca laboratuvar raporunuzda "Kalium" yazdığında, ViziAI bunu Türkçe raporunuzdaki "Potasyum" ile aynı şey olarak otomatik olarak tanır.
+
+İnceleme adımında, ViziAI'nin önerdiği her değişikliği açıkça görürsünüz. Her yeniden adlandırma, yanında bir aç/kapa düğmesiyle satır içinde gösterilir — kontrol tamamen sizde. Öneriyi kabul edin ya da orijinal ismi koruyun, karar sizin.
+
+### Adım 4: Birleşik Kontrol Paneli
+
+Onayladıktan sonra sonuçlarınız, önceki tüm testlerinizle birlikte tek bir kontrol panelinde görünür. Eğilim grafikleri, testin hangi ülkede yapıldığından bağımsız olarak her metriğin zaman içinde nasıl değiştiğini gösterir. Referans aralığı dışındaki değerler vurgulanır, böylece sorunları bir bakışta fark edebilirsiniz.
+
+## Gerçek Hayat Örneği: Türkiye'den Almanya'ya Taşınmak
+
+Yıllardır Türkiye'de kan testi yaptırdığınızı düşünün. Raporlarınızda "Potasyum", "Glukoz", "TSH" ve "Hemoglobin" gibi metrikler yer alıyor. Almanya'ya taşınıyorsunuz ve yeni laboratuvar raporlarınızda "Kalium", "Glukose", "TSH" (şanslıyız, aynı kısaltma) ve "Hämoglobin" yazıyor.
+
+ViziAI olmadan, hangi Almanca ismin hangi Türkçe isme karşılık geldiğini elle çözmeniz ve ikisini de bir tabloda takip etmeniz gerekirdi. ViziAI ile her iki PDF'i de yüklemeniz yeterli. Takma ad sistemi "Kalium"u "Potasyum"a, "Glukose"u "Glukoz"a bağlar ve böyle devam eder. Kontrol panelinizde her metrik için tek bir kesintisiz eğilim çizgisi görürsünüz.
+
+## Desteklenen Diller
+
+ViziAI şu anda aşağıdaki dillerdeki laboratuvar raporlarını desteklemektedir:
+
+- **Türkçe** — ViziAI'nin başlangıçta geliştirildiği dil
+- **İngilizce** — uluslararası kliniklerde yaygın olarak kullanılır
+- **Almanca** — yaygın laboratuvar metrikleri için 55'ten fazla takma ad eşlemesi
+- **Fransızca** — 59'dan fazla takma ad eşlemesi
+- **İspanyolca** — İspanya ve Latin Amerika'dan gelen raporlar için
+
+Takma ad veritabanı, tespit ettiğimiz her yeni yükleme deseniyle birlikte büyümeye devam eder. Raporunuzda daha önce görmediğimiz bir isim varsa, inceleme sırasında olduğu gibi bırakabilirsiniz ve yine doğru şekilde takip edilir.
+
+## Gizlilik ve Güvenlik
+
+Sağlık verileriniz gizli kalır. ViziAI, yapay zekayı yalnızca PDF'inizden değerleri çıkarmak için kullanır — yapay zeka verilerinizi saklamaz ve verilerinizden öğrenmez. Tüm sonuçlar veritabanımızda güvenli şekilde depolanır; verilerinizi istediğiniz zaman dışa aktarabilir veya silebilirsiniz. Ayrıntılar için [gizlilik politikamızı](/privacy) okuyun.
+
+## Ücretsiz Olarak Başlayın
+
+İlk kan testi PDF'inizi yükleyin ve ViziAI'nin metrik isimlerini diller arasında nasıl normalleştirdiğini görün. Kredi kartı gerekmez — ilk beş raporunuz ücretsiz.
+
+İster sınırlar arasında sağlığını takip eden bir gurbetçi olun, ister birden fazla profil yöneten bir aile, isterse laboratuvar sonuçlarının daha net bir resmini isteyen biri — ViziAI bunu kolaylaştırır.

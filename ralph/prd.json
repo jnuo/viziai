@@ -266,7 +266,7 @@
       "files": ["web/content/blog/"],
       "capabilities": ["writer-onur"],
       "priority": 4,
-      "status": "todo",
+      "status": "done",
       "dependencies": ["STORY-010"]
     }
   ]
