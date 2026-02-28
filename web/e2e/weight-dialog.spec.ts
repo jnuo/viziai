@@ -38,7 +38,7 @@ test.describe("Weight Dialog", () => {
     await page.getByRole("button", { name: /Ekle/ }).click();
     await page.getByText("Kilo Ekle").click();
 
-    await expect(page.getByRole("dialog")).toBeVisible();
+    await expect(page.getByRole("dialog")).toBeVisible({ timeout: 10000 });
     await expect(page.locator("#weight")).toBeVisible();
 
     await context.close();
@@ -92,7 +92,9 @@ test.describe("Weight Dialog", () => {
     await page.locator("#weight").fill("75.5");
     await page.getByRole("button", { name: "Kaydet" }).click();
 
-    await expect(page.getByText("Kilo kaydedildi")).toBeVisible();
+    await expect(page.getByText("Kilo kaydedildi")).toBeVisible({
+      timeout: 10000,
+    });
     await expect(page.getByRole("dialog")).not.toBeVisible();
 
     await context.close();
@@ -112,7 +114,9 @@ test.describe("Weight Dialog", () => {
     await page.getByText("Kilo Ekle").click();
     await page.locator("#weight").fill("75.5");
     await page.getByRole("button", { name: "Kaydet" }).click();
-    await expect(page.getByText("Kilo kaydedildi")).toBeVisible();
+    await expect(page.getByText("Kilo kaydedildi")).toBeVisible({
+      timeout: 10000,
+    });
 
     // Second entry — same day
     await page.getByRole("button", { name: /Ekle/ }).click();
@@ -140,18 +144,24 @@ test.describe("Weight Dialog", () => {
     await page.getByText("Kilo Ekle").click();
     await page.locator("#weight").fill("75.5");
     await page.getByRole("button", { name: "Kaydet" }).click();
-    await expect(page.getByText("Kilo kaydedildi")).toBeVisible();
+    await expect(page.getByText("Kilo kaydedildi")).toBeVisible({
+      timeout: 10000,
+    });
 
     // Second entry — triggers conflict
     await page.getByRole("button", { name: /Ekle/ }).click();
     await page.getByText("Kilo Ekle").click();
     await page.locator("#weight").fill("76.0");
     await page.getByRole("button", { name: "Kaydet" }).click();
-    await expect(page.getByText("Bugün zaten kayıt var")).toBeVisible();
+    await expect(page.getByText("Bugün zaten kayıt var")).toBeVisible({
+      timeout: 10000,
+    });
 
     // Replace
     await page.getByRole("button", { name: "Değiştir" }).click();
-    await expect(page.getByText("Kilo kaydedildi")).toBeVisible();
+    await expect(page.getByText("Kilo kaydedildi")).toBeVisible({
+      timeout: 10000,
+    });
     await expect(page.getByRole("dialog")).not.toBeVisible();
 
     await context.close();

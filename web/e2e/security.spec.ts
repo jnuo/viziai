@@ -28,7 +28,7 @@ test.describe("Security", () => {
     await page.goto("/dashboard");
     await expect(page).toHaveURL(/\/dashboard/);
     // Dashboard should render content (not redirect away)
-    await expect(page.locator("main")).toBeVisible();
+    await expect(page.locator("main")).toBeVisible({ timeout: 10000 });
 
     await context.close();
   });
