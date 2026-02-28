@@ -107,7 +107,9 @@
       "uploadAnother": "Télécharger un autre fichier",
       "goToDashboard": "Aller au tableau de bord",
       "uploadNewFile": "Télécharger un nouveau fichier",
-      "alreadyUploaded": "Ce fichier a déjà été téléchargé : {date}"
+      "alreadyUploaded": "Ce fichier a déjà été téléchargé : {date}",
+      "reportCapReached": "Limite de rapports atteinte",
+      "reportCapDescription": "Ce profil a atteint la limite du plan gratuit de {max} rapports. Plan Pro bientôt disponible."
     },
     "dashboard": {
       "loadingData": "Chargement des données…",
@@ -144,7 +146,8 @@
       "weight": "Poids",
       "bpSystolic": "Pression artérielle (Systolique)",
       "bpDiastolic": "Pression artérielle (Diastolique)",
-      "dataLoadFailed": "Échec du chargement des données"
+      "dataLoadFailed": "Échec du chargement des données",
+      "reportCount": "{count}/{max} rapports"
     },
     "settings": {
       "testReports": "Rapports d'analyses",
@@ -369,6 +372,7 @@
     "onlyPdf": "Seuls les fichiers PDF sont acceptés",
     "invalidPdf": "Fichier PDF invalide",
     "fileAlreadyUploaded": "Ce fichier a déjà été téléchargé",
+    "reportCapReached": "Ce profil a atteint la limite du plan gratuit de {max} rapports",
     "inviteNotFound": "Invitation introuvable",
     "inviteInfoFailed": "Échec de la récupération des détails de l'invitation",
     "inviteCancelled": "Cette invitation a été annulée",

@@ -2,3 +2,53 @@
 # Started: 2026-02-28
 # Branch: ralph/phase-1-ship-free-product
 
+---
+## 2026-02-28 - STORY-001: Add typecheck script
+- Added "typecheck": "tsc --noEmit" to web/package.json scripts
+- Installed @types/jest (was missing, causing typecheck failures in test files)
+- Excluded e2e/ from tsconfig.json and jest.config.js (Playwright tests were leaking into tsc and Jest)
+- Verified: typecheck passes (0 errors), tests pass (15/15), build succeeds
+- Files changed: web/package.json, web/package-lock.json, web/tsconfig.json, web/jest.config.js
+- Learnings: e2e tests need to be excluded from both tsconfig and Jest config — they use Playwright's own type system and test runner
+
+---
+## 2026-02-28 - STORY-002: Add German locale
+- Added 'de' locale to i18n config (label: Deutsch, BCP47: de-DE)
+- Created web/messages/de.json with all 334 keys translated to German
+- Key structure verified identical to en.json via script comparison
+- Files changed: web/src/i18n/config.ts, web/messages/de.json
+- Learnings: Use node script to verify key parity between locale files — catches structural mismatches before build
+
+---
+## 2026-02-28 - STORY-003: Add French locale
+- Added 'fr' locale to i18n config (label: Français, BCP47: fr-FR)
+- Created web/messages/fr.json with all 334 keys translated to French
+- Key structure verified identical to en.json
+- Files changed: web/src/i18n/config.ts, web/messages/fr.json
+- Learnings: Same pattern as STORY-002 — locale additions are mechanical once the first one is done
+
+---
+## 2026-02-28 - STORY-006: German metric aliases migration
+- Created db-schema/migrations/20260228_german_metric_aliases.sql with 55 German → Turkish alias mappings
+- Covers: CBC, metabolic panel, liver, kidney, lipids, thyroid, iron, inflammation, vitamins, coagulation
+- Used ON CONFLICT (alias) DO NOTHING for idempotent re-runs
+- Files changed: db-schema/migrations/20260228_german_metric_aliases.sql
+- Learnings: Canonical names include full parenthetical suffixes like "ALT (Alanin Aminotransferaz)" — must match exactly
+
+---
+## 2026-02-28 - STORY-007: French metric aliases migration
+- Created db-schema/migrations/20260228_french_metric_aliases.sql with 59 French → Turkish alias mappings
+- Same coverage as German: CBC, metabolic, liver, kidney, lipids, thyroid, iron, inflammation, vitamins, coagulation
+- Files changed: db-schema/migrations/20260228_french_metric_aliases.sql
+- Learnings: French medical terms often use accented characters (é, è, ê) — important for correct alias matching
+
+---
+## 2026-02-28 - STORY-004: Report cap enforcement — backend
+- Added 5-report-per-profile cap check to POST /api/upload, after profile access verification and before file processing
+- Counts existing reports in processed_files table; returns 403 with reportCount and reportCap if >= 5
+- Added translation keys to all 5 locale files: api.reportCapReached, pages.upload.reportCapReached, pages.upload.reportCapDescription, pages.dashboard.reportCount
+- Code review found: race condition (concurrent uploads can bypass cap) — acceptable risk for personal health app with <5 users; error string casing inconsistency — fixed
+- Verified: typecheck passes, tests pass (15/15), build succeeds
+- Files changed: web/src/app/api/upload/route.ts, web/messages/tr.json, web/messages/en.json, web/messages/es.json, web/messages/de.json, web/messages/fr.json
+- Learnings: Cap check placed before file read/upload to avoid wasting resources. Response includes reportCount/reportCap for STORY-005 frontend consumption
+

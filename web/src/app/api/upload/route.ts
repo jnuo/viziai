@@ -82,6 +82,24 @@ export async function POST(request: Request) {
       );
     }
 
+    // Check report cap (5 reports per profile for free tier)
+    const FREE_REPORT_CAP = 5;
+    const reportCountResult = await sql`
+      SELECT COUNT(*)::int AS count FROM processed_files WHERE profile_id = ${profileId}
+    `;
+    const reportCount = reportCountResult[0].count;
+    if (reportCount >= FREE_REPORT_CAP) {
+      return NextResponse.json(
+        {
+          error: "Report Cap Reached",
+          message: "Report limit reached for this profile",
+          reportCount,
+          reportCap: FREE_REPORT_CAP,
+        },
+        { status: 403 },
+      );
+    }
+
     // Read file content and validate PDF magic bytes
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);

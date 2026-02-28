@@ -107,7 +107,9 @@
       "uploadAnother": "Başka Dosya Yükle",
       "goToDashboard": "Dashboard'a Git",
       "uploadNewFile": "Yeni Dosya Yükle",
-      "alreadyUploaded": "Bu dosya zaten yüklenmiş: {date}"
+      "alreadyUploaded": "Bu dosya zaten yüklenmiş: {date}",
+      "reportCapReached": "Rapor sınırına ulaşıldı",
+      "reportCapDescription": "Bu profil ücretsiz plan sınırına ulaştı ({max} rapor). Pro plan yakında."
     },
     "dashboard": {
       "loadingData": "Veriler yükleniyor…",
@@ -144,7 +146,8 @@
       "weight": "Kilo",
       "bpSystolic": "Tansiyon (Sistolik)",
       "bpDiastolic": "Tansiyon (Diastolik)",
-      "dataLoadFailed": "Veriler yüklenemedi"
+      "dataLoadFailed": "Veriler yüklenemedi",
+      "reportCount": "{count}/{max} rapor"
     },
     "settings": {
       "testReports": "Tahliller",
@@ -369,6 +372,7 @@
     "onlyPdf": "Sadece PDF dosyaları kabul edilir",
     "invalidPdf": "Geçersiz PDF dosyası",
     "fileAlreadyUploaded": "Bu dosya zaten yüklenmiş",
+    "reportCapReached": "Bu profil ücretsiz plan sınırına ulaştı ({max} rapor)",
     "inviteNotFound": "Davet bulunamadı",
     "inviteInfoFailed": "Davet bilgileri alınamadı",
     "inviteCancelled": "Bu davet iptal edilmiş",

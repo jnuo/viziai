@@ -107,7 +107,9 @@
       "uploadAnother": "Upload Another File",
       "goToDashboard": "Go to Dashboard",
       "uploadNewFile": "Upload New File",
-      "alreadyUploaded": "This file has already been uploaded: {date}"
+      "alreadyUploaded": "This file has already been uploaded: {date}",
+      "reportCapReached": "Report limit reached",
+      "reportCapDescription": "This profile has reached the free plan limit of {max} reports. Pro plan coming soon."
     },
     "dashboard": {
       "loadingData": "Loading data…",
@@ -144,7 +146,8 @@
       "weight": "Weight",
       "bpSystolic": "Blood Pressure (Systolic)",
       "bpDiastolic": "Blood Pressure (Diastolic)",
-      "dataLoadFailed": "Failed to load data"
+      "dataLoadFailed": "Failed to load data",
+      "reportCount": "{count}/{max} reports"
     },
     "settings": {
       "testReports": "Test Reports",
@@ -369,6 +372,7 @@
     "onlyPdf": "Only PDF files are accepted",
     "invalidPdf": "Invalid PDF file",
     "fileAlreadyUploaded": "This file has already been uploaded",
+    "reportCapReached": "This profile has reached the free plan limit of {max} reports",
     "inviteNotFound": "Invite not found",
     "inviteInfoFailed": "Failed to retrieve invite details",
     "inviteCancelled": "This invite has been cancelled",

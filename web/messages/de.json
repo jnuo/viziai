@@ -107,7 +107,9 @@
       "uploadAnother": "Weitere Datei hochladen",
       "goToDashboard": "Zum Dashboard",
       "uploadNewFile": "Neue Datei hochladen",
-      "alreadyUploaded": "Diese Datei wurde bereits hochgeladen: {date}"
+      "alreadyUploaded": "Diese Datei wurde bereits hochgeladen: {date}",
+      "reportCapReached": "Berichtslimit erreicht",
+      "reportCapDescription": "Dieses Profil hat das Limit des kostenlosen Plans von {max} Berichten erreicht. Pro-Plan kommt bald."
     },
     "dashboard": {
       "loadingData": "Daten werden geladen…",
@@ -144,7 +146,8 @@
       "weight": "Gewicht",
       "bpSystolic": "Blutdruck (Systolisch)",
       "bpDiastolic": "Blutdruck (Diastolisch)",
-      "dataLoadFailed": "Daten konnten nicht geladen werden"
+      "dataLoadFailed": "Daten konnten nicht geladen werden",
+      "reportCount": "{count}/{max} Berichte"
     },
     "settings": {
       "testReports": "Testberichte",
@@ -369,6 +372,7 @@
     "onlyPdf": "Nur PDF-Dateien werden akzeptiert",
     "invalidPdf": "Ungültige PDF-Datei",
     "fileAlreadyUploaded": "Diese Datei wurde bereits hochgeladen",
+    "reportCapReached": "Dieses Profil hat das Limit des kostenlosen Plans von {max} Berichten erreicht",
     "inviteNotFound": "Einladung nicht gefunden",
     "inviteInfoFailed": "Einladungsdetails konnten nicht abgerufen werden",
     "inviteCancelled": "Diese Einladung wurde zurückgezogen",

@@ -35,7 +35,7 @@
       ],
       "files": ["web/package.json"],
       "priority": 1,
-      "status": "todo",
+      "status": "done",
       "dependencies": []
     },
     {
@@ -51,7 +51,7 @@
       ],
       "files": ["web/src/i18n/config.ts", "web/messages/de.json"],
       "priority": 1,
-      "status": "todo",
+      "status": "done",
       "dependencies": []
     },
     {
@@ -67,7 +67,7 @@
       ],
       "files": ["web/src/i18n/config.ts", "web/messages/fr.json"],
       "priority": 1,
-      "status": "todo",
+      "status": "done",
       "dependencies": []
     },
     {
@@ -90,7 +90,7 @@
         "web/messages/fr.json"
       ],
       "priority": 2,
-      "status": "todo",
+      "status": "done",
       "dependencies": ["STORY-002", "STORY-003"]
     },
     {
@@ -127,7 +127,7 @@
       ],
       "files": ["db-schema/migrations/20260228_german_metric_aliases.sql"],
       "priority": 2,
-      "status": "todo",
+      "status": "done",
       "dependencies": []
     },
     {
@@ -143,7 +143,7 @@
       ],
       "files": ["db-schema/migrations/20260228_french_metric_aliases.sql"],
       "priority": 2,
-      "status": "todo",
+      "status": "done",
       "dependencies": []
     },
     {

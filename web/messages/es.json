@@ -107,7 +107,9 @@
       "uploadAnother": "Subir Otro Archivo",
       "goToDashboard": "Ir al Panel",
       "uploadNewFile": "Subir Nuevo Archivo",
-      "alreadyUploaded": "Este archivo ya ha sido subido: {date}"
+      "alreadyUploaded": "Este archivo ya ha sido subido: {date}",
+      "reportCapReached": "Límite de informes alcanzado",
+      "reportCapDescription": "Este perfil ha alcanzado el límite del plan gratuito de {max} informes. Plan Pro próximamente."
     },
     "dashboard": {
       "loadingData": "Cargando datos…",
@@ -144,7 +146,8 @@
       "weight": "Peso",
       "bpSystolic": "Tensión Arterial (Sistólica)",
       "bpDiastolic": "Tensión Arterial (Diastólica)",
-      "dataLoadFailed": "Error al cargar datos"
+      "dataLoadFailed": "Error al cargar datos",
+      "reportCount": "{count}/{max} informes"
     },
     "settings": {
       "testReports": "Informes de Análisis",
@@ -369,6 +372,7 @@
     "onlyPdf": "Solo se aceptan archivos PDF",
     "invalidPdf": "Archivo PDF no válido",
     "fileAlreadyUploaded": "Este archivo ya ha sido subido",
+    "reportCapReached": "Este perfil ha alcanzado el límite del plan gratuito de {max} informes",
     "inviteNotFound": "Invitación no encontrada",
     "inviteInfoFailed": "Error al obtener detalles de la invitación",
     "inviteCancelled": "Esta invitación ha sido cancelada",
