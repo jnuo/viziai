@@ -352,6 +352,54 @@
     "noteOptional": "Nota (opcional)",
     "existingWeightWarning": "Ya existe un registro hoy ({weight} kg a las {time}). ¿Desea reemplazarlo?"
   },
+  "privacy": {
+    "title": "Política de Privacidad",
+    "lastUpdated": "Última actualización: 28 de febrero de 2026",
+    "intro": "ViziAI se toma tu privacidad en serio. Esta política explica qué datos recopilamos, cómo los usamos y cuáles son tus derechos. Lo mantenemos simple y transparente.",
+    "dataCollection": {
+      "title": "Qué Recopilamos",
+      "description": "Cuando usas ViziAI, recopilamos:",
+      "items": {
+        "account": "Tu correo electrónico y nombre de cuenta de Google (para autenticación)",
+        "bloodTests": "Archivos PDF de análisis de sangre que subes (almacenados temporalmente durante el procesamiento)",
+        "labValues": "Valores de laboratorio extraídos, nombres de métricas y rangos de referencia",
+        "tracking": "Datos de seguimiento de salud que ingresas manualmente (peso, presión arterial)",
+        "usage": "Analíticas básicas de uso (visitas a páginas, uso de funciones) mediante Google Analytics"
+      }
+    },
+    "dataStorage": {
+      "title": "Cómo Almacenamos tus Datos",
+      "description": "Tus datos se almacenan de forma segura en una base de datos Neon Postgres. Los archivos PDF se almacenan temporalmente en Vercel Blob durante el procesamiento y se eliminan después de completar la extracción. Todas las conexiones utilizan cifrado HTTPS."
+    },
+    "aiProcessing": {
+      "title": "Procesamiento con IA",
+      "description": "Cuando subes un PDF de análisis de sangre, usamos la API de OpenAI para extraer los valores de laboratorio del documento. El contenido del PDF se envía a OpenAI para su procesamiento y está sujeto a las políticas de uso de datos de OpenAI. No usamos tus datos de salud para entrenar modelos de IA."
+    },
+    "cookies": {
+      "title": "Cookies",
+      "description": "Usamos cookies esenciales para la autenticación (mantener tu sesión activa) y una cookie de preferencia de idioma (recordar tu elección de idioma). Google Analytics usa cookies para estadísticas de uso anónimas. No usamos cookies de publicidad ni de seguimiento."
+    },
+    "gdpr": {
+      "title": "Tus Derechos",
+      "description": "Tienes derecho a:",
+      "items": {
+        "access": "Acceder a todos los datos que almacenamos sobre ti",
+        "export": "Exportar tus datos en un formato estándar",
+        "delete": "Solicitar la eliminación de tu cuenta y todos los datos asociados",
+        "correct": "Corregir cualquier dato inexacto",
+        "withdraw": "Retirar el consentimiento y dejar de usar el servicio en cualquier momento"
+      }
+    },
+    "dataDeletion": {
+      "title": "Eliminación de Datos",
+      "description": "Puedes eliminar informes individuales, perfiles o toda tu cuenta desde la página de Configuración. Cuando eliminas datos, se borran permanentemente de nuestra base de datos. No hay recuperación posible."
+    },
+    "contact": {
+      "title": "Contacto",
+      "description": "Para consultas de privacidad o solicitudes de datos, contáctanos en:",
+      "email": "privacy@viziai.app"
+    }
+  },
   "seo": {
     "siteTitle": "ViziAI",
     "titleTemplate": "{page} | ViziAI",

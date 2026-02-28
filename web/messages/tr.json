@@ -352,6 +352,54 @@
     "noteOptional": "Not (isteğe bağlı)",
     "existingWeightWarning": "Bugün zaten kayıt var ({time}'de {weight} kg). Değiştirmek ister misin?"
   },
+  "privacy": {
+    "title": "Gizlilik Politikası",
+    "lastUpdated": "Son güncelleme: 28 Şubat 2026",
+    "intro": "ViziAI gizliliğinizi ciddiye alır. Bu politika, hangi verileri topladığımızı, nasıl kullandığımızı ve haklarınızı açıklar. Basit ve şeffaf tutuyoruz.",
+    "dataCollection": {
+      "title": "Neler Topluyoruz",
+      "description": "ViziAI'yı kullandığınızda şunları topluyoruz:",
+      "items": {
+        "account": "Google hesap e-postanız ve adınız (kimlik doğrulama için)",
+        "bloodTests": "Yüklediğiniz kan testi PDF dosyaları (işleme sırasında geçici olarak saklanır)",
+        "labValues": "Çıkarılan laboratuvar değerleri, metrik adları ve referans aralıkları",
+        "tracking": "Manuel olarak girdiğiniz sağlık takip verileri (kilo, tansiyon)",
+        "usage": "Google Analytics aracılığıyla temel kullanım analizleri (sayfa ziyaretleri, özellik kullanımı)"
+      }
+    },
+    "dataStorage": {
+      "title": "Verilerinizi Nasıl Saklıyoruz",
+      "description": "Verileriniz Neon Postgres veritabanında güvenli bir şekilde saklanır. PDF dosyaları işleme sırasında geçici olarak Vercel Blob'da saklanır ve çıkarma tamamlandıktan sonra silinir. Tüm bağlantılar HTTPS şifreleme kullanır."
+    },
+    "aiProcessing": {
+      "title": "Yapay Zeka İşleme",
+      "description": "Bir kan testi PDF'i yüklediğinizde, belgeden laboratuvar değerlerini çıkarmak için OpenAI'nin API'sini kullanıyoruz. PDF içeriği işleme için OpenAI'ye gönderilir ve OpenAI'nin veri kullanım politikalarına tabidir. Sağlık verilerinizi yapay zeka modellerini eğitmek için kullanmıyoruz."
+    },
+    "cookies": {
+      "title": "Çerezler",
+      "description": "Kimlik doğrulama (oturumunuzu açık tutma) ve dil tercihi çerezi (dil seçiminizi hatırlama) için temel çerezler kullanıyoruz. Google Analytics anonim kullanım istatistikleri için çerez kullanır. Reklam veya izleme çerezleri kullanmıyoruz."
+    },
+    "gdpr": {
+      "title": "Haklarınız",
+      "description": "Aşağıdaki haklara sahipsiniz:",
+      "items": {
+        "access": "Hakkınızda sakladığımız tüm verilere erişim",
+        "export": "Verilerinizi standart bir formatta dışa aktarma",
+        "delete": "Hesabınızın ve ilişkili tüm verilerin silinmesini talep etme",
+        "correct": "Hatalı verileri düzeltme",
+        "withdraw": "Onayınızı geri çekme ve hizmeti istediğiniz zaman kullanmayı bırakma"
+      }
+    },
+    "dataDeletion": {
+      "title": "Veri Silme",
+      "description": "Ayarlar sayfasından tek tek raporları, profilleri veya tüm hesabınızı silebilirsiniz. Veri sildiğinizde, veritabanımızdan kalıcı olarak kaldırılır. Geri alma imkanı yoktur."
+    },
+    "contact": {
+      "title": "İletişim",
+      "description": "Gizlilikle ilgili sorular veya veri talepleri için bize ulaşın:",
+      "email": "privacy@viziai.app"
+    }
+  },
   "seo": {
     "siteTitle": "ViziAI",
     "titleTemplate": "{page} | ViziAI",
