@@ -1,0 +1,4 @@
+# Ralph Progress Log - Phase 1: Ship the Free Product
+# Started: 2026-02-28
+# Branch: ralph/phase-1-ship-free-product
+
