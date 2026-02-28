@@ -37,6 +37,7 @@
     "yesterday": "Ayer",
     "hoursAgo": "Hace {count}h",
     "copyright": "© 2026 ViziAI. Todos los derechos reservados.",
+    "privacyLink": "Política de Privacidad",
     "accessLevel": {
       "owner": "Propietario",
       "editor": "Editor",

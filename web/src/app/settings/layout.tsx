@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Header } from "@/components/header";
 import { useActiveProfile } from "@/hooks/use-active-profile";
+import { useTranslations } from "next-intl";
 
 export default function SettingsLayout({
   children,
@@ -10,6 +11,7 @@ export default function SettingsLayout({
   children: React.ReactNode;
 }) {
   const { activeProfile, activeProfileId } = useActiveProfile();
+  const tc = useTranslations("common");
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -23,7 +25,7 @@ export default function SettingsLayout({
           href="/privacy"
           className="hover:text-foreground transition-colors"
         >
-          Privacy Policy
+          {tc("privacyLink")}
         </Link>
       </footer>
     </div>

@@ -167,6 +167,7 @@ function LoginFallback(): React.ReactElement {
 }
 
 export default function LoginPage(): React.ReactElement {
+  const tc = useTranslations("common");
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <div className="flex-1 flex items-center justify-center p-4">
@@ -179,7 +180,7 @@ export default function LoginPage(): React.ReactElement {
           href="/privacy"
           className="hover:text-foreground transition-colors"
         >
-          Privacy Policy
+          {tc("privacyLink")}
         </Link>
       </footer>
     </div>
