@@ -48,6 +48,7 @@
       "heroTitle": "Understand Your Test Results <highlight>Easily</highlight>",
       "heroDescription": "Upload your blood test results as PDF. ViziAI uses AI to analyze your results, presenting your values in a clear and comparable interface.",
       "getStarted": "Get Started",
+      "getStartedFree": "Get Started Free",
       "tryFree": "Try for Free",
       "dashboardAlt": "ViziAI Dashboard - Visually track your test results",
       "whyPrefix": "Why",
@@ -62,6 +63,24 @@
         "easyUploadDesc": "Easily upload your test reports in PDF format with drag and drop.",
         "securePrivate": "Secure & Private",
         "securePrivateDesc": "Your data is stored on secure infrastructure, accessible only by you."
+      },
+      "howItWorks": "How It Works",
+      "howItWorksSteps": {
+        "step1Title": "Upload Your PDF",
+        "step1Desc": "Drag and drop your blood test report. We support lab PDFs in Turkish, English, German, French, and Spanish.",
+        "step2Title": "AI Extracts Results",
+        "step2Desc": "Our AI reads your PDF and extracts every metric, value, and reference range — even from scanned documents.",
+        "step3Title": "Track Your Trends",
+        "step3Desc": "See all your results on a unified dashboard with trend charts. Spot changes at a glance across reports from any country."
+      },
+      "socialProof": {
+        "languages": "Languages Supported",
+        "familyProfiles": "Family Profiles",
+        "metricAliases": "Metric Aliases",
+        "description": "Track blood tests from Turkish, English, German, French, and Spanish labs — all in one dashboard."
+      },
+      "footer": {
+        "blog": "Blog"
       }
     },
     "login": {

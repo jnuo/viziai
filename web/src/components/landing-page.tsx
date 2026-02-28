@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
+import { useLocale } from "next-intl";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
@@ -10,7 +11,18 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Header } from "@/components/header";
 import { ViziAILogo } from "@/components/viziai-logo";
-import { FileText, BarChart3, Shield, Zap, LucideIcon } from "lucide-react";
+import { LocaleSwitcher } from "@/components/locale-switcher";
+import {
+  FileText,
+  BarChart3,
+  Shield,
+  Zap,
+  Upload,
+  Sparkles,
+  TrendingUp,
+  Users,
+  LucideIcon,
+} from "lucide-react";
 
 const COLOR_MAP = {
   primary: {
@@ -92,8 +104,30 @@ const FEATURE_KEYS = [
   },
 ] as const;
 
+const HOW_IT_WORKS_STEPS = [
+  {
+    icon: Upload,
+    colorClass: "text-primary bg-primary/10",
+    titleKey: "howItWorksSteps.step1Title" as const,
+    descKey: "howItWorksSteps.step1Desc" as const,
+  },
+  {
+    icon: Sparkles,
+    colorClass: "text-secondary bg-secondary/10",
+    titleKey: "howItWorksSteps.step2Title" as const,
+    descKey: "howItWorksSteps.step2Desc" as const,
+  },
+  {
+    icon: TrendingUp,
+    colorClass: "text-status-normal bg-status-normal/10",
+    titleKey: "howItWorksSteps.step3Title" as const,
+    descKey: "howItWorksSteps.step3Desc" as const,
+  },
+] as const;
+
 export function LandingPage(): React.ReactElement {
   const router = useRouter();
+  const locale = useLocale();
   const { status } = useSession();
   const t = useTranslations("pages.landing");
   const tc = useTranslations("common");
@@ -137,7 +171,7 @@ export function LandingPage(): React.ReactElement {
                 asChild
                 className="px-8 py-6 text-lg font-semibold shadow-lg hover:shadow-xl transition-shadow"
               >
-                <Link href="/login">{t("getStarted")}</Link>
+                <Link href="/login">{t("getStartedFree")}</Link>
               </Button>
             </div>
 
@@ -182,6 +216,72 @@ export function LandingPage(): React.ReactElement {
           </div>
         </section>
 
+        {/* How It Works Section */}
+        <section className="py-12 md:py-16">
+          <div className="container mx-auto px-4 max-w-4xl">
+            <h2 className="text-2xl md:text-3xl font-bold text-center mb-10">
+              {t("howItWorks")}
+            </h2>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              {HOW_IT_WORKS_STEPS.map((step, index) => {
+                const StepIcon = step.icon;
+                return (
+                  <div key={index} className="text-center">
+                    <div className="flex justify-center mb-4">
+                      <div className={`p-4 rounded-2xl ${step.colorClass}`}>
+                        <StepIcon className="h-8 w-8" />
+                      </div>
+                    </div>
+                    <div className="text-2xl font-bold text-muted-foreground/30 mb-2">
+                      {index + 1}
+                    </div>
+                    <h3 className="text-lg font-semibold mb-2">
+                      {t(step.titleKey)}
+                    </h3>
+                    <p className="text-muted-foreground text-sm">
+                      {t(step.descKey)}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        {/* Social Proof Placeholder */}
+        <section className="py-12 md:py-16 bg-muted/30">
+          <div className="container mx-auto px-4 max-w-3xl text-center">
+            <div className="flex items-center justify-center gap-6 mb-6">
+              <div className="text-center">
+                <div className="text-3xl font-bold text-primary">5</div>
+                <div className="text-sm text-muted-foreground">
+                  {t("socialProof.languages")}
+                </div>
+              </div>
+              <div className="h-8 w-px bg-border" />
+              <div className="text-center">
+                <div className="text-3xl font-bold text-primary">
+                  <Users className="h-8 w-8 inline" />
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  {t("socialProof.familyProfiles")}
+                </div>
+              </div>
+              <div className="h-8 w-px bg-border" />
+              <div className="text-center">
+                <div className="text-3xl font-bold text-primary">100+</div>
+                <div className="text-sm text-muted-foreground">
+                  {t("socialProof.metricAliases")}
+                </div>
+              </div>
+            </div>
+            <p className="text-muted-foreground text-sm">
+              {t("socialProof.description")}
+            </p>
+          </div>
+        </section>
+
         {/* CTA Section */}
         <section className="py-12 md:py-16">
           <div className="container mx-auto px-4 max-w-2xl text-center">
@@ -201,17 +301,31 @@ export function LandingPage(): React.ReactElement {
       </main>
 
       {/* Footer */}
-      <footer className="border-t py-6">
-        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          <p className="mb-2">
-            <Link
-              href="/privacy"
-              className="hover:text-primary transition-colors"
-            >
-              {tp("title")}
-            </Link>
-          </p>
-          <p>{tc("copyright")}</p>
+      <footer className="border-t py-8">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+              <Link
+                href="/privacy"
+                className="hover:text-primary transition-colors"
+              >
+                {tp("title")}
+              </Link>
+              <span className="text-border">|</span>
+              <Link
+                href={`/${locale}/blog`}
+                className="hover:text-primary transition-colors"
+              >
+                {t("footer.blog")}
+              </Link>
+            </div>
+            <div className="flex items-center gap-3">
+              <LocaleSwitcher />
+            </div>
+          </div>
+          <div className="text-center text-sm text-muted-foreground mt-4">
+            {tc("copyright")}
+          </div>
         </div>
       </footer>
     </div>

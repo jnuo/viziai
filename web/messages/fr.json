@@ -48,6 +48,7 @@
       "heroTitle": "Comprenez vos résultats d'analyses <highlight>facilement</highlight>",
       "heroDescription": "Téléchargez vos résultats d'analyses sanguines en PDF. ViziAI utilise l'IA pour analyser vos résultats et présenter vos valeurs dans une interface claire et comparable.",
       "getStarted": "Commencer",
+      "getStartedFree": "Commencer gratuitement",
       "tryFree": "Essayer gratuitement",
       "dashboardAlt": "Tableau de bord ViziAI - Suivez visuellement vos résultats d'analyses",
       "whyPrefix": "Pourquoi",
@@ -62,6 +63,24 @@
         "easyUploadDesc": "Téléchargez facilement vos rapports d'analyses au format PDF par glisser-déposer.",
         "securePrivate": "Sécurisé et privé",
         "securePrivateDesc": "Vos données sont stockées sur une infrastructure sécurisée, accessibles uniquement par vous."
+      },
+      "howItWorks": "Comment ça marche",
+      "howItWorksSteps": {
+        "step1Title": "Téléchargez votre PDF",
+        "step1Desc": "Glissez-déposez votre rapport d'analyse de sang. Nous acceptons les PDF de laboratoires en turc, anglais, allemand, français et espagnol.",
+        "step2Title": "L'IA extrait les résultats",
+        "step2Desc": "Notre IA lit votre PDF et extrait chaque marqueur, valeur et plage de référence — même à partir de documents scannés.",
+        "step3Title": "Suivez vos tendances",
+        "step3Desc": "Consultez tous vos résultats sur un tableau de bord unifié avec des graphiques de tendances. Repérez les changements en un coup d'œil sur des rapports de n'importe quel pays."
+      },
+      "socialProof": {
+        "languages": "Langues supportées",
+        "familyProfiles": "Profils familiaux",
+        "metricAliases": "Alias de marqueurs",
+        "description": "Suivez vos analyses de sang de laboratoires turcs, anglais, allemands, français et espagnols — le tout sur un seul tableau de bord."
+      },
+      "footer": {
+        "blog": "Blog"
       }
     },
     "login": {

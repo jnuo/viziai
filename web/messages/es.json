@@ -48,6 +48,7 @@
       "heroTitle": "Entiende tus resultados de análisis <highlight>fácilmente</highlight>",
       "heroDescription": "Sube tus resultados de análisis de sangre en PDF. ViziAI utiliza inteligencia artificial para analizar tus resultados, presentando tus valores en una interfaz clara y comparable.",
       "getStarted": "Empezar",
+      "getStartedFree": "Empezar Gratis",
       "tryFree": "Probar Gratis",
       "dashboardAlt": "ViziAI Dashboard - Seguimiento visual de tus resultados de análisis",
       "whyPrefix": "Por qué",
@@ -62,6 +63,24 @@
         "easyUploadDesc": "Sube fácilmente tus informes de análisis en formato PDF arrastrando y soltando.",
         "securePrivate": "Seguro y Privado",
         "securePrivateDesc": "Tus datos se almacenan en una infraestructura segura, accesible solo por ti."
+      },
+      "howItWorks": "Cómo Funciona",
+      "howItWorksSteps": {
+        "step1Title": "Sube tu PDF",
+        "step1Desc": "Arrastra y suelta tu informe de análisis de sangre. Aceptamos PDF de laboratorios en turco, inglés, alemán, francés y español.",
+        "step2Title": "La IA Extrae los Resultados",
+        "step2Desc": "Nuestra IA lee tu PDF y extrae cada métrica, valor y rango de referencia — incluso de documentos escaneados.",
+        "step3Title": "Sigue tus Tendencias",
+        "step3Desc": "Ve todos tus resultados en un panel unificado con gráficos de tendencias. Detecta cambios de un vistazo en informes de cualquier país."
+      },
+      "socialProof": {
+        "languages": "Idiomas Soportados",
+        "familyProfiles": "Perfiles Familiares",
+        "metricAliases": "Alias de Métricas",
+        "description": "Sigue análisis de sangre de laboratorios turcos, ingleses, alemanes, franceses y españoles — todo en un solo panel."
+      },
+      "footer": {
+        "blog": "Blog"
       }
     },
     "login": {

@@ -130,4 +130,16 @@
 - Files changed: web/content/blog/en/*.mdx, web/content/blog/tr/*.mdx, web/content/blog/es/*.mdx (new), web/content/blog/de/*.mdx (new), web/content/blog/fr/*.mdx (new)
 - Learnings: Blog articles with canonicalLocale + getAlternateLocales() handle cross-locale SEO linking automatically — no manual hreflang tags needed
 
+---
+## 2026-02-28 - STORY-011: Landing page optimization
+- Added "How It Works" 3-step section: Upload PDF → AI Extracts → Track Trends (with brand-colored icons)
+- Added social proof placeholder section: 5 languages, family profiles, 100+ metric aliases stats
+- Updated hero CTA from "Get Started" to "Get Started Free" (new `getStartedFree` key)
+- Enhanced footer: language selector (LocaleSwitcher), blog link (locale-prefixed), privacy link, copyright
+- Added ~20 new translation keys to all 5 locale files (howItWorks, howItWorksSteps, socialProof, footer)
+- TypeScript: Used `as const` key references in HOW_IT_WORKS_STEPS array to satisfy next-intl's strict key typing
+- Verified: typecheck passes, build succeeds
+- Files changed: web/src/components/landing-page.tsx, web/messages/*.json
+- Learnings: next-intl v4 type-checks translation keys strictly — template literals like `step${index}Title` fail. Use explicit `as const` key strings in arrays.
+
 

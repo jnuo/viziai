@@ -48,6 +48,7 @@
       "heroTitle": "Tahlil Sonuçlarını <highlight>Kolayca</highlight> Anlayın",
       "heroDescription": "E-nabız'dan veya laboratuar sayfalarından indirdiğiniz tahlil sonuçlarını PDF olarak yükleyin. ViziAI yapay zeka ile sonuçlarınızı analiz eder, değerlerinizi anlaşılır ve karşılaştırılabilir bir arayüzde sunar.",
       "getStarted": "Hemen Başla",
+      "getStartedFree": "Ücretsiz Başla",
       "tryFree": "Ücretsiz Deneyin",
       "dashboardAlt": "ViziAI Dashboard - Test sonuçlarınızı görsel olarak takip edin",
       "whyPrefix": "Neden",
@@ -62,6 +63,24 @@
         "easyUploadDesc": "PDF formatındaki tahlil raporlarınızı sürükle-bırak ile kolayca yükleyin.",
         "securePrivate": "Güvenli ve Özel",
         "securePrivateDesc": "Verileriniz güvenli altyapıda saklanır, sadece siz erişebilirsiniz."
+      },
+      "howItWorks": "Nasıl Çalışır",
+      "howItWorksSteps": {
+        "step1Title": "PDF'inizi Yükleyin",
+        "step1Desc": "Kan testi raporunuzu sürükleyip bırakın. Türkçe, İngilizce, Almanca, Fransızca ve İspanyolca laboratuvar PDF'lerini destekliyoruz.",
+        "step2Title": "AI Sonuçları Çıkarır",
+        "step2Desc": "Yapay zekamız PDF'inizi okur ve her metrik, değer ve referans aralığını çıkarır — taranmış belgelerden bile.",
+        "step3Title": "Trendlerinizi Takip Edin",
+        "step3Desc": "Tüm sonuçlarınızı trend grafikleriyle tek bir panoda görün. Herhangi bir ülkeden gelen raporlardaki değişiklikleri bir bakışta fark edin."
+      },
+      "socialProof": {
+        "languages": "Desteklenen Dil",
+        "familyProfiles": "Aile Profilleri",
+        "metricAliases": "Metrik Takma Ad",
+        "description": "Türkçe, İngilizce, Almanca, Fransızca ve İspanyolca laboratuvar sonuçlarını tek bir panoda takip edin."
+      },
+      "footer": {
+        "blog": "Blog"
       }
     },
     "login": {

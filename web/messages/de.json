@@ -48,6 +48,7 @@
       "heroTitle": "Verstehen Sie Ihre Testergebnisse <highlight>einfach</highlight>",
       "heroDescription": "Laden Sie Ihre Bluttestergebnisse als PDF hoch. ViziAI nutzt KI, um Ihre Ergebnisse zu analysieren und Ihre Werte in einer übersichtlichen und vergleichbaren Oberfläche darzustellen.",
       "getStarted": "Jetzt starten",
+      "getStartedFree": "Kostenlos starten",
       "tryFree": "Kostenlos testen",
       "dashboardAlt": "ViziAI Dashboard - Verfolgen Sie Ihre Testergebnisse visuell",
       "whyPrefix": "Warum",
@@ -62,6 +63,24 @@
         "easyUploadDesc": "Laden Sie Ihre Testberichte einfach per Drag & Drop im PDF-Format hoch.",
         "securePrivate": "Sicher & Privat",
         "securePrivateDesc": "Ihre Daten werden auf einer sicheren Infrastruktur gespeichert und sind nur für Sie zugänglich."
+      },
+      "howItWorks": "So funktioniert es",
+      "howItWorksSteps": {
+        "step1Title": "PDF hochladen",
+        "step1Desc": "Ziehen Sie Ihren Bluttest-Bericht per Drag & Drop. Wir unterstützen Labor-PDFs auf Türkisch, Englisch, Deutsch, Französisch und Spanisch.",
+        "step2Title": "KI extrahiert Ergebnisse",
+        "step2Desc": "Unsere KI liest Ihr PDF und extrahiert jeden Messwert, Wert und Referenzbereich — auch aus gescannten Dokumenten.",
+        "step3Title": "Trends verfolgen",
+        "step3Desc": "Sehen Sie alle Ergebnisse in einem einheitlichen Dashboard mit Trenddiagrammen. Erkennen Sie Veränderungen auf einen Blick über Berichte aus jedem Land."
+      },
+      "socialProof": {
+        "languages": "Unterstützte Sprachen",
+        "familyProfiles": "Familienprofile",
+        "metricAliases": "Metrik-Aliase",
+        "description": "Verfolgen Sie Bluttests aus türkischen, englischen, deutschen, französischen und spanischen Laboren — alles in einem Dashboard."
+      },
+      "footer": {
+        "blog": "Blog"
       }
     },
     "login": {
