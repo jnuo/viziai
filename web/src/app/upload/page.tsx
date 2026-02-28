@@ -40,6 +40,7 @@ import { cn } from "@/lib/utils";
 import { formatDateTimeTR } from "@/lib/date";
 import { reportError } from "@/lib/error-reporting";
 import { trackEvent } from "@/lib/analytics";
+import { FREE_REPORT_CAP } from "@/lib/constants";
 import {
   checkOutOfRange,
   type ExtractedMetric,
@@ -55,6 +56,7 @@ import {
 interface Profile {
   id: string;
   display_name: string;
+  report_count?: number;
 }
 
 interface ExtractedData {
@@ -341,6 +343,8 @@ function UploadPageContent(): React.ReactElement {
                 date: uploadData.existingSampleDate || "?",
               }),
             );
+          } else if (uploadResponse.status === 403 && uploadData.reportCap) {
+            setError(t("reportCapDescription", { max: uploadData.reportCap }));
           } else {
             setError(uploadData.message || t("uploadFailed"));
           }
@@ -379,11 +383,16 @@ function UploadPageContent(): React.ReactElement {
     [selectedProfileId, t, tc],
   );
 
+  const selectedProfile = profiles.find((p) => p.id === selectedProfileId);
+  const isAtCap =
+    selectedProfile?.report_count !== undefined &&
+    selectedProfile.report_count >= FREE_REPORT_CAP;
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: { "application/pdf": [".pdf"] },
     maxFiles: 1,
-    disabled: status !== "idle" && status !== "error",
+    disabled: isAtCap || (status !== "idle" && status !== "error"),
   });
 
   const handleMetricChange = useCallback(
@@ -500,8 +509,6 @@ function UploadPageContent(): React.ReactElement {
     [t, tc],
   );
 
-  const selectedProfile = profiles.find((p) => p.id === selectedProfileId);
-
   return (
     <div className="min-h-screen bg-background">
       <Header
@@ -545,6 +552,16 @@ function UploadPageContent(): React.ReactElement {
                     ))}
                   </SelectContent>
                 </Select>
+              </div>
+            )}
+
+            {/* Report Cap Warning */}
+            {status === "idle" && isAtCap && (
+              <div className="flex items-start gap-2 p-3 bg-status-warning/10 text-status-warning rounded-lg">
+                <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
+                <p className="text-sm">
+                  {t("reportCapDescription", { max: FREE_REPORT_CAP })}
+                </p>
               </div>
             )}
 

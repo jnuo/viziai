@@ -20,7 +20,7 @@
       ],
       "files": [],
       "priority": 0,
-      "status": "todo",
+      "status": "done",
       "dependencies": [],
       "requiresUserApproval": true,
       "checkpointReason": "User must: (1) Assign staging.viziai.app to ralph branch in Vercel Dashboard, (2) Add OAuth callback URLs for viziai.app AND staging.viziai.app in Google Cloud Console"
@@ -111,7 +111,7 @@
       ],
       "capabilities": ["frontend-design"],
       "priority": 2,
-      "status": "todo",
+      "status": "done",
       "dependencies": ["STORY-004"]
     },
     {
@@ -165,7 +165,7 @@
       ],
       "capabilities": ["frontend-design"],
       "priority": 3,
-      "status": "todo",
+      "status": "done",
       "dependencies": ["STORY-002", "STORY-003"]
     },
     {
@@ -186,7 +186,7 @@
         "web/messages/*.json"
       ],
       "priority": 4,
-      "status": "todo",
+      "status": "done",
       "dependencies": ["STORY-002", "STORY-003"]
     },
     {
@@ -217,13 +217,14 @@
     {
       "id": "STORY-011",
       "title": "Landing page optimization",
-      "description": "Redesign the landing page for conversion. viziai.app is the primary domain. Hero section with clear value prop, CTA 'Get Started Free', dashboard screenshot. Feature highlights: multi-language PDFs, family profiles, trend charts. 'How it works' section: 3 steps (upload, extract, track). Social proof placeholder. Bottom CTA. Responsive design. Use brand colors from product/brand-guidelines/BRAND.md.",
+      "description": "Redesign the landing page for conversion. viziai.app is the primary domain. Hero section with clear value prop, CTA 'Get Started Free', dashboard screenshot. Feature highlights: multi-language PDFs, family profiles, trend charts. 'How it works' section: 3 steps (upload, extract, track). Social proof placeholder. Bottom CTA. Footer with: language selector, links to /privacy, /[locale]/blog, and terms of use. Responsive design. Use brand colors from product/brand-guidelines/BRAND.md.",
       "acceptanceCriteria": [
         "Landing page has hero with clear value prop and CTA",
         "Feature highlights section with key selling points",
         "How it works section with 3 steps",
         "Social proof placeholder section",
         "Bottom CTA section",
+        "Footer with language selector, links to /privacy, /[locale]/blog, and terms of use",
         "Responsive on mobile",
         "Uses brand colors (Teal primary, Coral secondary)",
         "Translation keys added to all 5 locale files",
@@ -246,7 +247,7 @@
       ],
       "files": ["web/src/app/layout.tsx"],
       "priority": 4,
-      "status": "todo",
+      "status": "done",
       "dependencies": []
     },
     {

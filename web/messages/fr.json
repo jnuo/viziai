@@ -146,8 +146,7 @@
       "weight": "Poids",
       "bpSystolic": "Pression artérielle (Systolique)",
       "bpDiastolic": "Pression artérielle (Diastolique)",
-      "dataLoadFailed": "Échec du chargement des données",
-      "reportCount": "{count}/{max} rapports"
+      "dataLoadFailed": "Échec du chargement des données"
     },
     "settings": {
       "testReports": "Rapports d'analyses",
@@ -287,7 +286,8 @@
     },
     "profileSwitcher": {
       "selectProfile": "Sélectionner un profil",
-      "addProfile": "Ajouter un nouveau profil"
+      "addProfile": "Ajouter un nouveau profil",
+      "reportCount": "{count}/{max} rapports"
     },
     "inviteModal": {
       "sendFailed": "Échec de l'envoi de l'invitation",

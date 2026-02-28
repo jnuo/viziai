@@ -146,8 +146,7 @@
       "weight": "Kilo",
       "bpSystolic": "Tansiyon (Sistolik)",
       "bpDiastolic": "Tansiyon (Diastolik)",
-      "dataLoadFailed": "Veriler yüklenemedi",
-      "reportCount": "{count}/{max} rapor"
+      "dataLoadFailed": "Veriler yüklenemedi"
     },
     "settings": {
       "testReports": "Tahliller",
@@ -287,7 +286,8 @@
     },
     "profileSwitcher": {
       "selectProfile": "Profil Seç",
-      "addProfile": "Yeni Profil Ekle"
+      "addProfile": "Yeni Profil Ekle",
+      "reportCount": "{count}/{max} rapor"
     },
     "inviteModal": {
       "sendFailed": "Davet gönderilemedi",

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions, getDbUserId, hasProfileAccess } from "@/lib/auth";
 import { sql } from "@/lib/db";
+import { FREE_REPORT_CAP } from "@/lib/constants";
 import { put } from "@vercel/blob";
 import crypto from "crypto";
 
@@ -82,8 +83,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // Check report cap (5 reports per profile for free tier)
-    const FREE_REPORT_CAP = 5;
+    // Check report cap for free tier
     const reportCountResult = await sql`
       SELECT COUNT(*)::int AS count FROM processed_files WHERE profile_id = ${profileId}
     `;

@@ -146,8 +146,7 @@
       "weight": "Peso",
       "bpSystolic": "Tensión Arterial (Sistólica)",
       "bpDiastolic": "Tensión Arterial (Diastólica)",
-      "dataLoadFailed": "Error al cargar datos",
-      "reportCount": "{count}/{max} informes"
+      "dataLoadFailed": "Error al cargar datos"
     },
     "settings": {
       "testReports": "Informes de Análisis",
@@ -287,7 +286,8 @@
     },
     "profileSwitcher": {
       "selectProfile": "Seleccionar Perfil",
-      "addProfile": "Añadir Nuevo Perfil"
+      "addProfile": "Añadir Nuevo Perfil",
+      "reportCount": "{count}/{max} informes"
     },
     "inviteModal": {
       "sendFailed": "Error al enviar invitación",

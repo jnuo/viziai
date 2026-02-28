@@ -146,8 +146,7 @@
       "weight": "Gewicht",
       "bpSystolic": "Blutdruck (Systolisch)",
       "bpDiastolic": "Blutdruck (Diastolisch)",
-      "dataLoadFailed": "Daten konnten nicht geladen werden",
-      "reportCount": "{count}/{max} Berichte"
+      "dataLoadFailed": "Daten konnten nicht geladen werden"
     },
     "settings": {
       "testReports": "Testberichte",
@@ -287,7 +286,8 @@
     },
     "profileSwitcher": {
       "selectProfile": "Profil auswählen",
-      "addProfile": "Neues Profil hinzufügen"
+      "addProfile": "Neues Profil hinzufügen",
+      "reportCount": "{count}/{max} Berichte"
     },
     "inviteModal": {
       "sendFailed": "Einladung konnte nicht gesendet werden",

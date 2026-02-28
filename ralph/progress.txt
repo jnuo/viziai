@@ -72,3 +72,48 @@
   - Static generation (generateStaticParams + dynamicParams=false) eliminates runtime file I/O and prevents resource exhaustion attacks
   - Inline locale Records are correct for path-based locale pages — useTranslations() reads from cookie, not URL param
 
+---
+## 2026-02-28 - STORY-012: Update Google Analytics for viziai.app
+- Replaced GA4 measurement ID G-7SD063Z4ST with G-TWM75R9VKP in layout.tsx (both script src and config call)
+- Created web/src/lib/analytics.ts — trackEvent helper that wraps window.gtag() with SSR safety
+- Added 3 event tracking points: login_completed (login page), upload_started (upload page), locale_switched (locale hook)
+- Code review caught: event name "signup_completed" was misleading (fires on every auth, not just signups) — renamed to "login_completed"
+- Code review caught: over-defensive type casting (double `as unknown as`) — simplified to `(window as any).gtag`
+- Verified: typecheck passes, tests pass (15/15), build succeeds
+- Files changed: web/src/app/layout.tsx, web/src/lib/analytics.ts, web/src/app/login/page.tsx, web/src/app/upload/page.tsx, web/src/hooks/use-locale-switch.ts
+- Learnings: GA event naming should reflect what actually happens (login vs signup distinction matters for analytics accuracy)
+
+---
+## 2026-02-28 - STORY-009: SEO meta tags + Open Graph + structured data
+- Converted root layout static `metadata` to `generateMetadata()` with locale-aware title template and description
+- Split landing page into server component (page.tsx) + client component (landing-page.tsx) to enable `generateMetadata()` export
+- Added OG tags (title, description, image, type, siteName), Twitter summary_large_image card, JSON-LD SoftwareApplication structured data
+- Added `seo` section to all 5 locale files with: siteTitle, titleTemplate, defaultDescription, landingTitle, landingDescription, ogImageAlt
+- Code review caught: JSON-LD description was hardcoded English — fixed to use `t("landingDescription")` for locale consistency
+- Verified: typecheck passes, tests pass (15/15), build succeeds
+- Files changed: web/src/app/layout.tsx, web/src/app/page.tsx, web/src/components/landing-page.tsx, web/messages/*.json
+- Learnings: Client components can't export generateMetadata — split into server wrapper + client content for pages needing both SEO metadata and client-side interactivity
+
+---
+## 2026-02-28 - STORY-008: Privacy policy page
+- Created /privacy route with server component (metadata) + client component (privacy-content.tsx)
+- Privacy content covers 7 sections: data collection, storage, AI processing, cookies, GDPR rights, data deletion, contact
+- Added `privacy` section to all 5 locale files with full translations
+- Added footer link to /privacy from landing page
+- Design review loop: Brand compliance PASS, Design quality PASS, Web best practices flagged missing `<main>` landmark — fixed
+- Verified: typecheck passes, tests pass (15/15), build succeeds
+- Files changed: web/src/app/privacy/page.tsx, web/src/app/privacy/privacy-content.tsx, web/src/components/landing-page.tsx, web/messages/*.json
+- Learnings: Privacy pages should use calm, clear language — not legalese. Section component pattern keeps privacy content scannable.
+
+---
+## 2026-02-28 - STORY-005: Report cap enforcement — frontend upgrade prompt
+- Updated profile switcher to show X/5 report count with warning color (amber) when at cap
+- Updated upload page: inline warning banner before drop zone when at cap, disabled dropzone when at cap, specific 403 cap error handling
+- Code review caught: magic number 5 hardcoded in 4 places — extracted to shared FREE_REPORT_CAP constant in web/src/lib/constants.ts
+- Code review caught: profile-switcher borrowed translation from pages.dashboard namespace — moved reportCount key to components.profileSwitcher
+- Code review caught: dropzone not disabled when at cap — added isAtCap to disabled condition
+- Design review: Brand compliance PASS (amber warning correct), Accessibility PASS (no role needed for static banner), Design quality PASS (correct placement and hierarchy)
+- Verified: typecheck passes, build succeeds
+- Files changed: web/src/lib/constants.ts, web/src/app/upload/page.tsx, web/src/components/profile-switcher.tsx, web/src/app/api/upload/route.ts, web/messages/*.json
+- Learnings: Shared constants (FREE_REPORT_CAP) prevent magic number scatter when same value used across frontend and backend. Components should own their translation keys — never reach into page-specific namespaces.
+
