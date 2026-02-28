@@ -1,11 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { authenticatedContext, createSessionCookie } from "./helpers/auth";
-import {
-  seedTestUser,
-  deleteTestUser,
-  TEST_EMAIL,
-  TEST_NAME,
-} from "./helpers/db";
+import { seedTestUser, deleteTestUser } from "./helpers/db";
 import { neon } from "@neondatabase/serverless";
 
 const sql = neon(process.env.NEON_DATABASE_URL!);

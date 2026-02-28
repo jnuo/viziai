@@ -106,10 +106,9 @@ export function Header({
           className="flex items-center justify-between px-3 py-2.5 sm:px-6 md:px-8"
           aria-label={t("mainNav")}
         >
-          {/* Left: Logo + Profile Switcher */}
           <div className="flex items-center gap-2 sm:gap-4">
             <Link
-              href="/dashboard"
+              href={isLoggedIn ? "/dashboard" : "/"}
               className="hover:opacity-80 transition-opacity focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-sm"
               aria-label={t("home")}
             >
@@ -123,12 +122,9 @@ export function Header({
             )}
           </div>
 
-          {/* Right: Nav + Actions */}
           <div className="flex items-center gap-1.5 sm:gap-2">
-            {/* Locale Switcher — only when not logged in (otherwise inside user menu) */}
             {!isLoggedIn && <LocaleSwitcher />}
 
-            {/* Tahliller nav link — desktop only */}
             {isLoggedIn && (
               <Button
                 variant="ghost"
@@ -141,7 +137,6 @@ export function Header({
               </Button>
             )}
 
-            {/* + Ekle dropdown */}
             {isLoggedIn && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -181,7 +176,6 @@ export function Header({
               </DropdownMenu>
             )}
 
-            {/* User avatar dropdown */}
             {isLoggedIn ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -199,7 +193,6 @@ export function Header({
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
-                  {/* Mobile-only: Tahliller */}
                   <DropdownMenuItem
                     onClick={() => router.push("/settings")}
                     className="sm:hidden cursor-pointer"
@@ -287,7 +280,6 @@ export function Header({
         </nav>
       </header>
 
-      {/* Tracking Dialogs (owned by header, accessible from any page) */}
       {isLoggedIn && currentProfileId && profileName && (
         <>
           <AddBloodPressureDialog

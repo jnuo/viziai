@@ -419,6 +419,18 @@
       "email": "privacy@viziai.app"
     }
   },
+  "blog": {
+    "listTitle": "Blog — ViziAI",
+    "listDescription": "Artículos sobre seguimiento de análisis de sangre, salud y ViziAI.",
+    "listHeading": "Blog",
+    "listEmpty": "Aún no se han publicado artículos.",
+    "back": "Volver al Blog",
+    "ctaHeading": "Sube tu primer análisis de sangre gratis",
+    "ctaButton": "Comenzar gratis",
+    "ctaDesc": "Comienza a seguir tus análisis de sangre con ViziAI hoy.",
+    "alsoIn": "También disponible en:",
+    "privacyLink": "Política de Privacidad"
+  },
   "seo": {
     "siteTitle": "ViziAI",
     "titleTemplate": "{page} | ViziAI",

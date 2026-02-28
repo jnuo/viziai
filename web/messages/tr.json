@@ -419,6 +419,18 @@
       "email": "privacy@viziai.app"
     }
   },
+  "blog": {
+    "listTitle": "Blog — ViziAI",
+    "listDescription": "Kan testi takibi, sağlık analizi ve ViziAI hakkında yazılar.",
+    "listHeading": "Blog",
+    "listEmpty": "Henüz yazı yayınlanmadı.",
+    "back": "Blog'a dön",
+    "ctaHeading": "İlk kan testini ücretsiz yükle",
+    "ctaButton": "Ücretsiz başla",
+    "ctaDesc": "ViziAI ile kan testi sonuçlarını takip etmeye hemen başlayın.",
+    "alsoIn": "Diğer dillerde:",
+    "privacyLink": "Gizlilik Politikası"
+  },
   "seo": {
     "siteTitle": "ViziAI",
     "titleTemplate": "{page} | ViziAI",

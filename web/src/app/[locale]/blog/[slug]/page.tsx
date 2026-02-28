@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { Calendar, Clock, ArrowLeft } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import { Button } from "@/components/ui/button";
 import { Header } from "@/components/header";
 import { ViziAILogo } from "@/components/viziai-logo";
@@ -19,55 +20,6 @@ import type { Locale } from "@/i18n/config";
 interface ArticlePageProps {
   params: Promise<{ locale: string; slug: string }>;
 }
-
-const articleText: Record<
-  string,
-  {
-    back: string;
-    ctaHeading: string;
-    ctaButton: string;
-    ctaDesc: string;
-    alsoIn: string;
-  }
-> = {
-  tr: {
-    back: "Blog'a dön",
-    ctaHeading: "İlk kan testini ücretsiz yükle",
-    ctaButton: "Ücretsiz başla",
-    ctaDesc: "ViziAI ile kan testi sonuçlarını takip etmeye hemen başlayın.",
-    alsoIn: "Diğer dillerde:",
-  },
-  en: {
-    back: "Back to Blog",
-    ctaHeading: "Upload your first blood test for free",
-    ctaButton: "Get started free",
-    ctaDesc: "Start tracking your blood test results with ViziAI today.",
-    alsoIn: "Also available in:",
-  },
-  es: {
-    back: "Volver al Blog",
-    ctaHeading: "Sube tu primer análisis de sangre gratis",
-    ctaButton: "Comenzar gratis",
-    ctaDesc: "Comienza a seguir tus análisis de sangre con ViziAI hoy.",
-    alsoIn: "También disponible en:",
-  },
-  de: {
-    back: "Zurück zum Blog",
-    ctaHeading: "Lade deinen ersten Bluttest kostenlos hoch",
-    ctaButton: "Kostenlos starten",
-    ctaDesc:
-      "Beginne noch heute mit der Verfolgung deiner Blutwerte mit ViziAI.",
-    alsoIn: "Auch verfügbar auf:",
-  },
-  fr: {
-    back: "Retour au Blog",
-    ctaHeading: "Téléchargez votre première analyse de sang gratuitement",
-    ctaButton: "Commencer gratuitement",
-    ctaDesc:
-      "Commencez à suivre vos analyses de sang avec ViziAI dès aujourd'hui.",
-    alsoIn: "Également disponible en :",
-  },
-};
 
 export async function generateStaticParams() {
   const params: { locale: string; slug: string }[] = [];
@@ -91,26 +43,22 @@ export async function generateMetadata({
 
   const { frontmatter } = post;
   const alternates = getAlternateLocales(post, locales);
+  const canonicalUrl = `https://www.viziai.app/${locale}/blog/${slug}`;
 
-  // Build canonical URL
-  let canonicalUrl = `https://www.viziai.app/${locale}/blog/${slug}`;
-  if (frontmatter.canonicalLocale && frontmatter.canonicalLocale !== locale) {
-    const canonicalPost = alternates.find(
-      (a) => a.locale === frontmatter.canonicalLocale,
-    );
-    if (canonicalPost) {
-      canonicalUrl = `https://www.viziai.app/${canonicalPost.locale}/blog/${canonicalPost.slug}`;
-    }
-  }
-
-  // Build hreflang alternates
   const alternateLanguages: Record<string, string> = {
-    [bcp47[locale as Locale]]: `https://www.viziai.app/${locale}/blog/${slug}`,
+    [bcp47[locale as Locale]]: canonicalUrl,
   };
   for (const alt of alternates) {
     const altLocale = alt.locale as Locale;
     alternateLanguages[bcp47[altLocale]] =
       `https://www.viziai.app/${alt.locale}/blog/${alt.slug}`;
+  }
+  const enAlt = alternates.find((a) => a.locale === "en");
+  if (locale === "en") {
+    alternateLanguages["x-default"] = canonicalUrl;
+  } else if (enAlt) {
+    alternateLanguages["x-default"] =
+      `https://www.viziai.app/en/blog/${enAlt.slug}`;
   }
 
   return {
@@ -126,7 +74,7 @@ export async function generateMetadata({
       type: "article",
       publishedTime: frontmatter.publishedAt,
       tags: frontmatter.tags,
-      url: `https://www.viziai.app/${locale}/blog/${slug}`,
+      url: canonicalUrl,
     },
   };
 }
@@ -140,23 +88,24 @@ export default async function BlogArticlePage({ params }: ArticlePageProps) {
 
   const { frontmatter, content, readingTime } = post;
   const alternates = getAlternateLocales(post, locales);
-  const texts = articleText[locale] ?? articleText.en;
+  const t = await getTranslations({
+    locale: locale as Locale,
+    namespace: "blog",
+  });
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
 
       <main className="container mx-auto px-4 py-12 max-w-3xl">
-        {/* Back link */}
         <Link
           href={`/${locale}/blog`}
           className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8"
         >
           <ArrowLeft aria-hidden="true" className="h-4 w-4" />
-          {texts.back}
+          {t("back")}
         </Link>
 
-        {/* Article header */}
         <header className="mb-8">
           <h1 className="text-3xl md:text-4xl font-bold mb-4 leading-tight">
             {frontmatter.title}
@@ -177,11 +126,10 @@ export default async function BlogArticlePage({ params }: ArticlePageProps) {
               {readingTime} {readMinLabel[locale] ?? readMinLabel.en}
             </span>
           </div>
-          {/* Language alternates */}
           {alternates.length > 0 && (
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-xs text-muted-foreground">
-                {texts.alsoIn}
+                {t("alsoIn")}
               </span>
               {alternates.map((alt) => (
                 <Link
@@ -198,17 +146,15 @@ export default async function BlogArticlePage({ params }: ArticlePageProps) {
           )}
         </header>
 
-        {/* Article content */}
         <article className="prose prose-lg prose-neutral dark:prose-invert max-w-none prose-headings:font-semibold prose-a:text-primary prose-a:underline">
           <MDXRemote source={content} />
         </article>
 
-        {/* CTA */}
         <section className="mt-12 p-6 sm:p-8 rounded-2xl bg-primary/5 border border-primary/20 text-center">
-          <h2 className="text-xl font-bold mb-2">{texts.ctaHeading}</h2>
-          <p className="text-muted-foreground mb-6">{texts.ctaDesc}</p>
+          <h2 className="text-xl font-bold mb-2">{t("ctaHeading")}</h2>
+          <p className="text-muted-foreground mb-6">{t("ctaDesc")}</p>
           <Button size="lg" asChild>
-            <Link href="/login">{texts.ctaButton}</Link>
+            <Link href="/login">{t("ctaButton")}</Link>
           </Button>
         </section>
       </main>
@@ -217,6 +163,13 @@ export default async function BlogArticlePage({ params }: ArticlePageProps) {
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
           <p>
             © {new Date().getFullYear()} <ViziAILogo className="text-sm" />
+            {" · "}
+            <Link
+              href={`/${locale}/privacy`}
+              className="hover:text-foreground transition-colors"
+            >
+              {t("privacyLink")}
+            </Link>
           </p>
         </div>
       </footer>

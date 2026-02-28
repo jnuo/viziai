@@ -419,6 +419,18 @@
       "email": "privacy@viziai.app"
     }
   },
+  "blog": {
+    "listTitle": "Blog — ViziAI",
+    "listDescription": "Artikel über Blutwerte-Tracking, Gesundheitsanalyse und ViziAI.",
+    "listHeading": "Blog",
+    "listEmpty": "Noch keine Artikel veröffentlicht.",
+    "back": "Zurück zum Blog",
+    "ctaHeading": "Lade deinen ersten Bluttest kostenlos hoch",
+    "ctaButton": "Kostenlos starten",
+    "ctaDesc": "Beginne noch heute mit der Verfolgung deiner Blutwerte mit ViziAI.",
+    "alsoIn": "Auch verfügbar auf:",
+    "privacyLink": "Datenschutzrichtlinie"
+  },
   "seo": {
     "siteTitle": "ViziAI",
     "titleTemplate": "{page} | ViziAI",

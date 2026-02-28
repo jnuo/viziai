@@ -419,6 +419,18 @@
       "email": "privacy@viziai.app"
     }
   },
+  "blog": {
+    "listTitle": "Blog — ViziAI",
+    "listDescription": "Articles about blood test tracking, health analysis, and ViziAI.",
+    "listHeading": "Blog",
+    "listEmpty": "No articles published yet.",
+    "back": "Back to Blog",
+    "ctaHeading": "Upload your first blood test for free",
+    "ctaButton": "Get started free",
+    "ctaDesc": "Start tracking your blood test results with ViziAI today.",
+    "alsoIn": "Also available in:",
+    "privacyLink": "Privacy Policy"
+  },
   "seo": {
     "siteTitle": "ViziAI",
     "titleTemplate": "{page} | ViziAI",

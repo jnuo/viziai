@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Calendar, Clock } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Header } from "@/components/header";
@@ -14,51 +15,6 @@ interface BlogPageProps {
   params: Promise<{ locale: string }>;
 }
 
-const blogMeta: Record<
-  string,
-  {
-    title: string;
-    description: string;
-    heading: string;
-    empty: string;
-  }
-> = {
-  tr: {
-    title: "Blog — ViziAI",
-    description: "Kan testi takibi, sağlık analizi ve ViziAI hakkında yazılar.",
-    heading: "Blog",
-    empty: "Henüz yazı yayınlanmadı.",
-  },
-  en: {
-    title: "Blog — ViziAI",
-    description:
-      "Articles about blood test tracking, health analysis, and ViziAI.",
-    heading: "Blog",
-    empty: "No articles published yet.",
-  },
-  es: {
-    title: "Blog — ViziAI",
-    description:
-      "Artículos sobre seguimiento de análisis de sangre, salud y ViziAI.",
-    heading: "Blog",
-    empty: "Aún no se han publicado artículos.",
-  },
-  de: {
-    title: "Blog — ViziAI",
-    description:
-      "Artikel über Blutwerte-Tracking, Gesundheitsanalyse und ViziAI.",
-    heading: "Blog",
-    empty: "Noch keine Artikel veröffentlicht.",
-  },
-  fr: {
-    title: "Blog — ViziAI",
-    description:
-      "Articles sur le suivi des analyses de sang, la santé et ViziAI.",
-    heading: "Blog",
-    empty: "Aucun article publié pour le moment.",
-  },
-};
-
 export async function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
 }
@@ -67,15 +23,20 @@ export async function generateMetadata({
   params,
 }: BlogPageProps): Promise<Metadata> {
   const { locale } = await params;
-  const meta = blogMeta[locale] ?? blogMeta.en;
-  const alternateLanguages: Record<string, string> = {};
+  const t = await getTranslations({
+    locale: locale as Locale,
+    namespace: "blog",
+  });
+  const alternateLanguages: Record<string, string> = {
+    "x-default": "https://www.viziai.app/en/blog",
+  };
   for (const loc of locales) {
     alternateLanguages[bcp47[loc]] = `https://www.viziai.app/${loc}/blog`;
   }
 
   return {
-    title: meta.title,
-    description: meta.description,
+    title: t("listTitle"),
+    description: t("listDescription"),
     alternates: {
       canonical: `https://www.viziai.app/${locale}/blog`,
       languages: alternateLanguages,
@@ -88,17 +49,22 @@ export default async function BlogListingPage({ params }: BlogPageProps) {
   if (!locales.includes(locale as Locale)) notFound();
 
   const posts = getAllBlogPosts(locale);
-  const meta = blogMeta[locale] ?? blogMeta.en;
+  const t = await getTranslations({
+    locale: locale as Locale,
+    namespace: "blog",
+  });
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
 
       <main className="container mx-auto px-4 py-12 max-w-3xl">
-        <h1 className="text-3xl md:text-4xl font-bold mb-8">{meta.heading}</h1>
+        <h1 className="text-3xl md:text-4xl font-bold mb-8">
+          {t("listHeading")}
+        </h1>
 
         {posts.length === 0 ? (
-          <p className="text-muted-foreground text-lg">{meta.empty}</p>
+          <p className="text-muted-foreground text-lg">{t("listEmpty")}</p>
         ) : (
           <ul className="space-y-6">
             {posts.map((post) => (
@@ -156,6 +122,13 @@ export default async function BlogListingPage({ params }: BlogPageProps) {
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
           <p>
             © {new Date().getFullYear()} <ViziAILogo className="text-sm" />
+            {" · "}
+            <Link
+              href={`/${locale}/privacy`}
+              className="hover:text-foreground transition-colors"
+            >
+              {t("privacyLink")}
+            </Link>
           </p>
         </div>
       </footer>

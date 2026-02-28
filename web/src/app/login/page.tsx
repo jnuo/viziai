@@ -168,10 +168,20 @@ function LoginFallback(): React.ReactElement {
 
 export default function LoginPage(): React.ReactElement {
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <Suspense fallback={<LoginFallback />}>
-        <LoginContent />
-      </Suspense>
+    <div className="min-h-screen bg-background flex flex-col">
+      <div className="flex-1 flex items-center justify-center p-4">
+        <Suspense fallback={<LoginFallback />}>
+          <LoginContent />
+        </Suspense>
+      </div>
+      <footer className="py-4 text-center text-xs text-muted-foreground">
+        <Link
+          href="/privacy"
+          className="hover:text-foreground transition-colors"
+        >
+          Privacy Policy
+        </Link>
+      </footer>
     </div>
   );
 }

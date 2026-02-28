@@ -18,8 +18,8 @@ export async function generateMetadata(): Promise<Metadata> {
       images: [
         {
           url: `${BASE_URL}/dashboard.jpeg`,
-          width: 1200,
-          height: 800,
+          width: 1280,
+          height: 838,
           alt: t("ogImageAlt"),
         },
       ],
@@ -33,7 +33,7 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function Home() {
+export default async function Home(): Promise<React.ReactElement> {
   const t = await getTranslations("seo");
   const jsonLd = {
     "@context": "https://schema.org",
