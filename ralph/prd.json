@@ -211,7 +211,7 @@
       ],
       "capabilities": ["frontend-design"],
       "priority": 4,
-      "status": "todo",
+      "status": "done",
       "dependencies": ["STORY-001"]
     },
     {

@@ -52,3 +52,23 @@
 - Files changed: web/src/app/api/upload/route.ts, web/messages/tr.json, web/messages/en.json, web/messages/es.json, web/messages/de.json, web/messages/fr.json
 - Learnings: Cap check placed before file read/upload to avoid wasting resources. Response includes reportCount/reportCap for STORY-005 frontend consumption
 
+---
+## 2026-02-28 - STORY-010: Blog infrastructure with locale-prefixed routing
+- Set up MDX blog with path-based locale routing (/[locale]/blog/[slug]) for SEO
+- Installed next-mdx-remote, gray-matter, @tailwindcss/typography
+- Created blog utility library (web/src/lib/blog.ts) with path traversal protection
+- Blog listing page with semantic HTML (ul/li, time elements), WCAG AA accessibility
+- Article page with MDX rendering, reading time, description, hreflang alternates, CTA
+- Static generation via generateStaticParams + dynamicParams=false (prevents DoS)
+- Placeholder articles in EN and TR to verify cross-locale hreflang linking
+- Design review loop: 3 agents (Brand, A11y, Design Quality) — required 2 iterations
+- Code review: security (path boundary), performance (deduplicate alternates), architecture (route collision risk)
+- Verified: typecheck passes, tests pass (15/15), build succeeds with all routes SSG
+- Files changed: web/src/lib/blog.ts, web/src/app/[locale]/layout.tsx, web/src/app/[locale]/blog/page.tsx, web/src/app/[locale]/blog/[slug]/page.tsx, web/src/app/globals.css, web/src/app/layout.tsx, web/package.json, web/content/blog/en/*.mdx, web/content/blog/tr/*.mdx
+- Learnings:
+  - Tailwind v4 uses @plugin directive for JS plugins in CSS, not @import
+  - Path-based locale routes can coexist with cookie-based next-intl — but <html lang> comes from cookie, not URL (known limitation, would require layout restructuring to fix)
+  - [locale] dynamic segment captures any single-segment path — document this risk for future route additions
+  - Static generation (generateStaticParams + dynamicParams=false) eliminates runtime file I/O and prevents resource exhaustion attacks
+  - Inline locale Records are correct for path-based locale pages — useTranslations() reads from cookie, not URL param
+
