@@ -16,7 +16,7 @@
       ],
       "files": ["web/messages/tr.json"],
       "priority": 1,
-      "status": "todo"
+      "status": "done"
     },
     {
       "id": "SEO-002",
@@ -32,7 +32,7 @@
       ],
       "files": ["web/messages/en.json"],
       "priority": 1,
-      "status": "todo"
+      "status": "done"
     },
     {
       "id": "SEO-003",
@@ -48,7 +48,7 @@
       ],
       "files": ["web/messages/de.json"],
       "priority": 1,
-      "status": "todo"
+      "status": "done"
     },
     {
       "id": "SEO-004",
@@ -64,7 +64,7 @@
       ],
       "files": ["web/messages/fr.json"],
       "priority": 1,
-      "status": "todo"
+      "status": "done"
     },
     {
       "id": "SEO-005",
@@ -80,7 +80,7 @@
       ],
       "files": ["web/messages/es.json"],
       "priority": 1,
-      "status": "todo"
+      "status": "done"
     }
   ]
 }

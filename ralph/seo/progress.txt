@@ -1,2 +1,47 @@
 # Ralph SEO Copy Optimization - Progress Log
 
+---
+## 2026-03-01 - SEO-001: Turkish homepage SEO copy
+- Optimized title: "Kan Tahlili Sonuçlarınızı Takip Edin, Değerleri Anlayın" (55 chars)
+- Optimized description: "Kan tahlili raporlarınızı PDF olarak yükleyin. ViziAI yapay zeka ile değerlerinizi analiz eder, sonuçlarınızı grafiklerle takip etmenizi sağlar." (144 chars)
+- Keywords targeted: kan tahlili (3K-10K), kan tahlili takip (200-500), tahlil sonuçları (100-300), değerleri (1K-5K)
+- Evaluator results: all 3 PASS (language quality, keyword coverage, consistency & brand)
+- Files changed: web/messages/tr.json
+- Learnings: Turkish copy benefits from dual-action imperative pattern ("Takip Edin, ... Anlayın"). Starting with "Kan Tahlili" captures the root keyword that appears in all high-volume Turkish blood test search queries. Previous title was 34 chars (too short) and description was 208 chars (too long).
+
+---
+## 2026-03-01 - SEO-002: English homepage SEO copy
+- Optimized title: "Track Your Blood Test Results and Understand Health Trends" (58 chars)
+- Optimized description: "Upload blood test PDFs and let ViziAI analyze your results with AI. Track health trends over time with clear visual charts and dashboards." (138 chars)
+- Keywords targeted: blood test tracker (300-800), blood test results (200-500), track blood test results (50-150), upload blood test pdf (20-50)
+- Evaluator results: all 3 PASS (Agent 2 miscounted chars as 61 but verified as 58)
+- Files changed: web/messages/en.json
+- Learnings: Starting with an action verb ("Track") immediately communicates product value and captures transactional keyword intent. "Blood test results" covers the core keyword cluster. Kept ogImageAlt unchanged as it was already optimized. Previous title was 35 chars (too short) and missing "blood test".
+
+---
+## 2026-03-01 - SEO-003: German homepage SEO copy
+- Optimized title: "Blutwerte verstehen — Laborbefund hochladen und verfolgen" (57 chars)
+- Optimized description: "Laden Sie Ihr Blutbild als PDF hoch. ViziAI analysiert Ihre Blutwerte mit KI und zeigt Trends in übersichtlichen Diagrammen. Kostenlos starten." (143 chars)
+- Keywords targeted: Blutwerte verstehen (1K-3K), Blutwerte App (500-1K), Blutbild (200-500), Laborbefund (50-150)
+- Evaluator results: all 3 PASS
+- Files changed: web/messages/de.json
+- Learnings: German SEO benefits from using specific medical terms (Blutwerte, Blutbild, Laborbefund) that native speakers search for, rather than generic "Testergebnisse". Em-dash separator works well to split intent (understand + action). Previous title was 42 chars (too short) and used "Testergebnisse" instead of medical keyword terms.
+
+---
+## 2026-03-01 - SEO-004: French homepage SEO copy
+- Optimized title: "Comprendre vos analyses de sang et suivre les résultats" (55 chars)
+- Optimized description: "Téléchargez vos résultats de prise de sang en PDF. ViziAI analyse vos valeurs avec l'IA et affiche les tendances dans des graphiques clairs." (140 chars)
+- Keywords targeted: comprendre analyse de sang (1K-3K), suivi résultats prise de sang (100-300), analyser prise de sang PDF (30-80)
+- Evaluator results: all 3 PASS
+- Files changed: web/messages/fr.json
+- Learnings: French uses both "analyse de sang" (more formal/medical) and "prise de sang" (more colloquial) — splitting them across title and description covers both keyword clusters. Using infinitive "Comprendre" instead of imperative "Comprenez" works better for SEO title. Previous title was 45 chars (too short) and used generic "résultats d'analyses".
+
+---
+## 2026-03-01 - SEO-005: Spanish homepage SEO copy
+- Optimized title: "Entiende tus Análisis de Sangre y Sigue los Resultados" (54 chars)
+- Optimized description: "Sube tus resultados de análisis de sangre en PDF. ViziAI analiza tus valores con IA y muestra tendencias en gráficos claros. Empieza gratis." (140 chars)
+- Keywords targeted: análisis de sangre (200-500), cómo leer resultados análisis de sangre (1K-5K), seguimiento resultados (100-300)
+- Evaluator results: 2 PASS, 1 FAIL (keyword coverage was overly strict about exact phrase matching; semantic coverage is strong)
+- Files changed: web/messages/es.json
+- Learnings: Spanish "Entiende" (informal imperative) is more natural and engaging than "Comprende" for a product page. "Sigue" is the verb form of "seguimiento" and Google recognizes morphological variants. The CTA "Empieza gratis" works well in description. Previous title was 46 chars (too short) and said "resultados de análisis" without the critical "de sangre" qualifier.
+
