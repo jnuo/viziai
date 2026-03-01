@@ -1,13 +1,11 @@
 /**
- * Post-build verification: ensures per-locale sitemaps were generated.
+ * Post-build verification: ensures sitemap route handlers were generated.
  * Runs automatically after `npm run build`.
  * Fails the build if sitemap routes are missing.
  */
 
 const fs = require("fs");
 const path = require("path");
-
-const LOCALES = ["tr", "en", "es", "de", "fr"];
 
 const buildDir = path.join(__dirname, "..", ".next");
 
@@ -16,34 +14,37 @@ if (!fs.existsSync(buildDir)) {
   process.exit(1);
 }
 
-const sitemapDir = path.join(buildDir, "server", "app", "sitemap");
 let errors = 0;
 
-if (!fs.existsSync(sitemapDir)) {
-  console.error("FAIL: sitemap directory not found in build output");
-  process.exit(1);
-}
-
-// Check dynamic route handler exists (serves sitemap index + per-locale sitemaps)
-const routeHandler = path.join(sitemapDir, "[__metadata_id__]", "route.js");
-if (fs.existsSync(routeHandler)) {
-  console.log("  PASS sitemap route handler exists");
+// Check sitemap index route handler
+const indexRoute = path.join(
+  buildDir,
+  "server",
+  "app",
+  "sitemap.xml",
+  "route.js",
+);
+if (fs.existsSync(indexRoute)) {
+  console.log("  PASS /sitemap.xml route handler exists");
 } else {
-  console.error("  FAIL sitemap route handler not found");
+  console.error("  FAIL /sitemap.xml route handler not found");
   errors++;
 }
 
-// Check each locale sitemap body was generated
-for (const locale of LOCALES) {
-  const bodyFile = path.join(sitemapDir, `${locale}.xml.body`);
-  if (fs.existsSync(bodyFile)) {
-    const content = fs.readFileSync(bodyFile, "utf-8");
-    const urlCount = (content.match(/<loc>/g) || []).length;
-    console.log(`  PASS /sitemap/${locale}.xml (${urlCount} URLs)`);
-  } else {
-    console.error(`  FAIL /sitemap/${locale}.xml not generated`);
-    errors++;
-  }
+// Check per-locale sitemap route handler
+const localeRoute = path.join(
+  buildDir,
+  "server",
+  "app",
+  "sitemap",
+  "[locale]",
+  "route.js",
+);
+if (fs.existsSync(localeRoute)) {
+  console.log("  PASS /sitemap/[locale] route handler exists");
+} else {
+  console.error("  FAIL /sitemap/[locale] route handler not found");
+  errors++;
 }
 
 if (errors > 0) {
