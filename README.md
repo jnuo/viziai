@@ -2,7 +2,7 @@
 
 AI-powered blood test PDF analyzer with visual health insights. Upload lab reports, extract values with AI, and track health trends over time.
 
-**Live:** [vizi-ai.onurovali.me](https://vizi-ai.onurovali.me)
+**Live:** [viziai.app](https://viziai.app)
 
 ## Features
 

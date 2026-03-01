@@ -1,0 +1,169 @@
+{
+  "run_id": "2026-02-27_gpt-5-mini_2",
+  "scored_at": "2026-03-01T22:23:18.142Z",
+  "model": "gpt-5-mini",
+  "cases": 10,
+  "totals": {
+    "metric_match_rate": "391/414 (94.4%)",
+    "value_accuracy": "390/391 (99.7%)",
+    "missed": 23,
+    "hallucinated": 20
+  },
+  "per_case": [
+    {
+      "case": "2025-06-23_Enabiz-Tahlilleri",
+      "date_match": true,
+      "metrics": "53/57",
+      "value_accuracy": "100.0%",
+      "value_errors": [],
+      "missed": [
+        "AST",
+        "ALT",
+        "Kalsiyum",
+        "LDH"
+      ],
+      "hallucinated": [
+        "AST (GOT)",
+        "ALT (GPT)",
+        "Kalsiyum (Ca)",
+        "LDH (Laktik Dehidrogenaz)"
+      ]
+    },
+    {
+      "case": "2025-07-21_kan_2",
+      "date_match": true,
+      "metrics": "38/38",
+      "value_accuracy": "100.0%",
+      "value_errors": [],
+      "missed": [],
+      "hallucinated": []
+    },
+    {
+      "case": "2025-07-24_Enabiz-Tahlilleri",
+      "date_match": true,
+      "metrics": "38/40",
+      "value_accuracy": "100.0%",
+      "value_errors": [],
+      "missed": [
+        "AST",
+        "ALT"
+      ],
+      "hallucinated": [
+        "AST (GOT)",
+        "ALT (GPT)"
+      ]
+    },
+    {
+      "case": "2025-08-29",
+      "date_match": true,
+      "metrics": "33/36",
+      "value_accuracy": "100.0%",
+      "value_errors": [],
+      "missed": [
+        "Eozinofil%",
+        "Ürik Asit",
+        "Alkalen Fosfataz"
+      ],
+      "hallucinated": [
+        "Ürik asit",
+        "ALP"
+      ]
+    },
+    {
+      "case": "2025-09-29-2",
+      "date_match": true,
+      "metrics": "1/1",
+      "value_accuracy": "100.0%",
+      "value_errors": [],
+      "missed": [],
+      "hallucinated": []
+    },
+    {
+      "case": "2026-01-11-Y_KSEL_OVALI_Sonuc",
+      "date_match": true,
+      "metrics": "33/35",
+      "value_accuracy": "97.0%",
+      "value_errors": [
+        {
+          "name": "Eozinofil%",
+          "expected": 0.5,
+          "actual": 0.8
+        }
+      ],
+      "missed": [
+        "AST",
+        "ALT"
+      ],
+      "hallucinated": [
+        "AST (GOT)",
+        "ALT (GPT)"
+      ]
+    },
+    {
+      "case": "informes_OVAL0860107001_20241014",
+      "date_match": true,
+      "metrics": "50/52",
+      "value_accuracy": "100.0%",
+      "value_errors": [],
+      "missed": [
+        "AST",
+        "ALT"
+      ],
+      "hallucinated": [
+        "AST (GOT)",
+        "ALT (GPT)",
+        "İdrar Nitrit"
+      ]
+    },
+    {
+      "case": "informes_OVAL0860107001_20250207",
+      "date_match": true,
+      "metrics": "50/52",
+      "value_accuracy": "100.0%",
+      "value_errors": [],
+      "missed": [
+        "AST",
+        "ALT"
+      ],
+      "hallucinated": [
+        "AST (GOT)",
+        "ALT (GPT)"
+      ]
+    },
+    {
+      "case": "informes_OVAL0860107001_20250515",
+      "date_match": true,
+      "metrics": "48/53",
+      "value_accuracy": "100.0%",
+      "value_errors": [],
+      "missed": [
+        "AST",
+        "ALT",
+        "İdrar Nitrit",
+        "Üre",
+        "Klorür"
+      ],
+      "hallucinated": [
+        "AST (GOT)",
+        "ALT (GPT)"
+      ]
+    },
+    {
+      "case": "informes_OVAL0860107001_20251121",
+      "date_match": true,
+      "metrics": "47/50",
+      "value_accuracy": "100.0%",
+      "value_errors": [],
+      "missed": [
+        "Trigliserit",
+        "AST",
+        "ALT"
+      ],
+      "hallucinated": [
+        "Trigliserid",
+        "AST (GOT)",
+        "ALT (GPT)"
+      ]
+    }
+  ]
+}

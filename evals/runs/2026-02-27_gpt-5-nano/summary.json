@@ -1,0 +1,355 @@
+{
+  "run_id": "2026-02-27_gpt-5-nano",
+  "scored_at": "2026-03-01T22:23:18.918Z",
+  "model": "gpt-5-nano",
+  "cases": 10,
+  "totals": {
+    "metric_match_rate": "295/414 (71.3%)",
+    "value_accuracy": "291/295 (98.6%)",
+    "missed": 119,
+    "hallucinated": 92
+  },
+  "per_case": [
+    {
+      "case": "2025-06-23_Enabiz-Tahlilleri",
+      "date_match": true,
+      "metrics": "41/57",
+      "value_accuracy": "95.1%",
+      "value_errors": [
+        {
+          "name": "Kalsiyum",
+          "expected": 8.2,
+          "actual": 1.16
+        },
+        {
+          "name": "Sodyum",
+          "expected": 136,
+          "actual": 133.6
+        }
+      ],
+      "missed": [
+        "AST",
+        "ALT",
+        "GGT",
+        "PCT",
+        "MCHC",
+        "LDH",
+        "Kan Gazı Sodyum",
+        "Kan Gazı Glukoz",
+        "Kan Gazı Kalsiyum",
+        "Kan Gazı Klorür",
+        "Kan Gazı Hematokrit",
+        "Kan Gazı Magnezyum",
+        "Kan Gazı Potasyum",
+        "Ürik Asit",
+        "Direkt Bilirubin",
+        "CRP"
+      ],
+      "hallucinated": [
+        "AST (GOT)",
+        "ALT (GPT)",
+        "GGT (Gamma-glutamil transferaz)",
+        "Kalsiyum (Ca)",
+        "LDH (Laktik Dehidrogenaz)",
+        "Klorür",
+        "Hct",
+        "Sodyum [Na]",
+        "Bilirubin - [Direkt]",
+        "CRP TÜbidimetrik",
+        "Ürik asit"
+      ]
+    },
+    {
+      "case": "2025-07-21_kan_2",
+      "date_match": true,
+      "metrics": "37/38",
+      "value_accuracy": "100.0%",
+      "value_errors": [],
+      "missed": [
+        "Ürik Asit"
+      ],
+      "hallucinated": [
+        "Ürik asit"
+      ]
+    },
+    {
+      "case": "2025-07-24_Enabiz-Tahlilleri",
+      "date_match": true,
+      "metrics": "28/40",
+      "value_accuracy": "96.4%",
+      "value_errors": [
+        {
+          "name": "Monosit%",
+          "expected": 7.1,
+          "actual": 0.96
+        }
+      ],
+      "missed": [
+        "Lökosit",
+        "Nötrofil#",
+        "Trombosit",
+        "Total Protein",
+        "Direkt Bilirubin",
+        "GGT",
+        "Albümin",
+        "Üre",
+        "LDH",
+        "AST",
+        "Total Bilirubin",
+        "ALT"
+      ],
+      "hallucinated": [
+        "Biliyerin%",
+        "WBC",
+        "NEU%",
+        "LYM#",
+        "LYM%",
+        "PLT",
+        "Bilirubin Direkt",
+        "Ggt (Gamma Glutamil Transferaz)",
+        "Albümin (Serum/Plazma)",
+        "Kan Üre Azotu",
+        "LDH (Laktik Dehidrogenaz)",
+        "Protein (Serum/Plazma)",
+        "AST (GOT)",
+        "Bilirubin (Total)",
+        "ALT (GPT)"
+      ]
+    },
+    {
+      "case": "2025-08-29",
+      "date_match": true,
+      "metrics": "31/36",
+      "value_accuracy": "96.8%",
+      "value_errors": [
+        {
+          "name": "Eozinofil#",
+          "expected": 0,
+          "actual": 0.01
+        }
+      ],
+      "missed": [
+        "Bazofil%",
+        "Bazofil#",
+        "Trombosit",
+        "Ürik Asit",
+        "Alkalen Fosfataz"
+      ],
+      "hallucinated": [
+        "Ürik asit",
+        "ALP"
+      ]
+    },
+    {
+      "case": "2025-09-29-2",
+      "date_match": true,
+      "metrics": "1/1",
+      "value_accuracy": "100.0%",
+      "value_errors": [],
+      "missed": [],
+      "hallucinated": []
+    },
+    {
+      "case": "2026-01-11-Y_KSEL_OVALI_Sonuc",
+      "date_match": true,
+      "metrics": "14/35",
+      "value_accuracy": "100.0%",
+      "value_errors": [],
+      "missed": [
+        "Eozinofil%",
+        "Eozinofil#",
+        "Bazofil%",
+        "Bazofil#",
+        "Trombosit",
+        "PCT",
+        "MPV",
+        "PDW",
+        "Üre",
+        "BUN",
+        "Kreatinin",
+        "Sodyum",
+        "Potasyum",
+        "Kalsiyum",
+        "Magnezyum",
+        "eGFR",
+        "AST",
+        "ALT",
+        "GGT",
+        "Alkalen Fosfataz",
+        "LDH"
+      ],
+      "hallucinated": []
+    },
+    {
+      "case": "informes_OVAL0860107001_20241014",
+      "date_match": true,
+      "metrics": "42/52",
+      "value_accuracy": "100.0%",
+      "value_errors": [],
+      "missed": [
+        "eGFR",
+        "Ürik Asit",
+        "AST",
+        "ALT",
+        "Alkalen Fosfataz",
+        "GGT",
+        "Trigliserit",
+        "CRP",
+        "İdrar Dansitesi",
+        "İdrar Asetoasetat"
+      ],
+      "hallucinated": [
+        "Ürat",
+        "ASAT (GOT)",
+        "ALT (GPT)",
+        "Fosfataza alcalina",
+        "Gama-glutamiltransferasa",
+        "Trigliserid",
+        "CRP (Proteína C Reactiva / C-reaktif Protein)",
+        "İdrar Yoğunluğu",
+        "İdrar Asetoacetat",
+        "İdrar Nitrit"
+      ]
+    },
+    {
+      "case": "informes_OVAL0860107001_20250207",
+      "date_match": true,
+      "metrics": "42/52",
+      "value_accuracy": "100.0%",
+      "value_errors": [],
+      "missed": [
+        "AST",
+        "ALT",
+        "Alkalen Fosfataz",
+        "GGT",
+        "LDL Kolesterol",
+        "Trigliserit",
+        "İdrar Asetoasetat",
+        "İdrar Ürobilinojen",
+        "İdrar Eritrosit",
+        "İdrar Albümin/Kreatinin"
+      ],
+      "hallucinated": [
+        "AST (GOT)",
+        "ALT (GPT)",
+        "Alkalen Fosfataz (ALP)",
+        "Gamma-glutamiltransferasa",
+        "LDL Kolesterol (Friedewald hesaplama)",
+        "Trigliserid",
+        "İdrar Asetoacetat",
+        "İdrar Ürobilinogen",
+        "İdrar Eritrositleri",
+        "İdrar Albümin / Kreatinin"
+      ]
+    },
+    {
+      "case": "informes_OVAL0860107001_20250515",
+      "date_match": true,
+      "metrics": "36/53",
+      "value_accuracy": "100.0%",
+      "value_errors": [],
+      "missed": [
+        "Trombosit",
+        "Glukoz",
+        "Kreatinin",
+        "eGFR",
+        "Total Bilirubin",
+        "Potasyum",
+        "AST",
+        "ALT",
+        "Alkalen Fosfataz",
+        "GGT",
+        "Kolesterol",
+        "LDL Kolesterol",
+        "Trigliserit",
+        "İdrar Asetoasetat",
+        "İdrar Ürobilinojen",
+        "Üre",
+        "Klorür"
+      ],
+      "hallucinated": [
+        "Plaquetes",
+        "Bilirrubina Total",
+        "Potasiyum",
+        "AST (GOT)",
+        "ALT (GPT)",
+        "Alkalen Fosfataz (Fosfatasa Alcalina / ALP)",
+        "Gama-glutamiltransferasa",
+        "Toplam Kolesterol",
+        "LDL Kolesterol (Friedewald hesapla)",
+        "Trigliserid",
+        "İdrar Asetat",
+        "İdrar Ürobilinogen"
+      ]
+    },
+    {
+      "case": "informes_OVAL0860107001_20251121",
+      "date_match": true,
+      "metrics": "23/50",
+      "value_accuracy": "100.0%",
+      "value_errors": [],
+      "missed": [
+        "RDW",
+        "Eritroblast%",
+        "Eritroblast#",
+        "Lökosit",
+        "Eozinofil%",
+        "Nötrofil#",
+        "Eozinofil#",
+        "Bazofil#",
+        "Lenfosit#",
+        "Monosit#",
+        "Trombosit",
+        "MPV",
+        "PDW",
+        "PCT",
+        "Sedimentasyon",
+        "Kreatinin",
+        "HDL Kolesterol",
+        "Non-HDL Kolesterol",
+        "LDL Kolesterol",
+        "Trigliserit",
+        "Total Protein",
+        "Total Bilirubin",
+        "CRP",
+        "AST",
+        "ALT",
+        "GGT",
+        "Alkalen Fosfataz"
+      ],
+      "hallucinated": [
+        "ADE",
+        "Eritroblasts",
+        "Eritroblasts absolut",
+        "Leucocitos",
+        "Nötrofil absolut",
+        "Lenfosit absolut",
+        "Monosit absolut",
+        "Eozinofilos%",
+        "Eozinofil absolut",
+        "Bazofil absolut",
+        "Linfocitos%",
+        "Linfocitos absolut",
+        "Monócitos%",
+        "Monócitos absolut",
+        "Série Plaquetária - Plaquetas",
+        "Série Plaquetária - MPV",
+        "Série Plaquetária - Amplitud distribució plaquetária",
+        "Série Plaquetária - Plaquetócít",
+        "Eritrosedimentação (VSG)",
+        "Kreatinina",
+        "Kolesterol HDL",
+        "Kolesterol no HDL",
+        "Kolesterol LDL",
+        "Trigliserid",
+        "Toplam Protein",
+        "Bilirubin Total",
+        "C-reaktif Protein",
+        "Aspartat-aminotransferaz",
+        "Alanine-aminotransferaz",
+        "Gamma-Glutamiltransferaz",
+        "Fosfataza alcalina"
+      ]
+    }
+  ]
+}
