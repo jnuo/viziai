@@ -58,9 +58,9 @@ People google health questions in their own language. We rank for those queries 
 
 ### 1. Multi-Language Support
 
-- [ ] Spanish, French, German, English UI (Turkish already live)
+- [x] Spanish, French, German, English UI (Turkish already live)
 - [ ] Locale-aware metric names and reference ranges
-- [ ] Blog/content infrastructure per language
+- [x] Blog/content infrastructure per language
 
 ### 2. Native Mobile Apps
 
@@ -72,9 +72,9 @@ People google health questions in their own language. We rank for those queries 
 
 ### 3. Own Domain & Brand
 
-- [ ] Custom domain (viziai.com? getvizi.ai? TBD)
+- [x] Custom domain (viziai.com? getvizi.ai? TBD)
 - [ ] Landing page optimized for conversion per market
-- [ ] SEO-ready blog infrastructure
+- [x] SEO-ready blog infrastructure
 
 ### 4. Security as a Feature
 
