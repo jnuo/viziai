@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
-import { useLocale } from "next-intl";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
@@ -11,7 +10,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Header } from "@/components/header";
 import { ViziAILogo } from "@/components/viziai-logo";
-import { LocaleSwitcher } from "@/components/locale-switcher";
+import { Footer } from "@/components/footer";
 import {
   FileText,
   BarChart3,
@@ -108,39 +107,34 @@ const HOW_IT_WORKS_STEPS = [
   {
     icon: Upload,
     colorClass: "text-primary bg-primary/10",
-    titleKey: "howItWorksSteps.step1Title" as const,
-    descKey: "howItWorksSteps.step1Desc" as const,
+    titleKey: "howItWorksSteps.step1Title",
+    descKey: "howItWorksSteps.step1Desc",
   },
   {
     icon: Sparkles,
     colorClass: "text-secondary bg-secondary/10",
-    titleKey: "howItWorksSteps.step2Title" as const,
-    descKey: "howItWorksSteps.step2Desc" as const,
+    titleKey: "howItWorksSteps.step2Title",
+    descKey: "howItWorksSteps.step2Desc",
   },
   {
     icon: TrendingUp,
     colorClass: "text-status-normal bg-status-normal/10",
-    titleKey: "howItWorksSteps.step3Title" as const,
-    descKey: "howItWorksSteps.step3Desc" as const,
+    titleKey: "howItWorksSteps.step3Title",
+    descKey: "howItWorksSteps.step3Desc",
   },
 ] as const;
 
 export function LandingPage(): React.ReactElement {
   const router = useRouter();
-  const locale = useLocale();
   const { status } = useSession();
   const t = useTranslations("pages.landing");
-  const tc = useTranslations("common");
-  const tp = useTranslations("privacy");
 
-  // Redirect authenticated users to dashboard
   useEffect(() => {
     if (status === "authenticated") {
       router.replace("/dashboard");
     }
   }, [status, router]);
 
-  // Show nothing while checking auth or redirecting
   if (status === "loading" || status === "authenticated") {
     return <div className="min-h-screen bg-background" />;
   }
@@ -224,32 +218,31 @@ export function LandingPage(): React.ReactElement {
             </h2>
 
             <div className="grid md:grid-cols-3 gap-8">
-              {HOW_IT_WORKS_STEPS.map((step, index) => {
-                const StepIcon = step.icon;
-                return (
+              {HOW_IT_WORKS_STEPS.map(
+                ({ icon: Icon, colorClass, titleKey, descKey }, index) => (
                   <div key={index} className="text-center">
                     <div className="flex justify-center mb-4">
-                      <div className={`p-4 rounded-2xl ${step.colorClass}`}>
-                        <StepIcon className="h-8 w-8" />
+                      <div className={`p-4 rounded-2xl ${colorClass}`}>
+                        <Icon className="h-8 w-8" />
                       </div>
                     </div>
                     <div className="text-2xl font-bold text-muted-foreground/30 mb-2">
                       {index + 1}
                     </div>
                     <h3 className="text-lg font-semibold mb-2">
-                      {t(step.titleKey)}
+                      {t(titleKey)}
                     </h3>
                     <p className="text-muted-foreground text-sm">
-                      {t(step.descKey)}
+                      {t(descKey)}
                     </p>
                   </div>
-                );
-              })}
+                ),
+              )}
             </div>
           </div>
         </section>
 
-        {/* Social Proof Placeholder */}
+        {/* Social Proof */}
         <section className="py-12 md:py-16 bg-muted/30">
           <div className="container mx-auto px-4 max-w-3xl text-center">
             <div className="flex items-center justify-center gap-6 mb-6">
@@ -300,34 +293,7 @@ export function LandingPage(): React.ReactElement {
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t py-8">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
-              <Link
-                href="/privacy"
-                className="hover:text-primary transition-colors"
-              >
-                {tp("title")}
-              </Link>
-              <span className="text-border">|</span>
-              <Link
-                href={`/${locale}/blog`}
-                className="hover:text-primary transition-colors"
-              >
-                {t("footer.blog")}
-              </Link>
-            </div>
-            <div className="flex items-center gap-3">
-              <LocaleSwitcher />
-            </div>
-          </div>
-          <div className="text-center text-sm text-muted-foreground mt-4">
-            {tc("copyright")}
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

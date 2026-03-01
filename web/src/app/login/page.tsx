@@ -10,6 +10,7 @@ import { useTranslations } from "next-intl";
 import { reportError } from "@/lib/error-reporting";
 import { trackEvent } from "@/lib/analytics";
 import { ViziAILogo } from "@/components/viziai-logo";
+import { Footer } from "@/components/footer";
 
 function LoginContent(): React.ReactElement {
   const router = useRouter();
@@ -23,11 +24,7 @@ function LoginContent(): React.ReactElement {
   useEffect(() => {
     const errorParam = searchParams.get("error");
     if (errorParam) {
-      if (errorParam === "AccessDenied") {
-        setError(t("accessDenied"));
-      } else {
-        setError(errorParam);
-      }
+      setError(errorParam === "AccessDenied" ? t("accessDenied") : errorParam);
     }
   }, [searchParams, t]);
 
@@ -137,9 +134,9 @@ function LoginContent(): React.ReactElement {
           )}
         </Button>
 
-        <div className="mt-6 text-xs text-muted-foreground text-center">
-          <p>{t("termsAgreement")}</p>
-        </div>
+        <p className="mt-6 text-xs text-muted-foreground text-center">
+          {t("termsAgreement")}
+        </p>
       </CardContent>
     </Card>
   );
@@ -167,7 +164,6 @@ function LoginFallback(): React.ReactElement {
 }
 
 export default function LoginPage(): React.ReactElement {
-  const tc = useTranslations("common");
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <div className="flex-1 flex items-center justify-center p-4">
@@ -175,14 +171,7 @@ export default function LoginPage(): React.ReactElement {
           <LoginContent />
         </Suspense>
       </div>
-      <footer className="py-4 text-center text-xs text-muted-foreground">
-        <Link
-          href="/privacy"
-          className="hover:text-foreground transition-colors"
-        >
-          {tc("privacyLink")}
-        </Link>
-      </footer>
+      <Footer />
     </div>
   );
 }

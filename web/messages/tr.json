@@ -38,6 +38,8 @@
     "hoursAgo": "{count} saat önce",
     "copyright": "© 2026 ViziAI. Tüm hakları saklıdır.",
     "privacyLink": "Gizlilik Politikası",
+    "blog": "Blog",
+    "toggleTheme": "Tema değiştir",
     "accessLevel": {
       "owner": "Sahip",
       "editor": "Düzenleyici",

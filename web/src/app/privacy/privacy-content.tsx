@@ -1,17 +1,15 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import Link from "next/link";
 import { Header } from "@/components/header";
-import { ViziAILogo } from "@/components/viziai-logo";
+import { Footer } from "@/components/footer";
 
-function Section({
-  title,
-  children,
-}: {
+type SectionProps = {
   title: string;
   children: React.ReactNode;
-}) {
+};
+
+function Section({ title, children }: SectionProps) {
   return (
     <section className="mb-8">
       <h2 className="text-xl font-semibold mb-3">{title}</h2>
@@ -22,7 +20,6 @@ function Section({
 
 export function PrivacyContent(): React.ReactElement {
   const t = useTranslations("privacy");
-  const tc = useTranslations("common");
 
   const collectionItems = [
     "account",
@@ -110,14 +107,7 @@ export function PrivacyContent(): React.ReactElement {
         </Section>
       </main>
 
-      <footer className="border-t py-6">
-        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          <Link href="/" className="hover:text-primary transition-colors">
-            <ViziAILogo className="text-lg inline-block" />
-          </Link>
-          <p className="mt-2">{tc("copyright")}</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

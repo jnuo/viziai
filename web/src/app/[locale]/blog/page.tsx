@@ -6,7 +6,7 @@ import { getTranslations } from "next-intl/server";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Header } from "@/components/header";
-import { ViziAILogo } from "@/components/viziai-logo";
+import { Footer } from "@/components/footer";
 import { getAllBlogPosts, formatBlogDate, readMinLabel } from "@/lib/blog";
 import { locales, bcp47 } from "@/i18n/config";
 import type { Locale } from "@/i18n/config";
@@ -118,20 +118,7 @@ export default async function BlogListingPage({ params }: BlogPageProps) {
         )}
       </main>
 
-      <footer className="border-t py-6 mt-auto">
-        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          <p>
-            © {new Date().getFullYear()} <ViziAILogo className="text-sm" />
-            {" · "}
-            <Link
-              href={`/${locale}/privacy`}
-              className="hover:text-foreground transition-colors"
-            >
-              {t("privacyLink")}
-            </Link>
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

@@ -38,6 +38,8 @@
     "hoursAgo": "Hace {count}h",
     "copyright": "© 2026 ViziAI. Todos los derechos reservados.",
     "privacyLink": "Política de Privacidad",
+    "blog": "Blog",
+    "toggleTheme": "Cambiar tema",
     "accessLevel": {
       "owner": "Propietario",
       "editor": "Editor",

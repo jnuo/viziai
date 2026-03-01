@@ -1,9 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { Header } from "@/components/header";
+import { Footer } from "@/components/footer";
 import { useActiveProfile } from "@/hooks/use-active-profile";
-import { useTranslations } from "next-intl";
 
 export default function SettingsLayout({
   children,
@@ -11,7 +10,6 @@ export default function SettingsLayout({
   children: React.ReactNode;
 }) {
   const { activeProfile, activeProfileId } = useActiveProfile();
-  const tc = useTranslations("common");
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -20,14 +18,7 @@ export default function SettingsLayout({
         currentProfileId={activeProfileId || undefined}
       />
       <main className="container max-w-4xl mx-auto p-4 flex-1">{children}</main>
-      <footer className="py-4 text-center text-xs text-muted-foreground">
-        <Link
-          href="/privacy"
-          className="hover:text-foreground transition-colors"
-        >
-          {tc("privacyLink")}
-        </Link>
-      </footer>
+      <Footer />
     </div>
   );
 }

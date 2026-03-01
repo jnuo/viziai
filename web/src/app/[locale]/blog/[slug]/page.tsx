@@ -6,7 +6,7 @@ import { Calendar, Clock, ArrowLeft } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { Button } from "@/components/ui/button";
 import { Header } from "@/components/header";
-import { ViziAILogo } from "@/components/viziai-logo";
+import { Footer } from "@/components/footer";
 import {
   getBlogPost,
   getAllBlogPosts,
@@ -159,20 +159,7 @@ export default async function BlogArticlePage({ params }: ArticlePageProps) {
         </section>
       </main>
 
-      <footer className="border-t py-6 mt-12">
-        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          <p>
-            © {new Date().getFullYear()} <ViziAILogo className="text-sm" />
-            {" · "}
-            <Link
-              href={`/${locale}/privacy`}
-              className="hover:text-foreground transition-colors"
-            >
-              {t("privacyLink")}
-            </Link>
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
