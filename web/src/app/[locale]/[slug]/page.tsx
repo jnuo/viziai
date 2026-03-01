@@ -3,7 +3,13 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { locales, bcp47, staticPages } from "@/i18n/config";
 import type { Locale, StaticPageId } from "@/i18n/config";
+import type { ComponentType } from "react";
 import { PrivacyContent } from "@/app/privacy/privacy-content";
+
+/** Adding a page to staticPages without a renderer here = type error */
+const pageComponents: Record<StaticPageId, ComponentType> = {
+  privacy: PrivacyContent,
+};
 
 const BASE_URL = "https://www.viziai.app";
 
@@ -64,9 +70,6 @@ export default async function StaticPage({ params }: StaticPageProps) {
   const pageId = resolvePageId(locale as Locale, slug);
   if (!pageId) notFound();
 
-  if (pageId === "privacy") {
-    return <PrivacyContent />;
-  }
-
-  notFound();
+  const Component = pageComponents[pageId];
+  return <Component />;
 }
