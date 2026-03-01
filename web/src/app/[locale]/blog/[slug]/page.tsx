@@ -80,7 +80,7 @@ export async function generateMetadata({
       locale: bcp47[locale as Locale],
       images: [
         {
-          url: `${BASE_URL}/og/blog-${locale}.png`,
+          url: `${BASE_URL}/og/blog-${locale}.jpg`,
           width: 1280,
           height: 838,
           alt: frontmatter.title,
@@ -91,7 +91,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: frontmatter.title,
       description: frontmatter.description,
-      images: [`${BASE_URL}/og/blog-${locale}.png`],
+      images: [`${BASE_URL}/og/blog-${locale}.jpg`],
     },
   };
 }
