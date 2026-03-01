@@ -123,7 +123,7 @@ export function Header({
           </div>
 
           <div className="flex items-center gap-1.5 sm:gap-2">
-            {!isLoggedIn && <LocaleSwitcher />}
+            {!isLoggedIn && <LocaleSwitcher showFullName />}
 
             {isLoggedIn && (
               <Button
