@@ -23,14 +23,22 @@ test.afterEach(async () => {
   await cleanupTrackingData(profileId);
 });
 
-/** Navigate to dashboard and wait for it to be interactive */
+/** Navigate to dashboard, open the Ekle dropdown, and click Kilo Ekle */
 async function openWeightDialog(page: Page) {
-  await page.goto("/dashboard");
+  await page.goto("/dashboard", { waitUntil: "networkidle" });
+
+  // Wait for the Ekle button to be ready
   const ekleButton = page.getByRole("button", { name: /Ekle/ });
   await ekleButton.waitFor({ state: "visible", timeout: 15000 });
   await ekleButton.click();
-  await page.getByText("Kilo Ekle").click();
-  await page.locator("#weight").waitFor({ state: "visible", timeout: 10000 });
+
+  // Wait for dropdown menu item to appear before clicking
+  const kiloItem = page.getByText("Kilo Ekle");
+  await kiloItem.waitFor({ state: "visible", timeout: 5000 });
+  await kiloItem.click();
+
+  // Wait for dialog to fully open
+  await page.getByRole("dialog").waitFor({ state: "visible", timeout: 10000 });
 }
 
 test.describe("Weight Dialog", () => {
