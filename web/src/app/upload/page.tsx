@@ -20,8 +20,7 @@ import {
   ChevronLeft,
   ArrowRight,
 } from "lucide-react";
-import { useTranslations } from "next-intl";
-import { useLocale } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { ExtractionLoading } from "@/components/extraction-loading";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

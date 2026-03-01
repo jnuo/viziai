@@ -48,8 +48,8 @@
   },
   "pages": {
     "landing": {
-      "heroTitle": "Tahlil Sonuçlarını <highlight>Kolayca</highlight> Anlayın",
-      "heroDescription": "E-nabız'dan veya laboratuar sayfalarından indirdiğiniz tahlil sonuçlarını PDF olarak yükleyin. ViziAI yapay zeka ile sonuçlarınızı analiz eder, değerlerinizi anlaşılır ve karşılaştırılabilir bir arayüzde sunar.",
+      "heroTitle": "Kan Tahlili Sonuçlarınızı <highlight>Takip</highlight> Edin, Değerleri Anlayın",
+      "heroDescription": "Kan tahlili raporlarınızı PDF olarak yükleyin. ViziAI yapay zeka ile değerlerinizi analiz eder, sonuçlarınızı grafiklerle takip etmenizi sağlar.",
       "getStarted": "Hemen Başla",
       "getStartedFree": "Ücretsiz Başla",
       "tryFree": "Ücretsiz Deneyin",
@@ -435,9 +435,9 @@
     "siteTitle": "ViziAI",
     "titleTemplate": "{page} | ViziAI",
     "defaultDescription": "Kan testi sonuçlarınızı yükleyin ve yapay zeka destekli analizlerle görsel sağlık bilgileri edinin. Zaman içindeki değişimleri takip edin.",
-    "landingTitle": "Yapay Zeka Destekli Kan Testi Takibi",
-    "landingDescription": "Herhangi bir dildeki kan testi PDF'lerinizi yükleyin ve anında yapay zeka analizi alın. Sağlık trendlerini takip edin, sonuçları karşılaştırın ve aile profillerini yönetin — tamamen ücretsiz.",
-    "ogImageAlt": "ViziAI — Yapay Zeka Destekli Kan Testi Takibi"
+    "landingTitle": "Kan Tahlili Sonuçlarınızı Takip Edin, Değerleri Anlayın",
+    "landingDescription": "Kan tahlili raporlarınızı PDF olarak yükleyin. ViziAI yapay zeka ile değerlerinizi analiz eder, sonuçlarınızı grafiklerle takip etmenizi sağlar.",
+    "ogImageAlt": "ViziAI — Yapay Zeka ile Kan Tahlili Takibi"
   },
   "api": {
     "profileNotFound": "Profil bulunamadı",

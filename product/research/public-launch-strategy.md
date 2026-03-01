@@ -1,293 +1,163 @@
-# ViziAI Public Launch Strategy Research
+# ViziAI Public Launch Strategy
 
-**Date:** 2026-02-03
-**Status:** Research Complete
-
----
-
-## Executive Summary
-
-This research covers three key areas for launching ViziAI publicly:
-
-1. **Marketing as an indie developer** — Community-first approach, validation before code
-2. **Payment setup in Spain** — You need to register as autónomo (€80/month first year)
-3. **Pricing model** — Hybrid recommended: free tier + usage-based for PDFs
+**Last updated:** 2026-02-27
 
 ---
 
-## 1. Indie Developer Marketing Strategy
+## Vision
 
-### Key Insight: Community-First, Not Launch-First
-
-Most product launches fail not because the product is bad, but because the right people never see it. 54% of Indie Hackers products make $0 — community marketing amplifies product-market fit, it doesn't replace it.
-
-### The 90/10 Engagement Rule
-
-- **90% value, 10% promotion** — Share insights, failures, learnings
-- **15-20 minutes daily** of genuine participation in communities
-- Build recognition before expectation
-
-### Platforms to Use (Multi-Platform = 40% Higher Conversion)
-
-| Platform          | Best For                      | Conversion Rate        |
-| ----------------- | ----------------------------- | ---------------------- |
-| **Indie Hackers** | Builder community, validation | 23.1% per engaged post |
-| **Product Hunt**  | Launch visibility             | 3.1% per launch        |
-| **Reddit**        | Niche health communities      | Varies by subreddit    |
-| **Hacker News**   | Technical audience            | High but unpredictable |
-| **Twitter/X**     | Building in public            | Compounds over time    |
-
-### Recommended Launch Sequence
-
-1. **Pre-Launch (4-6 weeks before)**
-   - Start "building in public" on X/Twitter
-   - Share progress on Indie Hackers (weekly updates)
-   - Engage in health/wellness subreddits (r/health, r/longevity, r/biohacking)
-   - Document the journey — people love following stories
-
-2. **Soft Launch**
-   - Invite beta users from engaged followers
-   - Get testimonials and feedback
-   - Fix critical issues
-
-3. **Public Launch**
-   - Product Hunt launch (pick Tuesday-Thursday)
-   - Indie Hackers post with story + learnings
-   - Reddit posts in relevant communities
-   - Cross-post to X, LinkedIn
-
-### What Works for Health/AI Products
-
-- **Content-led growth**: Blog posts about health metrics, blood test interpretation
-- **SEO**: Target "how to read blood test results", "what is [metric] level"
-- **Educational content**: Position as expert, not just tool
-- **Case studies**: Real user stories (anonymized health improvements)
-
-### Avoid These Mistakes
-
-- Building for other builders instead of actual customers
-- Launching once and expecting results (launch is continuous)
-- Ignoring SEO — long-term traffic beats launch spikes
-- Not validating before building
+The easiest way to track blood test results across countries, languages, and family members. Built by a son tracking his dad's health.
 
 ---
 
-## 2. Payment Setup in Spain (Without Company)
+## Growth Strategy: SEO-First, Multi-Country
 
-### TL;DR: You Need Autónomo
+### Core Thesis
 
-**Bad news:** It's illegal to sell online in Spain without being self-employed. No way around it.
+People google health questions in their own language. We rank for those queries in every target market, in their language. The product is the answer.
 
-**Good news:** The first year is cheap and the process is straightforward.
+### Target Markets (by language)
 
-### Cost Structure (2025-2026)
+| Language | Markets                       | Priority                 |
+| -------- | ----------------------------- | ------------------------ |
+| Spanish  | Spain, Latin America          | High (already supported) |
+| English  | Australia, Nordics, UK, US    | High                     |
+| French   | France, Belgium, Switzerland  | Medium                   |
+| German   | Germany, Austria, Switzerland | Medium                   |
+| Turkish  | Turkey, diaspora              | Already live             |
 
-| Item                      | Cost            | Notes                                |
-| ------------------------- | --------------- | ------------------------------------ |
-| Social Security (Year 1)  | **€80/month**   | Flat rate for new autónomos          |
-| Social Security (Year 2+) | ~€204-290/month | Based on declared income             |
-| VAT (IVA)                 | 21%             | Charged to customers, paid quarterly |
-| Income Tax Prepayment     | 20%             | Of quarterly profit                  |
+### Content Engine
 
-### Registration Process
+**Blog structure per country/language:**
 
-1. **Step 1: Tax Agency (Hacienda)**
-   - File Modelo 036 or 037 (simpler)
-   - Choose IAE code (professional activity)
-   - Can be done online with Digital Certificate
+- "How to read your blood test results in [country]"
+- "How to track health records across multiple countries"
+- "How to manage your parents' medical records from abroad"
+- "What is [metric name] and what does it mean?"
+- "Normal [metric] levels — when to worry"
+- Country-specific: lab providers, health system quirks, common tests
 
-2. **Step 2: Social Security (RETA)**
-   - Register within 60 days of Hacienda registration
-   - Declare estimated annual earnings
-   - Triggers monthly payments
+**Distribution:**
 
-### Quarterly Obligations
+- SEO (primary — long-term compounding)
+- Reddit: r/biohacking, r/longevity, r/health, country-specific subs, expat subs
+- Local forums per market
+- YouTube: short explainer videos on reading blood tests
+- Post as Onur, the builder — authentic, not corporate
 
-| Quarter | Deadline   | What to File                |
-| ------- | ---------- | --------------------------- |
-| Q1      | April 20   | VAT + Income Tax prepayment |
-| Q2      | July 20    | VAT + Income Tax prepayment |
-| Q3      | October 20 | VAT + Income Tax prepayment |
-| Q4      | January 20 | VAT + Income Tax prepayment |
+**Builder-led marketing:**
 
-**Strong recommendation:** Hire a gestor (accountant). Costs ~€50-100/month, saves headaches.
-
-### Stripe Integration
-
-- Stripe works perfectly for autónomos in Spain
-- You can accept payments within minutes after account setup
-- **E-invoicing requirement coming:** July 2026 for self-employed (VERI\*FACTU system)
-- Solution: Invopop integrates with Stripe for compliant invoicing
-
-### Digital Kit Grant
-
-You can apply for up to **€3,000** from the Digital Kit program (Red.es) for:
-
-- Setting up online store
-- Payment integration
-- Digital tools
-
-Worth exploring once registered as autónomo.
-
-### Bottom Line
-
-**Monthly cost to run ViziAI commercially:**
-
-- Year 1: ~€80/month (Social Security) + gestor (~€70) = **~€150/month**
-- Year 2+: ~€250/month (Social Security) + gestor = **~€320/month**
-
-You keep whatever you earn after these costs and quarterly taxes.
+- Indie Hackers build log
+- X/Twitter building in public
+- "I built this to track my dad's health" story angle
+- Comment in relevant threads with genuine value + link
 
 ---
 
-## 3. Pricing Model Recommendation
+## Product Gaps for Launch
 
-### Analysis of Options
+### 1. Multi-Language Support
 
-#### Option A: Pure Subscription
+- [ ] Spanish, French, German, English UI (Turkish already live)
+- [ ] Locale-aware metric names and reference ranges
+- [ ] Blog/content infrastructure per language
 
-| Pros                | Cons                              |
-| ------------------- | --------------------------------- |
-| Predictable revenue | Barrier to entry                  |
-| Simple to implement | Users pay for what they don't use |
-| Easy to forecast    | Harder initial conversion         |
+### 2. Native Mobile Apps
 
-#### Option B: Pure Usage-Based (Pay per PDF)
+- [ ] iOS app (Swift/React Native — TBD)
+- [ ] Android app
+- [ ] Tablet-friendly layouts
+- [ ] Camera upload — snap a lab report, extract instantly
+- [ ] Push notifications for tracking reminders
 
-| Pros                        | Cons                      |
-| --------------------------- | ------------------------- |
-| Low barrier to entry        | Unpredictable revenue     |
-| Fair — pay for what you use | Can discourage usage      |
-| Scales with value           | Users hate surprise bills |
+### 3. Own Domain & Brand
 
-#### Option C: Freemium
+- [ ] Custom domain (viziai.com? getvizi.ai? TBD)
+- [ ] Landing page optimized for conversion per market
+- [ ] SEO-ready blog infrastructure
 
-| Pros             | Cons                        |
-| ---------------- | --------------------------- |
-| Maximum adoption | Free users = no revenue     |
-| Viral potential  | Supports cost on paid users |
-| Low friction     | High churn of free users    |
+### 4. Security as a Feature
 
-#### Option D: Hybrid (Recommended)
+- [ ] End-to-end encryption for stored health data
+- [ ] "Your data is encrypted" badge on every relevant screen
+- [ ] Security page explaining what we encrypt and how
+- [ ] SOC2 / HIPAA awareness (even if not certified, show we care)
+- [ ] GDPR compliance (required for EU markets anyway)
+- [ ] Data export / delete account flow
 
-| Pros                      | Cons                           |
-| ------------------------- | ------------------------------ |
-| Best of all worlds        | More complex to implement      |
-| Low barrier + predictable | Requires clear tier boundaries |
-| Aligned with user value   | Communication challenge        |
+### 5. Paid Tiers & Payments
 
-### Recommendation: Hybrid Model
+- [ ] Stripe integration
+- [ ] Free tier: limited uploads, 1 profile
+- [ ] Pro tier: unlimited uploads, multiple profiles
+- [ ] Family tier: sharing + many profiles
+- [ ] Business entity setup (see [legal-business-setup.md](./legal-business-setup.md))
 
-Based on research: **46% of successful SaaS companies use hybrid pricing**, and those with usage-based elements see **137% net dollar retention**.
+### 6. Marketing Automation
 
-### Proposed Pricing Tiers for ViziAI
+- [ ] Research: which ad channels work for health/wellness SaaS?
+- [ ] Google Ads for high-intent health queries
+- [ ] Facebook/Instagram ads targeting health-conscious demographics
+- [ ] Retargeting for visitors who didn't sign up
+- [ ] Email sequences for onboarding + re-engagement
+- [ ] Attribution tracking — which channel brings paying users?
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        ViziAI Pricing                           │
-├─────────────────┬─────────────────┬─────────────────────────────┤
-│      FREE       │      PRO        │         FAMILY              │
-│    €0/month     │   €5/month      │        €9/month             │
-├─────────────────┼─────────────────┼─────────────────────────────┤
-│ • 3 PDF uploads │ • 20 PDFs/month │ • 50 PDFs/month             │
-│ • 1 profile     │ • 3 profiles    │ • 10 profiles               │
-│ • Basic metrics │ • All metrics   │ • All metrics               │
-│ • 30-day history│ • Full history  │ • Full history              │
-│                 │ • Trends        │ • Trends                    │
-│                 │ • Export        │ • Export                    │
-│                 │                 │ • Family sharing            │
-│                 │                 │ • Priority support          │
-└─────────────────┴─────────────────┴─────────────────────────────┘
+---
 
-             Additional PDFs: €0.30 per PDF (all tiers)
-```
+## Review Notes
 
-### Why This Structure
+_Add notes while reviewing research and refining strategy._
 
-1. **Free tier (3 PDFs, 1 profile)**
-   - Low enough to try, limited enough to convert
-   - Covers the "just checking it out" user
-   - Allows validation of value before commitment
+### Open Questions
 
-2. **Pro tier (€5/month)**
-   - Sweet spot for individual health enthusiasts
-   - 20 PDFs covers ~monthly blood tests + occasional extras
-   - Psychological: "Less than a coffee per week"
+- Which markets to launch first after Turkish + Spanish?
+- Native apps vs PWA — what's the right first step?
+- Domain name — what's available?
+- Ad budget — how much to test with?
 
-3. **Family tier (€9/month)**
-   - Addresses your core use case (tracking family health)
-   - Multiple profiles + sharing built in
-   - Strong upgrade path from Pro
+### Decisions Made
 
-4. **Usage overage (€0.30/PDF)**
-   - Prevents tier gaming
-   - Captures power users
-   - Aligns revenue with value delivered
+- **2026-02-27:** Switch extraction model to gpt-5-mini (90% cost savings, eval-validated)
+- **2026-02-27:** SEO-first growth strategy, multi-country/multi-language
+- **2026-02-27:** Legal setup moved to separate doc, not blocking launch planning
 
-### Pricing Psychology
+### Ideas / Parking Lot
 
-- **Anchor on Family**: Show it first, makes Pro seem cheap
-- **Annual discount**: Offer 2 months free (€50/year, €90/year)
-- **First month free**: On Pro tier to drive conversion
-- **No credit card for free**: Maximum signups
-
-### Alternative: Simpler Launch Model
-
-If hybrid feels too complex to start:
-
-```
-FREE: 5 PDFs total (lifetime, not monthly)
-PRO: €5/month unlimited
-```
-
-Simple, clear, easy to explain. Add tiers later based on usage data.
+- Referral program ("invite your doctor")
+- API for clinics / labs to integrate
+- White-label for health clinics
+- Wearable data integration (Apple Health, Google Fit)
 
 ---
 
 ## Action Items
 
-### Immediate (Before Public Launch)
+### Now
 
-1. [ ] Register as autónomo (start process now — takes 1-2 weeks)
-2. [ ] Set up Stripe account linked to Spanish bank
-3. [ ] Find a gestor for quarterly taxes
-4. [ ] Implement basic paywall with Stripe
+1. [ ] Finalize target market priority order
+2. [ ] Research domain availability
+3. [ ] Add remaining languages to the app (French, German, English content)
 
-### Marketing (4-6 weeks)
+### Next (Pre-Launch)
 
-1. [ ] Start Indie Hackers build log
-2. [ ] Create X/Twitter account for ViziAI
-3. [ ] Write 3 SEO blog posts (blood test interpretation)
-4. [ ] Engage in r/biohacking, r/longevity communities
+1. [ ] Build blog infrastructure (per-language SEO pages)
+2. [ ] Write first 5 SEO articles (start with Spanish + English)
+3. [ ] Set up Stripe + paywall
+4. [ ] Start Indie Hackers build log
+5. [ ] Create X/Twitter account for ViziAI
 
-### Launch
+### Later (Post-Launch)
 
-1. [ ] Soft launch to current users (get testimonials)
-2. [ ] Product Hunt launch
-3. [ ] Indie Hackers launch post
-4. [ ] Reddit AMAs in health communities
+1. [ ] Native iOS/Android apps
+2. [ ] Marketing automation + ad experiments
+3. [ ] Security audit + encryption + compliance page
+4. [ ] Product Hunt launch
+5. [ ] YouTube content
 
 ---
 
-## Sources
+## Related Docs
 
-### Indie Marketing
-
-- [Indie Hackers Launch Strategy Guide 2025](https://awesome-directories.com/blog/indie-hackers-launch-strategy-guide-2025/)
-- [Product Hunt vs Indie Hackers](https://poindeo.com/blog/product-hunt-vs-indie-hackers)
-- [How to Launch a Product With No Money](https://www.indiehackers.com/article/how-to-launch-a-product-with-no-money-and-no-customers-5416bac05c)
-- [Product Hunt Alternatives 2025](https://openhunts.com/blog/product-hunt-alternatives-2025)
-
-### Spain Autónomo & Payments
-
-- [Stripe: Selling Online in Spain Without Being Self-Employed](https://stripe.com/resources/more/sell-online-in-spain-without-being-self-employed)
-- [Stripe: Self-Employed Taxes in Spain](https://stripe.com/resources/more/freelance-taxes-in-spain)
-- [How to Become Autónomo in Spain 2025](https://www.molinovillas.com/en/blog/how-to-become-autonomo-freelancer-spain-guide)
-- [Digital Kit Grant Spain](https://stripe.com/resources/more/kit-digital)
-
-### SaaS Pricing
-
-- [Healthcare Software Pricing Models](https://www.softwareadvice.com/resources/healthcare-software-pricing-models/)
-- [Guide to SaaS Pricing Models](https://www.maxio.com/blog/guide-to-saas-pricing-models-strategies-and-best-practices)
-- [Subscription vs Usage-Based Pricing](https://www.eleken.co/blog-posts/subscription-vs-usage-based-pricing-choosing-the-perfect-pricing-model-for-saas-success)
-- [SaaS Pricing Models Guide](https://www.chargebee.com/resources/guides/saas-pricing-models-guide/)
+- [Legal & Business Setup](./legal-business-setup.md) — Autónomo, Estonia e-Residency, company options
+- [Evals](../evals/README.md) — AI extraction quality tracking
+- [Brand Guidelines](../brand-guidelines/BRAND.md) — Colors, typography, tone

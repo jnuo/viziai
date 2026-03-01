@@ -48,8 +48,8 @@
   },
   "pages": {
     "landing": {
-      "heroTitle": "Entiende tus resultados de análisis <highlight>fácilmente</highlight>",
-      "heroDescription": "Sube tus resultados de análisis de sangre en PDF. ViziAI utiliza inteligencia artificial para analizar tus resultados, presentando tus valores en una interfaz clara y comparable.",
+      "heroTitle": "Entiende tus Análisis de Sangre y <highlight>Sigue</highlight> los Resultados",
+      "heroDescription": "Sube tus resultados de análisis de sangre en PDF. ViziAI analiza tus valores con IA y muestra tendencias en gráficos claros. Empieza gratis.",
       "getStarted": "Empezar",
       "getStartedFree": "Empezar Gratis",
       "tryFree": "Probar Gratis",
@@ -435,8 +435,8 @@
     "siteTitle": "ViziAI",
     "titleTemplate": "{page} | ViziAI",
     "defaultDescription": "Sube tus resultados de análisis de sangre y obtén análisis con inteligencia artificial e información visual de salud. Sigue las tendencias a lo largo del tiempo.",
-    "landingTitle": "Seguimiento de análisis de sangre con IA",
-    "landingDescription": "Sube tus análisis de sangre en PDF en cualquier idioma y obtén análisis instantáneo con IA. Sigue tendencias de salud, compara resultados y gestiona perfiles familiares — todo gratis.",
+    "landingTitle": "Entiende tus Análisis de Sangre y Sigue los Resultados",
+    "landingDescription": "Sube tus resultados de análisis de sangre en PDF. ViziAI analiza tus valores con IA y muestra tendencias en gráficos claros. Empieza gratis.",
     "ogImageAlt": "ViziAI — Seguimiento de análisis de sangre con IA"
   },
   "api": {

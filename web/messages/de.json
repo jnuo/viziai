@@ -48,8 +48,8 @@
   },
   "pages": {
     "landing": {
-      "heroTitle": "Verstehen Sie Ihre Testergebnisse <highlight>einfach</highlight>",
-      "heroDescription": "Laden Sie Ihre Bluttestergebnisse als PDF hoch. ViziAI nutzt KI, um Ihre Ergebnisse zu analysieren und Ihre Werte in einer übersichtlichen und vergleichbaren Oberfläche darzustellen.",
+      "heroTitle": "<highlight>Blutwerte</highlight> verstehen — Laborbefund hochladen und verfolgen",
+      "heroDescription": "Laden Sie Ihr Blutbild als PDF hoch. ViziAI analysiert Ihre Blutwerte mit KI und zeigt Trends in übersichtlichen Diagrammen. Kostenlos starten.",
       "getStarted": "Jetzt starten",
       "getStartedFree": "Kostenlos starten",
       "tryFree": "Kostenlos testen",
@@ -435,9 +435,9 @@
     "siteTitle": "ViziAI",
     "titleTemplate": "{page} | ViziAI",
     "defaultDescription": "Laden Sie Ihre Bluttestergebnisse hoch und erhalten Sie KI-gestützte Analysen mit visuellen Gesundheitseinblicken. Verfolgen Sie Trends über die Zeit.",
-    "landingTitle": "KI-gestützte Bluttest-Verfolgung",
-    "landingDescription": "Laden Sie Bluttest-PDFs in jeder Sprache hoch und erhalten Sie sofortige KI-Analyse. Verfolgen Sie Gesundheitstrends, vergleichen Sie Ergebnisse und verwalten Sie Familienprofile — alles kostenlos.",
-    "ogImageAlt": "ViziAI — KI-gestützte Bluttest-Verfolgung"
+    "landingTitle": "Blutwerte verstehen — Laborbefund hochladen und verfolgen",
+    "landingDescription": "Laden Sie Ihr Blutbild als PDF hoch. ViziAI analysiert Ihre Blutwerte mit KI und zeigt Trends in übersichtlichen Diagrammen. Kostenlos starten.",
+    "ogImageAlt": "ViziAI — Blutwerte mit KI verstehen und verfolgen"
   },
   "api": {
     "profileNotFound": "Profil nicht gefunden",

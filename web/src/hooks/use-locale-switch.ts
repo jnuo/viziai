@@ -4,8 +4,36 @@ import { useRef, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
 import { setLocale } from "@/app/actions/locale";
-import type { Locale } from "@/i18n/config";
+import { locales, staticPages, type Locale } from "@/i18n/config";
 import { trackEvent } from "@/lib/analytics";
+
+/** Resolve target URL when switching locale on a locale-prefixed page. */
+function resolveLocalePath(
+  path: string,
+  currentLocale: Locale,
+  target: Locale,
+): string | null {
+  const match = locales.find(
+    (l) => path === `/${l}` || path.startsWith(`/${l}/`),
+  );
+  if (!match) return null;
+
+  // Homepage
+  if (path === `/${match}` || path === `/${match}/`) return `/${target}`;
+
+  const rest = path.slice(match.length + 1); // e.g. "/blog/some-slug"
+
+  // Static pages with translated slugs
+  const slug = rest.replace(/^\//, "").replace(/\/$/, "");
+  for (const [, slugs] of Object.entries(staticPages)) {
+    if (slugs[currentLocale] === slug) {
+      return `/${target}/${slugs[target]}`;
+    }
+  }
+
+  // Blog and other pages — swap locale prefix, keep path
+  return `/${target}${rest}`;
+}
 
 export function useLocaleSwitch() {
   const locale = useLocale() as Locale;
@@ -24,7 +52,17 @@ export function useLocaleSwitch() {
           category: "engagement",
           label: target,
         });
-        router.refresh();
+
+        const targetPath = resolveLocalePath(
+          window.location.pathname,
+          locale,
+          target,
+        );
+        if (targetPath) {
+          router.push(targetPath);
+        } else {
+          router.refresh();
+        }
       } finally {
         switching.current = false;
       }
