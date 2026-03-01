@@ -81,9 +81,6 @@
         "familyProfiles": "Aile Profilleri",
         "metricAliases": "Metrik Takma Ad",
         "description": "Türkçe, İngilizce, Almanca, Fransızca ve İspanyolca laboratuvar sonuçlarını tek bir panoda takip edin."
-      },
-      "footer": {
-        "blog": "Blog"
       }
     },
     "login": {

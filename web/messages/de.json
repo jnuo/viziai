@@ -81,9 +81,6 @@
         "familyProfiles": "Familienprofile",
         "metricAliases": "Metrik-Aliase",
         "description": "Verfolgen Sie Bluttests aus türkischen, englischen, deutschen, französischen und spanischen Laboren — alles in einem Dashboard."
-      },
-      "footer": {
-        "blog": "Blog"
       }
     },
     "login": {

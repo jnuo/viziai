@@ -81,9 +81,6 @@
         "familyProfiles": "Profils familiaux",
         "metricAliases": "Alias de marqueurs",
         "description": "Suivez vos analyses de sang de laboratoires turcs, anglais, allemands, français et espagnols — le tout sur un seul tableau de bord."
-      },
-      "footer": {
-        "blog": "Blog"
       }
     },
     "login": {

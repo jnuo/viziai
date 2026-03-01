@@ -81,9 +81,6 @@
         "familyProfiles": "Family Profiles",
         "metricAliases": "Metric Aliases",
         "description": "Track blood tests from Turkish, English, German, French, and Spanish labs — all in one dashboard."
-      },
-      "footer": {
-        "blog": "Blog"
       }
     },
     "login": {

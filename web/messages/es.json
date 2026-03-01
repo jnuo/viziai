@@ -81,9 +81,6 @@
         "familyProfiles": "Perfiles Familiares",
         "metricAliases": "Alias de Métricas",
         "description": "Sigue análisis de sangre de laboratorios turcos, ingleses, alemanes, franceses y españoles — todo en un solo panel."
-      },
-      "footer": {
-        "blog": "Blog"
       }
     },
     "login": {

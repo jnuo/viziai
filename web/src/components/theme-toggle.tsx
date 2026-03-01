@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
 
 export function ThemeToggle() {
-  const { theme, setTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const t = useTranslations("common");
 
@@ -26,7 +26,7 @@ export function ThemeToggle() {
     );
   }
 
-  const isDark = theme === "dark";
+  const isDark = resolvedTheme === "dark";
 
   return (
     <Button
