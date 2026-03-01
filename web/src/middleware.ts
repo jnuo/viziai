@@ -1,23 +1,14 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
-
-/**
- * Next.js Middleware for Authentication (NextAuth.js)
- *
- * This middleware runs on every request and:
- * 1. Checks if the user is authenticated using NextAuth session
- * 2. Redirects unauthenticated users from protected routes to /login
- * 3. Redirects authenticated users from /login to /dashboard
- * 4. Redirects new users (no profiles) to /onboarding
- */
-const LOCALES = ["tr", "en", "es", "de", "fr"];
+import { locales } from "@/i18n/config";
+import type { Locale } from "@/i18n/config";
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
   // Sync locale cookie when visiting /{locale} homepage or /{locale}/blog/*
   const firstSegment = pathname.split("/")[1];
-  if (firstSegment && LOCALES.includes(firstSegment)) {
+  if (firstSegment && locales.includes(firstSegment as Locale)) {
     const currentCookie = request.cookies.get("locale")?.value;
     if (currentCookie !== firstSegment) {
       const response = NextResponse.next();
