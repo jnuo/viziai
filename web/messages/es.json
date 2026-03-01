@@ -37,6 +37,9 @@
     "yesterday": "Ayer",
     "hoursAgo": "Hace {count}h",
     "copyright": "© 2026 ViziAI. Todos los derechos reservados.",
+    "privacyLink": "Política de Privacidad",
+    "blog": "Blog",
+    "toggleTheme": "Cambiar tema",
     "accessLevel": {
       "owner": "Propietario",
       "editor": "Editor",
@@ -48,6 +51,7 @@
       "heroTitle": "Entiende tus resultados de análisis <highlight>fácilmente</highlight>",
       "heroDescription": "Sube tus resultados de análisis de sangre en PDF. ViziAI utiliza inteligencia artificial para analizar tus resultados, presentando tus valores en una interfaz clara y comparable.",
       "getStarted": "Empezar",
+      "getStartedFree": "Empezar Gratis",
       "tryFree": "Probar Gratis",
       "dashboardAlt": "ViziAI Dashboard - Seguimiento visual de tus resultados de análisis",
       "whyPrefix": "Por qué",
@@ -62,6 +66,21 @@
         "easyUploadDesc": "Sube fácilmente tus informes de análisis en formato PDF arrastrando y soltando.",
         "securePrivate": "Seguro y Privado",
         "securePrivateDesc": "Tus datos se almacenan en una infraestructura segura, accesible solo por ti."
+      },
+      "howItWorks": "Cómo Funciona",
+      "howItWorksSteps": {
+        "step1Title": "Sube tu PDF",
+        "step1Desc": "Arrastra y suelta tu informe de análisis de sangre. Aceptamos PDF de laboratorios en turco, inglés, alemán, francés y español.",
+        "step2Title": "La IA Extrae los Resultados",
+        "step2Desc": "Nuestra IA lee tu PDF y extrae cada métrica, valor y rango de referencia — incluso de documentos escaneados.",
+        "step3Title": "Sigue tus Tendencias",
+        "step3Desc": "Ve todos tus resultados en un panel unificado con gráficos de tendencias. Detecta cambios de un vistazo en informes de cualquier país."
+      },
+      "socialProof": {
+        "languages": "Idiomas Soportados",
+        "familyProfiles": "Perfiles Familiares",
+        "metricAliases": "Alias de Métricas",
+        "description": "Sigue análisis de sangre de laboratorios turcos, ingleses, alemanes, franceses y españoles — todo en un solo panel."
       }
     },
     "login": {
@@ -107,7 +126,9 @@
       "uploadAnother": "Subir Otro Archivo",
       "goToDashboard": "Ir al Panel",
       "uploadNewFile": "Subir Nuevo Archivo",
-      "alreadyUploaded": "Este archivo ya ha sido subido: {date}"
+      "alreadyUploaded": "Este archivo ya ha sido subido: {date}",
+      "reportCapReached": "Límite de informes alcanzado",
+      "reportCapDescription": "Este perfil ha alcanzado el límite del plan gratuito de {max} informes. Plan Pro próximamente."
     },
     "dashboard": {
       "loadingData": "Cargando datos…",
@@ -284,7 +305,8 @@
     },
     "profileSwitcher": {
       "selectProfile": "Seleccionar Perfil",
-      "addProfile": "Añadir Nuevo Perfil"
+      "addProfile": "Añadir Nuevo Perfil",
+      "reportCount": "{count}/{max} informes"
     },
     "inviteModal": {
       "sendFailed": "Error al enviar invitación",
@@ -349,6 +371,74 @@
     "noteOptional": "Nota (opcional)",
     "existingWeightWarning": "Ya existe un registro hoy ({weight} kg a las {time}). ¿Desea reemplazarlo?"
   },
+  "privacy": {
+    "title": "Política de Privacidad",
+    "lastUpdated": "Última actualización: 28 de febrero de 2026",
+    "intro": "ViziAI se toma tu privacidad en serio. Esta política explica qué datos recopilamos, cómo los usamos y cuáles son tus derechos. Lo mantenemos simple y transparente.",
+    "dataCollection": {
+      "title": "Qué Recopilamos",
+      "description": "Cuando usas ViziAI, recopilamos:",
+      "items": {
+        "account": "Tu correo electrónico y nombre de cuenta de Google (para autenticación)",
+        "bloodTests": "Archivos PDF de análisis de sangre que subes (almacenados temporalmente durante el procesamiento)",
+        "labValues": "Valores de laboratorio extraídos, nombres de métricas y rangos de referencia",
+        "tracking": "Datos de seguimiento de salud que ingresas manualmente (peso, presión arterial)",
+        "usage": "Analíticas básicas de uso (visitas a páginas, uso de funciones) mediante Google Analytics"
+      }
+    },
+    "dataStorage": {
+      "title": "Cómo Almacenamos tus Datos",
+      "description": "Tus datos se almacenan de forma segura en una base de datos Neon Postgres. Los archivos PDF se almacenan temporalmente en Vercel Blob durante el procesamiento y se eliminan después de completar la extracción. Todas las conexiones utilizan cifrado HTTPS."
+    },
+    "aiProcessing": {
+      "title": "Procesamiento con IA",
+      "description": "Cuando subes un PDF de análisis de sangre, usamos la API de OpenAI para extraer los valores de laboratorio del documento. El contenido del PDF se envía a OpenAI para su procesamiento y está sujeto a las políticas de uso de datos de OpenAI. No usamos tus datos de salud para entrenar modelos de IA."
+    },
+    "cookies": {
+      "title": "Cookies",
+      "description": "Usamos cookies esenciales para la autenticación (mantener tu sesión activa) y una cookie de preferencia de idioma (recordar tu elección de idioma). Google Analytics usa cookies para estadísticas de uso anónimas. No usamos cookies de publicidad ni de seguimiento."
+    },
+    "gdpr": {
+      "title": "Tus Derechos",
+      "description": "Tienes derecho a:",
+      "items": {
+        "access": "Acceder a todos los datos que almacenamos sobre ti",
+        "export": "Exportar tus datos en un formato estándar",
+        "delete": "Solicitar la eliminación de tu cuenta y todos los datos asociados",
+        "correct": "Corregir cualquier dato inexacto",
+        "withdraw": "Retirar el consentimiento y dejar de usar el servicio en cualquier momento"
+      }
+    },
+    "dataDeletion": {
+      "title": "Eliminación de Datos",
+      "description": "Puedes eliminar informes individuales, perfiles o toda tu cuenta desde la página de Configuración. Cuando eliminas datos, se borran permanentemente de nuestra base de datos. No hay recuperación posible."
+    },
+    "contact": {
+      "title": "Contacto",
+      "description": "Para consultas de privacidad o solicitudes de datos, contáctanos en:",
+      "email": "privacy@viziai.app"
+    }
+  },
+  "blog": {
+    "listTitle": "Blog — ViziAI",
+    "listDescription": "Artículos sobre seguimiento de análisis de sangre, salud y ViziAI.",
+    "listHeading": "Blog",
+    "listEmpty": "Aún no se han publicado artículos.",
+    "back": "Volver al Blog",
+    "ctaHeading": "Sube tu primer análisis de sangre gratis",
+    "ctaButton": "Comenzar gratis",
+    "ctaDesc": "Comienza a seguir tus análisis de sangre con ViziAI hoy.",
+    "alsoIn": "También disponible en:",
+    "privacyLink": "Política de Privacidad"
+  },
+  "seo": {
+    "siteTitle": "ViziAI",
+    "titleTemplate": "{page} | ViziAI",
+    "defaultDescription": "Sube tus resultados de análisis de sangre y obtén análisis con inteligencia artificial e información visual de salud. Sigue las tendencias a lo largo del tiempo.",
+    "landingTitle": "Seguimiento de análisis de sangre con IA",
+    "landingDescription": "Sube tus análisis de sangre en PDF en cualquier idioma y obtén análisis instantáneo con IA. Sigue tendencias de salud, compara resultados y gestiona perfiles familiares — todo gratis.",
+    "ogImageAlt": "ViziAI — Seguimiento de análisis de sangre con IA"
+  },
   "api": {
     "profileNotFound": "Perfil no encontrado",
     "profileDeleteFailed": "Error al eliminar perfil",
@@ -369,6 +459,7 @@
     "onlyPdf": "Solo se aceptan archivos PDF",
     "invalidPdf": "Archivo PDF no válido",
     "fileAlreadyUploaded": "Este archivo ya ha sido subido",
+    "reportCapReached": "Este perfil ha alcanzado el límite del plan gratuito de {max} informes",
     "inviteNotFound": "Invitación no encontrada",
     "inviteInfoFailed": "Error al obtener detalles de la invitación",
     "inviteCancelled": "Esta invitación ha sido cancelada",

@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { reportError } from "@/lib/error-reporting";
+import { FREE_REPORT_CAP } from "@/lib/constants";
 
 interface Profile {
   id: string;
@@ -136,8 +137,18 @@ export function ProfileSwitcher({
                     <AccessBadge level={profile.access_level} />
                   </div>
                   {profile.report_count !== undefined && (
-                    <span className="text-xs text-muted-foreground">
-                      {profile.report_count} rapor
+                    <span
+                      className={cn(
+                        "text-xs",
+                        profile.report_count >= FREE_REPORT_CAP
+                          ? "text-status-warning"
+                          : "text-muted-foreground",
+                      )}
+                    >
+                      {t("reportCount", {
+                        count: profile.report_count,
+                        max: FREE_REPORT_CAP,
+                      })}
                     </span>
                   )}
                 </div>

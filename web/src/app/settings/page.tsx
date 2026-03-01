@@ -185,6 +185,7 @@ function SettingsContent() {
     }
 
     fetchFiles();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeProfileId, activeTab, filesFetched]);
 
   const accessLevel = activeProfile?.access_level ?? null;

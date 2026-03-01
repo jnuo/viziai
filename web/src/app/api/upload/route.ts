@@ -2,23 +2,14 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions, getDbUserId, hasProfileAccess } from "@/lib/auth";
 import { sql } from "@/lib/db";
+import { FREE_REPORT_CAP } from "@/lib/constants";
 import { put } from "@vercel/blob";
 import crypto from "crypto";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-/**
- * POST /api/upload
- * Upload a PDF file for processing
- *
- * Request: FormData with:
- * - file: PDF file
- * - profileId: UUID of the profile to upload to
- *
- * Response: { uploadId, fileName, status }
- */
-export async function POST(request: Request) {
+export async function POST(request: Request): Promise<Response> {
   try {
     const session = await getServerSession(authOptions);
 
@@ -29,7 +20,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Get dbId from session, or look up by email if not present
     let userId = getDbUserId(session);
     if (!userId) {
       const users =
@@ -62,7 +52,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Verify file is a PDF
     if (file.type !== "application/pdf") {
       return NextResponse.json(
         { error: "Bad Request", message: "Sadece PDF dosyaları kabul edilir" },
@@ -70,7 +59,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Verify user has access to this profile
     const hasAccess = await hasProfileAccess(userId, profileId);
     if (!hasAccess) {
       return NextResponse.json(
@@ -82,7 +70,22 @@ export async function POST(request: Request) {
       );
     }
 
-    // Read file content and validate PDF magic bytes
+    const reportCountResult = await sql`
+      SELECT COUNT(*)::int AS count FROM reports WHERE profile_id = ${profileId}
+    `;
+    const reportCount = reportCountResult[0].count;
+    if (reportCount >= FREE_REPORT_CAP) {
+      return NextResponse.json(
+        {
+          error: "Report Cap Reached",
+          message: "Report limit reached for this profile",
+          reportCount,
+          reportCap: FREE_REPORT_CAP,
+        },
+        { status: 403 },
+      );
+    }
+
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
@@ -97,7 +100,6 @@ export async function POST(request: Request) {
       .update(buffer)
       .digest("hex");
 
-    // Check for duplicate uploads in processed_files
     const duplicateCheck = await sql`
       SELECT id, file_name, created_at::TEXT as uploaded_at
       FROM processed_files
@@ -118,7 +120,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Clean up any stuck pending uploads for same file
     await sql`
       DELETE FROM pending_uploads
       WHERE profile_id = ${profileId}
@@ -128,7 +129,7 @@ export async function POST(request: Request) {
     const fileName = file.name || `upload-${Date.now()}.pdf`;
     let fileUrl: string;
 
-    // Try Vercel Blob if token is configured, otherwise use data URL for local dev
+    // Vercel Blob in production, base64 data URL fallback for local dev
     if (process.env.BLOB_READ_WRITE_TOKEN) {
       const blob = await put(
         `uploads/${profileId}/${contentHash}.pdf`,
@@ -140,12 +141,10 @@ export async function POST(request: Request) {
       );
       fileUrl = blob.url;
     } else {
-      // For local development: store as base64 data URL
       const base64 = buffer.toString("base64");
       fileUrl = `data:application/pdf;base64,${base64}`;
     }
 
-    // Create pending_uploads record
     const result = await sql`
       INSERT INTO pending_uploads (user_id, profile_id, file_name, content_hash, file_url, status)
       VALUES (${userId}, ${profileId}, ${fileName}, ${contentHash}, ${fileUrl}, 'pending')
@@ -178,11 +177,7 @@ export async function POST(request: Request) {
   }
 }
 
-/**
- * GET /api/upload
- * List pending uploads for the current user
- */
-export async function GET(request: Request) {
+export async function GET(request: Request): Promise<Response> {
   try {
     const session = await getServerSession(authOptions);
     const userId = getDbUserId(session);
@@ -194,7 +189,6 @@ export async function GET(request: Request) {
       );
     }
 
-    // Auto-cleanup: Mark stuck extracting uploads as rejected (older than 5 minutes)
     await sql`
       UPDATE pending_uploads
       SET status = 'pending',
@@ -210,7 +204,6 @@ export async function GET(request: Request) {
 
     let uploads;
     if (profileId) {
-      // Verify access
       const hasAccess = await hasProfileAccess(userId, profileId);
       if (!hasAccess) {
         return NextResponse.json(

@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import Script from "next/script";
 import { NextIntlClientProvider } from "next-intl";
-import { getLocale, getMessages } from "next-intl/server";
+import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ToastProvider } from "@/components/ui/toast";
@@ -18,11 +18,16 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-export const metadata: Metadata = {
-  title: "ViziAI",
-  description:
-    "Upload your blood test results and get AI-powered analysis with visual health insights.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("seo");
+  return {
+    title: {
+      default: t("siteTitle"),
+      template: `%s | ${t("siteTitle")}`,
+    },
+    description: t("defaultDescription"),
+  };
+}
 
 export default async function RootLayout({
   children,
@@ -47,7 +52,7 @@ export default async function RootLayout({
         />
         {/* Google Analytics */}
         <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-7SD063Z4ST"
+          src="https://www.googletagmanager.com/gtag/js?id=G-TWM75R9VKP"
           strategy="afterInteractive"
         />
         <Script id="google-analytics" strategy="afterInteractive">
@@ -55,11 +60,11 @@ export default async function RootLayout({
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', 'G-7SD063Z4ST');
+            gtag('config', 'G-TWM75R9VKP');
           `}
         </Script>
       </head>
-      <body className={`${inter.variable} antialiased`}>
+      <body className={`${inter.variable} font-sans antialiased`}>
         <Providers>
           <NextIntlClientProvider locale={locale} messages={messages}>
             <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
