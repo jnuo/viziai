@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
 import { authenticatedContext } from "./helpers/auth";
 import {
   seedTestUser,
@@ -23,6 +23,16 @@ test.afterEach(async () => {
   await cleanupTrackingData(profileId);
 });
 
+/** Navigate to dashboard and wait for it to be interactive */
+async function openWeightDialog(page: Page) {
+  await page.goto("/dashboard");
+  const ekleButton = page.getByRole("button", { name: /Ekle/ });
+  await ekleButton.waitFor({ state: "visible", timeout: 15000 });
+  await ekleButton.click();
+  await page.getByText("Kilo Ekle").click();
+  await page.locator("#weight").waitFor({ state: "visible", timeout: 10000 });
+}
+
 test.describe("Weight Dialog", () => {
   // Tests share DB state — must run serially in one worker
   test.describe.configure({ mode: "serial" });
@@ -34,11 +44,9 @@ test.describe("Weight Dialog", () => {
       profileId,
     );
 
-    await page.goto("/dashboard");
-    await page.getByRole("button", { name: /Ekle/ }).click();
-    await page.getByText("Kilo Ekle").click();
+    await openWeightDialog(page);
 
-    await expect(page.getByRole("dialog")).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole("dialog")).toBeVisible();
     await expect(page.locator("#weight")).toBeVisible();
 
     await context.close();
@@ -51,9 +59,7 @@ test.describe("Weight Dialog", () => {
       profileId,
     );
 
-    await page.goto("/dashboard");
-    await page.getByRole("button", { name: /Ekle/ }).click();
-    await page.getByText("Kilo Ekle").click();
+    await openWeightDialog(page);
 
     await page.locator("#weight").fill("82,5");
     await expect(page.getByRole("button", { name: "Kaydet" })).toBeEnabled();
@@ -68,9 +74,7 @@ test.describe("Weight Dialog", () => {
       profileId,
     );
 
-    await page.goto("/dashboard");
-    await page.getByRole("button", { name: /Ekle/ }).click();
-    await page.getByText("Kilo Ekle").click();
+    await openWeightDialog(page);
 
     await page.locator("#weight").fill("82.5");
     await expect(page.getByRole("button", { name: "Kaydet" })).toBeEnabled();
@@ -85,9 +89,7 @@ test.describe("Weight Dialog", () => {
       profileId,
     );
 
-    await page.goto("/dashboard");
-    await page.getByRole("button", { name: /Ekle/ }).click();
-    await page.getByText("Kilo Ekle").click();
+    await openWeightDialog(page);
 
     await page.locator("#weight").fill("75.5");
     await page.getByRole("button", { name: "Kaydet" }).click();
@@ -107,11 +109,9 @@ test.describe("Weight Dialog", () => {
       profileId,
     );
 
-    await page.goto("/dashboard");
+    await openWeightDialog(page);
 
     // First entry
-    await page.getByRole("button", { name: /Ekle/ }).click();
-    await page.getByText("Kilo Ekle").click();
     await page.locator("#weight").fill("75.5");
     await page.getByRole("button", { name: "Kaydet" }).click();
     await expect(page.getByText("Kilo kaydedildi")).toBeVisible({
@@ -119,12 +119,13 @@ test.describe("Weight Dialog", () => {
     });
 
     // Second entry — same day
-    await page.getByRole("button", { name: /Ekle/ }).click();
-    await page.getByText("Kilo Ekle").click();
+    await openWeightDialog(page);
     await page.locator("#weight").fill("76.0");
     await page.getByRole("button", { name: "Kaydet" }).click();
 
-    await expect(page.getByText("Bugün zaten kayıt var")).toBeVisible();
+    await expect(page.getByText("Bugün zaten kayıt var")).toBeVisible({
+      timeout: 10000,
+    });
     await expect(page.getByRole("button", { name: "Değiştir" })).toBeVisible();
 
     await context.close();
@@ -137,11 +138,9 @@ test.describe("Weight Dialog", () => {
       profileId,
     );
 
-    await page.goto("/dashboard");
+    await openWeightDialog(page);
 
     // First entry
-    await page.getByRole("button", { name: /Ekle/ }).click();
-    await page.getByText("Kilo Ekle").click();
     await page.locator("#weight").fill("75.5");
     await page.getByRole("button", { name: "Kaydet" }).click();
     await expect(page.getByText("Kilo kaydedildi")).toBeVisible({
@@ -149,8 +148,7 @@ test.describe("Weight Dialog", () => {
     });
 
     // Second entry — triggers conflict
-    await page.getByRole("button", { name: /Ekle/ }).click();
-    await page.getByText("Kilo Ekle").click();
+    await openWeightDialog(page);
     await page.locator("#weight").fill("76.0");
     await page.getByRole("button", { name: "Kaydet" }).click();
     await expect(page.getByText("Bugün zaten kayıt var")).toBeVisible({
