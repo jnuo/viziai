@@ -37,6 +37,9 @@
     "yesterday": "Yesterday",
     "hoursAgo": "{count}h ago",
     "copyright": "© 2026 ViziAI. All rights reserved.",
+    "privacyLink": "Privacy Policy",
+    "blog": "Blog",
+    "toggleTheme": "Toggle theme",
     "accessLevel": {
       "owner": "Owner",
       "editor": "Editor",
@@ -48,6 +51,7 @@
       "heroTitle": "Understand Your Test Results <highlight>Easily</highlight>",
       "heroDescription": "Upload your blood test results as PDF. ViziAI uses AI to analyze your results, presenting your values in a clear and comparable interface.",
       "getStarted": "Get Started",
+      "getStartedFree": "Get Started Free",
       "tryFree": "Try for Free",
       "dashboardAlt": "ViziAI Dashboard - Visually track your test results",
       "whyPrefix": "Why",
@@ -62,6 +66,21 @@
         "easyUploadDesc": "Easily upload your test reports in PDF format with drag and drop.",
         "securePrivate": "Secure & Private",
         "securePrivateDesc": "Your data is stored on secure infrastructure, accessible only by you."
+      },
+      "howItWorks": "How It Works",
+      "howItWorksSteps": {
+        "step1Title": "Upload Your PDF",
+        "step1Desc": "Drag and drop your blood test report. We support lab PDFs in Turkish, English, German, French, and Spanish.",
+        "step2Title": "AI Extracts Results",
+        "step2Desc": "Our AI reads your PDF and extracts every metric, value, and reference range — even from scanned documents.",
+        "step3Title": "Track Your Trends",
+        "step3Desc": "See all your results on a unified dashboard with trend charts. Spot changes at a glance across reports from any country."
+      },
+      "socialProof": {
+        "languages": "Languages Supported",
+        "familyProfiles": "Family Profiles",
+        "metricAliases": "Metric Aliases",
+        "description": "Track blood tests from Turkish, English, German, French, and Spanish labs — all in one dashboard."
       }
     },
     "login": {
@@ -107,7 +126,9 @@
       "uploadAnother": "Upload Another File",
       "goToDashboard": "Go to Dashboard",
       "uploadNewFile": "Upload New File",
-      "alreadyUploaded": "This file has already been uploaded: {date}"
+      "alreadyUploaded": "This file has already been uploaded: {date}",
+      "reportCapReached": "Report limit reached",
+      "reportCapDescription": "This profile has reached the free plan limit of {max} reports. Pro plan coming soon."
     },
     "dashboard": {
       "loadingData": "Loading data…",
@@ -284,7 +305,8 @@
     },
     "profileSwitcher": {
       "selectProfile": "Select Profile",
-      "addProfile": "Add New Profile"
+      "addProfile": "Add New Profile",
+      "reportCount": "{count}/{max} reports"
     },
     "inviteModal": {
       "sendFailed": "Failed to send invite",
@@ -349,6 +371,74 @@
     "noteOptional": "Note (optional)",
     "existingWeightWarning": "An entry already exists today ({weight} kg at {time}). Would you like to replace it?"
   },
+  "privacy": {
+    "title": "Privacy Policy",
+    "lastUpdated": "Last updated: February 28, 2026",
+    "intro": "ViziAI takes your privacy seriously. This policy explains what data we collect, how we use it, and your rights. We keep it simple and transparent — no legalese.",
+    "dataCollection": {
+      "title": "What We Collect",
+      "description": "When you use ViziAI, we collect:",
+      "items": {
+        "account": "Your Google account email and name (for authentication)",
+        "bloodTests": "Blood test PDF files you upload (temporarily stored during processing)",
+        "labValues": "Extracted lab values, metric names, and reference ranges",
+        "tracking": "Health tracking data you manually enter (weight, blood pressure)",
+        "usage": "Basic usage analytics (page visits, feature usage) via Google Analytics"
+      }
+    },
+    "dataStorage": {
+      "title": "How We Store Your Data",
+      "description": "Your data is stored securely in a Neon Postgres database. PDF files are temporarily stored in Vercel Blob during processing and deleted after extraction is complete. All connections use HTTPS encryption."
+    },
+    "aiProcessing": {
+      "title": "AI Processing",
+      "description": "When you upload a blood test PDF, we use OpenAI's API to extract lab values from the document. The PDF content is sent to OpenAI for processing and is subject to OpenAI's data usage policies. We do not use your health data to train AI models."
+    },
+    "cookies": {
+      "title": "Cookies",
+      "description": "We use essential cookies for authentication (keeping you logged in) and a locale preference cookie (remembering your language choice). Google Analytics uses cookies for anonymous usage statistics. We do not use advertising or tracking cookies."
+    },
+    "gdpr": {
+      "title": "Your Rights",
+      "description": "You have the right to:",
+      "items": {
+        "access": "Access all data we store about you",
+        "export": "Export your data in a standard format",
+        "delete": "Request deletion of your account and all associated data",
+        "correct": "Correct any inaccurate data",
+        "withdraw": "Withdraw consent and stop using the service at any time"
+      }
+    },
+    "dataDeletion": {
+      "title": "Data Deletion",
+      "description": "You can delete individual reports, profiles, or your entire account from the Settings page. When you delete data, it is permanently removed from our database. There is no recovery."
+    },
+    "contact": {
+      "title": "Contact",
+      "description": "For privacy-related questions or data requests, contact us at:",
+      "email": "privacy@viziai.app"
+    }
+  },
+  "blog": {
+    "listTitle": "Blog — ViziAI",
+    "listDescription": "Articles about blood test tracking, health analysis, and ViziAI.",
+    "listHeading": "Blog",
+    "listEmpty": "No articles published yet.",
+    "back": "Back to Blog",
+    "ctaHeading": "Upload your first blood test for free",
+    "ctaButton": "Get started free",
+    "ctaDesc": "Start tracking your blood test results with ViziAI today.",
+    "alsoIn": "Also available in:",
+    "privacyLink": "Privacy Policy"
+  },
+  "seo": {
+    "siteTitle": "ViziAI",
+    "titleTemplate": "{page} | ViziAI",
+    "defaultDescription": "Upload your blood test results and get AI-powered analysis with visual health insights. Track trends across time and languages.",
+    "landingTitle": "AI-Powered Blood Test Tracking",
+    "landingDescription": "Upload blood test PDFs in any language and get instant AI analysis. Track health trends, compare results over time, and manage family profiles — all for free.",
+    "ogImageAlt": "ViziAI — AI-Powered Blood Test Tracking"
+  },
   "api": {
     "profileNotFound": "Profile not found",
     "profileDeleteFailed": "Failed to delete profile",
@@ -369,6 +459,7 @@
     "onlyPdf": "Only PDF files are accepted",
     "invalidPdf": "Invalid PDF file",
     "fileAlreadyUploaded": "This file has already been uploaded",
+    "reportCapReached": "This profile has reached the free plan limit of {max} reports",
     "inviteNotFound": "Invite not found",
     "inviteInfoFailed": "Failed to retrieve invite details",
     "inviteCancelled": "This invite has been cancelled",

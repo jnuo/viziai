@@ -125,6 +125,7 @@ export function useActiveProfile() {
     return () => {
       mounted = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, isLoading]);
 
   // Select a profile via API

@@ -12,7 +12,11 @@ import { locales, localeLabels } from "@/i18n/config";
 import { useLocaleSwitch } from "@/hooks/use-locale-switch";
 import { useTranslations } from "next-intl";
 
-export function LocaleSwitcher() {
+type LocaleSwitcherProps = {
+  showFullName?: boolean;
+};
+
+export function LocaleSwitcher({ showFullName = false }: LocaleSwitcherProps) {
   const { locale, isPending, switchTo } = useLocaleSwitch();
   const t = useTranslations("components.header");
 
@@ -31,7 +35,9 @@ export function LocaleSwitcher() {
           ) : (
             <Globe className="h-4 w-4" />
           )}
-          <span className="text-xs font-medium">{locale.toUpperCase()}</span>
+          <span className="text-xs font-medium">
+            {showFullName ? localeLabels[locale] : locale.toUpperCase()}
+          </span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

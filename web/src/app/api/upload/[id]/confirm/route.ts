@@ -164,12 +164,10 @@ export async function POST(
     // Insert metrics
     let insertedCount = 0;
     let updatedCount = 0;
-    let skippedCount = 0;
 
     for (const metric of body.metrics) {
       if (!isValidMetricValue(metric.value)) {
         console.log(`[API] Skipping metric with invalid value: ${metric.name}`);
-        skippedCount++;
         continue;
       }
 

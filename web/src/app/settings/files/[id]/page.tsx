@@ -87,6 +87,7 @@ export default function FileDetailPage(): React.ReactElement {
     if (fileId) {
       fetchFileDetails();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fileId]);
 
   // Format reference range: "100 - 200", "≥ 100", "≤ 200", or "-"

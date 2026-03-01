@@ -37,6 +37,9 @@
     "yesterday": "Dün",
     "hoursAgo": "{count} saat önce",
     "copyright": "© 2026 ViziAI. Tüm hakları saklıdır.",
+    "privacyLink": "Gizlilik Politikası",
+    "blog": "Blog",
+    "toggleTheme": "Tema değiştir",
     "accessLevel": {
       "owner": "Sahip",
       "editor": "Düzenleyici",
@@ -48,6 +51,7 @@
       "heroTitle": "Tahlil Sonuçlarını <highlight>Kolayca</highlight> Anlayın",
       "heroDescription": "E-nabız'dan veya laboratuar sayfalarından indirdiğiniz tahlil sonuçlarını PDF olarak yükleyin. ViziAI yapay zeka ile sonuçlarınızı analiz eder, değerlerinizi anlaşılır ve karşılaştırılabilir bir arayüzde sunar.",
       "getStarted": "Hemen Başla",
+      "getStartedFree": "Ücretsiz Başla",
       "tryFree": "Ücretsiz Deneyin",
       "dashboardAlt": "ViziAI Dashboard - Test sonuçlarınızı görsel olarak takip edin",
       "whyPrefix": "Neden",
@@ -62,6 +66,21 @@
         "easyUploadDesc": "PDF formatındaki tahlil raporlarınızı sürükle-bırak ile kolayca yükleyin.",
         "securePrivate": "Güvenli ve Özel",
         "securePrivateDesc": "Verileriniz güvenli altyapıda saklanır, sadece siz erişebilirsiniz."
+      },
+      "howItWorks": "Nasıl Çalışır",
+      "howItWorksSteps": {
+        "step1Title": "PDF'inizi Yükleyin",
+        "step1Desc": "Kan testi raporunuzu sürükleyip bırakın. Türkçe, İngilizce, Almanca, Fransızca ve İspanyolca laboratuvar PDF'lerini destekliyoruz.",
+        "step2Title": "AI Sonuçları Çıkarır",
+        "step2Desc": "Yapay zekamız PDF'inizi okur ve her metrik, değer ve referans aralığını çıkarır — taranmış belgelerden bile.",
+        "step3Title": "Trendlerinizi Takip Edin",
+        "step3Desc": "Tüm sonuçlarınızı trend grafikleriyle tek bir panoda görün. Herhangi bir ülkeden gelen raporlardaki değişiklikleri bir bakışta fark edin."
+      },
+      "socialProof": {
+        "languages": "Desteklenen Dil",
+        "familyProfiles": "Aile Profilleri",
+        "metricAliases": "Metrik Takma Ad",
+        "description": "Türkçe, İngilizce, Almanca, Fransızca ve İspanyolca laboratuvar sonuçlarını tek bir panoda takip edin."
       }
     },
     "login": {
@@ -107,7 +126,9 @@
       "uploadAnother": "Başka Dosya Yükle",
       "goToDashboard": "Dashboard'a Git",
       "uploadNewFile": "Yeni Dosya Yükle",
-      "alreadyUploaded": "Bu dosya zaten yüklenmiş: {date}"
+      "alreadyUploaded": "Bu dosya zaten yüklenmiş: {date}",
+      "reportCapReached": "Rapor sınırına ulaşıldı",
+      "reportCapDescription": "Bu profil ücretsiz plan sınırına ulaştı ({max} rapor). Pro plan yakında."
     },
     "dashboard": {
       "loadingData": "Veriler yükleniyor…",
@@ -284,7 +305,8 @@
     },
     "profileSwitcher": {
       "selectProfile": "Profil Seç",
-      "addProfile": "Yeni Profil Ekle"
+      "addProfile": "Yeni Profil Ekle",
+      "reportCount": "{count}/{max} rapor"
     },
     "inviteModal": {
       "sendFailed": "Davet gönderilemedi",
@@ -349,6 +371,74 @@
     "noteOptional": "Not (isteğe bağlı)",
     "existingWeightWarning": "Bugün zaten kayıt var ({time}'de {weight} kg). Değiştirmek ister misin?"
   },
+  "privacy": {
+    "title": "Gizlilik Politikası",
+    "lastUpdated": "Son güncelleme: 28 Şubat 2026",
+    "intro": "ViziAI gizliliğinizi ciddiye alır. Bu politika, hangi verileri topladığımızı, nasıl kullandığımızı ve haklarınızı açıklar. Basit ve şeffaf tutuyoruz.",
+    "dataCollection": {
+      "title": "Neler Topluyoruz",
+      "description": "ViziAI'yı kullandığınızda şunları topluyoruz:",
+      "items": {
+        "account": "Google hesap e-postanız ve adınız (kimlik doğrulama için)",
+        "bloodTests": "Yüklediğiniz kan testi PDF dosyaları (işleme sırasında geçici olarak saklanır)",
+        "labValues": "Çıkarılan laboratuvar değerleri, metrik adları ve referans aralıkları",
+        "tracking": "Manuel olarak girdiğiniz sağlık takip verileri (kilo, tansiyon)",
+        "usage": "Google Analytics aracılığıyla temel kullanım analizleri (sayfa ziyaretleri, özellik kullanımı)"
+      }
+    },
+    "dataStorage": {
+      "title": "Verilerinizi Nasıl Saklıyoruz",
+      "description": "Verileriniz Neon Postgres veritabanında güvenli bir şekilde saklanır. PDF dosyaları işleme sırasında geçici olarak Vercel Blob'da saklanır ve çıkarma tamamlandıktan sonra silinir. Tüm bağlantılar HTTPS şifreleme kullanır."
+    },
+    "aiProcessing": {
+      "title": "Yapay Zeka İşleme",
+      "description": "Bir kan testi PDF'i yüklediğinizde, belgeden laboratuvar değerlerini çıkarmak için OpenAI'nin API'sini kullanıyoruz. PDF içeriği işleme için OpenAI'ye gönderilir ve OpenAI'nin veri kullanım politikalarına tabidir. Sağlık verilerinizi yapay zeka modellerini eğitmek için kullanmıyoruz."
+    },
+    "cookies": {
+      "title": "Çerezler",
+      "description": "Kimlik doğrulama (oturumunuzu açık tutma) ve dil tercihi çerezi (dil seçiminizi hatırlama) için temel çerezler kullanıyoruz. Google Analytics anonim kullanım istatistikleri için çerez kullanır. Reklam veya izleme çerezleri kullanmıyoruz."
+    },
+    "gdpr": {
+      "title": "Haklarınız",
+      "description": "Aşağıdaki haklara sahipsiniz:",
+      "items": {
+        "access": "Hakkınızda sakladığımız tüm verilere erişim",
+        "export": "Verilerinizi standart bir formatta dışa aktarma",
+        "delete": "Hesabınızın ve ilişkili tüm verilerin silinmesini talep etme",
+        "correct": "Hatalı verileri düzeltme",
+        "withdraw": "Onayınızı geri çekme ve hizmeti istediğiniz zaman kullanmayı bırakma"
+      }
+    },
+    "dataDeletion": {
+      "title": "Veri Silme",
+      "description": "Ayarlar sayfasından tek tek raporları, profilleri veya tüm hesabınızı silebilirsiniz. Veri sildiğinizde, veritabanımızdan kalıcı olarak kaldırılır. Geri alma imkanı yoktur."
+    },
+    "contact": {
+      "title": "İletişim",
+      "description": "Gizlilikle ilgili sorular veya veri talepleri için bize ulaşın:",
+      "email": "privacy@viziai.app"
+    }
+  },
+  "blog": {
+    "listTitle": "Blog — ViziAI",
+    "listDescription": "Kan testi takibi, sağlık analizi ve ViziAI hakkında yazılar.",
+    "listHeading": "Blog",
+    "listEmpty": "Henüz yazı yayınlanmadı.",
+    "back": "Blog'a dön",
+    "ctaHeading": "İlk kan testini ücretsiz yükle",
+    "ctaButton": "Ücretsiz başla",
+    "ctaDesc": "ViziAI ile kan testi sonuçlarını takip etmeye hemen başlayın.",
+    "alsoIn": "Diğer dillerde:",
+    "privacyLink": "Gizlilik Politikası"
+  },
+  "seo": {
+    "siteTitle": "ViziAI",
+    "titleTemplate": "{page} | ViziAI",
+    "defaultDescription": "Kan testi sonuçlarınızı yükleyin ve yapay zeka destekli analizlerle görsel sağlık bilgileri edinin. Zaman içindeki değişimleri takip edin.",
+    "landingTitle": "Yapay Zeka Destekli Kan Testi Takibi",
+    "landingDescription": "Herhangi bir dildeki kan testi PDF'lerinizi yükleyin ve anında yapay zeka analizi alın. Sağlık trendlerini takip edin, sonuçları karşılaştırın ve aile profillerini yönetin — tamamen ücretsiz.",
+    "ogImageAlt": "ViziAI — Yapay Zeka Destekli Kan Testi Takibi"
+  },
   "api": {
     "profileNotFound": "Profil bulunamadı",
     "profileDeleteFailed": "Profil silinemedi",
@@ -369,6 +459,7 @@
     "onlyPdf": "Sadece PDF dosyaları kabul edilir",
     "invalidPdf": "Geçersiz PDF dosyası",
     "fileAlreadyUploaded": "Bu dosya zaten yüklenmiş",
+    "reportCapReached": "Bu profil ücretsiz plan sınırına ulaştı ({max} rapor)",
     "inviteNotFound": "Davet bulunamadı",
     "inviteInfoFailed": "Davet bilgileri alınamadı",
     "inviteCancelled": "Bu davet iptal edilmiş",

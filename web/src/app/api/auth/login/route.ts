@@ -7,23 +7,32 @@ export const dynamic = "force-dynamic";
 export async function POST(request: Request) {
   try {
     const { username, password } = await request.json();
-    
+
     if (!username || !password) {
-      return NextResponse.json({ error: "Username and password are required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Username and password are required" },
+        { status: 400 },
+      );
     }
 
     const userConfig = authenticateUser(username, password);
-    
+
     if (!userConfig) {
-      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+      return NextResponse.json(
+        { error: "Invalid credentials" },
+        { status: 401 },
+      );
     }
 
     // Return user config without password for security
-    const { password: _password, ...userConfigWithoutPassword } = userConfig;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _password, ...userConfigWithoutPassword } = userConfig;
     return NextResponse.json({ user: userConfigWithoutPassword });
   } catch (error) {
     console.error("/api/auth/login error", error);
-    return NextResponse.json({ error: "Authentication failed" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Authentication failed" },
+      { status: 500 },
+    );
   }
 }

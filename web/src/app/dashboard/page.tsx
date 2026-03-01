@@ -301,6 +301,7 @@ export default function Dashboard(): React.ReactElement | null {
     }
 
     loadMetricOrder();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeProfileId]);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -358,6 +359,7 @@ export default function Dashboard(): React.ReactElement | null {
     return () => {
       ignore = true;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeProfileId, profileLoading, addToast]);
 
   const [trackingData, setTrackingData] = useState<TrackingMeasurement[]>([]);
@@ -477,6 +479,7 @@ export default function Dashboard(): React.ReactElement | null {
     });
 
     return { metrics: allMetrics, values: filteredValues };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, dateRange, trackingData]);
 
   const displayedMetrics = useMemo(() => {
@@ -572,6 +575,7 @@ export default function Dashboard(): React.ReactElement | null {
     }
 
     return `${formatTR(earliest, locale)} - ${formatTR(latest, locale)}`;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filteredData, locale]);
 
   const toggleMetric = (metricId: string) => {

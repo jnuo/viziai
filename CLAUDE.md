@@ -74,7 +74,7 @@ git checkout -b feature/upload-improvements
 - **Database**: Neon Postgres (serverless)
 - **Auth**: NextAuth.js with Google OAuth
 - **Async Jobs**: Upstash QStash (PDF extraction queue)
-- **AI**: OpenAI GPT-4o Vision (extracts lab values from PDF images)
+- **AI**: OpenAI gpt-5-mini (extracts lab values from PDF images)
 - **Storage**: Vercel Blob (temporary PDF storage)
 - **Hosting**: Vercel
 
@@ -85,10 +85,17 @@ viziai/
 ├── web/                 # Next.js app (the entire application)
 │   ├── src/app/         # Pages and API routes
 │   ├── src/components/  # React components
-│   └── src/lib/         # Utilities (auth, db, etc.)
+│   ├── src/lib/         # Utilities (auth, db, etc.)
+│   └── messages/        # i18n locale files (tr, en, es, de, fr)
 ├── scripts/             # Operational scripts (metric normalization, etc.)
 ├── db-schema/           # SQL migrations for Neon
 ├── product/             # Brand guidelines, roadmap
+├── ralph/               # Ralph autonomous agent loop files
+│   ├── ralph.sh         # Loop script
+│   ├── prompt.md        # Per-iteration instructions
+│   ├── prd.json         # Story list with status tracking
+│   └── progress.txt     # Learnings log
+├── AGENTS.md            # Project patterns for Ralph iterations
 └── _legacy/             # Archived Python code
 ```
 
@@ -125,11 +132,11 @@ Same blood test can appear under different names across lab PDFs (e.g., "Potasiy
 Required for deployment:
 
 - `NEON_DATABASE_URL` - Neon connection string
-- `NEXTAUTH_URL` - Production URL (https://vizi-ai.onurovali.me)
+- `NEXTAUTH_URL` - Production: `https://www.viziai.app`, Preview: `https://staging.viziai.app`
 - `NEXTAUTH_SECRET` - Generate with `openssl rand -base64 32`
 - `GOOGLE_CLIENT_ID` - From Google Cloud Console
 - `GOOGLE_CLIENT_SECRET` - From Google Cloud Console
-- `OPENAI_API_KEY` - For PDF extraction (GPT-4o Vision)
+- `OPENAI_API_KEY` - For PDF extraction (gpt-5-mini)
 - `QSTASH_URL` - Upstash QStash endpoint
 - `QSTASH_TOKEN` - Upstash QStash token
 - `QSTASH_CURRENT_SIGNING_KEY` - For request verification
@@ -145,42 +152,58 @@ echo -n "value" | npx vercel env add VAR_NAME production
 
 Any Google account can sign in. Profile access is granted via the `profile_allowed_emails` table -- on sign-in, the user auto-claims any profiles linked to their email.
 
+## Domains
+
+| Environment | Domain                          | Purpose                                              |
+| ----------- | ------------------------------- | ---------------------------------------------------- |
+| Production  | `viziai.app` / `www.viziai.app` | Live app, auto-deploys on merge to main              |
+| Staging     | `staging.viziai.app`            | Preview deploys from feature branches, OAuth enabled |
+| Local       | `localhost:3000`                | Local dev                                            |
+
+**Google Analytics**: `G-TWM75R9VKP` (viziai.app property, Stream ID: 13682442084)
+
 ## Deployment
 
 **CRITICAL — NEVER use `npx vercel --prod` or Vercel CLI to deploy.**
 
 The CLI build produces a broken output (only a 404 page, no App Router routes). Deployments happen automatically when code is pushed/merged to `main` via GitHub integration.
 
-- **To deploy:** Just merge the PR to `main`. Vercel auto-deploys from GitHub.
-- **To redeploy:** Use `npx vercel redeploy <deployment-url>` to re-promote a known-good deployment.
-- **If you accidentally CLI-deployed:** Find the last good auto-deploy with `npx vercel ls --prod`, then `npx vercel redeploy <that-url>`.
+- **Production deploy:** Merge PR to `main` → Vercel auto-deploys to `viziai.app`
+- **Staging deploy:** Push to any feature branch → Vercel preview at `staging.viziai.app`
+- **To redeploy:** Use `npx vercel redeploy <deployment-url>` to re-promote a known-good deployment
+- **If you accidentally CLI-deployed:** Find the last good auto-deploy with `npx vercel ls --prod`, then `npx vercel redeploy <that-url>`
 
-## Deployment Checklist
+### Google OAuth Redirect URIs
 
-Before deploying to production, complete these steps:
+In Google Cloud Console > APIs & Services > Credentials > OAuth 2.0 Client, these redirect URIs must be registered:
 
-### 1. Set Vercel Environment Variables
+```
+https://www.viziai.app/api/auth/callback/google
+https://staging.viziai.app/api/auth/callback/google
+http://localhost:3000/api/auth/callback/google
+```
 
-In Vercel project settings, add:
+## Ralph (Autonomous Agent Loop)
 
-- `NEON_DATABASE_URL` - Neon connection string (from Neon dashboard)
-- `NEXTAUTH_URL` - Production URL (e.g., `https://viziai.vercel.app`)
-- `NEXTAUTH_SECRET` - Generate with `openssl rand -base64 32`
-- `GOOGLE_CLIENT_ID` - From Google Cloud Console
-- `GOOGLE_CLIENT_SECRET` - From Google Cloud Console
+Ralph is an autonomous development agent that implements stories from `ralph/prd.json`. Each iteration spawns a fresh Claude instance that picks one story, implements it through a 7-phase pipeline, commits, and pushes.
 
-### 2. Update Google OAuth Redirect URIs
+**Files:** `ralph/` directory (ralph.sh, prompt.md, prd.json, progress.txt)
+**Patterns:** `AGENTS.md` (project root)
 
-In Google Cloud Console > APIs & Services > Credentials > OAuth 2.0 Client:
+**Run:** `./ralph/ralph.sh 15`
+**Monitor:** `tail -f ralph/progress.txt`
 
-- Add authorized redirect URI: `https://viziai.vercel.app/api/auth/callback/google`
-- Remove old Supabase callback URLs if present
+### Per-story pipeline
 
-### 3. Test Production Deployment
-
-- [ ] Login flow works with Google OAuth
-- [ ] User data loads correctly from Neon
-- [ ] All allowed emails can access the app
+```
+Phase 1: BUILD         /workflows:work
+Phase 2: DESIGN REVIEW 3 parallel agents (UI stories only)
+Phase 3: CODE REVIEW   /workflows:review
+Phase 4: FIX FINDINGS  /resolve_todo_parallel
+Phase 5: TESTS         typecheck + lint + unit tests + build
+Phase 6: BROWSER TEST  /test-browser (UI stories only)
+Phase 7: SHIP          single commit + git push → staging.viziai.app preview
+```
 
 ## Security Checklist (Every Feature)
 

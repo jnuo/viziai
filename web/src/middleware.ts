@@ -40,6 +40,7 @@ export async function middleware(request: NextRequest) {
     "/api/profiles",
     "/api/upload",
     "/api/onboarding",
+    "/api/settings",
   ];
 
   // Internal worker routes that bypass auth (called server-to-server)

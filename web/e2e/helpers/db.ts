@@ -61,10 +61,22 @@ export async function cleanupTrackingData(profileId: string): Promise<void> {
  * Full cleanup: remove user, profile, access, and tracking data.
  */
 export async function deleteTestUser(userId: string): Promise<void> {
-  // Delete in dependency order
-  await sql`DELETE FROM tracking_measurements WHERE profile_id IN (
+  // Get all profile IDs for this user
+  const profiles = await sql`
     SELECT profile_id FROM user_access WHERE user_id_new = ${userId}
-  )`;
+  `;
+  const profileIds = profiles.map((p: { profile_id: string }) => p.profile_id);
+
+  // Delete in dependency order — clean up all tables referencing profile
+  for (const pid of profileIds) {
+    await sql`DELETE FROM pending_uploads WHERE profile_id = ${pid}`;
+    await sql`DELETE FROM metrics WHERE report_id IN (
+      SELECT id FROM reports WHERE profile_id = ${pid}
+    )`;
+    await sql`DELETE FROM reports WHERE profile_id = ${pid}`;
+    await sql`DELETE FROM processed_files WHERE profile_id = ${pid}`;
+    await sql`DELETE FROM tracking_measurements WHERE profile_id = ${pid}`;
+  }
   await sql`DELETE FROM user_access WHERE user_id_new = ${userId}`;
   await sql`DELETE FROM profiles WHERE display_name = ${TEST_PROFILE_NAME}`;
   await sql`DELETE FROM users WHERE id = ${userId}`;

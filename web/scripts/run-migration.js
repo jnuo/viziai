@@ -8,6 +8,7 @@
  *   node scripts/run-migration.js <db_url> <file>    # Custom DB and migration file
  */
 
+/* eslint-disable @typescript-eslint/no-require-imports */
 const { neon } = require("@neondatabase/serverless");
 const fs = require("fs");
 const path = require("path");

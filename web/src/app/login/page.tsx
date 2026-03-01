@@ -8,7 +8,9 @@ import Link from "next/link";
 import { signIn, useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { reportError } from "@/lib/error-reporting";
+import { trackEvent } from "@/lib/analytics";
 import { ViziAILogo } from "@/components/viziai-logo";
+import { Footer } from "@/components/footer";
 
 function LoginContent(): React.ReactElement {
   const router = useRouter();
@@ -22,11 +24,7 @@ function LoginContent(): React.ReactElement {
   useEffect(() => {
     const errorParam = searchParams.get("error");
     if (errorParam) {
-      if (errorParam === "AccessDenied") {
-        setError(t("accessDenied"));
-      } else {
-        setError(errorParam);
-      }
+      setError(errorParam === "AccessDenied" ? t("accessDenied") : errorParam);
     }
   }, [searchParams, t]);
 
@@ -34,6 +32,7 @@ function LoginContent(): React.ReactElement {
 
   useEffect(() => {
     if (status === "authenticated" && session) {
+      trackEvent({ action: "login_completed", category: "conversion" });
       router.push(redirectTo);
     }
   }, [status, session, router, redirectTo]);
@@ -135,9 +134,9 @@ function LoginContent(): React.ReactElement {
           )}
         </Button>
 
-        <div className="mt-6 text-xs text-muted-foreground text-center">
-          <p>{t("termsAgreement")}</p>
-        </div>
+        <p className="mt-6 text-xs text-muted-foreground text-center">
+          {t("termsAgreement")}
+        </p>
       </CardContent>
     </Card>
   );
@@ -166,10 +165,13 @@ function LoginFallback(): React.ReactElement {
 
 export default function LoginPage(): React.ReactElement {
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <Suspense fallback={<LoginFallback />}>
-        <LoginContent />
-      </Suspense>
+    <div className="min-h-screen bg-background flex flex-col">
+      <div className="flex-1 flex items-center justify-center p-4">
+        <Suspense fallback={<LoginFallback />}>
+          <LoginContent />
+        </Suspense>
+      </div>
+      <Footer />
     </div>
   );
 }
