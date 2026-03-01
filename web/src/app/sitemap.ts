@@ -1,11 +1,16 @@
 import type { MetadataRoute } from "next";
-import { locales, bcp47 } from "@/i18n/config";
+import { locales, bcp47, staticPages } from "@/i18n/config";
 import type { Locale } from "@/i18n/config";
 import { getAllBlogPosts } from "@/lib/blog";
 
 const BASE_URL = "https://www.viziai.app";
 
-/** Build hreflang alternates map for a path pattern like `/${locale}` or `/${locale}/blog` */
+/** Next.js calls this to generate a sitemap index at /sitemap.xml */
+export async function generateSitemaps() {
+  return locales.map((locale) => ({ id: locale }));
+}
+
+/** Build hreflang alternates map for a path pattern */
 function localeAlternates(
   pathFn: (locale: string) => string,
 ): Record<string, string> {
@@ -17,75 +22,81 @@ function localeAlternates(
   return languages;
 }
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default function sitemap({ id }: { id: string }): MetadataRoute.Sitemap {
+  const locale = id as Locale;
   const entries: MetadataRoute.Sitemap = [];
 
-  // Locale homepages — each linked to all other language variants
-  for (const locale of locales) {
-    entries.push({
-      url: `${BASE_URL}/${locale}`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 1.0,
-      alternates: {
-        languages: localeAlternates((l) => `/${l}`),
-      },
-    });
-  }
-
-  // Blog listing pages
-  for (const locale of locales) {
-    entries.push({
-      url: `${BASE_URL}/${locale}/blog`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.8,
-      alternates: {
-        languages: localeAlternates((l) => `/${l}/blog`),
-      },
-    });
-  }
-
-  // Blog posts — only add alternates for slugs that exist across locales
-  const slugsByLocale = new Map<string, Map<string, string>>();
-  for (const locale of locales) {
-    const posts = getAllBlogPosts(locale);
-    for (const post of posts) {
-      const { slug, publishedAt } = post.frontmatter;
-      if (!slugsByLocale.has(slug)) {
-        slugsByLocale.set(slug, new Map());
-      }
-      slugsByLocale.get(slug)!.set(locale, publishedAt);
-    }
-  }
-
-  for (const [slug, localeMap] of slugsByLocale) {
-    const languages: Record<string, string> = {};
-    for (const [locale] of localeMap) {
-      languages[bcp47[locale as Locale]] = `${BASE_URL}/${locale}/blog/${slug}`;
-    }
-    if (localeMap.has("en")) {
-      languages["x-default"] = `${BASE_URL}/en/blog/${slug}`;
-    }
-
-    for (const [locale, publishedAt] of localeMap) {
-      entries.push({
-        url: `${BASE_URL}/${locale}/blog/${slug}`,
-        lastModified: new Date(publishedAt),
-        changeFrequency: "monthly",
-        priority: 0.7,
-        alternates: { languages },
-      });
-    }
-  }
-
-  // Static pages (no locale prefix)
+  // Homepage
   entries.push({
-    url: `${BASE_URL}/privacy`,
+    url: `${BASE_URL}/${locale}`,
     lastModified: new Date(),
-    changeFrequency: "monthly",
-    priority: 0.3,
+    changeFrequency: "weekly",
+    priority: 1.0,
+    alternates: {
+      languages: localeAlternates((l) => `/${l}`),
+    },
   });
+
+  // Blog listing
+  entries.push({
+    url: `${BASE_URL}/${locale}/blog`,
+    lastModified: new Date(),
+    changeFrequency: "weekly",
+    priority: 0.8,
+    alternates: {
+      languages: localeAlternates((l) => `/${l}/blog`),
+    },
+  });
+
+  // Blog posts for this locale
+  const posts = getAllBlogPosts(locale);
+  const allSlugs = new Map<string, Map<string, string>>();
+  for (const loc of locales) {
+    for (const post of getAllBlogPosts(loc)) {
+      const { slug, publishedAt } = post.frontmatter;
+      if (!allSlugs.has(slug)) allSlugs.set(slug, new Map());
+      allSlugs.get(slug)!.set(loc, publishedAt);
+    }
+  }
+
+  for (const post of posts) {
+    const { slug, publishedAt } = post.frontmatter;
+    const localeMap = allSlugs.get(slug);
+    const languages: Record<string, string> = {};
+    if (localeMap) {
+      for (const [loc] of localeMap) {
+        languages[bcp47[loc as Locale]] = `${BASE_URL}/${loc}/blog/${slug}`;
+      }
+      if (localeMap.has("en")) {
+        languages["x-default"] = `${BASE_URL}/en/blog/${slug}`;
+      }
+    }
+
+    entries.push({
+      url: `${BASE_URL}/${locale}/blog/${slug}`,
+      lastModified: new Date(publishedAt),
+      changeFrequency: "monthly",
+      priority: 0.7,
+      alternates: { languages },
+    });
+  }
+
+  // Static pages with translated slugs
+  for (const [, slugs] of Object.entries(staticPages)) {
+    const languages: Record<string, string> = {};
+    for (const loc of locales) {
+      languages[bcp47[loc]] = `${BASE_URL}/${loc}/${slugs[loc]}`;
+    }
+    languages["x-default"] = `${BASE_URL}/en/${slugs.en}`;
+
+    entries.push({
+      url: `${BASE_URL}/${locale}/${slugs[locale]}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.3,
+      alternates: { languages },
+    });
+  }
 
   return entries;
 }

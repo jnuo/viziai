@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { staticPages } from "@/i18n/config";
+import type { Locale } from "@/i18n/config";
 
 export function Footer() {
   const locale = useLocale();
@@ -14,7 +16,7 @@ export function Footer() {
       <div className="container mx-auto px-4 max-w-4xl">
         <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
           <Link
-            href="/privacy"
+            href={`/${locale}/${staticPages.privacy[locale as Locale]}`}
             className="hover:text-foreground transition-colors"
           >
             {t("privacyLink")}
