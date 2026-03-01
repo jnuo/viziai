@@ -4,8 +4,7 @@ import { notFound } from "next/navigation";
 import { LandingPage } from "@/components/landing-page";
 import { locales, bcp47 } from "@/i18n/config";
 import type { Locale } from "@/i18n/config";
-
-const BASE_URL = "https://www.viziai.app";
+import { BASE_URL } from "@/lib/constants";
 
 interface HomePageProps {
   params: Promise<{ locale: string }>;
@@ -47,7 +46,7 @@ export async function generateMetadata({
       locale: bcp47[locale as Locale],
       images: [
         {
-          url: `${BASE_URL}/dashboard.jpeg`,
+          url: `${BASE_URL}/og/home-${locale}.png`,
           width: 1280,
           height: 838,
           alt: t("ogImageAlt"),
@@ -58,7 +57,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: t("landingTitle"),
       description: t("landingDescription"),
-      images: [`${BASE_URL}/dashboard.jpeg`],
+      images: [`${BASE_URL}/og/home-${locale}.png`],
     },
   };
 }
