@@ -4,7 +4,7 @@ import { useRef, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
 import { setLocale } from "@/app/actions/locale";
-import type { Locale } from "@/i18n/config";
+import { locales, type Locale } from "@/i18n/config";
 import { trackEvent } from "@/lib/analytics";
 
 export function useLocaleSwitch() {
@@ -24,7 +24,13 @@ export function useLocaleSwitch() {
           category: "engagement",
           label: target,
         });
-        router.refresh();
+        // Navigate to new locale URL if on a locale homepage
+        const path = window.location.pathname;
+        if (locales.some((l) => path === `/${l}` || path === `/${l}/`)) {
+          router.push(`/${target}`);
+        } else {
+          router.refresh();
+        }
       } finally {
         switching.current = false;
       }

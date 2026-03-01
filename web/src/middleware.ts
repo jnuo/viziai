@@ -10,8 +10,27 @@ import { getToken } from "next-auth/jwt";
  * 3. Redirects authenticated users from /login to /dashboard
  * 4. Redirects new users (no profiles) to /onboarding
  */
+const LOCALES = ["tr", "en", "es", "de", "fr"];
+
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
+
+  // Sync locale cookie when visiting /{locale} homepage or /{locale}/blog/*
+  const firstSegment = pathname.split("/")[1];
+  if (firstSegment && LOCALES.includes(firstSegment)) {
+    const currentCookie = request.cookies.get("locale")?.value;
+    if (currentCookie !== firstSegment) {
+      const response = NextResponse.next();
+      response.cookies.set("locale", firstSegment, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: 60 * 60 * 24 * 365,
+        path: "/",
+      });
+      return response;
+    }
+  }
 
   // Get the NextAuth token
   const token = await getToken({

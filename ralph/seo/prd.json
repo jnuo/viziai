@@ -1,0 +1,86 @@
+{
+  "project": "ViziAI SEO Copy Optimization",
+  "branch": "ralph/phase-1-ship-free-product",
+  "stories": [
+    {
+      "id": "SEO-001",
+      "title": "Turkish homepage SEO copy",
+      "description": "Optimize Turkish hero title + description using keywords: 'kan tahlili nasıl okunur' (3K-10K), 'kan tahlili değerleri ne anlama gelir' (1K-5K), 'kan tahlili takip uygulaması' (200-500), 'tahlil sonuçları' (100-300). Must include 'kan tahlili' in title. Hero title = seo.landingTitle, hero description = seo.landingDescription. Also update landing.heroTitle and landing.heroDescription to match.",
+      "acceptanceCriteria": [
+        "seo.landingTitle is 50-60 chars and contains 'kan tahlili'",
+        "seo.landingDescription is 110-160 chars with 2+ keywords naturally included",
+        "landing.heroTitle matches seo.landingTitle (with <highlight> tag on one key word)",
+        "landing.heroDescription matches seo.landingDescription",
+        "Copy reads naturally in Turkish, not keyword-stuffed",
+        "All evaluator agents pass"
+      ],
+      "files": ["web/messages/tr.json"],
+      "priority": 1,
+      "status": "todo"
+    },
+    {
+      "id": "SEO-002",
+      "title": "English homepage SEO copy",
+      "description": "Optimize English hero + meta using keywords: 'blood test tracker' (200-500 AU, 300-800 UK), 'blood test results app' (100-300 AU, 200-500 UK), 'track blood test results' (50-150), 'upload blood test pdf' (20-50). Title must include 'blood test'. Hero = meta.",
+      "acceptanceCriteria": [
+        "seo.landingTitle is 50-60 chars and contains 'blood test'",
+        "seo.landingDescription is 110-160 chars with 2+ keywords naturally included",
+        "landing.heroTitle matches seo.landingTitle (with <highlight> tag on one key word)",
+        "landing.heroDescription matches seo.landingDescription",
+        "Copy reads naturally in English, not keyword-stuffed",
+        "All evaluator agents pass"
+      ],
+      "files": ["web/messages/en.json"],
+      "priority": 1,
+      "status": "todo"
+    },
+    {
+      "id": "SEO-003",
+      "title": "German homepage SEO copy",
+      "description": "Optimize German hero + meta using keywords: 'Blutwerte App' (500-1K), 'Blutwerte verstehen' (1K-3K), 'Laborwerte App' (300-500), 'Blutbild App' (200-500), 'Laborbefund digitalisieren' (50-150). Hero = meta.",
+      "acceptanceCriteria": [
+        "seo.landingTitle is 50-60 chars and contains 'Blutwerte' or 'Blutbild'",
+        "seo.landingDescription is 110-160 chars with 2+ keywords naturally included",
+        "landing.heroTitle matches seo.landingTitle (with <highlight> tag on one key word)",
+        "landing.heroDescription matches seo.landingDescription",
+        "Copy reads naturally in German, not keyword-stuffed",
+        "All evaluator agents pass"
+      ],
+      "files": ["web/messages/de.json"],
+      "priority": 1,
+      "status": "todo"
+    },
+    {
+      "id": "SEO-004",
+      "title": "French homepage SEO copy",
+      "description": "Optimize French hero + meta using keywords: 'comprendre analyse de sang' (1K-3K), 'application analyse de sang' (200-500), 'suivi résultats prise de sang' (100-300), 'analyser prise de sang PDF' (30-80). Hero = meta.",
+      "acceptanceCriteria": [
+        "seo.landingTitle is 50-60 chars and contains 'analyse de sang' or 'prise de sang'",
+        "seo.landingDescription is 110-160 chars with 2+ keywords naturally included",
+        "landing.heroTitle matches seo.landingTitle (with <highlight> tag on one key word)",
+        "landing.heroDescription matches seo.landingDescription",
+        "Copy reads naturally in French, not keyword-stuffed",
+        "All evaluator agents pass"
+      ],
+      "files": ["web/messages/fr.json"],
+      "priority": 1,
+      "status": "todo"
+    },
+    {
+      "id": "SEO-005",
+      "title": "Spanish homepage SEO copy",
+      "description": "Optimize Spanish hero + meta using keywords: 'app análisis de sangre' (200-500), 'cómo leer resultados análisis de sangre' (1K-5K), 'seguimiento resultados análisis de sangre' (100-300), 'app resultados laboratorio' (100-300). Hero = meta.",
+      "acceptanceCriteria": [
+        "seo.landingTitle is 50-60 chars and contains 'análisis de sangre'",
+        "seo.landingDescription is 110-160 chars with 2+ keywords naturally included",
+        "landing.heroTitle matches seo.landingTitle (with <highlight> tag on one key word)",
+        "landing.heroDescription matches seo.landingDescription",
+        "Copy reads naturally in Spanish, not keyword-stuffed",
+        "All evaluator agents pass"
+      ],
+      "files": ["web/messages/es.json"],
+      "priority": 1,
+      "status": "todo"
+    }
+  ]
+}
