@@ -5,13 +5,12 @@ import { locales, bcp47, staticPages } from "@/i18n/config";
 import type { Locale, StaticPageId } from "@/i18n/config";
 import type { ComponentType } from "react";
 import { PrivacyContent } from "@/app/privacy/privacy-content";
+import { BASE_URL } from "@/lib/constants";
 
 /** Adding a page to staticPages without a renderer here = type error */
 const pageComponents: Record<StaticPageId, ComponentType> = {
   privacy: PrivacyContent,
 };
-
-const BASE_URL = "https://www.viziai.app";
 
 interface StaticPageProps {
   params: Promise<{ locale: string; slug: string }>;
@@ -58,6 +57,7 @@ export async function generateMetadata({
 
   return {
     title: t("title"),
+    description: t("title"),
     alternates: {
       canonical: `${BASE_URL}/${locale}/${slug}`,
       languages: alternateLanguages,
