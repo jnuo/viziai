@@ -16,6 +16,7 @@ import {
 } from "@/lib/blog";
 import { locales, bcp47, localeLabels } from "@/i18n/config";
 import type { Locale } from "@/i18n/config";
+import { BASE_URL } from "@/lib/constants";
 
 interface ArticlePageProps {
   params: Promise<{ locale: string; slug: string }>;
@@ -38,12 +39,13 @@ export async function generateMetadata({
   params,
 }: ArticlePageProps): Promise<Metadata> {
   const { locale, slug } = await params;
+  if (!locales.includes(locale as Locale)) return { title: "Not Found" };
   const post = getBlogPost(locale, slug);
   if (!post) return { title: "Not Found" };
 
   const { frontmatter } = post;
   const alternates = getAlternateLocales(post, locales);
-  const canonicalUrl = `https://www.viziai.app/${locale}/blog/${slug}`;
+  const canonicalUrl = `${BASE_URL}/${locale}/blog/${slug}`;
 
   const alternateLanguages: Record<string, string> = {
     [bcp47[locale as Locale]]: canonicalUrl,
@@ -51,14 +53,13 @@ export async function generateMetadata({
   for (const alt of alternates) {
     const altLocale = alt.locale as Locale;
     alternateLanguages[bcp47[altLocale]] =
-      `https://www.viziai.app/${alt.locale}/blog/${alt.slug}`;
+      `${BASE_URL}/${alt.locale}/blog/${alt.slug}`;
   }
   const enAlt = alternates.find((a) => a.locale === "en");
   if (locale === "en") {
     alternateLanguages["x-default"] = canonicalUrl;
   } else if (enAlt) {
-    alternateLanguages["x-default"] =
-      `https://www.viziai.app/en/blog/${enAlt.slug}`;
+    alternateLanguages["x-default"] = `${BASE_URL}/en/blog/${enAlt.slug}`;
   }
 
   return {
@@ -75,6 +76,22 @@ export async function generateMetadata({
       publishedTime: frontmatter.publishedAt,
       tags: frontmatter.tags,
       url: canonicalUrl,
+      siteName: "ViziAI",
+      locale: bcp47[locale as Locale],
+      images: [
+        {
+          url: `${BASE_URL}/og/blog-${locale}.png`,
+          width: 1280,
+          height: 838,
+          alt: frontmatter.title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: frontmatter.title,
+      description: frontmatter.description,
+      images: [`${BASE_URL}/og/blog-${locale}.png`],
     },
   };
 }

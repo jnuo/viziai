@@ -10,6 +10,7 @@ import { Footer } from "@/components/footer";
 import { getAllBlogPosts, formatBlogDate, readMinLabel } from "@/lib/blog";
 import { locales, bcp47 } from "@/i18n/config";
 import type { Locale } from "@/i18n/config";
+import { BASE_URL } from "@/lib/constants";
 
 interface BlogPageProps {
   params: Promise<{ locale: string }>;
@@ -23,23 +24,46 @@ export async function generateMetadata({
   params,
 }: BlogPageProps): Promise<Metadata> {
   const { locale } = await params;
+  if (!locales.includes(locale as Locale)) return { title: "Not Found" };
   const t = await getTranslations({
     locale: locale as Locale,
     namespace: "blog",
   });
   const alternateLanguages: Record<string, string> = {
-    "x-default": "https://www.viziai.app/en/blog",
+    "x-default": `${BASE_URL}/en/blog`,
   };
   for (const loc of locales) {
-    alternateLanguages[bcp47[loc]] = `https://www.viziai.app/${loc}/blog`;
+    alternateLanguages[bcp47[loc]] = `${BASE_URL}/${loc}/blog`;
   }
 
   return {
     title: t("listTitle"),
     description: t("listDescription"),
     alternates: {
-      canonical: `https://www.viziai.app/${locale}/blog`,
+      canonical: `${BASE_URL}/${locale}/blog`,
       languages: alternateLanguages,
+    },
+    openGraph: {
+      title: t("listTitle"),
+      description: t("listDescription"),
+      url: `${BASE_URL}/${locale}/blog`,
+      siteName: "ViziAI",
+      type: "website",
+      locale: bcp47[locale as Locale],
+      images: [
+        {
+          url: `${BASE_URL}/og/blog-${locale}.png`,
+          width: 1280,
+          height: 838,
+          alt: t("listTitle"),
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: t("listTitle"),
+      description: t("listDescription"),
+      images: [`${BASE_URL}/og/blog-${locale}.png`],
     },
   };
 }
