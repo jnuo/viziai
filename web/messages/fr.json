@@ -48,8 +48,8 @@
   },
   "pages": {
     "landing": {
-      "heroTitle": "Comprenez vos résultats d'analyses <highlight>facilement</highlight>",
-      "heroDescription": "Téléchargez vos résultats d'analyses sanguines en PDF. ViziAI utilise l'IA pour analyser vos résultats et présenter vos valeurs dans une interface claire et comparable.",
+      "heroTitle": "<highlight>Comprendre</highlight> vos analyses de sang et suivre les résultats",
+      "heroDescription": "Téléchargez vos résultats de prise de sang en PDF. ViziAI analyse vos valeurs avec l'IA et affiche les tendances dans des graphiques clairs.",
       "getStarted": "Commencer",
       "getStartedFree": "Commencer gratuitement",
       "tryFree": "Essayer gratuitement",
@@ -435,9 +435,9 @@
     "siteTitle": "ViziAI",
     "titleTemplate": "{page} | ViziAI",
     "defaultDescription": "Téléchargez vos résultats d'analyses sanguines et obtenez une analyse par IA avec des informations visuelles sur votre santé. Suivez les tendances au fil du temps.",
-    "landingTitle": "Suivi d'analyses sanguines par IA",
-    "landingDescription": "Téléchargez vos analyses sanguines en PDF dans n'importe quelle langue et obtenez une analyse IA instantanée. Suivez les tendances de santé, comparez les résultats et gérez les profils familiaux — tout gratuitement.",
-    "ogImageAlt": "ViziAI — Suivi d'analyses sanguines par IA"
+    "landingTitle": "Comprendre vos analyses de sang et suivre les résultats",
+    "landingDescription": "Téléchargez vos résultats de prise de sang en PDF. ViziAI analyse vos valeurs avec l'IA et affiche les tendances dans des graphiques clairs.",
+    "ogImageAlt": "ViziAI — Suivi d'analyses de sang par IA"
   },
   "api": {
     "profileNotFound": "Profil introuvable",

@@ -91,11 +91,7 @@ function OnboardingContent(): React.ReactElement {
         const uploadData = await uploadResponse.json();
 
         if (!uploadResponse.ok) {
-          if (uploadResponse.status === 409) {
-            setError(uploadData.message || tu("uploadFailed"));
-          } else {
-            setError(uploadData.message || tu("uploadFailed"));
-          }
+          setError(uploadData.message || tu("uploadFailed"));
           setIsUploading(false);
           return;
         }

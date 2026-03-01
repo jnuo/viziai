@@ -48,8 +48,8 @@
   },
   "pages": {
     "landing": {
-      "heroTitle": "Understand Your Test Results <highlight>Easily</highlight>",
-      "heroDescription": "Upload your blood test results as PDF. ViziAI uses AI to analyze your results, presenting your values in a clear and comparable interface.",
+      "heroTitle": "<highlight>Track</highlight> Your Blood Test Results and Understand Health Trends",
+      "heroDescription": "Upload blood test PDFs and let ViziAI analyze your results with AI. Track health trends over time with clear visual charts and dashboards.",
       "getStarted": "Get Started",
       "getStartedFree": "Get Started Free",
       "tryFree": "Try for Free",
@@ -435,8 +435,8 @@
     "siteTitle": "ViziAI",
     "titleTemplate": "{page} | ViziAI",
     "defaultDescription": "Upload your blood test results and get AI-powered analysis with visual health insights. Track trends across time and languages.",
-    "landingTitle": "AI-Powered Blood Test Tracking",
-    "landingDescription": "Upload blood test PDFs in any language and get instant AI analysis. Track health trends, compare results over time, and manage family profiles — all for free.",
+    "landingTitle": "Track Your Blood Test Results and Understand Health Trends",
+    "landingDescription": "Upload blood test PDFs and let ViziAI analyze your results with AI. Track health trends over time with clear visual charts and dashboards.",
     "ogImageAlt": "ViziAI — AI-Powered Blood Test Tracking"
   },
   "api": {

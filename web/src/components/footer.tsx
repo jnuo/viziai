@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { staticPages } from "@/i18n/config";
+import type { Locale } from "@/i18n/config";
 
 export function Footer() {
   const locale = useLocale();
@@ -12,30 +14,28 @@ export function Footer() {
   return (
     <footer className="border-t border-border/60 bg-teal-50/50 dark:bg-teal-950/30 py-6 mt-auto">
       <div className="container mx-auto px-4 max-w-4xl">
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-4 text-sm text-muted-foreground">
-            <Link
-              href="/privacy"
-              className="hover:text-foreground transition-colors"
-            >
-              {t("privacyLink")}
-            </Link>
-            <span className="text-border">|</span>
-            <Link
-              href={`/${locale}/blog`}
-              className="hover:text-foreground transition-colors"
-            >
-              {t("blog")}
-            </Link>
-          </div>
-          <span className="hidden sm:block text-sm text-muted-foreground/70">
-            {t("copyright")}
-          </span>
-          <div className="flex items-center gap-1">
-            <LocaleSwitcher showFullName />
-            <ThemeToggle />
-          </div>
+        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
+          <Link
+            href={`/${locale}/${staticPages.privacy[locale as Locale]}`}
+            className="hover:text-foreground transition-colors"
+          >
+            {t("privacyLink")}
+          </Link>
+          <span className="text-border">|</span>
+          <Link
+            href={`/${locale}/blog`}
+            className="hover:text-foreground transition-colors"
+          >
+            {t("blog")}
+          </Link>
+          <span className="text-border">|</span>
+          <LocaleSwitcher showFullName />
+          <span className="text-border">|</span>
+          <ThemeToggle />
         </div>
+        <p className="text-center text-sm text-muted-foreground/70 mt-3">
+          {t("copyright")}
+        </p>
       </div>
     </footer>
   );
