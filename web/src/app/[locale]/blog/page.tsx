@@ -24,6 +24,7 @@ export async function generateMetadata({
   params,
 }: BlogPageProps): Promise<Metadata> {
   const { locale } = await params;
+  if (!locales.includes(locale as Locale)) return { title: "Not Found" };
   const t = await getTranslations({
     locale: locale as Locale,
     namespace: "blog",

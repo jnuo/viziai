@@ -18,6 +18,7 @@ export async function generateMetadata({
   params,
 }: HomePageProps): Promise<Metadata> {
   const { locale } = await params;
+  if (!locales.includes(locale as Locale)) return { title: "Not Found" };
   const t = await getTranslations({
     locale: locale as Locale,
     namespace: "seo",
@@ -41,7 +42,7 @@ export async function generateMetadata({
       title: t("landingTitle"),
       description: t("landingDescription"),
       url: `${BASE_URL}/${locale}`,
-      siteName: t("siteTitle"),
+      siteName: "ViziAI",
       type: "website",
       locale: bcp47[locale as Locale],
       images: [

@@ -39,6 +39,7 @@ export async function generateMetadata({
   params,
 }: ArticlePageProps): Promise<Metadata> {
   const { locale, slug } = await params;
+  if (!locales.includes(locale as Locale)) return { title: "Not Found" };
   const post = getBlogPost(locale, slug);
   if (!post) return { title: "Not Found" };
 
