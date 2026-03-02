@@ -18,6 +18,7 @@ import {
   LogOut,
   Users,
   FolderPlus,
+  AlertTriangle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -67,6 +68,13 @@ interface ProfileAccess {
   allowedEmails: AllowedEmail[];
 }
 
+interface ProfileStats {
+  reportCount: number;
+  weightCount: number;
+  bpCount: number;
+  sharedWith: { email: string; displayName: string | null }[];
+}
+
 function getInitials(name: string | null, email: string): string {
   if (name) {
     return name
@@ -92,6 +100,8 @@ export default function AccessPage() {
   } | null>(null);
   const [deletingProfile, setDeletingProfile] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  const [deleteStats, setDeleteStats] = useState<ProfileStats | null>(null);
+  const [loadingStats, setLoadingStats] = useState(false);
   const [leavingProfile, setLeavingProfile] = useState<string | null>(null);
   const [confirmLeave, setConfirmLeave] = useState<string | null>(null);
 
@@ -187,6 +197,23 @@ export default function AccessPage() {
     }
   };
 
+  const handleConfirmDeleteClick = async (profileId: string) => {
+    setLoadingStats(true);
+    setConfirmDelete(profileId);
+    setDeleteStats(null);
+    try {
+      const res = await fetch(`/api/profiles/${profileId}/stats`);
+      if (res.ok) {
+        const data = await res.json();
+        setDeleteStats(data);
+      }
+    } catch (error) {
+      reportError(error, { op: "settings.access.fetchStats", profileId });
+    } finally {
+      setLoadingStats(false);
+    }
+  };
+
   const handleDeleteProfile = async (profileId: string) => {
     setDeletingProfile(profileId);
     try {
@@ -196,6 +223,7 @@ export default function AccessPage() {
 
       if (res.ok) {
         setConfirmDelete(null);
+        setDeleteStats(null);
         await fetchAccessData();
         window.location.reload();
       }
@@ -439,15 +467,79 @@ export default function AccessPage() {
 
             <div className="pt-4 border-t">
               {confirmDelete === profile.profileId ? (
-                <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                  <p className="text-sm text-destructive flex-1">
+                <div className="space-y-3">
+                  <p className="text-sm text-destructive font-medium">
                     {t("deleteConfirm")}
                   </p>
-                  <div className="flex gap-2 shrink-0">
+
+                  {loadingStats ? (
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      {tc("loading")}
+                    </div>
+                  ) : deleteStats ? (
+                    <div className="space-y-2">
+                      {(deleteStats.reportCount > 0 ||
+                        deleteStats.bpCount > 0 ||
+                        deleteStats.weightCount > 0) && (
+                        <div className="text-sm text-muted-foreground space-y-1">
+                          <p className="font-medium text-foreground">
+                            {t("deleteDataTitle")}
+                          </p>
+                          {deleteStats.reportCount > 0 && (
+                            <p>
+                              {t("deleteReportCount", {
+                                count: deleteStats.reportCount,
+                              })}
+                            </p>
+                          )}
+                          {deleteStats.bpCount > 0 && (
+                            <p>
+                              {t("deleteBpCount", {
+                                count: deleteStats.bpCount,
+                              })}
+                            </p>
+                          )}
+                          {deleteStats.weightCount > 0 && (
+                            <p>
+                              {t("deleteWeightCount", {
+                                count: deleteStats.weightCount,
+                              })}
+                            </p>
+                          )}
+                        </div>
+                      )}
+
+                      {deleteStats.sharedWith.length > 0 && (
+                        <div className="flex items-start gap-2 p-2 rounded-md bg-amber-50 dark:bg-amber-950/30 text-sm">
+                          <AlertTriangle
+                            aria-hidden="true"
+                            className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5"
+                          />
+                          <div>
+                            <p className="font-medium text-amber-800 dark:text-amber-300">
+                              {t("deleteSharedWarning", {
+                                count: deleteStats.sharedWith.length,
+                              })}
+                            </p>
+                            <p className="text-amber-700 dark:text-amber-400">
+                              {deleteStats.sharedWith
+                                .map((u) => u.displayName || u.email)
+                                .join(", ")}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ) : null}
+
+                  <div className="flex gap-2">
                     <Button
                       variant="destructive"
                       size="sm"
-                      disabled={deletingProfile === profile.profileId}
+                      disabled={
+                        deletingProfile === profile.profileId || loadingStats
+                      }
                       onClick={() => handleDeleteProfile(profile.profileId)}
                     >
                       {deletingProfile === profile.profileId && (
@@ -458,7 +550,10 @@ export default function AccessPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => setConfirmDelete(null)}
+                      onClick={() => {
+                        setConfirmDelete(null);
+                        setDeleteStats(null);
+                      }}
                     >
                       {tc("cancel")}
                     </Button>
@@ -469,7 +564,7 @@ export default function AccessPage() {
                   variant="ghost"
                   size="sm"
                   className="text-destructive hover:text-destructive"
-                  onClick={() => setConfirmDelete(profile.profileId)}
+                  onClick={() => handleConfirmDeleteClick(profile.profileId)}
                 >
                   <Trash2 aria-hidden="true" className="h-4 w-4 mr-1.5" />
                   {t("deleteProfile")}
