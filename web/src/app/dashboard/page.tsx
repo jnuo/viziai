@@ -6,6 +6,7 @@ import {
   closestCenter,
   KeyboardSensor,
   MouseSensor,
+  TouchSensor,
   useSensor,
   useSensors,
   DragEndEvent,
@@ -320,6 +321,12 @@ export default function Dashboard(): React.ReactElement | null {
     useSensor(MouseSensor, {
       activationConstraint: {
         distance: 5,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 150,
+        tolerance: 5,
       },
     }),
     useSensor(KeyboardSensor, {
