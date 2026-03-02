@@ -646,10 +646,12 @@ export default function Dashboard(): React.ReactElement | null {
       document.body.style.cursor = "";
       target.removeEventListener("pointermove", handlePointerMove);
       target.removeEventListener("pointerup", handlePointerUp);
+      target.removeEventListener("pointercancel", handlePointerUp);
     };
 
     target.addEventListener("pointermove", handlePointerMove);
     target.addEventListener("pointerup", handlePointerUp);
+    target.addEventListener("pointercancel", handlePointerUp);
   };
 
   const handleResizeKeyDown = (e: React.KeyboardEvent) => {
@@ -838,8 +840,7 @@ export default function Dashboard(): React.ReactElement | null {
                         id="average-switch"
                         checked={showAverage}
                         onCheckedChange={setShowAverage}
-                        className="touch-action-manipulation"
-                        style={{ touchAction: "manipulation" }}
+                        className="touch-manipulation"
                       />
                       <Label
                         htmlFor="average-switch"
@@ -1118,7 +1119,7 @@ export default function Dashboard(): React.ReactElement | null {
               className={cn(
                 "flex items-center justify-center gap-2",
                 "h-8 -my-1 cursor-row-resize select-none touch-none",
-                "group",
+                "group outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
               )}
               onPointerDown={handleResizeStart}
               onKeyDown={handleResizeKeyDown}
