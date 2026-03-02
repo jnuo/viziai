@@ -36,7 +36,15 @@ import {
 } from "@/components/ui/tooltip";
 import { cn, friendlyMetricName } from "@/lib/utils";
 import type { Metric, MetricValue } from "@/lib/sheets";
-import { Info, Search, X, ArrowUpDown, GripVertical } from "lucide-react";
+import {
+  Info,
+  Search,
+  X,
+  ArrowUpDown,
+  GripVertical,
+  ChevronUp,
+  ChevronDown,
+} from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -61,6 +69,7 @@ type ApiData = { metrics: Metric[]; values: MetricValue[] };
 
 const DEFAULT_GRID_HEIGHT = 192; // matches Tailwind max-h-48 (12rem)
 const MIN_GRID_HEIGHT = 96; // ~1 card row
+const MAX_GRID_HEIGHT_MOBILE = 480; // ~5 rows, keeps charts visible on mobile
 const KEYBOARD_STEP = 48; // ~1 row per keypress
 
 type DateRange = "all" | "15" | "30" | "90";
@@ -153,7 +162,7 @@ function SortableMetricItem({
       ref={setNodeRef}
       style={{ ...style, pointerEvents: "auto" }}
       className={cn(
-        "group flex items-center gap-2 p-2 border rounded-lg transition-[opacity,transform,box-shadow] relative",
+        "group flex items-center gap-2 p-2 border rounded-lg transition-[opacity,transform] relative",
         isDragging
           ? "opacity-40 scale-105 shadow-lg cursor-grabbing"
           : "hover:shadow-sm opacity-100",
@@ -168,7 +177,7 @@ function SortableMetricItem({
           e.stopPropagation();
         }}
       >
-        <GripVertical className="h-4 w-4" />
+        <GripVertical className="h-4 w-4" aria-hidden="true" />
       </div>
       <div className="flex-1 min-w-0" style={{ pointerEvents: "none" }}>
         <div className="text-xs text-muted-foreground truncate">{name}</div>
@@ -189,13 +198,14 @@ function SortableMetricItem({
 
       {!isFirst && onSendToTop && (
         <button
+          aria-label={t("sendToTop")}
           onClick={(e) => {
             e.stopPropagation();
             onSendToTop();
           }}
           className={cn(
             "flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium",
-            "transition-[opacity,transform,background-color,border-color,color] duration-200 ease-out",
+            "transition-[opacity,transform] duration-200 ease-out",
             // Always visible on mobile, hover-only on desktop
             "opacity-100 sm:opacity-0 sm:group-hover:opacity-100",
             "translate-x-0 sm:translate-x-2 sm:group-hover:translate-x-0",
@@ -213,6 +223,7 @@ function SortableMetricItem({
             strokeWidth="2.5"
             stroke="currentColor"
             viewBox="0 0 24 24"
+            aria-hidden="true"
           >
             <path
               strokeLinecap="round"
@@ -596,47 +607,56 @@ export default function Dashboard(): React.ReactElement | null {
   };
 
   // --- Grid resize handlers ---
-  const getMaxGridHeight = () =>
-    gridContainerRef.current?.scrollHeight ?? DEFAULT_GRID_HEIGHT;
+  const getMaxGridHeight = (isMobile: boolean) => {
+    const scrollH =
+      gridContainerRef.current?.scrollHeight ?? DEFAULT_GRID_HEIGHT;
+    if (isMobile) return Math.min(scrollH, MAX_GRID_HEIGHT_MOBILE);
+    // Cap at 60% of viewport so charts always stay visible
+    return Math.min(scrollH, window.innerHeight * 0.6);
+  };
 
-  const handleResizeStart = (e: React.MouseEvent) => {
+  const handleResizeStart = (e: React.PointerEvent) => {
     e.preventDefault();
+    const target = e.currentTarget as HTMLElement;
+    target.setPointerCapture(e.pointerId);
+
     const startY = e.clientY;
     const startHeight = gridContainerRef.current?.offsetHeight ?? gridHeight;
+    const maxHeight = getMaxGridHeight(window.innerWidth < 768);
     let rafId: number | null = null;
 
     document.body.style.userSelect = "none";
     document.body.style.cursor = "ns-resize";
 
-    const handleMouseMove = (moveEvent: MouseEvent) => {
+    const handlePointerMove = (moveEvent: PointerEvent) => {
       if (rafId !== null) return;
       rafId = requestAnimationFrame(() => {
         rafId = null;
         const delta = moveEvent.clientY - startY;
-        const newHeight = Math.max(
-          MIN_GRID_HEIGHT,
-          Math.min(startHeight + delta, getMaxGridHeight()),
+        const newHeight = Math.round(
+          Math.max(MIN_GRID_HEIGHT, Math.min(startHeight + delta, maxHeight)),
         );
         setGridHeight(newHeight);
       });
     };
 
-    const handleMouseUp = () => {
+    const handlePointerUp = () => {
       if (rafId !== null) cancelAnimationFrame(rafId);
       document.body.style.userSelect = "";
       document.body.style.cursor = "";
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseup", handleMouseUp);
+      target.removeEventListener("pointermove", handlePointerMove);
+      target.removeEventListener("pointerup", handlePointerUp);
     };
 
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
+    target.addEventListener("pointermove", handlePointerMove);
+    target.addEventListener("pointerup", handlePointerUp);
   };
 
   const handleResizeKeyDown = (e: React.KeyboardEvent) => {
+    const maxHeight = getMaxGridHeight(window.innerWidth < 768);
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      setGridHeight((h) => Math.min(h + KEYBOARD_STEP, getMaxGridHeight()));
+      setGridHeight((h) => Math.min(h + KEYBOARD_STEP, maxHeight));
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
       setGridHeight((h) => Math.max(h - KEYBOARD_STEP, MIN_GRID_HEIGHT));
@@ -795,56 +815,64 @@ export default function Dashboard(): React.ReactElement | null {
 
           {/* Metric Grid Widget - shown when there are lab metrics or tracking data */}
           {data && filteredData.metrics.length > 0 && (
-            <Card className="rounded-xl">
-              <CardHeader className="pb-1.5 space-y-1.5">
+            <Card className="rounded-xl gap-2 py-3 sm:gap-4 sm:py-4 md:gap-6 md:py-6">
+              <CardHeader className="pb-1.5 space-y-1.5 px-4 sm:px-6">
                 {/* Row 1: Title + Average + Date */}
-                <div className="flex items-center gap-2">
-                  <CardTitle className="text-xs font-medium text-muted-foreground whitespace-nowrap">
-                    {t("values")}
-                  </CardTitle>
-
-                  <div className="flex items-center gap-2 ml-auto">
-                    {/* Average switch */}
-                    <div className="flex items-center space-x-2">
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                  {/* Title + switch stay together */}
+                  <div className="flex items-center gap-2">
+                    <CardTitle className="text-xs font-medium text-muted-foreground whitespace-nowrap">
+                      {t("values")}
+                    </CardTitle>
+                    <div className="flex items-center space-x-1.5">
                       <Label
                         htmlFor="average-switch"
-                        className="text-xs text-muted-foreground whitespace-nowrap hidden sm:inline"
+                        className={`text-xs whitespace-nowrap cursor-pointer ${!showAverage ? "text-foreground font-medium" : "text-muted-foreground"}`}
                       >
-                        {t("lastValue")}
+                        <span className="sm:hidden">{t("lastValueShort")}</span>
+                        <span className="hidden sm:inline">
+                          {t("lastValue")}
+                        </span>
                       </Label>
                       <Switch
                         id="average-switch"
                         checked={showAverage}
                         onCheckedChange={setShowAverage}
+                        className="touch-action-manipulation"
+                        style={{ touchAction: "manipulation" }}
                       />
                       <Label
                         htmlFor="average-switch"
-                        className="text-xs text-muted-foreground whitespace-nowrap hidden sm:inline"
+                        className={`text-xs whitespace-nowrap cursor-pointer ${showAverage ? "text-foreground font-medium" : "text-muted-foreground"}`}
                       >
-                        {t("average")}
+                        <span className="sm:hidden">{t("averageShort")}</span>
+                        <span className="hidden sm:inline">{t("average")}</span>
                       </Label>
                     </div>
-
-                    {/* Date filter */}
-                    <Select
-                      value={dateRange}
-                      onValueChange={(value: DateRange) => setDateRange(value)}
-                    >
-                      <SelectTrigger className="w-36 sm:w-40 h-7 text-xs">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">{t("all")}</SelectItem>
-                        <SelectItem value="90">{t("last90")}</SelectItem>
-                        <SelectItem value="30">{t("last30")}</SelectItem>
-                        <SelectItem value="15">{t("last15")}</SelectItem>
-                      </SelectContent>
-                    </Select>
                   </div>
+
+                  {/* Date filter */}
+                  <Select
+                    value={dateRange}
+                    onValueChange={(value: DateRange) => setDateRange(value)}
+                  >
+                    <SelectTrigger
+                      className="w-auto h-7 text-xs ml-auto"
+                      style={{ touchAction: "manipulation" }}
+                    >
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">{t("all")}</SelectItem>
+                      <SelectItem value="90">{t("last90")}</SelectItem>
+                      <SelectItem value="30">{t("last30")}</SelectItem>
+                      <SelectItem value="15">{t("last15")}</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 {/* Row 2: Search + Sort + Date Range Display */}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5 md:gap-2">
                   {/* Desktop: Search input + Sort button */}
                   <div className="hidden md:flex items-center gap-2">
                     <div className="relative">
@@ -856,6 +884,7 @@ export default function Dashboard(): React.ReactElement | null {
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="h-7 pl-8 pr-7 w-48 text-xs"
                         aria-label={t("searchMetric")}
+                        autoComplete="off"
                       />
                       {searchQuery && (
                         <button
@@ -881,12 +910,13 @@ export default function Dashboard(): React.ReactElement | null {
 
                   {/* Mobile: Search button + Sort button */}
                   {!showSearchInput ? (
-                    <div className="flex md:hidden items-center gap-2">
+                    <div className="flex md:hidden items-center gap-1.5">
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => setShowSearchInput(true)}
-                        className="h-7 gap-1 px-2"
+                        className="h-7 gap-1 px-1.5"
+                        style={{ touchAction: "manipulation" }}
                       >
                         <Search className="h-3.5 w-3.5" />
                         <span className="text-xs">{t("search")}</span>
@@ -896,7 +926,8 @@ export default function Dashboard(): React.ReactElement | null {
                         variant="ghost"
                         size="sm"
                         onClick={() => setSortSheetOpen(true)}
-                        className="h-7 gap-1 px-2"
+                        className="h-7 gap-1 px-1.5"
+                        style={{ touchAction: "manipulation" }}
                       >
                         <ArrowUpDown className="h-3.5 w-3.5" />
                         <span className="text-xs">{t("sort")}</span>
@@ -904,13 +935,15 @@ export default function Dashboard(): React.ReactElement | null {
                     </div>
                   ) : (
                     <div className="flex-1 md:hidden relative">
+                      <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
                       <Input
                         type="text"
                         placeholder={t("searchPlaceholder")}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="h-7 pr-8 text-xs"
+                        className="h-7 pl-8 pr-8 text-xs w-full"
                         aria-label={t("searchMetric")}
+                        autoComplete="off"
                       />
                       <Button
                         variant="ghost"
@@ -924,8 +957,11 @@ export default function Dashboard(): React.ReactElement | null {
                     </div>
                   )}
 
-                  {/* Date range display */}
-                  <div className="text-xs text-muted-foreground ml-auto">
+                  {/* Date range display - truncates on very narrow screens */}
+                  <div
+                    className={`text-xs text-muted-foreground ml-auto truncate min-w-0 ${showSearchInput ? "hidden md:block" : ""}`}
+                    title={dateRangeDisplay}
+                  >
                     {dateRangeDisplay}
                   </div>
                 </div>
@@ -933,7 +969,7 @@ export default function Dashboard(): React.ReactElement | null {
               <CardContent className="pt-0 px-0">
                 <div
                   ref={gridContainerRef}
-                  className="overflow-y-auto p-2 max-h-48 md:max-h-[var(--grid-h)]"
+                  className="overflow-y-auto p-2 max-h-[var(--grid-h)]"
                   style={
                     { "--grid-h": `${gridHeight}px` } as React.CSSProperties
                   }
@@ -967,9 +1003,12 @@ export default function Dashboard(): React.ReactElement | null {
                       return (
                         <Card
                           key={m.id}
+                          role="button"
+                          tabIndex={0}
                           className={cn(
                             "rounded-lg transition-[box-shadow,border-color] duration-200 cursor-pointer",
                             "hover:shadow-md hover:border-primary/50",
+                            "focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
                             "border-l-4",
                             inRange
                               ? "border-l-status-normal"
@@ -978,6 +1017,12 @@ export default function Dashboard(): React.ReactElement | null {
                               "ring-2 ring-primary ring-offset-2 ring-offset-background",
                           )}
                           onClick={() => toggleMetric(m.id)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              toggleMetric(m.id);
+                            }
+                          }}
                         >
                           <CardContent className="px-1.5 py-1 space-y-0">
                             <div className="flex items-start justify-between mb-1">
@@ -986,10 +1031,18 @@ export default function Dashboard(): React.ReactElement | null {
                               </div>
                               <Tooltip>
                                 <TooltipTrigger asChild>
-                                  <Info
-                                    className="h-3 w-3 text-muted-foreground hover:text-foreground transition-colors flex-shrink-0 ml-1"
+                                  <button
+                                    type="button"
+                                    className="flex-shrink-0 ml-1 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary rounded-sm"
                                     aria-label={t("details")}
-                                  />
+                                    onClick={(e) => e.stopPropagation()}
+                                    onKeyDown={(e) => e.stopPropagation()}
+                                  >
+                                    <Info
+                                      className="h-3 w-3 text-muted-foreground hover:text-foreground transition-colors"
+                                      aria-hidden="true"
+                                    />
+                                  </button>
                                 </TooltipTrigger>
                                 <TooltipContent side="top" className="max-w-xs">
                                   <div className="space-y-1">
@@ -1023,7 +1076,7 @@ export default function Dashboard(): React.ReactElement | null {
                             </div>
                             <div
                               className={cn(
-                                "text-lg font-semibold leading-none",
+                                "text-lg font-semibold leading-none tabular-nums",
                                 inRange
                                   ? "text-status-normal"
                                   : "text-status-critical",
@@ -1051,25 +1104,29 @@ export default function Dashboard(): React.ReactElement | null {
                     })}
                   </div>
                 </div>
-                {/* Resize handle — desktop only */}
-                <div
-                  role="separator"
-                  aria-orientation="horizontal"
-                  aria-label={t("resizeMetricGrid")}
-                  tabIndex={0}
-                  className={cn(
-                    "hidden md:flex items-center justify-center",
-                    "h-2 cursor-row-resize select-none",
-                    "hover:bg-muted/50 transition-colors",
-                    "group",
-                  )}
-                  onMouseDown={handleResizeStart}
-                  onKeyDown={handleResizeKeyDown}
-                >
-                  <div className="w-8 h-0.5 rounded-full bg-muted-foreground/30 group-hover:bg-muted-foreground/50 transition-colors" />
-                </div>
               </CardContent>
             </Card>
+          )}
+
+          {/* Resize divider — between metric grid and charts */}
+          {data && filteredData.metrics.length > 0 && (
+            <div
+              role="separator"
+              aria-orientation="horizontal"
+              aria-label={t("resizeMetricGrid")}
+              tabIndex={0}
+              className={cn(
+                "flex items-center justify-center gap-2",
+                "h-8 -my-1 cursor-row-resize select-none touch-none",
+                "group",
+              )}
+              onPointerDown={handleResizeStart}
+              onKeyDown={handleResizeKeyDown}
+            >
+              <ChevronUp className="h-3 w-3 text-muted-foreground/40 group-hover:text-muted-foreground/70 transition-colors" />
+              <div className="w-12 h-1 rounded-full bg-muted-foreground/30 group-hover:bg-muted-foreground/50 transition-colors" />
+              <ChevronDown className="h-3 w-3 text-muted-foreground/40 group-hover:text-muted-foreground/70 transition-colors" />
+            </div>
           )}
 
           {/* Charts */}
