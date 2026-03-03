@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { useTranslations, useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
 import { Loader2, Settings, User, Globe, Clock, Palette } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -58,13 +57,16 @@ export default function PreferencesPage() {
 
   const [prefs, setPrefs] = useState<Preferences | null>(null);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
 
   // Form state — seeded from client-side values so dropdowns are never empty
   const [name, setName] = useState(session?.user?.name || "");
   const [locale, setLocaleValue] = useState(currentLocale);
   const [timezone, setTimezone] = useState("Europe/Istanbul");
   const [theme, setThemeValue] = useState(currentTheme || "system");
+
+  // Ref to always have latest values in persistField without stale closures
+  const latestRef = useRef({ name, locale, timezone, theme });
+  latestRef.current = { name, locale, timezone, theme };
 
   useEffect(() => {
     if (status !== "authenticated") return;
@@ -89,33 +91,25 @@ export default function PreferencesPage() {
     fetchPrefs();
   }, [status]);
 
-  const hasChanges =
-    prefs &&
-    (name !== (prefs.name || "") ||
-      timezone !== prefs.timezone);
-
-  // Persist a single field to the API (fire-and-forget for instant-apply fields)
-  async function persistField(field: string, value: string) {
-    try {
-      const body = {
-        name: name.trim(),
-        locale,
-        timezone,
-        theme,
-        [field]: value,
-      };
-      const res = await fetch("/api/user/preferences", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-      if (!res.ok) throw new Error("Failed to save");
-      if (prefs) setPrefs({ ...prefs, ...body });
-    } catch (err) {
-      reportError(err, { op: `preferences.save.${field}` });
-      addToast({ message: tc("saveFailed"), type: "error" });
-    }
-  }
+  // Persist a field to the API immediately
+  const persistField = useCallback(
+    async (field: string, value: string) => {
+      try {
+        const body = { ...latestRef.current, [field]: value };
+        const res = await fetch("/api/user/preferences", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...body, name: body.name.trim() }),
+        });
+        if (!res.ok) throw new Error("Failed to save");
+        if (prefs) setPrefs({ ...prefs, ...body, name: body.name.trim() });
+      } catch (err) {
+        reportError(err, { op: `preferences.save.${field}` });
+        addToast({ message: tc("saveFailed"), type: "error" });
+      }
+    },
+    [prefs, addToast, tc],
+  );
 
   // Theme: apply instantly + persist
   function handleThemeChange(value: string) {
@@ -131,30 +125,17 @@ export default function PreferencesPage() {
     switchTo(value as Locale);
   }
 
-  // Save button only needed for name & timezone now
-  async function handleSave() {
-    if (!hasChanges || saving) return;
-    setSaving(true);
+  // Timezone: persist on change
+  function handleTimezoneChange(value: string) {
+    setTimezone(value);
+    persistField("timezone", value);
+  }
 
-    try {
-      const res = await fetch("/api/user/preferences", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: name.trim(), locale, timezone, theme }),
-      });
-
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || "Failed to save");
-      }
-
-      setPrefs({ ...prefs!, name: name.trim(), locale, timezone, theme });
-      addToast({ message: tc("updated"), type: "success" });
-    } catch (err) {
-      reportError(err, { op: "preferences.save" });
-      addToast({ message: tc("saveFailed"), type: "error" });
-    } finally {
-      setSaving(false);
+  // Name: save on blur (user finishes typing and leaves the field)
+  function handleNameBlur() {
+    const trimmed = name.trim();
+    if (prefs && trimmed !== (prefs.name || "")) {
+      persistField("name", trimmed);
     }
   }
 
@@ -198,6 +179,7 @@ export default function PreferencesPage() {
               id="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              onBlur={handleNameBlur}
               placeholder={t("displayNamePlaceholder")}
               maxLength={100}
             />
@@ -247,7 +229,7 @@ export default function PreferencesPage() {
         </CardHeader>
         <CardContent className="space-y-2">
           <Label htmlFor="timezone">{t("timezoneLabel")}</Label>
-          <Select value={timezone} onValueChange={setTimezone}>
+          <Select value={timezone} onValueChange={handleTimezoneChange}>
             <SelectTrigger id="timezone" className="w-full">
               <SelectValue />
             </SelectTrigger>
@@ -287,13 +269,8 @@ export default function PreferencesPage() {
         </CardContent>
       </Card>
 
-      {/* Save button */}
-      <div className="flex justify-end pb-4">
-        <Button onClick={handleSave} disabled={!hasChanges || saving}>
-          {saving && <Loader2 className="h-4 w-4 animate-spin mr-1.5" />}
-          {tc("save")}
-        </Button>
-      </div>
+      {/* Bottom spacing */}
+      <div className="pb-4" />
     </div>
   );
 }
