@@ -3,16 +3,14 @@ import { getServerSession } from "next-auth";
 import { authOptions, getDbUserId } from "@/lib/auth";
 import { sql } from "@/lib/db";
 import { locales, type Locale } from "@/i18n/config";
+import { reportError } from "@/lib/error-reporting";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const VALID_THEMES = ["light", "dark", "system"] as const;
+type Theme = (typeof VALID_THEMES)[number];
 
-/**
- * GET /api/user/preferences
- * Returns current user's preferences (name, locale, timezone, theme)
- */
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
@@ -57,7 +55,7 @@ export async function GET() {
       theme: (user.theme as string) || "system",
     });
   } catch (error) {
-    console.error("[API] GET /api/user/preferences error:", error);
+    reportError(error, { op: "api.user.preferences.GET" });
     return NextResponse.json(
       { error: "Failed to fetch preferences" },
       { status: 500 },
@@ -65,10 +63,6 @@ export async function GET() {
   }
 }
 
-/**
- * PUT /api/user/preferences
- * Update current user's preferences
- */
 export async function PUT(request: Request) {
   try {
     const session = await getServerSession(authOptions);
@@ -103,10 +97,7 @@ export async function PUT(request: Request) {
     // Validate locale
     if (locale !== undefined) {
       if (!locales.includes(locale as Locale)) {
-        return NextResponse.json(
-          { error: "Invalid locale" },
-          { status: 400 },
-        );
+        return NextResponse.json({ error: "Invalid locale" }, { status: 400 });
       }
     }
 
@@ -122,13 +113,8 @@ export async function PUT(request: Request) {
 
     // Validate theme
     if (theme !== undefined) {
-      if (
-        !(VALID_THEMES as readonly string[]).includes(theme)
-      ) {
-        return NextResponse.json(
-          { error: "Invalid theme" },
-          { status: 400 },
-        );
+      if (!VALID_THEMES.includes(theme as Theme)) {
+        return NextResponse.json({ error: "Invalid theme" }, { status: 400 });
       }
     }
 
@@ -157,7 +143,7 @@ export async function PUT(request: Request) {
 
     return NextResponse.json({ ok: true });
   } catch (error) {
-    console.error("[API] PUT /api/user/preferences error:", error);
+    reportError(error, { op: "api.user.preferences.PUT" });
     return NextResponse.json(
       { error: "Failed to update preferences" },
       { status: 500 },

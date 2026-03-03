@@ -114,7 +114,7 @@ export default function FileDetailPage(): React.ReactElement {
     setEditForm(EMPTY_FORM);
   }
 
-  const saveMetric = async (metricId: string) => {
+  async function saveMetric(metricId: string): Promise<void> {
     // Validate value is not empty
     const parsedValue = parseFloat(editForm.value);
     if (!editForm.value.trim() || isNaN(parsedValue)) {
@@ -165,7 +165,7 @@ export default function FileDetailPage(): React.ReactElement {
     } finally {
       setSaving(false);
     }
-  };
+  }
 
   if (loading) {
     return (

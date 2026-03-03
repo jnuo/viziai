@@ -46,7 +46,7 @@ interface Preferences {
   theme: string;
 }
 
-export default function PreferencesPage() {
+export default function PreferencesPage(): React.ReactElement | null {
   const { data: session, status } = useSession();
   const { theme: currentTheme, setTheme } = useTheme();
   const router = useRouter();
@@ -275,7 +275,6 @@ export default function PreferencesPage() {
         </CardContent>
       </Card>
 
-      {/* Bottom spacing */}
       <div className="pb-4" />
     </div>
   );

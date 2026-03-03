@@ -19,11 +19,11 @@ const TimezoneContext = createContext<TimezoneContextValue>({
   setTimezone: () => {},
 });
 
-export function useTimezone() {
+export function useTimezone(): string {
   return useContext(TimezoneContext).timezone;
 }
 
-export function useSetTimezone() {
+export function useSetTimezone(): (tz: string) => void {
   return useContext(TimezoneContext).setTimezone;
 }
 
@@ -35,7 +35,7 @@ export function PreferenceProvider({
   children,
 }: {
   children: React.ReactNode;
-}) {
+}): React.ReactElement {
   const { status } = useSession();
   const { setTheme } = useTheme();
   const currentLocale = useLocale();
@@ -53,17 +53,14 @@ export function PreferenceProvider({
         if (!res.ok) return;
         const data = await res.json();
 
-        // Sync timezone
         if (data.timezone) {
           setTimezone(data.timezone);
         }
 
-        // Sync theme
         if (data.theme && data.theme !== "system") {
           setTheme(data.theme);
         }
 
-        // Sync locale
         if (
           data.locale &&
           locales.includes(data.locale as Locale) &&
