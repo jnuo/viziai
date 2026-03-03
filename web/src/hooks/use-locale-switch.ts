@@ -47,6 +47,14 @@ export function useLocaleSwitch() {
     startTransition(async () => {
       try {
         await setLocale(target);
+
+        // Persist to DB (fire-and-forget for logged-in users)
+        fetch("/api/user/preferences", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ locale: target }),
+        }).catch(() => {});
+
         trackEvent({
           action: "locale_switched",
           category: "engagement",
