@@ -234,6 +234,26 @@
       "accountNotCreated": "Cuenta no creada",
       "awaitingRegistration": "Esperando Registro"
     },
+    "apiKeys": {
+      "title": "Claves API",
+      "createKey": "Crear Clave",
+      "createKeyTitle": "Crear Clave API",
+      "keyNameLabel": "Nombre de la Clave",
+      "noKeys": "Aún no hay claves API",
+      "noKeysDescription": "Crea una clave API para conectar la extensión de Chrome e-Nabız a tu perfil.",
+      "extensionTitle": "Extensión Chrome e-Nabız",
+      "extensionDescription": "Importa resultados de laboratorio directamente desde e-Nabız a ViziAI — sin necesidad de subir PDF. Solo Chrome de escritorio.",
+      "step1": "Crea una clave API abajo para tu perfil",
+      "step2": "Instala la extensión de Chrome (descarga .zip de GitHub)",
+      "step3": "Pega la clave en la ventana de la extensión y haz clic en Probar Conexión",
+      "lastUsed": "Último uso",
+      "revokeKey": "Revocar clave",
+      "confirmRevoke": "Revocar",
+      "revoked": "Revocada",
+      "revokedKeys": "Claves Revocadas",
+      "keyWarning": "Copia esta clave ahora. No podrás verla de nuevo.",
+      "done": "Listo"
+    },
     "onboarding": {
       "visualize": "Visualice sus resultados de análisis y controle las tendencias de su salud.",
       "createProfileTitle": "Crear un Perfil",
@@ -297,7 +317,8 @@
       "darkTheme": "Tema Oscuro",
       "logout": "Cerrar Sesión",
       "login": "Iniciar Sesión",
-      "changeLanguage": "Cambiar idioma"
+      "changeLanguage": "Cambiar idioma",
+      "apiKeys": "Claves API"
     },
     "extraction": {
       "readingPdf": "Leyendo PDF…",

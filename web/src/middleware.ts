@@ -53,6 +53,12 @@ export async function middleware(request: NextRequest) {
     "/api/settings",
   ];
 
+  // Routes that use API key auth instead of session auth
+  const apiKeyAuthRoutes = ["/api/settings/api-keys/verify", "/api/import/"];
+  const isApiKeyAuthRoute = apiKeyAuthRoutes.some(
+    (route) => pathname === route || pathname.startsWith(route),
+  );
+
   // Internal worker routes that bypass auth (called server-to-server)
   // Matches: /api/upload/[id]/extract/worker
   const isInternalWorkerRoute = pathname.endsWith("/extract/worker");
@@ -87,7 +93,12 @@ export async function middleware(request: NextRequest) {
 
   // Return 401 for protected API routes if not authenticated
   // Skip auth check for internal worker routes
-  if (isProtectedApiRoute && !isAuthenticated && !isInternalWorkerRoute) {
+  if (
+    isProtectedApiRoute &&
+    !isAuthenticated &&
+    !isInternalWorkerRoute &&
+    !isApiKeyAuthRoute
+  ) {
     return NextResponse.json(
       { error: "Unauthorized", message: "Authentication required" },
       { status: 401 },

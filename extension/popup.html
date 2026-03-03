@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div class="popup">
+      <div class="header">
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#0d9488"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M12 2L2 7l10 5 10-5-10-5z" />
+          <path d="M2 17l10 5 10-5" />
+          <path d="M2 12l10 5 10-5" />
+        </svg>
+        <span class="title">ViziAI</span>
+      </div>
+
+      <div id="setup" class="section">
+        <label for="apiKey">API Key</label>
+        <input
+          type="password"
+          id="apiKey"
+          placeholder="viz_..."
+          autocomplete="off"
+        />
+        <button id="testBtn" class="btn btn-primary">Bağlantıyı Test Et</button>
+        <div id="testResult" class="result hidden"></div>
+      </div>
+
+      <div id="connected" class="section hidden">
+        <div class="status-badge">
+          <span class="dot"></span>
+          <span id="profileName"></span>
+        </div>
+        <button id="disconnectBtn" class="btn btn-secondary">
+          Bağlantıyı Kes
+        </button>
+      </div>
+
+      <div class="footer">
+        <a href="https://www.viziai.app/settings/api-keys" target="_blank">
+          API Anahtarlarını Yönet
+        </a>
+      </div>
+    </div>
+    <script src="popup.js"></script>
+  </body>
+</html>

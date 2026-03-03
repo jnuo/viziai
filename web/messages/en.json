@@ -234,6 +234,26 @@
       "accountNotCreated": "Account not created",
       "awaitingRegistration": "Awaiting Registration"
     },
+    "apiKeys": {
+      "title": "API Keys",
+      "createKey": "Create Key",
+      "createKeyTitle": "Create API Key",
+      "keyNameLabel": "Key Name",
+      "noKeys": "No API keys yet",
+      "noKeysDescription": "Create an API key to connect the e-Nabız Chrome extension to your profile.",
+      "extensionTitle": "e-Nabız Chrome Extension",
+      "extensionDescription": "Import lab results directly from e-Nabız into ViziAI — no PDF upload needed. Desktop Chrome only.",
+      "step1": "Create an API key below for your profile",
+      "step2": "Install the Chrome extension (download .zip from GitHub)",
+      "step3": "Paste the key in the extension popup and click Test Connection",
+      "lastUsed": "Last used",
+      "revokeKey": "Revoke key",
+      "confirmRevoke": "Revoke",
+      "revoked": "Revoked",
+      "revokedKeys": "Revoked Keys",
+      "keyWarning": "Copy this key now. You won't be able to see it again.",
+      "done": "Done"
+    },
     "onboarding": {
       "visualize": "Visualize your test results and track your health trends.",
       "createProfileTitle": "Create a Profile",
@@ -297,7 +317,8 @@
       "darkTheme": "Dark Theme",
       "logout": "Sign Out",
       "login": "Sign In",
-      "changeLanguage": "Change language"
+      "changeLanguage": "Change language",
+      "apiKeys": "API Keys"
     },
     "extraction": {
       "readingPdf": "Reading PDF…",

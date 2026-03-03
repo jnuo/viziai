@@ -1,0 +1,62 @@
+/* ViziAI extension styles — prefixed to avoid e-Nabız conflicts */
+
+.viziai-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border: 1px solid #0d9488;
+  border-radius: 6px;
+  background: #0d9488;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: Inter, system-ui, sans-serif;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+.viziai-btn:hover {
+  background: #0f766e;
+  border-color: #0f766e;
+}
+
+.viziai-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.viziai-btn-sm {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 4px 10px;
+  font-size: 12px;
+  z-index: 10;
+}
+
+.viziai-btn-primary.viziai-import-all {
+  margin-bottom: 12px;
+  padding: 8px 20px;
+  font-size: 14px;
+}
+
+/* States */
+.viziai-btn-loading {
+  background: #6b7280;
+  border-color: #6b7280;
+}
+
+.viziai-btn-success {
+  background: #059669;
+  border-color: #059669;
+}
+
+.viziai-btn-error {
+  background: #dc2626;
+  border-color: #dc2626;
+}
