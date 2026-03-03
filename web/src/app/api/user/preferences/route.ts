@@ -25,23 +25,36 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const rows = await sql`
-      SELECT name, email, locale, timezone, theme
-      FROM users
-      WHERE id = ${userId}
-    `;
+    // Try with preference columns first; fall back to name+email only
+    // if the migration hasn't been applied yet
+    let user: Record<string, unknown> | undefined;
+    try {
+      const rows = await sql`
+        SELECT name, email, locale, timezone, theme
+        FROM users
+        WHERE id = ${userId}
+      `;
+      user = rows[0];
+    } catch {
+      // Columns don't exist yet — query without them
+      const rows = await sql`
+        SELECT name, email
+        FROM users
+        WHERE id = ${userId}
+      `;
+      user = rows[0];
+    }
 
-    if (rows.length === 0) {
+    if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    const user = rows[0];
     return NextResponse.json({
       name: user.name,
       email: user.email,
-      locale: user.locale || "tr",
-      timezone: user.timezone || "Europe/Istanbul",
-      theme: user.theme || "system",
+      locale: (user.locale as string) || "tr",
+      timezone: (user.timezone as string) || "Europe/Istanbul",
+      theme: (user.theme as string) || "system",
     });
   } catch (error) {
     console.error("[API] GET /api/user/preferences error:", error);
@@ -119,16 +132,28 @@ export async function PUT(request: Request) {
       }
     }
 
-    await sql`
-      UPDATE users
-      SET
-        name = COALESCE(${name?.trim() ?? null}, name),
-        locale = COALESCE(${locale ?? null}, locale),
-        timezone = COALESCE(${timezone ?? null}, timezone),
-        theme = COALESCE(${theme ?? null}, theme),
-        updated_at = NOW()
-      WHERE id = ${userId}
-    `;
+    // Try full update; fall back to name-only if columns don't exist yet
+    try {
+      await sql`
+        UPDATE users
+        SET
+          name = COALESCE(${name?.trim() ?? null}, name),
+          locale = COALESCE(${locale ?? null}, locale),
+          timezone = COALESCE(${timezone ?? null}, timezone),
+          theme = COALESCE(${theme ?? null}, theme),
+          updated_at = NOW()
+        WHERE id = ${userId}
+      `;
+    } catch {
+      // Migration not applied — only update name
+      if (name !== undefined) {
+        await sql`
+          UPDATE users
+          SET name = ${name.trim()}, updated_at = NOW()
+          WHERE id = ${userId}
+        `;
+      }
+    }
 
     return NextResponse.json({ ok: true });
   } catch (error) {
