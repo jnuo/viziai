@@ -120,9 +120,10 @@ export default function PreferencesPage() {
 
   // Language: apply instantly + persist
   function handleLocaleChange(value: string) {
-    setLocaleValue(value);
+    const loc = value as Locale;
+    setLocaleValue(loc);
     persistField("locale", value);
-    switchTo(value as Locale);
+    switchTo(loc);
   }
 
   // Timezone: persist on change
