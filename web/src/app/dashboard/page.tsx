@@ -532,13 +532,16 @@ export default function Dashboard(): React.ReactElement | null {
 
   // Clamp grid height when content shrinks (e.g. after filtering)
   useEffect(() => {
-    requestAnimationFrame(() => {
+    const id = requestAnimationFrame(() => {
       const contentH = gridInnerRef.current?.scrollHeight;
-      if (contentH && gridHeight > contentH) {
-        setGridHeight(Math.max(contentH, MIN_GRID_HEIGHT));
+      if (contentH) {
+        setGridHeight((prev) =>
+          prev > contentH ? Math.max(contentH, MIN_GRID_HEIGHT) : prev,
+        );
       }
     });
-  }, [displayedMetrics, gridHeight]);
+    return () => cancelAnimationFrame(id);
+  }, [displayedMetrics]);
 
   const valuesByMetric = useMemo(() => {
     if (!filteredData)
