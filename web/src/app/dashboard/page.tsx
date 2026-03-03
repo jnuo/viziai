@@ -54,6 +54,7 @@ import {
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { compareDateAsc, parseToISO, formatTR } from "@/lib/date";
+import { useTimezone } from "@/components/preference-sync";
 import { MetricChart } from "@/components/metric-chart";
 import { OnboardingChecklist } from "@/components/onboarding-checklist";
 import { GhostedChart } from "@/components/ghosted-chart";
@@ -67,7 +68,11 @@ import { useRouter } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import { reportError } from "@/lib/error-reporting";
 
-type ApiData = { metrics: Metric[]; values: MetricValue[]; reportCount: number };
+type ApiData = {
+  metrics: Metric[];
+  values: MetricValue[];
+  reportCount: number;
+};
 
 const DEFAULT_GRID_HEIGHT = 192; // matches Tailwind max-h-48 (12rem)
 const MIN_GRID_HEIGHT = 96; // ~1 card row
@@ -247,6 +252,7 @@ export default function Dashboard(): React.ReactElement | null {
   const t = useTranslations("pages.dashboard");
   const tc = useTranslations("common");
   const locale = useLocale();
+  const timezone = useTimezone();
   const [data, setData] = useState<ApiData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -599,12 +605,12 @@ export default function Dashboard(): React.ReactElement | null {
     const latest = dates[dates.length - 1];
 
     if (earliest === latest) {
-      return formatTR(earliest, locale);
+      return formatTR(earliest, locale, timezone);
     }
 
-    return `${formatTR(earliest, locale)} - ${formatTR(latest, locale)}`;
+    return `${formatTR(earliest, locale, timezone)} - ${formatTR(latest, locale, timezone)}`;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filteredData, locale]);
+  }, [filteredData, locale, timezone]);
 
   const toggleMetric = (metricId: string) => {
     if (selectedMetrics.includes(metricId)) {
@@ -627,8 +633,7 @@ export default function Dashboard(): React.ReactElement | null {
   const getMaxGridHeight = (isMobile: boolean) => {
     // Use inner grid's height (actual content), not the scrollable container
     // scrollHeight on the outer container grows with its set height, not content
-    const contentH =
-      gridInnerRef.current?.scrollHeight ?? DEFAULT_GRID_HEIGHT;
+    const contentH = gridInnerRef.current?.scrollHeight ?? DEFAULT_GRID_HEIGHT;
     if (isMobile) return Math.min(contentH, MAX_GRID_HEIGHT_MOBILE);
     return Math.min(contentH, window.innerHeight * 0.6);
   };
@@ -839,9 +844,7 @@ export default function Dashboard(): React.ReactElement | null {
           {data && reportCount >= 1 && reportCount <= 2 && (
             <OnboardingChecklist
               reportCount={reportCount}
-              hasWeight={trackingData.some(
-                (m) => m.type === "weight",
-              )}
+              hasWeight={trackingData.some((m) => m.type === "weight")}
               hasBloodPressure={trackingData.some(
                 (m) => m.type === "blood_pressure",
               )}
@@ -1008,7 +1011,10 @@ export default function Dashboard(): React.ReactElement | null {
                     { "--grid-h": `${gridHeight}px` } as React.CSSProperties
                   }
                 >
-                  <div ref={gridInnerRef} className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
+                  <div
+                    ref={gridInnerRef}
+                    className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2"
+                  >
                     {displayedMetrics.map((m) => {
                       const latest = valuesByMetric.get(m.id);
                       const value = latest?.value;
@@ -1129,7 +1135,7 @@ export default function Dashboard(): React.ReactElement | null {
                               <div className="text-xs text-muted-foreground leading-none">
                                 {showAverage && latest.count > 1
                                   ? t("nValues", { count: latest.count })
-                                  : formatTR(latest.date, locale)}
+                                  : formatTR(latest.date, locale, timezone)}
                               </div>
                             )}
                           </CardContent>
@@ -1164,9 +1170,9 @@ export default function Dashboard(): React.ReactElement | null {
           )}
 
           {/* Ghosted Chart — shown for 1 report (line charts don't make sense with a single data point) */}
-          {data &&
-            reportCount === 1 &&
-            filteredData.metrics.length > 0 && <GhostedChart />}
+          {data && reportCount === 1 && filteredData.metrics.length > 0 && (
+            <GhostedChart />
+          )}
 
           {/* Charts — shown for 2+ reports */}
           {data &&

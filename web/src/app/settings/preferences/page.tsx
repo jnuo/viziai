@@ -19,6 +19,7 @@ import {
 import { useToast } from "@/components/ui/toast";
 import { locales, localeLabels, type Locale } from "@/i18n/config";
 import { useLocaleSwitch } from "@/hooks/use-locale-switch";
+import { useSetTimezone as useSetGlobalTimezone } from "@/components/preference-sync";
 import { reportError } from "@/lib/error-reporting";
 
 const TIMEZONES = [
@@ -54,6 +55,7 @@ export default function PreferencesPage() {
   const tc = useTranslations("common");
   const currentLocale = useLocale();
   const { switchTo } = useLocaleSwitch();
+  const setGlobalTimezone = useSetGlobalTimezone();
 
   const [prefs, setPrefs] = useState<Preferences | null>(null);
   const [loading, setLoading] = useState(true);
@@ -126,9 +128,10 @@ export default function PreferencesPage() {
     switchTo(loc);
   }
 
-  // Timezone: persist on change
+  // Timezone: persist on change + update global context
   function handleTimezoneChange(value: string) {
     setTimezone(value);
+    setGlobalTimezone(value);
     persistField("timezone", value);
   }
 
@@ -184,7 +187,9 @@ export default function PreferencesPage() {
               placeholder={t("displayNamePlaceholder")}
               maxLength={100}
             />
-            <p className="text-xs text-muted-foreground">{t("displayNameHint")}</p>
+            <p className="text-xs text-muted-foreground">
+              {t("displayNameHint")}
+            </p>
           </div>
           <div className="space-y-2">
             <Label>{t("email")}</Label>

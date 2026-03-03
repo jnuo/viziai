@@ -8,7 +8,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { ToastProvider } from "@/components/ui/toast";
 import { Providers } from "@/components/providers";
 import { NotificationChecker } from "@/components/notification-checker";
-import { PreferenceSync } from "@/components/preference-sync";
+import { PreferenceProvider } from "@/components/preference-sync";
 
 const inter = Inter({
   variable: "--font-sans",
@@ -71,8 +71,7 @@ export default async function RootLayout({
             <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
               <ToastProvider>
                 <NotificationChecker />
-                <PreferenceSync />
-                {children}
+                <PreferenceProvider>{children}</PreferenceProvider>
               </ToastProvider>
             </ThemeProvider>
           </NextIntlClientProvider>
