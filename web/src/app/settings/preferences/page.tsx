@@ -92,10 +92,46 @@ export default function PreferencesPage() {
   const hasChanges =
     prefs &&
     (name !== (prefs.name || "") ||
-      locale !== prefs.locale ||
-      timezone !== prefs.timezone ||
-      theme !== prefs.theme);
+      timezone !== prefs.timezone);
 
+  // Persist a single field to the API (fire-and-forget for instant-apply fields)
+  async function persistField(field: string, value: string) {
+    try {
+      const body = {
+        name: name.trim(),
+        locale,
+        timezone,
+        theme,
+        [field]: value,
+      };
+      const res = await fetch("/api/user/preferences", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) throw new Error("Failed to save");
+      if (prefs) setPrefs({ ...prefs, ...body });
+    } catch (err) {
+      reportError(err, { op: `preferences.save.${field}` });
+      addToast({ message: tc("saveFailed"), type: "error" });
+    }
+  }
+
+  // Theme: apply instantly + persist
+  function handleThemeChange(value: string) {
+    setThemeValue(value);
+    setTheme(value);
+    persistField("theme", value);
+  }
+
+  // Language: apply instantly + persist
+  function handleLocaleChange(value: string) {
+    setLocaleValue(value);
+    persistField("locale", value);
+    switchTo(value as Locale);
+  }
+
+  // Save button only needed for name & timezone now
   async function handleSave() {
     if (!hasChanges || saving) return;
     setSaving(true);
@@ -110,16 +146,6 @@ export default function PreferencesPage() {
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         throw new Error(data.error || "Failed to save");
-      }
-
-      // Apply theme change locally
-      if (theme !== prefs!.theme) {
-        setTheme(theme);
-      }
-
-      // Apply locale change
-      if (locale !== prefs!.locale) {
-        switchTo(locale as Locale);
       }
 
       setPrefs({ ...prefs!, name: name.trim(), locale, timezone, theme });
@@ -195,7 +221,7 @@ export default function PreferencesPage() {
         </CardHeader>
         <CardContent className="space-y-2">
           <Label htmlFor="locale">{t("languageLabel")}</Label>
-          <Select value={locale} onValueChange={setLocaleValue}>
+          <Select value={locale} onValueChange={handleLocaleChange}>
             <SelectTrigger id="locale" className="w-full">
               <SelectValue />
             </SelectTrigger>
@@ -247,7 +273,7 @@ export default function PreferencesPage() {
         </CardHeader>
         <CardContent className="space-y-2">
           <Label htmlFor="theme">{t("themeLabel")}</Label>
-          <Select value={theme} onValueChange={setThemeValue}>
+          <Select value={theme} onValueChange={handleThemeChange}>
             <SelectTrigger id="theme" className="w-full">
               <SelectValue />
             </SelectTrigger>
