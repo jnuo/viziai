@@ -223,8 +223,13 @@
       "deleteWeightCount": "{count} registros de peso",
       "deleteSharedWarning": "Este perfil se comparte con {count} personas. Perderán el acceso:",
       "removeMember": "Eliminar miembro",
+      "removeConfirmText": "{name} ya no tendrá acceso a este perfil.",
+      "removeConfirm": "Eliminar",
       "copyLink": "Copiar enlace",
       "revokeInvite": "Revocar invitación",
+      "revokeInviteConfirm": "La invitación para {email} será revocada. No podrán usar el enlace de invitación.",
+      "removeAllowedEmail": "Eliminar",
+      "removeAllowedEmailConfirm": "{email} ya no podrá acceder a este perfil, aunque se registre.",
       "pending": "Pendiente",
       "accountNotCreated": "Cuenta no creada",
       "awaitingRegistration": "Esperando Registro"
@@ -326,7 +331,16 @@
       "shareLink": "Comparta este enlace con la persona invitada:",
       "shareOnWhatsApp": "Compartir por WhatsApp",
       "whatsAppMessage": "Quiero compartir el perfil {profileName} contigo. Puedes acceder con este enlace: {url}",
-      "directAccessGranted": "{name} ahora puede acceder al perfil {profileName}."
+      "directAccessGranted": "{name} ahora puede acceder al perfil {profileName}. Le enviamos un correo para informarle.",
+      "directWhatsAppHint": "También puedes avisarle por WhatsApp:",
+      "directWhatsApp": "Avisar por WhatsApp",
+      "whatsAppMessageDirect": "Compartí el perfil {profileName} contigo en ViziAI. Inicia sesión en {url} para ver los valores.",
+      "pickContact": "Elegir de Contactos",
+      "emailSent": "Correo de invitación enviado a {email}",
+      "inviteSentTitle": "Invitación Enviada",
+      "inviteSentBody": "Enviamos un correo de invitación a {email}. Tendrá acceso una vez que se registre. La invitación expira en 30 días.",
+      "shareAlternative": "También puedes compartirlo por WhatsApp:",
+      "linkDisclaimer": "Este enlace no es público. Solo los usuarios que inicien sesión con {email} podrán acceder a este perfil."
     },
     "metricChart": {
       "removeChart": "Eliminar gráfico",

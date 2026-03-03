@@ -223,8 +223,13 @@
       "deleteWeightCount": "{count} kilo kaydı",
       "deleteSharedWarning": "Bu profil {count} kişiyle paylaşılmış. Erişimleri kaldırılacak:",
       "removeMember": "Üyeyi kaldır",
+      "removeConfirmText": "{name} artık bu profile erişemeyecek.",
+      "removeConfirm": "Kaldır",
       "copyLink": "Bağlantıyı kopyala",
       "revokeInvite": "Daveti iptal et",
+      "revokeInviteConfirm": "{email} için davet iptal edilecek. Davet bağlantısını kullanamayacaklar.",
+      "removeAllowedEmail": "Kaldır",
+      "removeAllowedEmailConfirm": "{email} kayıt olsa bile artık bu profile erişemeyecek.",
       "pending": "Bekliyor",
       "accountNotCreated": "Hesap oluşturmamış",
       "awaitingRegistration": "Kayıt Bekleniyor"
@@ -326,7 +331,16 @@
       "shareLink": "Bu bağlantıyı davet edilen kişiyle paylaşın:",
       "shareOnWhatsApp": "WhatsApp ile Paylaş",
       "whatsAppMessage": "{profileName} profilini seninle paylaşmak istiyorum. Bu bağlantıyla erişim sağlayabilirsin: {url}",
-      "directAccessGranted": "{name} artık {profileName} profiline erişebilir."
+      "directAccessGranted": "{name} artık {profileName} profiline erişebilir. Kendisine e-posta ile bilgi verdik.",
+      "directWhatsAppHint": "İsterseniz WhatsApp üzerinden de bilgilendirebilirsiniz:",
+      "directWhatsApp": "WhatsApp'ta Bilgilendir",
+      "whatsAppMessageDirect": "{profileName} profilini ViziAI'da seninle paylaştım. Değerlerini görmek için {url} adresine gir.",
+      "pickContact": "Rehberden Seç",
+      "emailSent": "{email} adresine davet e-postası gönderildi",
+      "inviteSentTitle": "Davet Gönderildi",
+      "inviteSentBody": "{email} adresine davet e-postası gönderdik. Kaydolduktan sonra erişim sağlayacak. Davetin süresi 30 gün içinde dolar.",
+      "shareAlternative": "İsterseniz WhatsApp üzerinden de paylaşabilirsiniz:",
+      "linkDisclaimer": "Bu bağlantı herkese açık değildir. Yalnızca {email} adresiyle giriş yapanlar erişebilir."
     },
     "metricChart": {
       "removeChart": "Grafiği kaldır",

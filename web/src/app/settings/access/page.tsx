@@ -271,6 +271,48 @@ export default function AccessPage() {
     }
   };
 
+  const handleRemoveAllowedEmail = async (
+    profileId: string,
+    emailId: string,
+  ) => {
+    try {
+      const res = await fetch(
+        `/api/profiles/${profileId}/access/allowed-emails/${emailId}`,
+        { method: "DELETE" },
+      );
+
+      if (res.ok) {
+        await fetchAccessData();
+      }
+    } catch (error) {
+      reportError(error, {
+        op: "settings.access.removeAllowedEmail",
+        profileId,
+        emailId,
+      });
+    }
+  };
+
+  const knownUsersForProfile = useMemo(() => {
+    if (!inviteModalProfile) return [];
+    const targetMembers = new Set(
+      accessData
+        .find((p) => p.profileId === inviteModalProfile.id)
+        ?.members.map((m) => m.email) || [],
+    );
+    const seen = new Set<string>();
+    const users: KnownUser[] = [];
+    for (const profile of accessData) {
+      for (const member of profile.members) {
+        if (!targetMembers.has(member.email) && !seen.has(member.email)) {
+          seen.add(member.email);
+          users.push({ email: member.email, name: member.name });
+        }
+      }
+    }
+    return users;
+  }, [accessData, inviteModalProfile]);
+
   if (profilesLoading || loading) {
     return (
       <div
@@ -460,7 +502,12 @@ export default function AccessPage() {
                   {t("notYetJoined")}
                 </p>
                 {profile.allowedEmails.map((ae) => (
-                  <AllowedEmailRow key={ae.id} allowedEmail={ae} />
+                  <AllowedEmailRow
+                    key={ae.id}
+                    allowedEmail={ae}
+                    profileId={profile.profileId}
+                    onRemove={handleRemoveAllowedEmail}
+                  />
                 ))}
               </div>
             )}
@@ -586,34 +633,13 @@ export default function AccessPage() {
               fetchAccessData();
             }
           }}
-          knownUsers={(() => {
-            const targetMembers = new Set(
-              accessData
-                .find((p) => p.profileId === inviteModalProfile.id)
-                ?.members.map((m) => m.email) || [],
-            );
-            const seen = new Set<string>();
-            const users: KnownUser[] = [];
-            for (const profile of accessData) {
-              for (const member of profile.members) {
-                if (
-                  !targetMembers.has(member.email) &&
-                  !seen.has(member.email)
-                ) {
-                  seen.add(member.email);
-                  users.push({ email: member.email, name: member.name });
-                }
-              }
-            }
-            return users;
-          })()}
+          knownUsers={knownUsersForProfile}
         />
       )}
     </div>
   );
 }
 
-// Read-only member row for non-owners
 function ReadOnlyMemberRow({ member }: { member: Member }) {
   const tc = useTranslations("common");
 
@@ -668,6 +694,7 @@ function MemberRow({
 }: MemberRowProps) {
   const tc = useTranslations("common");
   const t = useTranslations("pages.access");
+  const [confirming, setConfirming] = useState(false);
 
   return (
     <div className="flex flex-wrap items-center gap-3 p-3 rounded-lg border">
@@ -691,6 +718,33 @@ function MemberRow({
           <Crown aria-hidden="true" className="h-3 w-3" />
           {tc("accessLevel.owner")}
         </Badge>
+      ) : confirming ? (
+        <div className="w-full ml-11 space-y-2">
+          <p className="text-xs text-destructive">
+            {t("removeConfirmText", {
+              name: member.name || member.email,
+            })}
+          </p>
+          <div className="flex gap-2">
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => {
+                onRemoveAccess(profileId, member.user_id);
+                setConfirming(false);
+              }}
+            >
+              {t("removeConfirm")}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setConfirming(false)}
+            >
+              {tc("cancel")}
+            </Button>
+          </div>
+        </div>
       ) : (
         <div className="flex items-center gap-2 w-full sm:w-auto sm:ml-0 ml-11">
           <Select
@@ -720,7 +774,7 @@ function MemberRow({
           <Button
             variant="outline"
             size="sm"
-            onClick={() => onRemoveAccess(profileId, member.user_id)}
+            onClick={() => setConfirming(true)}
             className="text-destructive hover:text-destructive"
             aria-label={t("removeMember")}
           >
@@ -742,6 +796,7 @@ function InviteRow({ invite, profileId, onRevoke }: InviteRowProps) {
   const tc = useTranslations("common");
   const t = useTranslations("pages.access");
   const [copied, setCopied] = useState(false);
+  const [confirming, setConfirming] = useState(false);
 
   const handleCopyLink = async () => {
     const baseUrl = window.location.origin;
@@ -762,41 +817,78 @@ function InviteRow({ invite, profileId, onRevoke }: InviteRowProps) {
           {tc(`accessLevel.${invite.access_level}` as Parameters<typeof tc>[0])}
         </p>
       </div>
-      <div className="flex items-center gap-2 w-full sm:w-auto sm:ml-0 ml-11">
-        <Badge variant="outline" className="shrink-0">
-          {t("pending")}
-        </Badge>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleCopyLink}
-          aria-label={t("copyLink")}
-        >
-          {copied ? (
-            <Check aria-hidden="true" className="h-4 w-4 text-primary" />
-          ) : (
-            <Copy aria-hidden="true" className="h-4 w-4" />
-          )}
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => onRevoke(profileId, invite.id)}
-          className="text-destructive hover:text-destructive"
-          aria-label={t("revokeInvite")}
-        >
-          <X aria-hidden="true" className="h-4 w-4" />
-        </Button>
-      </div>
+      {confirming ? (
+        <div className="w-full ml-11 space-y-2">
+          <p className="text-xs text-destructive">
+            {t("revokeInviteConfirm", { email: invite.email })}
+          </p>
+          <div className="flex gap-2">
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => {
+                onRevoke(profileId, invite.id);
+                setConfirming(false);
+              }}
+            >
+              {t("revokeInvite")}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setConfirming(false)}
+            >
+              {tc("cancel")}
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <div className="flex items-center gap-2 w-full sm:w-auto sm:ml-0 ml-11">
+          <Badge variant="outline" className="shrink-0">
+            {t("pending")}
+          </Badge>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleCopyLink}
+            aria-label={t("copyLink")}
+          >
+            {copied ? (
+              <Check aria-hidden="true" className="h-4 w-4 text-primary" />
+            ) : (
+              <Copy aria-hidden="true" className="h-4 w-4" />
+            )}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setConfirming(true)}
+            className="text-destructive hover:text-destructive"
+            aria-label={t("revokeInvite")}
+          >
+            <X aria-hidden="true" className="h-4 w-4" />
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
 
-function AllowedEmailRow({ allowedEmail }: { allowedEmail: AllowedEmail }) {
+function AllowedEmailRow({
+  allowedEmail,
+  profileId,
+  onRemove,
+}: {
+  allowedEmail: AllowedEmail;
+  profileId: string;
+  onRemove: (profileId: string, emailId: string) => void;
+}) {
   const t = useTranslations("pages.access");
+  const tc = useTranslations("common");
+  const [confirming, setConfirming] = useState(false);
 
   return (
-    <div className="flex items-center gap-3 p-3 rounded-lg border border-dashed opacity-60">
+    <div className="flex flex-wrap items-center gap-3 p-3 rounded-lg border border-dashed">
       <div className="h-8 w-8 rounded-full bg-muted/50 flex items-center justify-center text-xs font-medium text-muted-foreground shrink-0">
         <Mail aria-hidden="true" className="h-4 w-4" />
       </div>
@@ -806,9 +898,47 @@ function AllowedEmailRow({ allowedEmail }: { allowedEmail: AllowedEmail }) {
           {t("accountNotCreated")}
         </p>
       </div>
-      <Badge variant="outline" className="text-muted-foreground shrink-0">
-        {t("awaitingRegistration")}
-      </Badge>
+      {confirming ? (
+        <div className="w-full ml-11 space-y-2">
+          <p className="text-xs text-destructive">
+            {t("removeAllowedEmailConfirm", { email: allowedEmail.email })}
+          </p>
+          <div className="flex gap-2">
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => {
+                onRemove(profileId, allowedEmail.id);
+                setConfirming(false);
+              }}
+            >
+              {t("removeConfirm")}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setConfirming(false)}
+            >
+              {tc("cancel")}
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <>
+          <Badge variant="outline" className="text-muted-foreground shrink-0">
+            {t("awaitingRegistration")}
+          </Badge>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setConfirming(true)}
+            className="text-destructive hover:text-destructive shrink-0"
+            aria-label={t("removeAllowedEmail")}
+          >
+            <X aria-hidden="true" className="h-4 w-4" />
+          </Button>
+        </>
+      )}
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import { randomBytes } from "crypto";
 import { NextResponse } from "next/server";
 import {
   requireAuth,
@@ -5,11 +6,20 @@ import {
   getProfileAccessLevel,
 } from "@/lib/auth";
 import { sql } from "@/lib/db";
-import { randomBytes } from "crypto";
+import { sendInviteEmail, sendAccessGrantedEmail } from "@/lib/email";
 import { reportError } from "@/lib/error-reporting";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+
+function buildBaseUrl(request: Request): string {
+  const host = request.headers.get("host") || "localhost:3000";
+  const protocol =
+    host.startsWith("localhost") || /^\d+\.\d+\.\d+\.\d+/.test(host)
+      ? "http"
+      : "https";
+  return `${protocol}://${host}`;
+}
 
 /**
  * GET /api/profiles/[id]/access
@@ -31,8 +41,6 @@ export async function GET(
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const isOwner = accessLevel === "owner";
-
     const members = await sql`
       SELECT
         u.id as user_id,
@@ -49,8 +57,7 @@ export async function GET(
         ua.granted_at ASC
     `;
 
-    // Non-owners only see the members list
-    if (!isOwner) {
+    if (accessLevel !== "owner") {
       return NextResponse.json({
         members,
         invites: [],
@@ -59,7 +66,6 @@ export async function GET(
       });
     }
 
-    // Owner gets full details: pending invites + allowed emails
     const invites = await sql`
       SELECT
         id,
@@ -129,7 +135,7 @@ export async function POST(
     }
 
     const body = await request.json();
-    const { email, accessLevel: inviteLevel } = body;
+    const { email, accessLevel: inviteLevel, locale } = body;
 
     if (!email || typeof email !== "string") {
       return NextResponse.json(
@@ -140,7 +146,6 @@ export async function POST(
 
     const trimmedEmail = email.trim().toLowerCase();
 
-    // Basic email validation
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
       return NextResponse.json(
         { error: "Geçersiz e-posta adresi" },
@@ -155,7 +160,6 @@ export async function POST(
       );
     }
 
-    // Check if user already has access (also catches self-invite)
     const existingAccess = await sql`
       SELECT ua.id FROM user_access ua
       JOIN users u ON u.id = ua.user_id_new
@@ -170,7 +174,13 @@ export async function POST(
       );
     }
 
-    // If user is already registered, grant access directly (no invite URL needed)
+    const [inviter] = await sql`
+      SELECT name, email FROM users WHERE id = ${userId}
+    `;
+    const [profile] = await sql`
+      SELECT display_name FROM profiles WHERE id = ${profileId}
+    `;
+
     const existingUser = await sql`
       SELECT id, name FROM users WHERE LOWER(email) = ${trimmedEmail}
     `;
@@ -181,6 +191,18 @@ export async function POST(
         VALUES (${existingUser[0].id}, ${profileId}, ${inviteLevel}, ${userId})
         ON CONFLICT (user_id_new, profile_id) DO NOTHING
       `;
+
+      const dashboardUrl = `${buildBaseUrl(request)}/dashboard`;
+
+      sendAccessGrantedEmail({
+        to: trimmedEmail,
+        inviterName: inviter?.name || "Someone",
+        inviterEmail: inviter?.email || "",
+        profileName: profile?.display_name || "a profile",
+        accessLevel: inviteLevel,
+        dashboardUrl,
+        locale: locale || "en",
+      }).catch(() => {});
 
       return NextResponse.json(
         {
@@ -193,7 +215,6 @@ export async function POST(
       );
     }
 
-    // User not registered — create invite with token
     const existingInvite = await sql`
       SELECT id FROM profile_invites
       WHERE profile_id = ${profileId}
@@ -223,12 +244,17 @@ export async function POST(
       RETURNING id, token, created_at, expires_at
     `;
 
-    const host = request.headers.get("host") || "localhost:3000";
-    const protocol =
-      host.startsWith("localhost") || /^\d+\.\d+\.\d+\.\d+/.test(host)
-        ? "http"
-        : "https";
-    const inviteUrl = `${protocol}://${host}/invite/${token}`;
+    const inviteUrl = `${buildBaseUrl(request)}/invite/${token}`;
+
+    sendInviteEmail({
+      to: trimmedEmail,
+      inviterName: inviter?.name || "Someone",
+      inviterEmail: inviter?.email || "",
+      profileName: profile?.display_name || "a profile",
+      accessLevel: inviteLevel,
+      inviteUrl,
+      locale: locale || "en",
+    }).catch(() => {});
 
     return NextResponse.json(
       {
