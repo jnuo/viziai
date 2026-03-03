@@ -310,6 +310,18 @@
       "aiExtracts": "Nuestro sistema con IA extrae automáticamente los datos de los PDF.",
       "uploadFirst": "Subir Primer Análisis"
     },
+    "onboardingChecklist": {
+      "title": "Primeros Pasos",
+      "subtitle": "Complete estos pasos para aprovechar ViziAI al máximo.",
+      "uploadReports": "Subir informes ({count}/3)",
+      "logWeight": "Registrar peso",
+      "logBloodPressure": "Registrar presión arterial",
+      "uploadNext": "Subir Siguiente Informe"
+    },
+    "ghostedChart": {
+      "needMoreData": "Suba otro informe para ver tendencias a lo largo del tiempo.",
+      "uploadAnother": "Subir Informe"
+    },
     "profileSwitcher": {
       "selectProfile": "Seleccionar Perfil",
       "addProfile": "Añadir Nuevo Perfil",

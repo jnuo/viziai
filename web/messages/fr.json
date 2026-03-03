@@ -310,6 +310,18 @@
       "aiExtracts": "Notre système alimenté par l'IA extrait automatiquement les données des PDF.",
       "uploadFirst": "Télécharger le premier test"
     },
+    "onboardingChecklist": {
+      "title": "Pour Commencer",
+      "subtitle": "Suivez ces étapes pour tirer le meilleur parti de ViziAI.",
+      "uploadReports": "Télécharger des rapports ({count}/3)",
+      "logWeight": "Enregistrer le poids",
+      "logBloodPressure": "Enregistrer la tension artérielle",
+      "uploadNext": "Télécharger le Prochain Rapport"
+    },
+    "ghostedChart": {
+      "needMoreData": "Téléchargez un autre rapport pour voir les tendances dans le temps.",
+      "uploadAnother": "Télécharger un Rapport"
+    },
     "profileSwitcher": {
       "selectProfile": "Sélectionner un profil",
       "addProfile": "Ajouter un nouveau profil",

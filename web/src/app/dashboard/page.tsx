@@ -55,6 +55,8 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { compareDateAsc, parseToISO, formatTR } from "@/lib/date";
 import { MetricChart } from "@/components/metric-chart";
+import { OnboardingChecklist } from "@/components/onboarding-checklist";
+import { GhostedChart } from "@/components/ghosted-chart";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { useActiveProfile } from "@/hooks/use-active-profile";
@@ -65,7 +67,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import { reportError } from "@/lib/error-reporting";
 
-type ApiData = { metrics: Metric[]; values: MetricValue[] };
+type ApiData = { metrics: Metric[]; values: MetricValue[]; reportCount: number };
 
 const DEFAULT_GRID_HEIGHT = 192; // matches Tailwind max-h-48 (12rem)
 const MIN_GRID_HEIGHT = 96; // ~1 card row
@@ -122,6 +124,7 @@ function deduplicateMetrics(data: ApiData): ApiData {
   return {
     metrics: deduplicatedMetrics,
     values: deduplicatedValues,
+    reportCount: data.reportCount,
   };
 }
 
@@ -794,6 +797,8 @@ export default function Dashboard(): React.ReactElement | null {
   }
   if (!data) return null;
 
+  const reportCount = data.reportCount;
+
   const selectedMetricsData = selectedMetrics
     .map((id) => filteredData.metrics.find((m) => m.id === id))
     .filter(Boolean) as Metric[];
@@ -813,6 +818,19 @@ export default function Dashboard(): React.ReactElement | null {
             <Card className="rounded-xl">
               <EmptyState profileName={activeProfile?.display_name} />
             </Card>
+          )}
+
+          {/* Onboarding Checklist - shown for 1-2 reports */}
+          {data && reportCount >= 1 && reportCount <= 2 && (
+            <OnboardingChecklist
+              reportCount={reportCount}
+              hasWeight={trackingData.some(
+                (m) => m.type === "weight",
+              )}
+              hasBloodPressure={trackingData.some(
+                (m) => m.type === "blood_pressure",
+              )}
+            />
           )}
 
           {/* Metric Grid Widget - shown when there are lab metrics or tracking data */}
@@ -1109,8 +1127,8 @@ export default function Dashboard(): React.ReactElement | null {
             </Card>
           )}
 
-          {/* Resize divider — between metric grid and charts */}
-          {data && filteredData.metrics.length > 0 && (
+          {/* Resize divider — between metric grid and charts (only for 2+ reports) */}
+          {data && filteredData.metrics.length > 0 && reportCount >= 2 && (
             <div
               role="separator"
               aria-orientation="horizontal"
@@ -1130,8 +1148,14 @@ export default function Dashboard(): React.ReactElement | null {
             </div>
           )}
 
-          {/* Charts */}
+          {/* Ghosted Chart — shown for 1 report (line charts don't make sense with a single data point) */}
           {data &&
+            reportCount === 1 &&
+            filteredData.metrics.length > 0 && <GhostedChart />}
+
+          {/* Charts — shown for 2+ reports */}
+          {data &&
+            reportCount >= 2 &&
             filteredData.metrics.length > 0 &&
             selectedMetrics.length > 0 && (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
