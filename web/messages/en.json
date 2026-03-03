@@ -315,6 +315,18 @@
       "aiExtracts": "Our AI-powered system automatically extracts data from PDFs.",
       "uploadFirst": "Upload First Test"
     },
+    "onboardingChecklist": {
+      "title": "Getting Started",
+      "subtitle": "Complete these steps to get the most out of ViziAI.",
+      "uploadReports": "Upload reports ({count}/3)",
+      "logWeight": "Log weight",
+      "logBloodPressure": "Log blood pressure",
+      "uploadNext": "Upload Next Report"
+    },
+    "ghostedChart": {
+      "needMoreData": "Upload another report to see trends over time.",
+      "uploadAnother": "Upload Report"
+    },
     "profileSwitcher": {
       "selectProfile": "Select Profile",
       "addProfile": "Add New Profile",

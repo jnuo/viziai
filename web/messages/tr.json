@@ -315,6 +315,18 @@
       "aiExtracts": "AI destekli sistemimiz PDF'lerden verileri otomatik çıkarır.",
       "uploadFirst": "İlk Tahlilini Yükle"
     },
+    "onboardingChecklist": {
+      "title": "Kullanıma Başlayın",
+      "subtitle": "ViziAI'dan en iyi şekilde yararlanmak için bu adımları tamamlayın.",
+      "uploadReports": "Rapor yükle ({count}/3)",
+      "logWeight": "Kilo kaydet",
+      "logBloodPressure": "Tansiyon kaydet",
+      "uploadNext": "Sonraki Raporu Yükle"
+    },
+    "ghostedChart": {
+      "needMoreData": "Zaman içindeki değişimleri görmek için başka bir rapor yükleyin.",
+      "uploadAnother": "Rapor Yükle"
+    },
     "profileSwitcher": {
       "selectProfile": "Profil Seç",
       "addProfile": "Yeni Profil Ekle",

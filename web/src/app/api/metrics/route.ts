@@ -23,6 +23,7 @@ type MetricValue = {
 type MetricsPayload = {
   metrics: Metric[];
   values: MetricValue[];
+  reportCount: number;
 };
 
 export async function GET(request: Request) {
@@ -57,7 +58,7 @@ export async function GET(request: Request) {
     `;
 
     if (!reports || reports.length === 0) {
-      return NextResponse.json({ metrics: [], values: [] });
+      return NextResponse.json({ metrics: [], values: [], reportCount: 0 });
     }
 
     const reportIds = reports.map((r) => r.id);
@@ -151,7 +152,7 @@ export async function GET(request: Request) {
         ref_max: ref.ref_max != null ? Number(ref.ref_max) : null,
       }));
 
-    const payload: MetricsPayload = { metrics, values };
+    const payload: MetricsPayload = { metrics, values, reportCount: reports.length };
     return NextResponse.json(payload);
   } catch (error) {
     reportError(error, { op: "api.metrics.GET" });
