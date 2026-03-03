@@ -315,6 +315,18 @@
       "aiExtracts": "Unser KI-gestütztes System extrahiert automatisch Daten aus PDFs.",
       "uploadFirst": "Ersten Test hochladen"
     },
+    "onboardingChecklist": {
+      "title": "Erste Schritte",
+      "subtitle": "Vervollständigen Sie diese Schritte, um ViziAI optimal zu nutzen.",
+      "uploadReports": "Berichte hochladen ({count}/3)",
+      "logWeight": "Gewicht erfassen",
+      "logBloodPressure": "Blutdruck erfassen",
+      "uploadNext": "Nächsten Bericht hochladen"
+    },
+    "ghostedChart": {
+      "needMoreData": "Laden Sie einen weiteren Bericht hoch, um Trends im Zeitverlauf zu sehen.",
+      "uploadAnother": "Bericht hochladen"
+    },
     "profileSwitcher": {
       "selectProfile": "Profil auswählen",
       "addProfile": "Neues Profil hinzufügen",
