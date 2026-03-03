@@ -223,8 +223,13 @@
       "deleteWeightCount": "{count} enregistrements de poids",
       "deleteSharedWarning": "Ce profil est partagé avec {count} personnes. Elles perdront l'accès :",
       "removeMember": "Retirer le membre",
+      "removeConfirmText": "{name} n'aura plus accès à ce profil.",
+      "removeConfirm": "Retirer",
       "copyLink": "Copier le lien",
       "revokeInvite": "Révoquer l'invitation",
+      "revokeInviteConfirm": "L'invitation pour {email} sera révoquée. Le lien d'invitation ne fonctionnera plus.",
+      "removeAllowedEmail": "Supprimer",
+      "removeAllowedEmailConfirm": "{email} ne pourra plus accéder à ce profil, même après inscription.",
       "pending": "En attente",
       "accountNotCreated": "Compte non créé",
       "awaitingRegistration": "En attente d'inscription"
@@ -326,7 +331,16 @@
       "shareLink": "Partagez ce lien avec la personne invitée :",
       "shareOnWhatsApp": "Partager sur WhatsApp",
       "whatsAppMessage": "Je souhaite partager le profil {profileName} avec toi. Tu peux y accéder avec ce lien : {url}",
-      "directAccessGranted": "{name} peut maintenant accéder au profil {profileName}."
+      "directAccessGranted": "{name} peut maintenant accéder au profil {profileName}. Nous lui avons envoyé un e-mail pour l'informer.",
+      "directWhatsAppHint": "Vous pouvez aussi l'informer par WhatsApp :",
+      "directWhatsApp": "Informer par WhatsApp",
+      "whatsAppMessageDirect": "J'ai partagé le profil {profileName} avec toi sur ViziAI. Connecte-toi sur {url} pour voir les valeurs.",
+      "pickContact": "Choisir dans les Contacts",
+      "emailSent": "E-mail d'invitation envoyé à {email}",
+      "inviteSentTitle": "Invitation Envoyée",
+      "inviteSentBody": "Nous avons envoyé un e-mail d'invitation à {email}. L'accès sera accordé après l'inscription. L'invitation expire dans 30 jours.",
+      "shareAlternative": "Vous pouvez aussi partager par WhatsApp :",
+      "linkDisclaimer": "Ce lien n'est pas public. Seuls les utilisateurs qui se connectent avec {email} peuvent accéder à ce profil."
     },
     "metricChart": {
       "removeChart": "Supprimer le graphique",
