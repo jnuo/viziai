@@ -101,9 +101,11 @@ export async function PUT(request: Request) {
       }
     }
 
-    // Validate timezone
+    // Validate timezone against IANA database
     if (timezone !== undefined) {
-      if (typeof timezone !== "string" || timezone.length === 0) {
+      try {
+        Intl.DateTimeFormat(undefined, { timeZone: timezone as string });
+      } catch {
         return NextResponse.json(
           { error: "Invalid timezone" },
           { status: 400 },
