@@ -272,6 +272,7 @@ export default function Dashboard(): React.ReactElement | null {
   const hasAutoSelected = useRef(false);
   const [gridHeight, setGridHeight] = useState(DEFAULT_GRID_HEIGHT);
   const gridContainerRef = useRef<HTMLDivElement>(null);
+  const gridInnerRef = useRef<HTMLDivElement>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearchInput, setShowSearchInput] = useState(false);
   const [sortSheetOpen, setSortSheetOpen] = useState(false);
@@ -529,6 +530,16 @@ export default function Dashboard(): React.ReactElement | null {
     return metrics;
   }, [filteredData.metrics, searchQuery, metricOrder]);
 
+  // Clamp grid height when content shrinks (e.g. after filtering)
+  useEffect(() => {
+    requestAnimationFrame(() => {
+      const contentH = gridInnerRef.current?.scrollHeight;
+      if (contentH && gridHeight > contentH) {
+        setGridHeight(Math.max(contentH, MIN_GRID_HEIGHT));
+      }
+    });
+  }, [displayedMetrics, gridHeight]);
+
   const valuesByMetric = useMemo(() => {
     if (!filteredData)
       return new Map<string, { date: string; value: number; count: number }>();
@@ -611,11 +622,12 @@ export default function Dashboard(): React.ReactElement | null {
 
   // --- Grid resize handlers ---
   const getMaxGridHeight = (isMobile: boolean) => {
-    const scrollH =
-      gridContainerRef.current?.scrollHeight ?? DEFAULT_GRID_HEIGHT;
-    if (isMobile) return Math.min(scrollH, MAX_GRID_HEIGHT_MOBILE);
-    // Cap at 60% of viewport so charts always stay visible
-    return Math.min(scrollH, window.innerHeight * 0.6);
+    // Use inner grid's height (actual content), not the scrollable container
+    // scrollHeight on the outer container grows with its set height, not content
+    const contentH =
+      gridInnerRef.current?.scrollHeight ?? DEFAULT_GRID_HEIGHT;
+    if (isMobile) return Math.min(contentH, MAX_GRID_HEIGHT_MOBILE);
+    return Math.min(contentH, window.innerHeight * 0.6);
   };
 
   const handleResizeStart = (e: React.PointerEvent) => {
@@ -993,7 +1005,7 @@ export default function Dashboard(): React.ReactElement | null {
                     { "--grid-h": `${gridHeight}px` } as React.CSSProperties
                   }
                 >
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
+                  <div ref={gridInnerRef} className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
                     {displayedMetrics.map((m) => {
                       const latest = valuesByMetric.get(m.id);
                       const value = latest?.value;
