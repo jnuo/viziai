@@ -12,13 +12,8 @@ import { reportError } from "@/lib/error-reporting";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-function buildBaseUrl(request: Request): string {
-  const host = request.headers.get("host") || "localhost:3000";
-  const protocol =
-    host.startsWith("localhost") || /^\d+\.\d+\.\d+\.\d+/.test(host)
-      ? "http"
-      : "https";
-  return `${protocol}://${host}`;
+function buildBaseUrl(): string {
+  return process.env.NEXTAUTH_URL || "http://localhost:3000";
 }
 
 /**
@@ -192,7 +187,7 @@ export async function POST(
         ON CONFLICT (user_id_new, profile_id) DO NOTHING
       `;
 
-      const dashboardUrl = `${buildBaseUrl(request)}/dashboard`;
+      const dashboardUrl = `${buildBaseUrl()}/dashboard`;
 
       sendAccessGrantedEmail({
         to: trimmedEmail,
@@ -244,7 +239,7 @@ export async function POST(
       RETURNING id, token, created_at, expires_at
     `;
 
-    const inviteUrl = `${buildBaseUrl(request)}/invite/${token}`;
+    const inviteUrl = `${buildBaseUrl()}/invite/${token}`;
 
     sendInviteEmail({
       to: trimmedEmail,
