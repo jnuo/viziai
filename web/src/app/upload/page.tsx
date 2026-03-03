@@ -37,6 +37,7 @@ import { Switch } from "@/components/ui/switch";
 import { Header } from "@/components/header";
 import { cn } from "@/lib/utils";
 import { formatDateTimeTR } from "@/lib/date";
+import { useTimezone } from "@/components/preference-sync";
 import { reportError } from "@/lib/error-reporting";
 import { trackEvent } from "@/lib/analytics";
 import { FREE_REPORT_CAP } from "@/lib/constants";
@@ -76,6 +77,7 @@ function UploadPageContent(): React.ReactElement {
   const t = useTranslations("pages.upload");
   const tc = useTranslations("common");
   const locale = useLocale();
+  const timezone = useTimezone();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [profiles, setProfiles] = useState<Profile[]>([]);
@@ -604,7 +606,7 @@ function UploadPageContent(): React.ReactElement {
             {status === "extracting" && (
               <ExtractionLoading
                 fileName={fileName || undefined}
-                uploadTime={formatDateTimeTR(uploadCreatedAt, locale)}
+                uploadTime={formatDateTimeTR(uploadCreatedAt, locale, timezone)}
                 onCancel={handleCancel}
               />
             )}
@@ -618,7 +620,7 @@ function UploadPageContent(): React.ReactElement {
                     <p className="font-medium text-sm truncate">{fileName}</p>
                     {uploadCreatedAt && (
                       <p className="text-muted-foreground text-xs mt-0.5">
-                        {formatDateTimeTR(uploadCreatedAt, locale)}
+                        {formatDateTimeTR(uploadCreatedAt, locale, timezone)}
                       </p>
                     )}
                   </div>
@@ -921,7 +923,8 @@ function UploadPageContent(): React.ReactElement {
                     <p className="text-sm">{error}</p>
                     {fileName && uploadCreatedAt && (
                       <p className="text-xs mt-1 opacity-70">
-                        {fileName} - {formatDateTimeTR(uploadCreatedAt, locale)}
+                        {fileName} -{" "}
+                        {formatDateTimeTR(uploadCreatedAt, locale, timezone)}
                       </p>
                     )}
                   </div>

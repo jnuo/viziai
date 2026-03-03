@@ -202,6 +202,27 @@
       "unsorted": "unsortiert",
       "actions": "Aktionen"
     },
+    "preferences": {
+      "title": "Einstellungen",
+      "account": "Konto",
+      "displayName": "Anzeigename",
+      "displayNamePlaceholder": "Ihr Name",
+      "displayNameHint": "So wird Ihr Name in geteilten Profilen angezeigt.",
+      "email": "E-Mail",
+      "emailHint": "Wird von Ihrem Google-Konto verwaltet. Kann hier nicht geändert werden.",
+      "language": "Sprache",
+      "languageLabel": "Oberflächensprache",
+      "languageHint": "Ändert die Sprache auf allen Geräten bei der Anmeldung.",
+      "timezone": "Zeitzone",
+      "timezoneLabel": "Ihre Zeitzone",
+      "timezoneHint": "Wird für die Anzeige von Datum und Uhrzeit verwendet.",
+      "theme": "Erscheinungsbild",
+      "themeLabel": "Design",
+      "themeSystem": "Systemstandard",
+      "themeLight": "Hell",
+      "themeDark": "Dunkel",
+      "themeHint": "Wird bei der Anmeldung geräteübergreifend synchronisiert."
+    },
     "access": {
       "profileDescription": "Laden Sie Testergebnisse hoch und verfolgen Sie Veränderungen im Zeitverlauf.",
       "createProfile": "Neues Profil erstellen",
@@ -297,6 +318,7 @@
       "darkTheme": "Dunkles Design",
       "logout": "Abmelden",
       "login": "Anmelden",
+      "settings": "Einstellungen",
       "changeLanguage": "Sprache ändern"
     },
     "extraction": {

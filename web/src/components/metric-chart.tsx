@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { useLocale, useTranslations } from "next-intl";
 import type { Metric, MetricValue } from "@/lib/sheets";
 import { compareDateAsc, parseToISO, formatTR } from "@/lib/date";
+import { useTimezone } from "@/components/preference-sync";
 import { cn, friendlyMetricName } from "@/lib/utils";
 
 /**
@@ -105,6 +106,7 @@ export function MetricChart({
   const colors = useChartColors();
   const t = useTranslations("components.metricChart");
   const locale = useLocale();
+  const timezone = useTimezone();
 
   // Sort values by date and create chart data
   const chartData: ChartData[] = values
@@ -254,7 +256,9 @@ export function MetricChart({
 
               <XAxis
                 dataKey="date"
-                tickFormatter={(value: string) => formatTR(value, locale)}
+                tickFormatter={(value: string) =>
+                  formatTR(value, locale, timezone)
+                }
                 tick={{ fontSize: 10 }}
                 tickLine={false}
                 axisLine={false}
@@ -299,7 +303,7 @@ export function MetricChart({
                             : t("noValue")}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          {formatTR(label as string, locale)}
+                          {formatTR(label as string, locale, timezone)}
                         </p>
                         {metric.ref_min !== null && metric.ref_max !== null && (
                           <p className="mt-1 text-xs text-status-normal">

@@ -29,6 +29,7 @@ import {
   FileText,
   Globe,
   Check,
+  Settings,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { locales, localeLabels } from "@/i18n/config";
@@ -206,6 +207,13 @@ export function Header({
                   >
                     <Users className="h-4 w-4" />
                     {t("profiles")}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => router.push("/settings/preferences")}
+                    className="cursor-pointer"
+                  >
+                    <Settings className="h-4 w-4" />
+                    {t("settings")}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   {mounted && (

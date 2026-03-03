@@ -54,6 +54,7 @@ import {
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { compareDateAsc, parseToISO, formatTR } from "@/lib/date";
+import { useTimezone } from "@/components/preference-sync";
 import { MetricChart } from "@/components/metric-chart";
 import { OnboardingChecklist } from "@/components/onboarding-checklist";
 import { GhostedChart } from "@/components/ghosted-chart";
@@ -67,7 +68,11 @@ import { useRouter } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import { reportError } from "@/lib/error-reporting";
 
-type ApiData = { metrics: Metric[]; values: MetricValue[]; reportCount: number };
+type ApiData = {
+  metrics: Metric[];
+  values: MetricValue[];
+  reportCount: number;
+};
 
 const DEFAULT_GRID_HEIGHT = 192; // matches Tailwind max-h-48 (12rem)
 const MIN_GRID_HEIGHT = 96; // ~1 card row
@@ -247,6 +252,7 @@ export default function Dashboard(): React.ReactElement | null {
   const t = useTranslations("pages.dashboard");
   const tc = useTranslations("common");
   const locale = useLocale();
+  const timezone = useTimezone();
   const [data, setData] = useState<ApiData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -599,41 +605,40 @@ export default function Dashboard(): React.ReactElement | null {
     const latest = dates[dates.length - 1];
 
     if (earliest === latest) {
-      return formatTR(earliest, locale);
+      return formatTR(earliest, locale, timezone);
     }
 
-    return `${formatTR(earliest, locale)} - ${formatTR(latest, locale)}`;
+    return `${formatTR(earliest, locale, timezone)} - ${formatTR(latest, locale, timezone)}`;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filteredData, locale]);
+  }, [filteredData, locale, timezone]);
 
-  const toggleMetric = (metricId: string) => {
+  function toggleMetric(metricId: string): void {
     if (selectedMetrics.includes(metricId)) {
       setSelectedMetrics(selectedMetrics.filter((id) => id !== metricId));
     } else {
       setSelectedMetrics([...selectedMetrics, metricId]);
     }
-  };
+  }
 
-  const removeMetric = (metricId: string) => {
+  function removeMetric(metricId: string): void {
     setSelectedMetrics(selectedMetrics.filter((id) => id !== metricId));
-  };
+  }
 
-  const closeSearch = () => {
+  function closeSearch(): void {
     setShowSearchInput(false);
     setSearchQuery("");
-  };
+  }
 
   // --- Grid resize handlers ---
-  const getMaxGridHeight = (isMobile: boolean) => {
+  function getMaxGridHeight(isMobile: boolean): number {
     // Use inner grid's height (actual content), not the scrollable container
     // scrollHeight on the outer container grows with its set height, not content
-    const contentH =
-      gridInnerRef.current?.scrollHeight ?? DEFAULT_GRID_HEIGHT;
+    const contentH = gridInnerRef.current?.scrollHeight ?? DEFAULT_GRID_HEIGHT;
     if (isMobile) return Math.min(contentH, MAX_GRID_HEIGHT_MOBILE);
     return Math.min(contentH, window.innerHeight * 0.6);
-  };
+  }
 
-  const handleResizeStart = (e: React.PointerEvent) => {
+  function handleResizeStart(e: React.PointerEvent): void {
     e.preventDefault();
     const target = e.currentTarget as HTMLElement;
     target.setPointerCapture(e.pointerId);
@@ -670,9 +675,9 @@ export default function Dashboard(): React.ReactElement | null {
     target.addEventListener("pointermove", handlePointerMove);
     target.addEventListener("pointerup", handlePointerUp);
     target.addEventListener("pointercancel", handlePointerUp);
-  };
+  }
 
-  const handleResizeKeyDown = (e: React.KeyboardEvent) => {
+  function handleResizeKeyDown(e: React.KeyboardEvent): void {
     const maxHeight = getMaxGridHeight(window.innerWidth < 768);
     if (e.key === "ArrowDown") {
       e.preventDefault();
@@ -681,9 +686,9 @@ export default function Dashboard(): React.ReactElement | null {
       e.preventDefault();
       setGridHeight((h) => Math.max(h - KEYBOARD_STEP, MIN_GRID_HEIGHT));
     }
-  };
+  }
 
-  const handleSortDragEnd = async (event: DragEndEvent) => {
+  async function handleSortDragEnd(event: DragEndEvent): Promise<void> {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
 
@@ -711,9 +716,9 @@ export default function Dashboard(): React.ReactElement | null {
       });
       setMetricOrder(oldOrder);
     }
-  };
+  }
 
-  const resetMetricOrder = async () => {
+  async function resetMetricOrder(): Promise<void> {
     if (!data) return;
 
     const defaultOrder = data.metrics.map((m) => m.id);
@@ -745,9 +750,9 @@ export default function Dashboard(): React.ReactElement | null {
         duration: 5000,
       });
     }
-  };
+  }
 
-  const sendToTop = async (metricId: string) => {
+  async function sendToTop(metricId: string): Promise<void> {
     const index = metricOrder.indexOf(metricId);
     if (index === -1 || index === 0) return;
 
@@ -784,7 +789,7 @@ export default function Dashboard(): React.ReactElement | null {
       });
       setMetricOrder(oldOrder);
     }
-  };
+  }
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -829,19 +834,17 @@ export default function Dashboard(): React.ReactElement | null {
 
         <main className="p-2 sm:p-3 md:p-4 space-y-3">
           {/* Empty State - shown when no metrics/reports */}
-          {data && data.metrics.length === 0 && (
+          {data.metrics.length === 0 && (
             <Card className="rounded-xl">
               <EmptyState profileName={activeProfile?.display_name} />
             </Card>
           )}
 
           {/* Onboarding Checklist - shown for 1-2 reports */}
-          {data && reportCount >= 1 && reportCount <= 2 && (
+          {reportCount >= 1 && reportCount <= 2 && (
             <OnboardingChecklist
               reportCount={reportCount}
-              hasWeight={trackingData.some(
-                (m) => m.type === "weight",
-              )}
+              hasWeight={trackingData.some((m) => m.type === "weight")}
               hasBloodPressure={trackingData.some(
                 (m) => m.type === "blood_pressure",
               )}
@@ -849,7 +852,7 @@ export default function Dashboard(): React.ReactElement | null {
           )}
 
           {/* Metric Grid Widget - shown when there are lab metrics or tracking data */}
-          {data && filteredData.metrics.length > 0 && (
+          {filteredData.metrics.length > 0 && (
             <Card className="rounded-xl gap-2 py-3 sm:gap-4 sm:py-4 md:gap-6 md:py-6">
               <CardHeader className="pb-1.5 space-y-1.5 px-4 sm:px-6">
                 {/* Row 1: Title + Average + Date */}
@@ -1008,7 +1011,10 @@ export default function Dashboard(): React.ReactElement | null {
                     { "--grid-h": `${gridHeight}px` } as React.CSSProperties
                   }
                 >
-                  <div ref={gridInnerRef} className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
+                  <div
+                    ref={gridInnerRef}
+                    className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2"
+                  >
                     {displayedMetrics.map((m) => {
                       const latest = valuesByMetric.get(m.id);
                       const value = latest?.value;
@@ -1129,7 +1135,7 @@ export default function Dashboard(): React.ReactElement | null {
                               <div className="text-xs text-muted-foreground leading-none">
                                 {showAverage && latest.count > 1
                                   ? t("nValues", { count: latest.count })
-                                  : formatTR(latest.date, locale)}
+                                  : formatTR(latest.date, locale, timezone)}
                               </div>
                             )}
                           </CardContent>
@@ -1143,7 +1149,7 @@ export default function Dashboard(): React.ReactElement | null {
           )}
 
           {/* Resize divider — between metric grid and charts (only for 2+ reports) */}
-          {data && filteredData.metrics.length > 0 && reportCount >= 2 && (
+          {filteredData.metrics.length > 0 && reportCount >= 2 && (
             <div
               role="separator"
               aria-orientation="horizontal"
@@ -1164,13 +1170,12 @@ export default function Dashboard(): React.ReactElement | null {
           )}
 
           {/* Ghosted Chart — shown for 1 report (line charts don't make sense with a single data point) */}
-          {data &&
-            reportCount === 1 &&
-            filteredData.metrics.length > 0 && <GhostedChart />}
+          {reportCount === 1 && filteredData.metrics.length > 0 && (
+            <GhostedChart />
+          )}
 
           {/* Charts — shown for 2+ reports */}
-          {data &&
-            reportCount >= 2 &&
+          {reportCount >= 2 &&
             filteredData.metrics.length > 0 &&
             selectedMetrics.length > 0 && (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

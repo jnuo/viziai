@@ -1,7 +1,7 @@
 import type { Locale } from "@/i18n/config";
 import { bcp47 } from "@/i18n/config";
 
-const TURKEY_TIMEZONE = "Europe/Istanbul";
+export const DEFAULT_TIMEZONE = "Europe/Istanbul";
 
 function isValidISODate(s: string): boolean {
   return /^\d{4}-\d{2}-\d{2}$/.test(s);
@@ -31,7 +31,11 @@ export function compareDateAsc(a: string, b: string): number {
  * Format date as short format: "15.01.26"
  * Used in charts
  */
-export function formatTR(dateStr: string, locale: Locale = "tr"): string {
+export function formatTR(
+  dateStr: string,
+  locale: Locale = "tr",
+  timezone: string = DEFAULT_TIMEZONE,
+): string {
   const iso = parseToISO(dateStr);
   if (!iso) return dateStr;
   const [year, month, day] = iso.split("-").map(Number);
@@ -40,17 +44,17 @@ export function formatTR(dateStr: string, locale: Locale = "tr"): string {
     day: "2-digit",
     month: "2-digit",
     year: "2-digit",
-    timeZone: TURKEY_TIMEZONE,
+    timeZone: timezone,
   });
 }
 
 /**
  * Format date: "29 Oca 2025" (TR) / "Jan 29, 2025" (EN)
- * Always uses Turkey timezone
  */
 export function formatDateTR(
   dateString: string | null,
   locale: Locale = "tr",
+  timezone: string = DEFAULT_TIMEZONE,
 ): string {
   if (!dateString) return "—";
   const localeStr = bcp47[locale];
@@ -63,7 +67,7 @@ export function formatDateTR(
       day: "numeric",
       month: "short",
       year: "numeric",
-      timeZone: TURKEY_TIMEZONE,
+      timeZone: timezone,
     });
   }
 
@@ -73,17 +77,17 @@ export function formatDateTR(
     day: "numeric",
     month: "short",
     year: "numeric",
-    timeZone: TURKEY_TIMEZONE,
+    timeZone: timezone,
   });
 }
 
 /**
  * Format datetime: "29 Oca 2025, 10:30" (TR) / "Jan 29, 2025, 10:30 AM" (EN)
- * Always uses Turkey timezone
  */
 export function formatDateTimeTR(
   dateString: string | null,
   locale: Locale = "tr",
+  timezone: string = DEFAULT_TIMEZONE,
 ): string {
   if (!dateString) return "—";
 
@@ -94,6 +98,6 @@ export function formatDateTimeTR(
     year: "numeric",
     hour: "2-digit",
     minute: "2-digit",
-    timeZone: TURKEY_TIMEZONE,
+    timeZone: timezone,
   });
 }

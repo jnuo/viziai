@@ -202,6 +202,27 @@
       "unsorted": "sin ordenar",
       "actions": "Acciones"
     },
+    "preferences": {
+      "title": "Configuración",
+      "account": "Cuenta",
+      "displayName": "Nombre para Mostrar",
+      "displayNamePlaceholder": "Tu nombre",
+      "displayNameHint": "Así aparece tu nombre en los perfiles compartidos.",
+      "email": "Correo electrónico",
+      "emailHint": "Gestionado por tu cuenta de Google. No se puede cambiar aquí.",
+      "language": "Idioma",
+      "languageLabel": "Idioma de la Interfaz",
+      "languageHint": "Cambia el idioma en todos los dispositivos al iniciar sesión.",
+      "timezone": "Zona Horaria",
+      "timezoneLabel": "Tu Zona Horaria",
+      "timezoneHint": "Se usa para mostrar fechas y horas.",
+      "theme": "Apariencia",
+      "themeLabel": "Tema",
+      "themeSystem": "Predeterminado del Sistema",
+      "themeLight": "Claro",
+      "themeDark": "Oscuro",
+      "themeHint": "Se sincroniza entre dispositivos al iniciar sesión."
+    },
     "access": {
       "profileDescription": "Suba resultados de análisis y controle los cambios a lo largo del tiempo.",
       "createProfile": "Crear Nuevo Perfil",
@@ -297,6 +318,7 @@
       "darkTheme": "Tema Oscuro",
       "logout": "Cerrar Sesión",
       "login": "Iniciar Sesión",
+      "settings": "Configuración",
       "changeLanguage": "Cambiar idioma"
     },
     "extraction": {
