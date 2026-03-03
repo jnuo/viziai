@@ -223,8 +223,13 @@
       "deleteWeightCount": "{count} Gewichtseinträge",
       "deleteSharedWarning": "Dieses Profil wird mit {count} Personen geteilt. Sie verlieren den Zugriff:",
       "removeMember": "Mitglied entfernen",
+      "removeConfirmText": "{name} wird keinen Zugriff mehr auf dieses Profil haben.",
+      "removeConfirm": "Entfernen",
       "copyLink": "Link kopieren",
       "revokeInvite": "Einladung widerrufen",
+      "revokeInviteConfirm": "Die Einladung für {email} wird widerrufen. Der Einladungslink kann nicht mehr verwendet werden.",
+      "removeAllowedEmail": "Entfernen",
+      "removeAllowedEmailConfirm": "{email} wird keinen Zugriff auf dieses Profil haben, auch wenn sie sich registrieren.",
       "pending": "Ausstehend",
       "accountNotCreated": "Konto nicht erstellt",
       "awaitingRegistration": "Wartet auf Registrierung"
@@ -326,7 +331,16 @@
       "shareLink": "Teilen Sie diesen Link mit der eingeladenen Person:",
       "shareOnWhatsApp": "Auf WhatsApp teilen",
       "whatsAppMessage": "Ich möchte das Profil {profileName} mit dir teilen. Du kannst über diesen Link darauf zugreifen: {url}",
-      "directAccessGranted": "{name} kann jetzt auf das Profil {profileName} zugreifen."
+      "directAccessGranted": "{name} kann jetzt auf das Profil {profileName} zugreifen. Wir haben eine E-Mail zur Benachrichtigung gesendet.",
+      "directWhatsAppHint": "Sie können auch per WhatsApp informieren:",
+      "directWhatsApp": "Über WhatsApp informieren",
+      "whatsAppMessageDirect": "Ich habe das Profil {profileName} mit dir auf ViziAI geteilt. Melde dich unter {url} an, um die Werte zu sehen.",
+      "pickContact": "Aus Kontakten wählen",
+      "emailSent": "Einladungs-E-Mail an {email} gesendet",
+      "inviteSentTitle": "Einladung Gesendet",
+      "inviteSentBody": "Wir haben eine Einladungs-E-Mail an {email} gesendet. Der Zugriff wird nach der Registrierung gewährt. Die Einladung läuft in 30 Tagen ab.",
+      "shareAlternative": "Sie können auch per WhatsApp teilen:",
+      "linkDisclaimer": "Dieser Link ist nicht öffentlich. Nur Benutzer, die sich mit {email} anmelden, können auf dieses Profil zugreifen."
     },
     "metricChart": {
       "removeChart": "Diagramm entfernen",

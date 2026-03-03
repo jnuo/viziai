@@ -223,8 +223,13 @@
       "deleteWeightCount": "{count} weight records",
       "deleteSharedWarning": "This profile is shared with {count} people. They will lose access:",
       "removeMember": "Remove member",
+      "removeConfirmText": "{name} will no longer have access to this profile.",
+      "removeConfirm": "Remove",
       "copyLink": "Copy link",
       "revokeInvite": "Revoke invite",
+      "revokeInviteConfirm": "The invite for {email} will be revoked. They won't be able to use the invite link.",
+      "removeAllowedEmail": "Remove",
+      "removeAllowedEmailConfirm": "{email} will no longer be able to access this profile, even if they sign up.",
       "pending": "Pending",
       "accountNotCreated": "Account not created",
       "awaitingRegistration": "Awaiting Registration"
@@ -326,7 +331,16 @@
       "shareLink": "Share this link with the invited person:",
       "shareOnWhatsApp": "Share on WhatsApp",
       "whatsAppMessage": "I want to share the {profileName} profile with you. You can access it with this link: {url}",
-      "directAccessGranted": "{name} can now access the {profileName} profile."
+      "directAccessGranted": "{name} can now access the {profileName} profile. We sent them an email to let them know.",
+      "directWhatsAppHint": "You can also let them know via WhatsApp:",
+      "directWhatsApp": "Notify on WhatsApp",
+      "whatsAppMessageDirect": "I shared the {profileName} profile with you on ViziAI. Sign in at {url} to see the values.",
+      "pickContact": "Pick from Contacts",
+      "emailSent": "Invite email sent to {email}",
+      "inviteSentTitle": "Invite Sent",
+      "inviteSentBody": "We sent an invite email to {email}. They'll get access once they sign up. The invite expires in 30 days.",
+      "shareAlternative": "You can also share via WhatsApp:",
+      "linkDisclaimer": "This link is not public. Only users who sign in with {email} can access this profile."
     },
     "metricChart": {
       "removeChart": "Remove chart",

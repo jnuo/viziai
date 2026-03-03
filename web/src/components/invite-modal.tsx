@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { useTranslations } from "next-intl";
-import { Check, Copy, Loader2, UserCheck } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import { BookUser, Check, Copy, Loader2, UserCheck } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -45,6 +45,7 @@ export function InviteModal({
   const t = useTranslations("components.inviteModal");
   const tc = useTranslations("common");
   const ti = useTranslations("pages.invite");
+  const locale = useLocale();
 
   const [step, setStep] = useState<Step>("form");
   const [email, setEmail] = useState("");
@@ -54,6 +55,26 @@ export function InviteModal({
   const [inviteUrl, setInviteUrl] = useState("");
   const [copied, setCopied] = useState(false);
   const [grantedName, setGrantedName] = useState<string | null>(null);
+  const [hasContactPicker, setHasContactPicker] = useState(false);
+  const [invitedEmail, setInvitedEmail] = useState("");
+
+  useEffect(() => {
+    setHasContactPicker("contacts" in navigator && "ContactsManager" in window);
+  }, []);
+
+  const handlePickContact = async () => {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const contacts = await (navigator as any).contacts.select(["email"], {
+        multiple: false,
+      });
+      if (contacts?.length > 0 && contacts[0].email?.length > 0) {
+        setEmail(contacts[0].email[0]);
+      }
+    } catch {
+      // User cancelled or API not available — ignore
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,7 +85,7 @@ export function InviteModal({
       const res = await fetch(`/api/profiles/${profileId}/access`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim(), accessLevel }),
+        body: JSON.stringify({ email: email.trim(), accessLevel, locale }),
       });
 
       const data = await res.json();
@@ -79,6 +100,7 @@ export function InviteModal({
         setStep("direct");
       } else {
         setInviteUrl(data.invite.inviteUrl);
+        setInvitedEmail(email.trim());
         setStep("success");
       }
     } catch {
@@ -99,9 +121,22 @@ export function InviteModal({
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
   };
 
+  const handleWhatsAppDirect = () => {
+    const text = t("whatsAppMessageDirect", {
+      profileName,
+      url: "https://www.viziai.app",
+    });
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
+  };
+
+  function dialogTitle(): string {
+    if (step === "form") return t("inviteTitle", { profileName });
+    if (step === "direct") return ti("accessGranted");
+    return t("inviteSentTitle");
+  }
+
   const handleClose = (open: boolean) => {
     if (!open) {
-      // Reset state on close
       setStep("form");
       setEmail("");
       setAccessLevel("viewer");
@@ -109,6 +144,7 @@ export function InviteModal({
       setInviteUrl("");
       setCopied(false);
       setGrantedName(null);
+      setInvitedEmail("");
     }
     onOpenChange(open);
   };
@@ -117,13 +153,7 @@ export function InviteModal({
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>
-            {step === "form"
-              ? t("inviteTitle", { profileName })
-              : step === "direct"
-                ? ti("accessGranted")
-                : ti("inviteLink")}
-          </DialogTitle>
+          <DialogTitle>{dialogTitle()}</DialogTitle>
         </DialogHeader>
 
         {step === "direct" ? (
@@ -137,6 +167,16 @@ export function InviteModal({
                 profileName,
               })}
             </p>
+            <p className="text-xs text-muted-foreground">
+              {t("directWhatsAppHint")}
+            </p>
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={handleWhatsAppDirect}
+            >
+              {t("directWhatsApp")}
+            </Button>
             <Button className="w-full" onClick={() => handleClose(false)}>
               {tc("ok")}
             </Button>
@@ -179,14 +219,28 @@ export function InviteModal({
               <Label htmlFor="invite-email">
                 {knownUsers.length > 0 ? t("orEnterEmail") : t("emailLabel")}
               </Label>
-              <Input
-                id="invite-email"
-                type="email"
-                placeholder="ornek@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
+              <div className="flex gap-2">
+                <Input
+                  id="invite-email"
+                  type="email"
+                  placeholder="ornek@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+                {hasContactPicker && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={handlePickContact}
+                    title={t("pickContact")}
+                    className="shrink-0"
+                  >
+                    <BookUser className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
             </div>
 
             <div className="space-y-2">
@@ -209,40 +263,51 @@ export function InviteModal({
             {error && <p className="text-sm text-destructive">{error}</p>}
 
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? (
-                <Loader2 className="h-4 w-4 animate-spin mr-2" />
-              ) : null}
+              {loading && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
               {t("invite")}
             </Button>
           </form>
         ) : (
           <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">{t("shareLink")}</p>
+            <p className="text-sm">
+              {t("inviteSentBody", { email: invitedEmail })}
+            </p>
 
-            <div className="flex gap-2">
-              <Input value={inviteUrl} readOnly className="text-xs" />
+            <div className="space-y-2">
+              <p className="text-xs text-muted-foreground">
+                {t("shareAlternative")}
+              </p>
+
+              <div className="flex gap-2">
+                <Input value={inviteUrl} readOnly className="text-xs" />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleCopy}
+                  className="shrink-0"
+                >
+                  {copied ? (
+                    <Check className="h-4 w-4" />
+                  ) : (
+                    <Copy className="h-4 w-4" />
+                  )}
+                  {copied ? tc("copied") : tc("copy")}
+                </Button>
+              </div>
+
               <Button
                 variant="outline"
-                size="sm"
-                onClick={handleCopy}
-                className="shrink-0"
+                className="w-full"
+                onClick={handleWhatsApp}
               >
-                {copied ? (
-                  <Check className="h-4 w-4" />
-                ) : (
-                  <Copy className="h-4 w-4" />
-                )}
-                {copied ? tc("copied") : tc("copy")}
+                {t("shareOnWhatsApp")}
               </Button>
             </div>
 
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={handleWhatsApp}
-            >
-              {t("shareOnWhatsApp")}
-            </Button>
+            <p className="text-xs text-muted-foreground flex items-start gap-1.5">
+              <span className="shrink-0">🔒</span>
+              {t("linkDisclaimer", { email: invitedEmail })}
+            </p>
           </div>
         )}
       </DialogContent>
