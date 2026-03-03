@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
 import { formatDateTR } from "@/lib/date";
+import { useTimezone } from "@/components/preference-sync";
 import { checkOutOfRange } from "@/lib/metrics";
 
 const EMPTY_FORM = { value: "", unit: "", ref_low: "", ref_high: "" };
@@ -42,6 +43,7 @@ export default function FileDetailPage(): React.ReactElement {
   const tc = useTranslations("common");
   const tu = useTranslations("pages.upload");
   const locale = useLocale();
+  const timezone = useTimezone();
   const fileId = params.id as string;
 
   const [file, setFile] = useState<FileData | null>(null);
@@ -112,7 +114,7 @@ export default function FileDetailPage(): React.ReactElement {
     setEditForm(EMPTY_FORM);
   }
 
-  const saveMetric = async (metricId: string) => {
+  async function saveMetric(metricId: string): Promise<void> {
     // Validate value is not empty
     const parsedValue = parseFloat(editForm.value);
     if (!editForm.value.trim() || isNaN(parsedValue)) {
@@ -163,7 +165,7 @@ export default function FileDetailPage(): React.ReactElement {
     } finally {
       setSaving(false);
     }
-  };
+  }
 
   if (loading) {
     return (
@@ -210,7 +212,7 @@ export default function FileDetailPage(): React.ReactElement {
           {file.sample_date && (
             <p className="text-sm text-muted-foreground">
               {t("testDateLabel", {
-                date: formatDateTR(file.sample_date, locale),
+                date: formatDateTR(file.sample_date, locale, timezone),
               })}
             </p>
           )}

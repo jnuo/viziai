@@ -19,6 +19,7 @@ import { TrackingHistory } from "@/components/tracking-history";
 import { useToast } from "@/components/ui/toast";
 import { useActiveProfile } from "@/hooks/use-active-profile";
 import { formatDateTR, formatDateTimeTR } from "@/lib/date";
+import { useTimezone } from "@/components/preference-sync";
 import { reportError } from "@/lib/error-reporting";
 
 type Tab = "tahliller" | "kilo" | "tansiyon";
@@ -56,6 +57,7 @@ function SettingsContent() {
   const t = useTranslations("pages.settings");
   const tc = useTranslations("common");
   const locale = useLocale();
+  const timezone = useTimezone();
 
   const TABS: { key: Tab; label: string }[] = [
     { key: "tahliller", label: t("testReports") },
@@ -308,14 +310,22 @@ function SettingsContent() {
                             <td className="p-3">
                               {file.sample_date ? (
                                 <span className="font-medium">
-                                  {formatDateTR(file.sample_date, locale)}
+                                  {formatDateTR(
+                                    file.sample_date,
+                                    locale,
+                                    timezone,
+                                  )}
                                 </span>
                               ) : (
                                 <span className="text-muted-foreground">—</span>
                               )}
                             </td>
                             <td className="p-3 text-muted-foreground">
-                              {formatDateTimeTR(file.created_at, locale)}
+                              {formatDateTimeTR(
+                                file.created_at,
+                                locale,
+                                timezone,
+                              )}
                             </td>
                             <td className="p-3 text-center">
                               <span className="inline-flex items-center justify-center min-w-[2rem] px-2 py-0.5 bg-primary/10 text-primary rounded-full text-xs font-medium tabular-nums">
@@ -450,14 +460,22 @@ function SettingsContent() {
                               {file.sample_date ? (
                                 <span>
                                   {t("testPrefix")}{" "}
-                                  {formatDateTR(file.sample_date, locale)}
+                                  {formatDateTR(
+                                    file.sample_date,
+                                    locale,
+                                    timezone,
+                                  )}
                                 </span>
                               ) : (
                                 <span>{t("noTestDate")}</span>
                               )}
                               <span>·</span>
                               <span>
-                                {formatDateTimeTR(file.created_at, locale)}
+                                {formatDateTimeTR(
+                                  file.created_at,
+                                  locale,
+                                  timezone,
+                                )}
                               </span>
                             </div>
                           </div>

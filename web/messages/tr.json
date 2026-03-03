@@ -202,6 +202,27 @@
       "unsorted": "sıralanmamış",
       "actions": "İşlemler"
     },
+    "preferences": {
+      "title": "Ayarlar",
+      "account": "Hesap",
+      "displayName": "Görünen Ad",
+      "displayNamePlaceholder": "Adınız",
+      "displayNameHint": "Paylaşılan profillerde adınız böyle görünür.",
+      "email": "E-posta",
+      "emailHint": "Google hesabınız tarafından yönetilir. Buradan değiştirilemez.",
+      "language": "Dil",
+      "languageLabel": "Arayüz Dili",
+      "languageHint": "Giriş yaptığınızda tüm cihazlarda dili değiştirir.",
+      "timezone": "Saat Dilimi",
+      "timezoneLabel": "Saat Diliminiz",
+      "timezoneHint": "Tarih ve saatlerin gösteriminde kullanılır.",
+      "theme": "Görünüm",
+      "themeLabel": "Tema",
+      "themeSystem": "Sistem Varsayılanı",
+      "themeLight": "Açık",
+      "themeDark": "Koyu",
+      "themeHint": "Giriş yaptığınızda tüm cihazlarda senkronize edilir."
+    },
     "access": {
       "profileDescription": "Tahlil sonuçlarını yükleyip zaman içindeki değişimleri takip edin.",
       "createProfile": "Yeni Profil Oluştur",
@@ -297,6 +318,7 @@
       "darkTheme": "Koyu Tema",
       "logout": "Çıkış",
       "login": "Giriş Yap",
+      "settings": "Ayarlar",
       "changeLanguage": "Dili değiştir"
     },
     "extraction": {

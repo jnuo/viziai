@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { useActiveProfile } from "@/hooks/use-active-profile";
 import { formatDateTR } from "@/lib/date";
+import { useTimezone } from "@/components/preference-sync";
 import { reportError } from "@/lib/error-reporting";
 import type { TrackingMeasurement } from "@/lib/tracking";
 import { getBPStatus } from "@/lib/tracking";
@@ -24,6 +25,7 @@ export function TrackingHistory({ type, accessLevel }: TrackingHistoryProps) {
   const t = useTranslations("tracking");
   const tc = useTranslations("common");
   const locale = useLocale();
+  const timezone = useTimezone();
 
   const [measurements, setMeasurements] = useState<TrackingMeasurement[]>([]);
   const [loading, setLoading] = useState(true);
@@ -360,7 +362,7 @@ export function TrackingHistory({ type, accessLevel }: TrackingHistoryProps) {
                     {isEditing ? (
                       <>
                         <td className="p-3 text-muted-foreground">
-                          {formatDateTR(m.measured_at, locale)}
+                          {formatDateTR(m.measured_at, locale, timezone)}
                         </td>
                         <td className="p-2">
                           <Input
@@ -382,7 +384,7 @@ export function TrackingHistory({ type, accessLevel }: TrackingHistoryProps) {
                     ) : (
                       <>
                         <td className="p-3">
-                          {formatDateTR(m.measured_at, locale)}
+                          {formatDateTR(m.measured_at, locale, timezone)}
                         </td>
                         <td className="p-3 text-right tabular-nums font-medium">
                           {m.weight_kg}
@@ -423,7 +425,7 @@ export function TrackingHistory({ type, accessLevel }: TrackingHistoryProps) {
                 {isEditing ? (
                   <div className="space-y-3">
                     <p className="text-xs text-muted-foreground">
-                      {formatDateTR(m.measured_at, locale)}
+                      {formatDateTR(m.measured_at, locale, timezone)}
                     </p>
                     <div className="space-y-2">
                       <div>
@@ -452,7 +454,7 @@ export function TrackingHistory({ type, accessLevel }: TrackingHistoryProps) {
                   <div>
                     <div className="flex items-center justify-between gap-2">
                       <span className="text-xs text-muted-foreground">
-                        {formatDateTR(m.measured_at, locale)}
+                        {formatDateTR(m.measured_at, locale, timezone)}
                       </span>
                       {canEdit && !isDeleting && (
                         <EditDeleteActions
@@ -530,7 +532,7 @@ export function TrackingHistory({ type, accessLevel }: TrackingHistoryProps) {
                   {isEditing ? (
                     <>
                       <td className="p-3 text-muted-foreground">
-                        {formatDateTR(m.measured_at, locale)}
+                        {formatDateTR(m.measured_at, locale, timezone)}
                       </td>
                       <td className="p-2">
                         <div className="flex items-center gap-1 justify-end">
@@ -571,7 +573,7 @@ export function TrackingHistory({ type, accessLevel }: TrackingHistoryProps) {
                   ) : (
                     <>
                       <td className="p-3">
-                        {formatDateTR(m.measured_at, locale)}
+                        {formatDateTR(m.measured_at, locale, timezone)}
                       </td>
                       <td
                         className={cn(
@@ -642,7 +644,7 @@ export function TrackingHistory({ type, accessLevel }: TrackingHistoryProps) {
               {isEditing ? (
                 <div className="space-y-3">
                   <p className="text-xs text-muted-foreground">
-                    {formatDateTR(m.measured_at, locale)}
+                    {formatDateTR(m.measured_at, locale, timezone)}
                   </p>
                   <div className="grid grid-cols-2 gap-2">
                     <div>
@@ -695,7 +697,7 @@ export function TrackingHistory({ type, accessLevel }: TrackingHistoryProps) {
                 <div>
                   <div className="flex items-center justify-between gap-2">
                     <span className="text-xs text-muted-foreground">
-                      {formatDateTR(m.measured_at, locale)}
+                      {formatDateTR(m.measured_at, locale, timezone)}
                     </span>
                     {canEdit && !isDeleting && (
                       <EditDeleteActions
