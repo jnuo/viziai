@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
 import { Loader2, Settings, User, Globe, Clock, Palette } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -47,23 +47,24 @@ interface Preferences {
 }
 
 export default function PreferencesPage() {
-  const { status } = useSession();
-  const { setTheme } = useTheme();
+  const { data: session, status } = useSession();
+  const { theme: currentTheme, setTheme } = useTheme();
   const router = useRouter();
   const { addToast } = useToast();
   const t = useTranslations("pages.preferences");
   const tc = useTranslations("common");
+  const currentLocale = useLocale();
   const { switchTo } = useLocaleSwitch();
 
   const [prefs, setPrefs] = useState<Preferences | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  // Form state
-  const [name, setName] = useState("");
-  const [locale, setLocaleValue] = useState("");
-  const [timezone, setTimezone] = useState("");
-  const [theme, setThemeValue] = useState("");
+  // Form state — seeded from client-side values so dropdowns are never empty
+  const [name, setName] = useState(session?.user?.name || "");
+  const [locale, setLocaleValue] = useState(currentLocale);
+  const [timezone, setTimezone] = useState("Europe/Istanbul");
+  const [theme, setThemeValue] = useState(currentTheme || "system");
 
   useEffect(() => {
     if (status !== "authenticated") return;
