@@ -92,121 +92,69 @@
     return { low: null, high: null };
   }
 
+  // Extract labeled field from a .columnContainer row
+  // e.g. "Sonuç : 111.3" → "111.3", "Referans Değeri : 14-72" → "14-72"
+  function extractField(bodyRows, prefix) {
+    for (const row of bodyRows) {
+      const text = row.textContent.trim();
+      if (text.startsWith(prefix)) {
+        return text.slice(prefix.length).trim();
+      }
+    }
+    return null;
+  }
+
   // Scrape metrics from an expanded accordion panel
+  // Each .tahlilList card is one metric with header (name) and body (value/unit/ref)
   function scrapeMetrics(panel) {
     const metrics = [];
-    // Look for metric cards/rows within the panel
-    const rows = panel.querySelectorAll(
-      ".tahlilList .card, .tahlilList tr, .tahlilList .list-group-item",
-    );
+    const cards = panel.querySelectorAll(".tahlilList");
 
-    if (rows.length === 0) {
-      // Try alternative selectors
-      const altRows = panel.querySelectorAll(
-        "table tbody tr, .result-row, [class*='tahlil']",
-      );
-      altRows.forEach((row) => parseMetricRow(row, metrics));
-    } else {
-      rows.forEach((row) => parseMetricRow(row, metrics));
-    }
+    cards.forEach((card) => {
+      const nameEl = card.querySelector(".tahlilHeader span");
+      if (!nameEl) return;
+      const name = nameEl.textContent.trim();
+      if (!name) return;
+
+      const bodyRows = card.querySelectorAll(".tahlilBody .columnContainer");
+      const valueStr = extractField(bodyRows, "Sonuç :");
+      const unit = extractField(bodyRows, "Sonuç Birimi :");
+      const refStr = extractField(bodyRows, "Referans Değeri :");
+
+      // Skip non-numeric values (Pozitif/Negatif etc.)
+      const value = parseNumericValue(valueStr);
+      if (value === null) return;
+
+      const { low, high } = parseRefRange(refStr);
+
+      metrics.push({
+        name,
+        value,
+        unit: unit || undefined,
+        ref_low: low,
+        ref_high: high,
+      });
+    });
 
     return metrics;
   }
 
-  function parseMetricRow(row, metrics) {
-    // Try to find name, value, unit, reference from the row
-    const cells = row.querySelectorAll("td, .card-body > div, span, p");
-    if (cells.length < 2) return;
-
-    // Strategy: look for text content patterns
-    const texts = Array.from(cells).map((c) => c.textContent.trim());
-
-    // Find the metric name (usually first non-empty cell)
-    let name = null;
-    let valueStr = null;
-    let unit = null;
-    let refStr = null;
-
-    // Try structured approach: name in first significant cell, value/unit/ref in others
-    for (const cell of cells) {
-      const text = cell.textContent.trim();
-      if (!text) continue;
-
-      // If cell has a specific class hint
-      const cls = cell.className || "";
-      if (
-        cls.includes("test-name") ||
-        cls.includes("testName") ||
-        cls.includes("tahlilAdi")
-      ) {
-        name = text;
-      } else if (
-        cls.includes("test-value") ||
-        cls.includes("testValue") ||
-        cls.includes("sonuc")
-      ) {
-        valueStr = text;
-      } else if (cls.includes("test-unit") || cls.includes("birim")) {
-        unit = text;
-      } else if (cls.includes("test-ref") || cls.includes("referans")) {
-        refStr = text;
-      }
-    }
-
-    // Fallback: use positional heuristic for table rows
-    if (!name && cells.length >= 2) {
-      const cellTexts = Array.from(cells)
-        .map((c) => c.textContent.trim())
-        .filter(Boolean);
-
-      if (cellTexts.length >= 2) {
-        name = cellTexts[0];
-        valueStr = cellTexts[1];
-        if (cellTexts.length >= 3) unit = cellTexts[2];
-        if (cellTexts.length >= 4) refStr = cellTexts[3];
-      }
-    }
-
-    if (!name || !valueStr) return;
-
-    // Skip non-numeric values (Pozitif/Negatif etc.)
-    const value = parseNumericValue(valueStr);
-    if (value === null) return;
-
-    const { low, high } = parseRefRange(refStr);
-
-    metrics.push({
-      name: name,
-      value: value,
-      unit: unit || undefined,
-      ref_low: low,
-      ref_high: high,
-    });
-  }
-
   // Parse header to get date and hospital
   function parseHeader(header) {
-    const text = header.textContent || "";
     let date = null;
     let hospital = null;
 
-    // Find date pattern DD.MM.YYYY
-    const dateMatch = text.match(/(\d{2}\.\d{2}\.\d{4})/);
-    if (dateMatch) {
-      date = parseDate(dateMatch[1]);
+    // Date is in .tAcordionDate span (contains "26 Aralık 2023 26.12.2023")
+    const dateEl = header.querySelector(".tAcordionDate");
+    if (dateEl) {
+      const dateMatch = dateEl.textContent.match(/(\d{2}\.\d{2}\.\d{4})/);
+      if (dateMatch) date = parseDate(dateMatch[1]);
     }
 
-    // Hospital is typically after a separator or in a specific element
-    const spans = header.querySelectorAll("span, div, small");
-    for (const span of spans) {
-      const t = span.textContent.trim();
-      // Skip if it's just the date
-      if (t.match(/^\d{2}\.\d{2}\.\d{4}$/)) continue;
-      // Skip very short strings
-      if (t.length > 3 && !t.match(/^\d/) && t !== "Tahlil" && t !== "Test") {
-        hospital = t;
-        break;
-      }
+    // Hospital is in .hastaneAdi div
+    const hospitalEl = header.querySelector(".hastaneAdi");
+    if (hospitalEl) {
+      hospital = hospitalEl.textContent.trim();
     }
 
     return { date, hospital };
@@ -261,20 +209,15 @@
 
   // Scrape a single report from an accordion item
   async function scrapeReport(item) {
-    const header = item.querySelector(
-      ".accordion-header, .accordion-button, .card-header",
-    );
+    const header = item.querySelector(".accordion-header");
     if (!header) return null;
 
     const { date, hospital } = parseHeader(header);
     if (!date) return null;
 
     // Ensure panel is expanded to scrape metrics
-    const collapseBtn =
-      header.querySelector("button[data-bs-toggle], [data-toggle]") || header;
-    const panel = item.querySelector(
-      ".accordion-collapse, .collapse, .card-body",
-    );
+    const collapseBtn = header.querySelector("[data-bs-toggle]") || header;
+    const panel = item.querySelector(".accordion-collapse");
 
     if (panel && !panel.classList.contains("show")) {
       collapseBtn.click();
@@ -322,7 +265,7 @@
     setButtonState(btn, "loading", LABELS.importing);
 
     const items = document.querySelectorAll(
-      "#accordionTahlilListe .accordion-item, #accordionTahlilListe > .card",
+      "#accordionTahlilListe .accordion-item",
     );
 
     const reports = [];
@@ -346,21 +289,13 @@
     }
   }
 
-  // Inject buttons into the page
-  async function init() {
-    try {
-      await waitForElement("#accordionTahlilListe");
-    } catch {
-      // Accordion not found — not on the right page
-      return;
-    }
-
-    const accordion = document.querySelector("#accordionTahlilListe");
-    if (!accordion) return;
-
-    // Check if API key is configured
-    const { apiKey } = await chrome.storage.local.get("apiKey");
-    if (!apiKey) return;
+  // Inject buttons into the accordion
+  function injectButtons(accordion) {
+    // Remove any previously injected buttons
+    accordion.parentElement
+      .querySelectorAll(".viziai-import-all")
+      .forEach((el) => el.remove());
+    accordion.querySelectorAll(".viziai-btn-sm").forEach((el) => el.remove());
 
     // Add "Import All" button at the top
     const importAllBtn = createButton(
@@ -371,10 +306,10 @@
     accordion.parentElement.insertBefore(importAllBtn, accordion);
 
     // Add "Send to ViziAI" button per accordion item
-    const items = accordion.querySelectorAll(".accordion-item, > .card");
+    const items = accordion.querySelectorAll(".accordion-item");
 
     items.forEach((item) => {
-      const header = item.querySelector(".accordion-header, .card-header");
+      const header = item.querySelector(".accordion-header");
       if (!header) return;
 
       const btn = createButton(
@@ -385,6 +320,52 @@
       header.style.position = "relative";
       header.appendChild(btn);
     });
+  }
+
+  // Watch for accordion changes — AJAX may replace the entire element or just its children
+  function observeForAccordion() {
+    let currentAccordion = null;
+
+    function tryInject() {
+      const accordion = document.querySelector("#accordionTahlilListe");
+      if (!accordion) return;
+
+      // Track if the accordion element was replaced
+      if (accordion !== currentAccordion) {
+        currentAccordion = accordion;
+      }
+
+      const items = accordion.querySelectorAll(".accordion-item");
+      // Only inject if there are items and buttons aren't already present
+      const hasButtons =
+        accordion.parentElement?.querySelector(".viziai-import-all");
+      if (items.length > 0 && !hasButtons) {
+        injectButtons(accordion);
+      }
+    }
+
+    // Observe body for any DOM changes that might affect the accordion
+    const observer = new MutationObserver(tryInject);
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    // Also try immediately
+    tryInject();
+  }
+
+  // Inject buttons into the page
+  async function init() {
+    try {
+      await waitForElement("#accordionTahlilListe");
+    } catch {
+      // Accordion not found — not on the right page
+      return;
+    }
+
+    // Check if API key is configured
+    const { apiKey } = await chrome.storage.local.get("apiKey");
+    if (!apiKey) return;
+
+    observeForAccordion();
   }
 
   // Run when DOM is ready
