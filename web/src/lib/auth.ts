@@ -219,6 +219,31 @@ export async function requireAuth(): Promise<string | null> {
   return userId;
 }
 
+/**
+ * Authenticate via Bearer token (API key) from the Authorization header.
+ * Used by the Chrome extension for server-to-server calls.
+ * Returns the user ID or null if invalid.
+ */
+export async function requireApiKey(request: Request): Promise<string | null> {
+  const authHeader = request.headers.get("authorization");
+  if (!authHeader?.startsWith("Bearer ")) return null;
+
+  const token = authHeader.slice(7).trim();
+  if (!token) return null;
+
+  try {
+    const result = await sql`
+      SELECT id FROM users WHERE api_key = ${token}::uuid
+    `;
+    if (result.length === 0) return null;
+    Sentry.setUser({ id: result[0].id });
+    return result[0].id;
+  } catch (error) {
+    reportError(error, { op: "auth.requireApiKey" });
+    return null;
+  }
+}
+
 export async function requireProfileOwner(
   profileId: string,
 ): Promise<string | null> {

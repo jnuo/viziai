@@ -44,6 +44,8 @@ export async function DELETE(request: Request) {
 
     await sql`DELETE FROM pending_uploads WHERE profile_id = ${profileId}`;
 
+    await sql`DELETE FROM pending_imports WHERE profile_id = ${profileId}`;
+
     console.log(`[API] Cleanup for profile ${profileId}: all data deleted`);
 
     return NextResponse.json({

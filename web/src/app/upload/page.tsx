@@ -8,6 +8,7 @@ import React, {
   useRef,
   Suspense,
 } from "react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useDropzone } from "react-dropzone";
 import {
@@ -19,6 +20,9 @@ import {
   AlertCircle,
   ChevronLeft,
   ArrowRight,
+  Chrome,
+  Key,
+  ExternalLink,
 } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { ExtractionLoading } from "@/components/extraction-loading";
@@ -590,6 +594,59 @@ function UploadPageContent(): React.ReactElement {
                     </p>
                   </>
                 )}
+              </div>
+            )}
+
+            {/* e-Nabız Import Option */}
+            {(status === "idle" || status === "error") && (
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-card px-2 text-muted-foreground">
+                    {t("orImportFromEnabiz")}
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {(status === "idle" || status === "error") && (
+              <div className="rounded-lg border bg-muted/30 p-5 space-y-4">
+                <div>
+                  <h3 className="font-medium text-sm">
+                    {t("enabizImportTitle")}
+                  </h3>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {t("enabizImportDescription")}
+                  </p>
+                </div>
+
+                <ol className="text-xs text-muted-foreground space-y-2 list-decimal list-inside">
+                  <li>{t("enabizStep1")}</li>
+                  <li>{t("enabizStep2")}</li>
+                  <li>{t("enabizStep3")}</li>
+                </ol>
+
+                <div className="flex flex-wrap gap-2">
+                  <Button variant="outline" size="sm" asChild>
+                    <a
+                      href="https://chromewebstore.google.com/detail/viziai-e-nabiz-import/placeholder"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Chrome className="h-4 w-4 mr-1.5" />
+                      {t("installExtension")}
+                      <ExternalLink className="h-3 w-3 ml-1.5 opacity-50" />
+                    </a>
+                  </Button>
+                  <Button variant="outline" size="sm" asChild>
+                    <Link href="/settings/api-keys">
+                      <Key className="h-4 w-4 mr-1.5" />
+                      {t("createApiKey")}
+                    </Link>
+                  </Button>
+                </div>
               </div>
             )}
 

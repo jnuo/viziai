@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div class="popup">
+      <div class="header">
+        <div class="logo">
+          <span class="logo-vizi">Vizi</span><span class="logo-ai">AI</span>
+        </div>
+        <span class="header-badge">e-Nabız</span>
+      </div>
+
+      <div id="setup" class="section">
+        <p class="setup-hint">
+          API anahtarınızı
+          <a href="https://www.viziai.app/settings/api-keys" target="_blank"
+            >viziai.app</a
+          >'den oluşturun ve aşağıya yapıştırın.
+        </p>
+        <label for="apiKey">API Key</label>
+        <input
+          type="password"
+          id="apiKey"
+          placeholder="viz_..."
+          autocomplete="off"
+        />
+        <button id="testBtn" class="btn btn-primary">Bağlantıyı Test Et</button>
+        <div id="testResult" class="result hidden"></div>
+      </div>
+
+      <div id="connected" class="section hidden">
+        <div class="status-badge">
+          <span class="dot"></span>
+          <span>Bağlı:</span>
+          <span id="profileName" class="profile-name"></span>
+        </div>
+        <p class="connected-hint">
+          enabiz.gov.tr → Tahlillerim sayfasında<br />
+          "ViziAI'a Gönder" butonlarını göreceksiniz.
+        </p>
+        <button id="disconnectBtn" class="btn btn-secondary">
+          Bağlantıyı Kes
+        </button>
+      </div>
+
+      <div class="footer">
+        <a href="https://www.viziai.app" target="_blank">viziai.app</a>
+      </div>
+    </div>
+    <script src="popup.js"></script>
+  </body>
+</html>
