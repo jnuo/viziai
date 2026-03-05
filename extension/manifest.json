@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "ViziAI — e-Nabız",
+  "version": "1.0.0",
+  "description": "e-Nabız tahlil sonuçlarınızı tek tıkla ViziAI'a aktarın.",
+  "permissions": ["storage"],
+  "host_permissions": ["https://enabiz.gov.tr/*", "https://www.viziai.app/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://enabiz.gov.tr/Home/Tahlillerim*",
+        "https://enabiz.gov.tr/home/tahlillerim*"
+      ],
+      "js": ["content.js"],
+      "css": ["styles.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

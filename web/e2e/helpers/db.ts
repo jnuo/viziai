@@ -70,12 +70,15 @@ export async function deleteTestUser(userId: string): Promise<void> {
   // Delete in dependency order — clean up all tables referencing profile
   for (const pid of profileIds) {
     await sql`DELETE FROM pending_uploads WHERE profile_id = ${pid}`;
+    await sql`DELETE FROM pending_imports WHERE profile_id = ${pid}`;
+    await sql`DELETE FROM api_keys WHERE profile_id = ${pid}`;
     await sql`DELETE FROM metrics WHERE report_id IN (
       SELECT id FROM reports WHERE profile_id = ${pid}
     )`;
     await sql`DELETE FROM reports WHERE profile_id = ${pid}`;
     await sql`DELETE FROM processed_files WHERE profile_id = ${pid}`;
     await sql`DELETE FROM tracking_measurements WHERE profile_id = ${pid}`;
+    await sql`DELETE FROM metric_preferences WHERE profile_id = ${pid}`;
   }
   await sql`DELETE FROM user_access WHERE user_id_new = ${userId}`;
   await sql`DELETE FROM profiles WHERE display_name = ${TEST_PROFILE_NAME}`;

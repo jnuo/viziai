@@ -147,9 +147,14 @@ export async function DELETE(
     // 4. Delete processed_files record
     await sql`DELETE FROM processed_files WHERE id = ${id}`;
 
-    // 5. Clean up pending_uploads (best-effort)
+    // 5. Clean up pending_uploads and pending_imports (best-effort)
     await sql`
       DELETE FROM pending_uploads
+      WHERE profile_id = ${file.profile_id}
+        AND content_hash = ${file.content_hash}
+    `;
+    await sql`
+      DELETE FROM pending_imports
       WHERE profile_id = ${file.profile_id}
         AND content_hash = ${file.content_hash}
     `;

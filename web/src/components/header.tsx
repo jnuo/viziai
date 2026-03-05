@@ -30,6 +30,7 @@ import {
   Globe,
   Check,
   Settings,
+  Key,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { locales, localeLabels } from "@/i18n/config";
@@ -214,6 +215,13 @@ export function Header({
                   >
                     <Settings className="h-4 w-4" />
                     {t("settings")}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => router.push("/settings/api-keys")}
+                    className="cursor-pointer"
+                  >
+                    <Key className="h-4 w-4" />
+                    {t("apiKeys")}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   {mounted && (
