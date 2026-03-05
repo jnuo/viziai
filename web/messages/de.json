@@ -38,6 +38,7 @@
     "hoursAgo": "vor {count} Std.",
     "copyright": "© 2026 ViziAI. Alle Rechte vorbehalten.",
     "privacyLink": "Datenschutzrichtlinie",
+    "faqLink": "FAQ",
     "blog": "Blog",
     "toggleTheme": "Design wechseln",
     "accessLevel": {
@@ -81,6 +82,9 @@
         "familyProfiles": "Familienprofile",
         "metricAliases": "Metrik-Aliase",
         "description": "Verfolgen Sie Bluttests aus türkischen, englischen, deutschen, französischen und spanischen Laboren — alles in einem Dashboard."
+      },
+      "faq": {
+        "title": "Häufig gestellte Fragen"
       }
     },
     "login": {
@@ -544,6 +548,83 @@
       "title": "Kontakt",
       "description": "Für datenschutzbezogene Fragen oder Datenanfragen kontaktieren Sie uns unter:",
       "email": "privacy@viziai.app"
+    }
+  },
+  "faq": {
+    "title": "Häufig gestellte Fragen",
+    "subtitle": "Alles, was Sie über ViziAI wissen müssen",
+    "questions": {
+      "whatIsViziAI": {
+        "q": "Was ist ViziAI?",
+        "a": "ViziAI ist eine Gesundheits-Tracking-Plattform, mit der Sie Bluttestergebnisse als PDF hochladen und mit KI analysieren können. Verfolgen Sie Ihre Werte im Zeitverlauf mit visuellen Diagrammen und verwalten Sie die Ergebnisse von Familienmitgliedern in separaten Profilen."
+      },
+      "howToUpload": {
+        "q": "Wie lade ich meine Testergebnisse hoch?",
+        "a": "Klicken Sie auf \"Bericht hochladen\" im Dashboard und ziehen Sie Ihre PDF-Datei per Drag & Drop. Unsere KI liest das PDF und extrahiert automatisch Messwertnamen, Werte und Referenzbereiche. Überprüfen und bestätigen Sie die Ergebnisse, und sie werden in Ihrem Profil gespeichert."
+      },
+      "enabizImport": {
+        "q": "Kann ich aus e-Nabız importieren?",
+        "a": "Ja! Installieren Sie unsere Chrome-Erweiterung, erstellen Sie einen API-Schlüssel und fügen Sie ihn in die Erweiterung ein. Gehen Sie dann auf enabiz.gov.tr zur Tahlillerim-Seite und klicken Sie auf \"An ViziAI senden\", um Ihre Ergebnisse mit einem Klick zu übertragen."
+      },
+      "dataSecure": {
+        "q": "Sind meine Daten sicher?",
+        "a": "Ja. Ihre Daten werden in einer sicheren Neon Postgres-Datenbank gespeichert und alle Verbindungen nutzen HTTPS-Verschlüsselung. Hochgeladene PDFs werden nach der Verarbeitung gelöscht. Nur Sie und Personen, denen Sie ausdrücklich Zugriff gewähren, können Ihre Daten einsehen."
+      },
+      "familyTracking": {
+        "q": "Wie verfolge ich die Daten meiner Familienmitglieder?",
+        "a": "Sie können für jedes Familienmitglied ein separates Profil erstellen. Teilen Sie Profile mit anderen und legen Sie Zugriffsebenen als Eigentümer, Bearbeiter oder Betrachter fest."
+      },
+      "isFree": {
+        "q": "Ist ViziAI kostenlos?",
+        "a": "ViziAI ist derzeit komplett kostenlos. Wir werden in Zukunft einen kostenpflichtigen Plan mit erweiterten Funktionen hinzufügen, aber es wird immer eine kostenlose Stufe geben."
+      },
+      "languages": {
+        "q": "Welche Sprachen werden unterstützt?",
+        "a": "Die ViziAI-Oberfläche unterstützt Türkisch, Englisch, Spanisch, Deutsch und Französisch. Unsere KI kann auch Labor-PDFs in allen fünf Sprachen verarbeiten."
+      },
+      "testsAbroad": {
+        "q": "Kann ich im Ausland durchgeführte Tests hochladen?",
+        "a": "Ja! Sie können Laborberichte aus jedem Land in unterstützten Sprachen (Türkisch, Englisch, Spanisch, Deutsch, Französisch) hochladen. Alle Ergebnisse werden in einem einzigen Dashboard zusammengeführt."
+      },
+      "afterUpload": {
+        "q": "Was passiert nach dem PDF-Upload?",
+        "a": "Unsere KI liest Ihr PDF und extrahiert jeden Messwertnamen, Wert und Referenzbereich. Sie können die Ergebnisse in einem Überprüfungsschritt ansehen, bearbeiten und bestätigen. Nach der Bestätigung werden die Daten in Ihrem Profil gespeichert und erscheinen auf Ihrem Dashboard."
+      },
+      "whoCanSee": {
+        "q": "Wer kann meine Daten sehen?",
+        "a": "Nur Sie und Personen, denen Sie über die Profil-Freigabeeinstellungen ausdrücklich Zugriff gewähren. Sie können für jede Person Zugriffsebenen als Eigentümer, Bearbeiter oder Betrachter festlegen."
+      },
+      "deleteData": {
+        "q": "Kann ich meine Daten löschen?",
+        "a": "Ja. Sie können einzelne Berichte, Profile oder Ihr gesamtes Konto auf der Einstellungsseite löschen. Gelöschte Daten werden dauerhaft aus der Datenbank entfernt und können nicht wiederhergestellt werden."
+      },
+      "colorMeaning": {
+        "q": "Was bedeuten die Farben?",
+        "a": "Grün zeigt an, dass der Wert im Referenzbereich liegt. Bernstein signalisiert Grenzwerte. Terrakotta (Orange-Braun) bedeutet, dass der Wert außerhalb des Referenzbereichs liegt. Wir verwenden Terrakotta statt leuchtendem Rot, um unnötige Beunruhigung zu vermeiden."
+      },
+      "referenceRanges": {
+        "q": "Woher stammen die Referenzbereiche?",
+        "a": "Die Referenzbereiche werden direkt aus dem hochgeladenen PDF extrahiert — wir verwenden die tatsächlichen Bereiche Ihres Labors. Verschiedene Labore können unterschiedliche Bereiche verwenden, und das ist normal."
+      },
+      "mobileApp": {
+        "q": "Gibt es eine mobile App?",
+        "a": "ViziAI ist derzeit eine Webanwendung, aber sie ist für eine hervorragende Darstellung auf Mobilgeräten optimiert. Besuchen Sie viziai.app im Browser Ihres Telefons für das volle Erlebnis."
+      },
+      "chromeExtension": {
+        "q": "Wie funktioniert die Chrome-Erweiterung?",
+        "a": "Unsere Chrome-Erweiterung integriert sich in die e-Nabız-Website. Nach der Installation und dem Einfügen Ihres API-Schlüssels erscheint ein \"An ViziAI senden\"-Button auf der Tahlillerim-Seite in e-Nabız. Klicken Sie darauf, um Ihre Ergebnisse direkt zu übertragen, ohne ein PDF hochladen zu müssen."
+      }
+    },
+    "contact": {
+      "title": "Noch Fragen?",
+      "subtitle": "Senden Sie uns eine Nachricht und wir melden uns bei Ihnen.",
+      "name": "Ihr Name",
+      "email": "E-Mail",
+      "message": "Ihre Nachricht",
+      "send": "Senden",
+      "sending": "Wird gesendet…",
+      "success": "Nachricht gesendet! Wir melden uns bald bei Ihnen.",
+      "error": "Senden fehlgeschlagen. Bitte versuchen Sie es erneut."
     }
   },
   "blog": {

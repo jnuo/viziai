@@ -220,6 +220,20 @@ export async function sendInviteEmail({
   );
 }
 
+export async function sendContactEmail(params: {
+  name: string;
+  email: string;
+  message: string;
+}): Promise<void> {
+  await resend.emails.send({
+    from: FROM,
+    to: "support@viziai.app",
+    replyTo: params.email,
+    subject: `[ViziAI Contact] ${params.name}`,
+    text: `Name: ${params.name}\nEmail: ${params.email}\n\n${params.message}`,
+  });
+}
+
 interface SendAccessGrantedEmailParams {
   to: string;
   inviterName: string;

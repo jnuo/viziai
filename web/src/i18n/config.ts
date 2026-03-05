@@ -31,6 +31,13 @@ export const staticPages = {
     de: "datenschutz",
     fr: "confidentialite",
   },
+  faq: {
+    tr: "sss",
+    en: "faq",
+    es: "preguntas-frecuentes",
+    de: "faq",
+    fr: "faq",
+  },
 } as const;
 
 export type StaticPageId = keyof typeof staticPages;

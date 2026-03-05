@@ -38,6 +38,7 @@
     "hoursAgo": "{count} saat önce",
     "copyright": "© 2026 ViziAI. Tüm hakları saklıdır.",
     "privacyLink": "Gizlilik Politikası",
+    "faqLink": "SSS",
     "blog": "Blog",
     "toggleTheme": "Tema değiştir",
     "accessLevel": {
@@ -81,6 +82,9 @@
         "familyProfiles": "Aile Profilleri",
         "metricAliases": "Metrik Takma Ad",
         "description": "Türkçe, İngilizce, Almanca, Fransızca ve İspanyolca laboratuvar sonuçlarını tek bir panoda takip edin."
+      },
+      "faq": {
+        "title": "Sıkça Sorulan Sorular"
       }
     },
     "login": {
@@ -544,6 +548,83 @@
       "title": "İletişim",
       "description": "Gizlilikle ilgili sorular veya veri talepleri için bize ulaşın:",
       "email": "privacy@viziai.app"
+    }
+  },
+  "faq": {
+    "title": "Sıkça Sorulan Sorular",
+    "subtitle": "ViziAI hakkında merak ettikleriniz",
+    "questions": {
+      "whatIsViziAI": {
+        "q": "ViziAI nedir?",
+        "a": "ViziAI, kan tahlili sonuçlarınızı PDF olarak yüklemenizi ve yapay zeka ile analiz etmenizi sağlayan bir sağlık takip platformudur. Değerlerinizi zaman içinde grafiklerle takip edebilir, aile bireylerinin sonuçlarını ayrı profillerde yönetebilirsiniz."
+      },
+      "howToUpload": {
+        "q": "Tahlil sonuçlarımı nasıl yüklerim?",
+        "a": "Dashboard'dan \"Tahlil Yükle\" butonuna tıklayın ve PDF dosyanızı sürükleyip bırakın. Yapay zekamız PDF'i okuyarak metrik adlarını, değerleri ve referans aralıklarını otomatik olarak çıkarır. Sonuçları inceleyip onayladıktan sonra profilinize kaydedilir."
+      },
+      "enabizImport": {
+        "q": "e-Nabız'dan aktarım yapabilir miyim?",
+        "a": "Evet! Chrome eklentimizi yükleyin, bir API anahtarı oluşturun ve eklentiye yapıştırın. Ardından enabiz.gov.tr'deki Tahlillerim sayfasında \"ViziAI'a Gönder\" butonuna tıklayarak sonuçlarınızı tek tıkla aktarabilirsiniz."
+      },
+      "dataSecure": {
+        "q": "Verilerim güvende mi?",
+        "a": "Evet. Verileriniz güvenli bir Neon Postgres veritabanında saklanır ve tüm bağlantılar HTTPS şifreleme kullanır. Yüklenen PDF'ler işleme sonrası silinir. Verilerinize yalnızca siz ve erişim izni verdiğiniz kişiler ulaşabilir."
+      },
+      "familyTracking": {
+        "q": "Aile bireylerimin verilerini nasıl takip ederim?",
+        "a": "Her aile üyesi için ayrı bir profil oluşturabilirsiniz. Profilleri diğer kişilerle paylaşabilir ve sahip, düzenleyici veya görüntüleyici olarak erişim seviyesi belirleyebilirsiniz."
+      },
+      "isFree": {
+        "q": "ViziAI ücretsiz mi?",
+        "a": "Şu anda ViziAI tamamen ücretsizdir. İleride gelişmiş özellikler sunan ücretli bir plan ekleyeceğiz, ancak her zaman ücretsiz bir katman olacak."
+      },
+      "languages": {
+        "q": "Hangi dilleri destekliyorsunuz?",
+        "a": "ViziAI arayüzü Türkçe, İngilizce, İspanyolca, Almanca ve Fransızca dillerini destekler. Yapay zekamız bu beş dildeki laboratuvar PDF'lerini de işleyebilir."
+      },
+      "testsAbroad": {
+        "q": "Yurt dışında yaptırdığım testleri yükleyebilir miyim?",
+        "a": "Evet! Desteklenen dillerdeki (Türkçe, İngilizce, İspanyolca, Almanca, Fransızca) herhangi bir ülkenin laboratuvar raporlarını yükleyebilirsiniz. Tüm sonuçlar tek bir panoda birleştirilir."
+      },
+      "afterUpload": {
+        "q": "PDF yükledikten sonra ne olur?",
+        "a": "Yapay zekamız PDF'inizi okur ve her metrik adını, değerini ve referans aralığını çıkarır. Sonuçları bir inceleme adımında görebilir, düzeltebilir ve onaylayabilirsiniz. Onayladıktan sonra veriler profilinize kaydedilir ve dashboard'da görünür."
+      },
+      "whoCanSee": {
+        "q": "Verilerimi kim görebilir?",
+        "a": "Yalnızca siz ve profil paylaşım ayarlarından açıkça erişim izni verdiğiniz kişiler. Her paylaşım için sahip, düzenleyici veya görüntüleyici olarak erişim seviyesi belirleyebilirsiniz."
+      },
+      "deleteData": {
+        "q": "Verilerimi silebilir miyim?",
+        "a": "Evet. Ayarlar sayfasından tek tek raporları, profilleri veya tüm hesabınızı silebilirsiniz. Silinen veriler veritabanından kalıcı olarak kaldırılır ve geri alınamaz."
+      },
+      "colorMeaning": {
+        "q": "Renkler ne anlama geliyor?",
+        "a": "Yeşil, değerin referans aralığında olduğunu gösterir. Sarı/kehribar, sınır değerleri ifade eder. Terracotta (turuncu-kahve), değerin referans aralığının dışında olduğunu belirtir. Parlak kırmızı yerine terracotta kullanarak gereksiz panik yaratmaktan kaçınıyoruz."
+      },
+      "referenceRanges": {
+        "q": "Referans aralıkları nereden geliyor?",
+        "a": "Referans aralıkları doğrudan yüklediğiniz PDF'den çıkarılır — yani laboratuvarınızın belirlediği gerçek aralıkları kullanırız. Farklı laboratuvarlar farklı aralıklar kullanabilir ve bu normaldir."
+      },
+      "mobileApp": {
+        "q": "Mobil uygulama var mı?",
+        "a": "ViziAI şu anda bir web uygulamasıdır, ancak mobil cihazlarda mükemmel çalışacak şekilde tasarlanmıştır. Telefonunuzun tarayıcısından viziai.app adresine giderek tam deneyimi yaşayabilirsiniz."
+      },
+      "chromeExtension": {
+        "q": "Chrome eklentisi nasıl çalışır?",
+        "a": "Chrome eklentimiz e-Nabız web sitesine entegre olur. Yükledikten ve API anahtarınızı yapıştırdıktan sonra, e-Nabız'daki Tahlillerim sayfasında bir \"ViziAI'a Gönder\" butonu belirir. Bu butona tıklayarak sonuçlarınızı PDF yüklemeye gerek kalmadan doğrudan aktarabilirsiniz."
+      }
+    },
+    "contact": {
+      "title": "Hâlâ sorunuz mu var?",
+      "subtitle": "Bize mesaj gönderin, en kısa sürede döneceğiz.",
+      "name": "Adınız",
+      "email": "E-posta",
+      "message": "Mesajınız",
+      "send": "Gönder",
+      "sending": "Gönderiliyor…",
+      "success": "Mesajınız gönderildi! En kısa sürede size döneceğiz.",
+      "error": "Gönderilemedi. Lütfen tekrar deneyin."
     }
   },
   "blog": {

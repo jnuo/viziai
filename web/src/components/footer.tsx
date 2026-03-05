@@ -23,6 +23,13 @@ export function Footer() {
           </Link>
           <span className="text-border">|</span>
           <Link
+            href={`/${locale}/${staticPages.faq[locale as Locale]}`}
+            className="hover:text-foreground transition-colors"
+          >
+            {t("faqLink")}
+          </Link>
+          <span className="text-border">|</span>
+          <Link
             href={`/${locale}/blog`}
             className="hover:text-foreground transition-colors"
           >

@@ -38,6 +38,7 @@
     "hoursAgo": "{count}h ago",
     "copyright": "© 2026 ViziAI. All rights reserved.",
     "privacyLink": "Privacy Policy",
+    "faqLink": "FAQ",
     "blog": "Blog",
     "toggleTheme": "Toggle theme",
     "accessLevel": {
@@ -81,6 +82,9 @@
         "familyProfiles": "Family Profiles",
         "metricAliases": "Metric Aliases",
         "description": "Track blood tests from Turkish, English, German, French, and Spanish labs — all in one dashboard."
+      },
+      "faq": {
+        "title": "Frequently Asked Questions"
       }
     },
     "login": {
@@ -544,6 +548,83 @@
       "title": "Contact",
       "description": "For privacy-related questions or data requests, contact us at:",
       "email": "privacy@viziai.app"
+    }
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Everything you need to know about ViziAI",
+    "questions": {
+      "whatIsViziAI": {
+        "q": "What is ViziAI?",
+        "a": "ViziAI is a health tracking platform that lets you upload blood test results as PDFs and analyze them with AI. Track your values over time with visual charts and manage family members' results in separate profiles."
+      },
+      "howToUpload": {
+        "q": "How do I upload my test results?",
+        "a": "Click \"Upload Report\" from the dashboard and drag and drop your PDF file. Our AI reads the PDF and automatically extracts metric names, values, and reference ranges. Review and confirm the results, and they'll be saved to your profile."
+      },
+      "enabizImport": {
+        "q": "Can I import from e-Nabız?",
+        "a": "Yes! Install our Chrome extension, create an API key and paste it into the extension. Then go to enabiz.gov.tr's Tahlillerim page and click \"Send to ViziAI\" to transfer your results with one click."
+      },
+      "dataSecure": {
+        "q": "Is my data secure?",
+        "a": "Yes. Your data is stored in a secure Neon Postgres database and all connections use HTTPS encryption. Uploaded PDFs are deleted after processing. Only you and people you explicitly grant access to can view your data."
+      },
+      "familyTracking": {
+        "q": "How do I track family members' data?",
+        "a": "You can create a separate profile for each family member. Share profiles with others and set access levels as owner, editor, or viewer."
+      },
+      "isFree": {
+        "q": "Is ViziAI free?",
+        "a": "ViziAI is currently completely free. We'll add a paid plan with advanced features in the future, but there will always be a free tier."
+      },
+      "languages": {
+        "q": "What languages do you support?",
+        "a": "ViziAI's interface supports Turkish, English, Spanish, German, and French. Our AI can also process lab PDFs in all five languages."
+      },
+      "testsAbroad": {
+        "q": "Can I upload tests done abroad?",
+        "a": "Yes! You can upload lab reports from any country in supported languages (Turkish, English, Spanish, German, French). All results are unified in a single dashboard."
+      },
+      "afterUpload": {
+        "q": "What happens after I upload a PDF?",
+        "a": "Our AI reads your PDF and extracts every metric name, value, and reference range. You can review, edit, and confirm the results in a review step. Once confirmed, the data is saved to your profile and appears on your dashboard."
+      },
+      "whoCanSee": {
+        "q": "Who can see my data?",
+        "a": "Only you and people you explicitly grant access to through profile sharing settings. You can set access levels for each person as owner, editor, or viewer."
+      },
+      "deleteData": {
+        "q": "Can I delete my data?",
+        "a": "Yes. You can delete individual reports, profiles, or your entire account from the Settings page. Deleted data is permanently removed from the database and cannot be recovered."
+      },
+      "colorMeaning": {
+        "q": "What do the colors mean?",
+        "a": "Green indicates the value is within the reference range. Amber signals borderline values. Terracotta (orange-brown) means the value is outside the reference range. We use terracotta instead of bright red to avoid unnecessary alarm."
+      },
+      "referenceRanges": {
+        "q": "Where do reference ranges come from?",
+        "a": "Reference ranges are extracted directly from the PDF you upload — we use your lab's actual ranges. Different labs may use different ranges, and that's normal."
+      },
+      "mobileApp": {
+        "q": "Is there a mobile app?",
+        "a": "ViziAI is currently a web application, but it's designed to work great on mobile devices. Visit viziai.app from your phone's browser for the full experience."
+      },
+      "chromeExtension": {
+        "q": "How does the Chrome extension work?",
+        "a": "Our Chrome extension integrates with the e-Nabız website. After installing it and pasting your API key, a \"Send to ViziAI\" button appears on the Tahlillerim page in e-Nabız. Click it to transfer your results directly without needing to upload a PDF."
+      }
+    },
+    "contact": {
+      "title": "Still have questions?",
+      "subtitle": "Send us a message and we'll get back to you.",
+      "name": "Your name",
+      "email": "Email",
+      "message": "Your message",
+      "send": "Send",
+      "sending": "Sending…",
+      "success": "Message sent! We'll get back to you soon.",
+      "error": "Failed to send. Please try again."
     }
   },
   "blog": {

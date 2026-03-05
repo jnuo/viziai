@@ -21,6 +21,7 @@ import {
   TrendingUp,
   Users,
   LucideIcon,
+  ChevronDown,
 } from "lucide-react";
 
 const COLOR_MAP = {
@@ -43,12 +44,12 @@ const COLOR_MAP = {
 
 type ColorKey = keyof typeof COLOR_MAP;
 
-type FeatureCardProps = {
+interface FeatureCardProps {
   icon: LucideIcon;
   title: string;
   description: string;
   colorKey: ColorKey;
-};
+}
 
 function FeatureCard({
   icon: Icon,
@@ -81,27 +82,32 @@ const FEATURE_KEYS = [
     icon: Zap,
     titleKey: "aiAnalysis",
     descKey: "aiAnalysisDesc",
-    colorKey: "primary" as ColorKey,
+    colorKey: "primary",
   },
   {
     icon: BarChart3,
     titleKey: "visualDashboard",
     descKey: "visualDashboardDesc",
-    colorKey: "secondary" as ColorKey,
+    colorKey: "secondary",
   },
   {
     icon: FileText,
     titleKey: "easyUpload",
     descKey: "easyUploadDesc",
-    colorKey: "status-normal" as ColorKey,
+    colorKey: "status-normal",
   },
   {
     icon: Shield,
     titleKey: "securePrivate",
     descKey: "securePrivateDesc",
-    colorKey: "primary" as ColorKey,
+    colorKey: "primary",
   },
-] as const;
+] as const satisfies readonly {
+  icon: LucideIcon;
+  titleKey: string;
+  descKey: string;
+  colorKey: ColorKey;
+}[];
 
 const HOW_IT_WORKS_STEPS = [
   {
@@ -124,10 +130,20 @@ const HOW_IT_WORKS_STEPS = [
   },
 ] as const;
 
+const LANDING_FAQ_KEYS = [
+  "whatIsViziAI",
+  "howToUpload",
+  "enabizImport",
+  "dataSecure",
+  "familyTracking",
+  "isFree",
+] as const;
+
 export function LandingPage(): React.ReactElement {
   const router = useRouter();
   const { status } = useSession();
   const t = useTranslations("pages.landing");
+  const faqT = useTranslations("faq");
 
   useEffect(() => {
     if (status === "authenticated") {
@@ -272,6 +288,31 @@ export function LandingPage(): React.ReactElement {
             <p className="text-muted-foreground text-sm">
               {t("socialProof.description")}
             </p>
+          </div>
+        </section>
+
+        {/* FAQ Section */}
+        <section className="py-12 md:py-16">
+          <div className="container mx-auto px-4 max-w-4xl">
+            <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
+              {t("faq.title")}
+            </h2>
+            <div className="space-y-3">
+              {LANDING_FAQ_KEYS.map((key) => (
+                <details
+                  key={key}
+                  className="group rounded-lg border border-border bg-card"
+                >
+                  <summary className="cursor-pointer select-none px-5 py-4 font-medium flex items-center justify-between gap-2 hover:bg-muted/50 transition-colors rounded-lg">
+                    {faqT(`questions.${key}.q`)}
+                    <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-180" />
+                  </summary>
+                  <div className="px-5 pb-4 text-muted-foreground leading-relaxed">
+                    {faqT(`questions.${key}.a`)}
+                  </div>
+                </details>
+              ))}
+            </div>
           </div>
         </section>
 
