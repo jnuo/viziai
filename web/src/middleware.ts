@@ -20,12 +20,17 @@ export async function middleware(request: NextRequest) {
   // This replaces the client-side useSession() check in the landing page
   const isLocaleHomepage = locales.some((l) => pathname === `/${l}`);
   if (isLocaleHomepage) {
-    const token = await getToken({
-      req: request,
-      secret: process.env.NEXTAUTH_SECRET,
-    });
-    if (token) {
-      return NextResponse.redirect(new URL("/dashboard", request.url));
+    const hasSessionCookie =
+      request.cookies.has("next-auth.session-token") ||
+      request.cookies.has("__Secure-next-auth.session-token");
+    if (hasSessionCookie) {
+      const token = await getToken({
+        req: request,
+        secret: process.env.NEXTAUTH_SECRET,
+      });
+      if (token) {
+        return NextResponse.redirect(new URL("/dashboard", request.url));
+      }
     }
   }
 
