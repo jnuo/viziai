@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { FaqContent } from "@/app/faq/faq-content";
 import { PrivacyContent } from "@/app/privacy/privacy-content";
-import { locales, bcp47, staticPages } from "@/i18n/config";
+import { locales, bcp47, staticPages, toLocale } from "@/i18n/config";
 import type { Locale, StaticPageId } from "@/i18n/config";
 import { BASE_URL } from "@/lib/constants";
 
@@ -40,11 +40,11 @@ export async function generateMetadata({
   params,
 }: StaticPageProps): Promise<Metadata> {
   const { locale, slug } = await params;
-  const pageId = resolvePageId(locale as Locale, slug);
+  const pageId = resolvePageId(toLocale(locale), slug);
   if (!pageId) return { title: "Not Found" };
 
   const t = await getTranslations({
-    locale: locale as Locale,
+    locale: toLocale(locale),
     namespace: pageId,
   });
 
@@ -57,7 +57,8 @@ export async function generateMetadata({
 
   return {
     title: t("title"),
-    description: t("title"),
+    description:
+      { privacy: t("intro"), faq: t("subtitle") }[pageId] ?? t("title"),
     alternates: {
       canonical: `${BASE_URL}/${locale}/${slug}`,
       languages: alternateLanguages,
@@ -85,14 +86,14 @@ const FAQ_KEYS = [
 
 export default async function StaticPage({ params }: StaticPageProps) {
   const { locale, slug } = await params;
-  const pageId = resolvePageId(locale as Locale, slug);
+  const pageId = resolvePageId(toLocale(locale), slug);
   if (!pageId) notFound();
 
   const Component = pageComponents[pageId];
 
   if (pageId === "faq") {
     const faqT = await getTranslations({
-      locale: locale as Locale,
+      locale: toLocale(locale),
       namespace: "faq",
     });
     const faqSchema = {

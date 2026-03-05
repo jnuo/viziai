@@ -6,6 +6,7 @@ import { ChevronDown } from "lucide-react";
 import Script from "next/script";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { toLocale } from "@/i18n/config";
 import type { Locale } from "@/i18n/config";
 
 const FAQ_CATEGORIES = [
@@ -137,7 +138,7 @@ function ContactForm(): React.ReactElement {
       <p className="text-sm text-muted-foreground mb-5">{t("subtitle")}</p>
 
       {status === "success" ? (
-        <p className="text-sm text-green-600 dark:text-green-400">
+        <p role="alert" className="text-sm text-green-600 dark:text-green-400">
           {t("success")}
         </p>
       ) : (
@@ -196,7 +197,9 @@ function ContactForm(): React.ReactElement {
           </div>
 
           {status === "error" && (
-            <p className="text-sm text-destructive">{t("error")}</p>
+            <p role="alert" className="text-sm text-destructive">
+              {t("error")}
+            </p>
           )}
 
           <button
@@ -228,7 +231,7 @@ export function FaqContent(): React.ReactElement {
         {FAQ_CATEGORIES.map((category) => (
           <section key={category.titleKey} className="mb-8">
             <h2 className="text-lg font-semibold mb-4 text-primary">
-              {CATEGORY_LABELS[category.titleKey][locale as Locale]}
+              {CATEGORY_LABELS[category.titleKey][toLocale(locale)]}
             </h2>
             <div className="space-y-3">
               {category.keys.map((key) => (
