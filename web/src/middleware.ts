@@ -6,6 +6,34 @@ import type { Locale } from "@/i18n/config";
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
+  // Rewrite "/" to "/{locale}" to avoid 302 redirect chain (saves ~783ms on mobile)
+  if (pathname === "/") {
+    const localeCookie = request.cookies.get("locale")?.value;
+    const locale =
+      localeCookie && locales.includes(localeCookie as Locale)
+        ? localeCookie
+        : "tr";
+    return NextResponse.rewrite(new URL(`/${locale}`, request.url));
+  }
+
+  // Redirect authenticated locale homepage visitors to dashboard (server-side)
+  // This replaces the client-side useSession() check in the landing page
+  const isLocaleHomepage = locales.some((l) => pathname === `/${l}`);
+  if (isLocaleHomepage) {
+    const hasSessionCookie =
+      request.cookies.has("next-auth.session-token") ||
+      request.cookies.has("__Secure-next-auth.session-token");
+    if (hasSessionCookie) {
+      const token = await getToken({
+        req: request,
+        secret: process.env.NEXTAUTH_SECRET,
+      });
+      if (token) {
+        return NextResponse.redirect(new URL("/dashboard", request.url));
+      }
+    }
+  }
+
   // Sync locale cookie when visiting /{locale} homepage or /{locale}/blog/*
   const firstSegment = pathname.split("/")[1];
   if (firstSegment && locales.includes(firstSegment as Locale)) {
