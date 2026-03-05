@@ -179,20 +179,9 @@ export function BlogListFilter({
                         {post.readingTime} {readMinLabel}
                       </span>
                       {post.author && (
-                        <span
-                          className="flex items-center gap-1.5"
-                          onClick={(e) => e.stopPropagation()}
-                        >
+                        <span className="flex items-center gap-1.5">
                           <User aria-hidden="true" className="h-3.5 w-3.5" />
-                          <Link
-                            href={buildHref({
-                              author: slugifyAuthor(post.author.name),
-                              tag: null,
-                            })}
-                            className="hover:text-foreground transition-colors hover:underline"
-                          >
-                            {post.author.name}
-                          </Link>
+                          {post.author.name}
                         </span>
                       )}
                     </div>

@@ -5,7 +5,15 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/api/", "/dashboard/", "/upload/", "/settings/"],
+      disallow: [
+        "/api/",
+        "/dashboard/",
+        "/upload/",
+        "/settings/",
+        "/onboarding/",
+        "/import/",
+        "/login",
+      ],
     },
     sitemap: "https://www.viziai.app/sitemap.xml",
   };

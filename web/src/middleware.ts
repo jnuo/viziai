@@ -61,7 +61,10 @@ export async function middleware(request: NextRequest) {
 
   // Only call getToken() when we actually need auth info (protected/auth/API routes)
   // This avoids ~350ms of JWT verification on public pages (homepage, blog, FAQ)
-  const needsAuth = isProtectedRoute || isAuthRoute || isProtectedApiRoute;
+  const needsAuth =
+    isProtectedRoute ||
+    isAuthRoute ||
+    (isProtectedApiRoute && !isSelfAuthRoute);
   let isAuthenticated = false;
   if (needsAuth) {
     const token = await getToken({
