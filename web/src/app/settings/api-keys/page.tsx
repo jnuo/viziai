@@ -63,8 +63,11 @@ export default function ApiKeysPage() {
   const [confirmRevoke, setConfirmRevoke] = useState<string | null>(null);
 
   const fetchKeys = useCallback(async () => {
+    if (!activeProfileId) return;
     try {
-      const res = await fetch("/api/settings/api-keys");
+      const res = await fetch(
+        `/api/settings/api-keys?profileId=${activeProfileId}`,
+      );
       if (!res.ok) return;
       const data = await res.json();
       setKeys(data.keys || []);
@@ -73,13 +76,14 @@ export default function ApiKeysPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [activeProfileId]);
 
   useEffect(() => {
-    if (!profilesLoading) {
+    if (!profilesLoading && activeProfileId) {
+      setLoading(true);
       fetchKeys();
     }
-  }, [profilesLoading, fetchKeys]);
+  }, [profilesLoading, activeProfileId, fetchKeys]);
 
   const handleCreate = async () => {
     if (!selectedProfileId) return;
