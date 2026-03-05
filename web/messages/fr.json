@@ -558,6 +558,10 @@
         "q": "Qu'est-ce que ViziAI ?",
         "a": "ViziAI est une plateforme de suivi de santé qui vous permet de télécharger vos résultats d'analyses de sang en PDF et de les analyser avec l'IA. Suivez vos valeurs dans le temps avec des graphiques visuels et gérez les résultats de vos proches dans des profils séparés."
       },
+      "noMedicalAdvice": {
+        "q": "ViziAI interprète-t-il mes résultats ou pose-t-il des diagnostics ?",
+        "a": "Non. ViziAI ne fait qu'organiser vos résultats de laboratoire — il rassemble les rapports de différentes langues et laboratoires en un seul endroit, associe les noms des métriques et affiche vos tendances dans le temps. Il ne fournit aucune interprétation médicale, diagnostic ou recommandation de traitement. Discutez toujours de vos résultats avec votre médecin."
+      },
       "howToUpload": {
         "q": "Comment télécharger mes résultats d'analyses ?",
         "a": "Cliquez sur « Télécharger un rapport » depuis le tableau de bord et glissez-déposez votre fichier PDF. Notre IA lit le PDF et extrait automatiquement les noms de mesures, valeurs et plages de référence. Vérifiez et confirmez les résultats, et ils seront enregistrés dans votre profil."
@@ -636,6 +640,10 @@
     "ctaHeading": "Téléchargez votre première analyse de sang gratuitement",
     "ctaButton": "Commencer gratuitement",
     "ctaDesc": "Commencez à suivre vos analyses de sang avec ViziAI dès aujourd'hui.",
+    "by": "Par",
+    "articlesBy": "Articles de {author}",
+    "allPosts": "Tous les articles",
+    "filterByTag": "Filtrer par tag",
     "alsoIn": "Également disponible en :",
     "privacyLink": "Politique de Confidentialité"
   },

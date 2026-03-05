@@ -558,6 +558,10 @@
         "q": "ViziAI nedir?",
         "a": "ViziAI, kan tahlili sonuçlarınızı PDF olarak yüklemenizi ve yapay zeka ile analiz etmenizi sağlayan bir sağlık takip platformudur. Değerlerinizi zaman içinde grafiklerle takip edebilir, aile bireylerinin sonuçlarını ayrı profillerde yönetebilirsiniz."
       },
+      "noMedicalAdvice": {
+        "q": "ViziAI tahlil sonuçlarımı yorumluyor mu? Hastalık teşhisi koyuyor mu?",
+        "a": "Hayır. ViziAI tahlil sonuçlarınızı sadece organize eder — farklı dillerdeki ve laboratuvarlardaki raporlarınızı tek bir yerde toplar, metrik isimlerini eşleştirir ve trendlerinizi gösterir. Herhangi bir tıbbi yorum, teşhis veya tedavi önerisi yapmaz. Sonuçlarınızı her zaman doktorunuzla değerlendirin."
+      },
       "howToUpload": {
         "q": "Tahlil sonuçlarımı nasıl yüklerim?",
         "a": "Dashboard'dan \"Tahlil Yükle\" butonuna tıklayın ve PDF dosyanızı sürükleyip bırakın. Yapay zekamız PDF'i okuyarak metrik adlarını, değerleri ve referans aralıklarını otomatik olarak çıkarır. Sonuçları inceleyip onayladıktan sonra profilinize kaydedilir."
@@ -636,6 +640,10 @@
     "ctaHeading": "İlk kan testini ücretsiz yükle",
     "ctaButton": "Ücretsiz başla",
     "ctaDesc": "ViziAI ile kan testi sonuçlarını takip etmeye hemen başlayın.",
+    "by": "Yazan:",
+    "articlesBy": "{author} tarafından yazılar",
+    "allPosts": "Tüm yazılar",
+    "filterByTag": "Etikete göre filtrele",
     "alsoIn": "Diğer dillerde:",
     "privacyLink": "Gizlilik Politikası"
   },
