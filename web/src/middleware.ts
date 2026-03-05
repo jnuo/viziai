@@ -23,14 +23,6 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Get the NextAuth token
-  const token = await getToken({
-    req: request,
-    secret: process.env.NEXTAUTH_SECRET,
-  });
-
-  const isAuthenticated = !!token;
-
   // Protected routes that require authentication
   const protectedRoutes = ["/dashboard", "/upload", "/onboarding", "/import"];
   const isProtectedRoute = protectedRoutes.some(
@@ -66,6 +58,18 @@ export async function middleware(request: NextRequest) {
   const isOnboardingPath = onboardingPaths.some(
     (route) => pathname === route || pathname.startsWith(`${route}/`),
   );
+
+  // Only call getToken() when we actually need auth info (protected/auth/API routes)
+  // This avoids ~350ms of JWT verification on public pages (homepage, blog, FAQ)
+  const needsAuth = isProtectedRoute || isAuthRoute || isProtectedApiRoute;
+  let isAuthenticated = false;
+  if (needsAuth) {
+    const token = await getToken({
+      req: request,
+      secret: process.env.NEXTAUTH_SECRET,
+    });
+    isAuthenticated = !!token;
+  }
 
   // Redirect unauthenticated users from protected routes to login
   if (isProtectedRoute && !isAuthenticated) {

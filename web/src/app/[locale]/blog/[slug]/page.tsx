@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
-import { Calendar, Clock, ArrowLeft } from "lucide-react";
+import { Calendar, Clock, ArrowLeft, User } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { Button } from "@/components/ui/button";
 import { Header } from "@/components/header";
@@ -10,11 +10,11 @@ import { Footer } from "@/components/footer";
 import {
   getBlogPost,
   getAllBlogPosts,
-  getAlternateLocales,
   formatBlogDate,
   readMinLabel,
+  slugifyAuthor,
 } from "@/lib/blog";
-import { locales, bcp47, localeLabels } from "@/i18n/config";
+import { locales, bcp47 } from "@/i18n/config";
 import type { Locale } from "@/i18n/config";
 import { BASE_URL } from "@/lib/constants";
 
@@ -44,30 +44,13 @@ export async function generateMetadata({
   if (!post) return { title: "Not Found" };
 
   const { frontmatter } = post;
-  const alternates = getAlternateLocales(post, locales);
   const canonicalUrl = `${BASE_URL}/${locale}/blog/${slug}`;
-
-  const alternateLanguages: Record<string, string> = {
-    [bcp47[locale as Locale]]: canonicalUrl,
-  };
-  for (const alt of alternates) {
-    const altLocale = alt.locale as Locale;
-    alternateLanguages[bcp47[altLocale]] =
-      `${BASE_URL}/${alt.locale}/blog/${alt.slug}`;
-  }
-  const enAlt = alternates.find((a) => a.locale === "en");
-  if (locale === "en") {
-    alternateLanguages["x-default"] = canonicalUrl;
-  } else if (enAlt) {
-    alternateLanguages["x-default"] = `${BASE_URL}/en/blog/${enAlt.slug}`;
-  }
 
   return {
     title: `${frontmatter.title} — ViziAI`,
     description: frontmatter.description,
     alternates: {
       canonical: canonicalUrl,
-      languages: alternateLanguages,
     },
     openGraph: {
       title: frontmatter.title,
@@ -104,7 +87,6 @@ export default async function BlogArticlePage({ params }: ArticlePageProps) {
   if (!post) notFound();
 
   const { frontmatter, content, readingTime } = post;
-  const alternates = getAlternateLocales(post, locales);
   const t = await getTranslations({
     locale: locale as Locale,
     namespace: "blog",
@@ -142,25 +124,16 @@ export default async function BlogArticlePage({ params }: ArticlePageProps) {
               <Clock aria-hidden="true" className="h-3.5 w-3.5" />
               {readingTime} {readMinLabel[locale] ?? readMinLabel.en}
             </span>
+            {frontmatter.author && (
+              <Link
+                href={`/${locale}/blog?author=${slugifyAuthor(frontmatter.author.name)}`}
+                className="flex items-center gap-1.5 hover:text-foreground transition-colors"
+              >
+                <User aria-hidden="true" className="h-3.5 w-3.5" />
+                {frontmatter.author.name}
+              </Link>
+            )}
           </div>
-          {alternates.length > 0 && (
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-xs text-muted-foreground">
-                {t("alsoIn")}
-              </span>
-              {alternates.map((alt) => (
-                <Link
-                  key={alt.locale}
-                  href={`/${alt.locale}/blog/${alt.slug}`}
-                  className="text-xs px-3 py-2 min-h-[44px] inline-flex items-center rounded-md bg-muted text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors"
-                  hrefLang={bcp47[alt.locale as Locale]}
-                  aria-label={`Read in ${localeLabels[alt.locale as Locale]}`}
-                >
-                  {localeLabels[alt.locale as Locale]}
-                </Link>
-              ))}
-            </div>
-          )}
         </header>
 
         <article className="prose prose-lg prose-neutral dark:prose-invert max-w-none prose-headings:font-semibold prose-a:text-primary prose-a:underline">

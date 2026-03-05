@@ -558,6 +558,10 @@
         "q": "¿Qué es ViziAI?",
         "a": "ViziAI es una plataforma de seguimiento de salud que te permite subir resultados de análisis de sangre en PDF y analizarlos con IA. Sigue tus valores a lo largo del tiempo con gráficos visuales y gestiona los resultados de familiares en perfiles separados."
       },
+      "noMedicalAdvice": {
+        "q": "¿ViziAI interpreta mis resultados o diagnostica enfermedades?",
+        "a": "No. ViziAI solo organiza tus resultados de laboratorio — reúne informes de diferentes idiomas y laboratorios en un solo lugar, empareja los nombres de las métricas y muestra tus tendencias a lo largo del tiempo. No proporciona ninguna interpretación médica, diagnóstico ni recomendación de tratamiento. Siempre consulta tus resultados con tu médico."
+      },
       "howToUpload": {
         "q": "¿Cómo subo mis resultados de análisis?",
         "a": "Haz clic en \"Subir Informe\" desde el panel y arrastra y suelta tu archivo PDF. Nuestra IA lee el PDF y extrae automáticamente los nombres de métricas, valores y rangos de referencia. Revisa y confirma los resultados, y se guardarán en tu perfil."
@@ -636,6 +640,10 @@
     "ctaHeading": "Sube tu primer análisis de sangre gratis",
     "ctaButton": "Comenzar gratis",
     "ctaDesc": "Comienza a seguir tus análisis de sangre con ViziAI hoy.",
+    "by": "Por",
+    "articlesBy": "Artículos de {author}",
+    "allPosts": "Todos los artículos",
+    "filterByTag": "Filtrar por etiqueta",
     "alsoIn": "También disponible en:",
     "privacyLink": "Política de Privacidad"
   },

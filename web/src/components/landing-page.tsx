@@ -193,6 +193,7 @@ export function LandingPage(): React.ReactElement {
                   alt="ViziAI Dashboard Preview"
                   width={1200}
                   height={800}
+                  sizes="(max-width: 768px) 100vw, 896px"
                   className="w-full h-auto"
                   priority
                 />
@@ -242,7 +243,7 @@ export function LandingPage(): React.ReactElement {
                         <Icon className="h-8 w-8" />
                       </div>
                     </div>
-                    <div className="text-2xl font-bold text-muted-foreground/30 mb-2">
+                    <div className="text-2xl font-bold text-muted-foreground/50 mb-2">
                       {index + 1}
                     </div>
                     <h3 className="text-lg font-semibold mb-2">

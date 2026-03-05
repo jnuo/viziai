@@ -39,7 +39,7 @@ export function Footer() {
           <span className="text-border">|</span>
           <ThemeToggle />
         </div>
-        <p className="text-center text-sm text-muted-foreground/70 mt-3">
+        <p className="text-center text-sm text-muted-foreground mt-3">
           {t("copyright")}
         </p>
       </div>
