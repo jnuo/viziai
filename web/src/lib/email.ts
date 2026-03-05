@@ -220,17 +220,22 @@ export async function sendInviteEmail({
   );
 }
 
+function sanitize(str: string): string {
+  return str.replace(/[\r\n\t\x00-\x1f]/g, " ").trim();
+}
+
 export async function sendContactEmail(params: {
   name: string;
   email: string;
   message: string;
 }): Promise<void> {
+  const safeName = sanitize(params.name);
   await resend.emails.send({
     from: FROM,
     to: "support@viziai.app",
     replyTo: params.email,
-    subject: `[ViziAI Contact] ${params.name}`,
-    text: `Name: ${params.name}\nEmail: ${params.email}\n\n${params.message}`,
+    subject: `[ViziAI Contact] ${safeName}`,
+    text: `Name: ${safeName}\nEmail: ${params.email}\n\n${params.message}`,
   });
 }
 

@@ -4,7 +4,28 @@ import { reportError } from "@/lib/error-reporting";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+const RATE_LIMIT_WINDOW = 15 * 60 * 1000; // 15 minutes
+const RATE_LIMIT_MAX = 5;
+const ipHits = new Map<string, number[]>();
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const hits = (ipHits.get(ip) ?? []).filter(
+    (t) => now - t < RATE_LIMIT_WINDOW,
+  );
+  if (hits.length >= RATE_LIMIT_MAX) return true;
+  hits.push(now);
+  ipHits.set(ip, hits);
+  return false;
+}
+
 export async function POST(req: Request) {
+  const ip =
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  if (isRateLimited(ip)) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  }
+
   let body: unknown;
   try {
     body = await req.json();
@@ -25,7 +46,11 @@ export async function POST(req: Request) {
   ) {
     return NextResponse.json({ error: "Invalid name" }, { status: 422 });
   }
-  if (typeof email !== "string" || !EMAIL_RE.test(email)) {
+  if (
+    typeof email !== "string" ||
+    email.length > 254 ||
+    !EMAIL_RE.test(email)
+  ) {
     return NextResponse.json({ error: "Invalid email" }, { status: 422 });
   }
   if (
