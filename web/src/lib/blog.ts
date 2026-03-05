@@ -12,7 +12,7 @@ export interface BlogFrontmatter {
   slug: string;
   publishedAt: string;
   tags: string[];
-  canonicalLocale?: Locale;
+  author?: { name: string; email: string };
 }
 
 export interface BlogPost {
@@ -26,7 +26,7 @@ function estimateReadingTime(text: string): number {
   return Math.max(1, Math.ceil(words / 200));
 }
 
-/** Resolve locale dir with path traversal protection. */
+/** Rejects path traversal (e.g. locale = "../../etc"). */
 function safeLocaleDir(locale: string): string | null {
   const resolved = path.join(CONTENT_DIR, locale);
   if (
@@ -79,7 +79,6 @@ export function getAllBlogPosts(locale: string): BlogPost[] {
     });
   }
 
-  // Sort by publishedAt descending
   posts.sort(
     (a, b) =>
       new Date(b.frontmatter.publishedAt).getTime() -
@@ -87,44 +86,6 @@ export function getAllBlogPosts(locale: string): BlogPost[] {
   );
 
   return posts;
-}
-
-/**
- * Find alternate locale versions of the same article.
- * Looks for articles in other locales that share the same canonicalLocale
- * or are translations of the same article.
- */
-export function getAlternateLocales(
-  post: BlogPost,
-  allLocales: readonly string[],
-): { locale: string; slug: string }[] {
-  const alternates: { locale: string; slug: string }[] = [];
-
-  for (const loc of allLocales) {
-    if (loc === post.frontmatter.locale) continue;
-
-    const localeDir = safeLocaleDir(loc);
-    if (!localeDir || !fs.existsSync(localeDir)) continue;
-
-    const files = fs.readdirSync(localeDir).filter((f) => f.endsWith(".mdx"));
-
-    for (const file of files) {
-      const filePath = path.join(localeDir, file);
-      const raw = fs.readFileSync(filePath, "utf-8");
-      const { data } = matter(raw);
-
-      const currentCanonical =
-        post.frontmatter.canonicalLocale || post.frontmatter.locale;
-      const otherCanonical = data.canonicalLocale || data.locale;
-
-      if (currentCanonical === otherCanonical) {
-        alternates.push({ locale: loc, slug: data.slug });
-        break;
-      }
-    }
-  }
-
-  return alternates;
 }
 
 export function formatBlogDate(dateStr: string, locale: string): string {
@@ -142,3 +103,5 @@ export const readMinLabel: Record<string, string> = {
   de: "Min. Lesezeit",
   fr: "min de lecture",
 };
+
+export { slugifyAuthor } from "./blog-utils";

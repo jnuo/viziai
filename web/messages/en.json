@@ -558,6 +558,10 @@
         "q": "What is ViziAI?",
         "a": "ViziAI is a health tracking platform that lets you upload blood test results as PDFs and analyze them with AI. Track your values over time with visual charts and manage family members' results in separate profiles."
       },
+      "noMedicalAdvice": {
+        "q": "Does ViziAI interpret my results or diagnose conditions?",
+        "a": "No. ViziAI only organizes your lab results — it collects reports from different languages and laboratories in one place, matches metric names, and shows your trends over time. It does not provide any medical interpretation, diagnosis, or treatment advice. Always discuss your results with your doctor."
+      },
       "howToUpload": {
         "q": "How do I upload my test results?",
         "a": "Click \"Upload Report\" from the dashboard and drag and drop your PDF file. Our AI reads the PDF and automatically extracts metric names, values, and reference ranges. Review and confirm the results, and they'll be saved to your profile."
@@ -636,6 +640,10 @@
     "ctaHeading": "Upload your first blood test for free",
     "ctaButton": "Get started free",
     "ctaDesc": "Start tracking your blood test results with ViziAI today.",
+    "by": "By",
+    "articlesBy": "Articles by {author}",
+    "allPosts": "All posts",
+    "filterByTag": "Filter by tag",
     "alsoIn": "Also available in:",
     "privacyLink": "Privacy Policy"
   },

@@ -558,6 +558,10 @@
         "q": "Was ist ViziAI?",
         "a": "ViziAI ist eine Gesundheits-Tracking-Plattform, mit der Sie Bluttestergebnisse als PDF hochladen und mit KI analysieren können. Verfolgen Sie Ihre Werte im Zeitverlauf mit visuellen Diagrammen und verwalten Sie die Ergebnisse von Familienmitgliedern in separaten Profilen."
       },
+      "noMedicalAdvice": {
+        "q": "Interpretiert ViziAI meine Ergebnisse oder stellt Diagnosen?",
+        "a": "Nein. ViziAI organisiert nur Ihre Laborergebnisse — es sammelt Berichte aus verschiedenen Sprachen und Laboren an einem Ort, ordnet Metriknamen zu und zeigt Ihre Trends über die Zeit. Es gibt keine medizinische Interpretation, Diagnose oder Behandlungsempfehlung. Besprechen Sie Ihre Ergebnisse immer mit Ihrem Arzt."
+      },
       "howToUpload": {
         "q": "Wie lade ich meine Testergebnisse hoch?",
         "a": "Klicken Sie auf \"Bericht hochladen\" im Dashboard und ziehen Sie Ihre PDF-Datei per Drag & Drop. Unsere KI liest das PDF und extrahiert automatisch Messwertnamen, Werte und Referenzbereiche. Überprüfen und bestätigen Sie die Ergebnisse, und sie werden in Ihrem Profil gespeichert."
@@ -636,6 +640,10 @@
     "ctaHeading": "Lade deinen ersten Bluttest kostenlos hoch",
     "ctaButton": "Kostenlos starten",
     "ctaDesc": "Beginne noch heute mit der Verfolgung deiner Blutwerte mit ViziAI.",
+    "by": "Von",
+    "articlesBy": "Artikel von {author}",
+    "allPosts": "Alle Artikel",
+    "filterByTag": "Nach Tag filtern",
     "alsoIn": "Auch verfügbar auf:",
     "privacyLink": "Datenschutzrichtlinie"
   },

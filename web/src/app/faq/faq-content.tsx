@@ -12,7 +12,13 @@ import type { Locale } from "@/i18n/config";
 const FAQ_CATEGORIES = [
   {
     titleKey: "general",
-    keys: ["whatIsViziAI", "howToUpload", "enabizImport", "isFree"],
+    keys: [
+      "whatIsViziAI",
+      "noMedicalAdvice",
+      "howToUpload",
+      "enabizImport",
+      "isFree",
+    ],
   },
   {
     titleKey: "dataUpload",
