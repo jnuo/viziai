@@ -1,16 +1,11 @@
-"use client";
-
-import { useEffect } from "react";
-import { useSession } from "next-auth/react";
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { Header } from "@/components/header";
+import { LandingHeader } from "@/components/landing-header";
+import { LandingFooter } from "@/components/landing-footer";
 import { ViziAILogo } from "@/components/viziai-logo";
-import { Footer } from "@/components/footer";
 import {
   FileText,
   BarChart3,
@@ -20,8 +15,8 @@ import {
   Sparkles,
   TrendingUp,
   Users,
-  LucideIcon,
   ChevronDown,
+  LucideIcon,
 } from "lucide-react";
 
 const COLOR_MAP = {
@@ -44,19 +39,17 @@ const COLOR_MAP = {
 
 type ColorKey = keyof typeof COLOR_MAP;
 
-interface FeatureCardProps {
-  icon: LucideIcon;
-  title: string;
-  description: string;
-  colorKey: ColorKey;
-}
-
 function FeatureCard({
   icon: Icon,
   title,
   description,
   colorKey,
-}: FeatureCardProps): React.ReactElement {
+}: {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+  colorKey: ColorKey;
+}) {
   const colors = COLOR_MAP[colorKey];
   return (
     <Card
@@ -139,25 +132,13 @@ const LANDING_FAQ_KEYS = [
   "isFree",
 ] as const;
 
-export function LandingPage(): React.ReactElement {
-  const router = useRouter();
-  const { status } = useSession();
-  const t = useTranslations("pages.landing");
-  const faqT = useTranslations("faq");
-
-  useEffect(() => {
-    if (status === "authenticated") {
-      router.replace("/dashboard");
-    }
-  }, [status, router]);
-
-  if (status === "loading" || status === "authenticated") {
-    return <div className="min-h-screen bg-background" />;
-  }
+export async function LandingPage(): Promise<React.ReactElement> {
+  const t = await getTranslations("pages.landing");
+  const faqT = await getTranslations("faq");
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      <LandingHeader />
 
       <main>
         {/* Hero Section */}
@@ -335,7 +316,7 @@ export function LandingPage(): React.ReactElement {
         </section>
       </main>
 
-      <Footer />
+      <LandingFooter />
     </div>
   );
 }

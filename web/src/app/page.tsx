@@ -1,11 +1,7 @@
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { hasLocale } from "next-intl";
-import { locales, defaultLocale } from "@/i18n/config";
 
-export default async function Home() {
-  const store = await cookies();
-  const raw = store.get("locale")?.value;
-  const locale = hasLocale(locales, raw) ? raw : defaultLocale;
-  redirect(`/${locale}`);
+// Fallback — middleware rewrite handles "/" normally.
+// This only runs if middleware is bypassed.
+export default function Home() {
+  redirect("/tr");
 }
