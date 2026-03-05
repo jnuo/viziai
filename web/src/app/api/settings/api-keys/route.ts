@@ -11,28 +11,48 @@ export const dynamic = "force-dynamic";
  * GET /api/settings/api-keys
  * List user's API keys (session auth)
  */
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const userId = await requireAuth();
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const keys = await sql`
-      SELECT
-        ak.id,
-        ak.name,
-        ak.key_prefix,
-        ak.profile_id,
-        p.display_name as profile_name,
-        ak.created_at,
-        ak.last_used_at,
-        ak.revoked_at
-      FROM api_keys ak
-      JOIN profiles p ON p.id = ak.profile_id
-      WHERE ak.user_id = ${userId}
-      ORDER BY ak.created_at DESC
-    `;
+    const { searchParams } = new URL(request.url);
+    const profileId = searchParams.get("profileId");
+
+    const keys = profileId
+      ? await sql`
+          SELECT
+            ak.id,
+            ak.name,
+            ak.key_prefix,
+            ak.profile_id,
+            p.display_name as profile_name,
+            ak.created_at,
+            ak.last_used_at,
+            ak.revoked_at
+          FROM api_keys ak
+          JOIN profiles p ON p.id = ak.profile_id
+          WHERE ak.user_id = ${userId}
+            AND ak.profile_id = ${profileId}
+          ORDER BY ak.created_at DESC
+        `
+      : await sql`
+          SELECT
+            ak.id,
+            ak.name,
+            ak.key_prefix,
+            ak.profile_id,
+            p.display_name as profile_name,
+            ak.created_at,
+            ak.last_used_at,
+            ak.revoked_at
+          FROM api_keys ak
+          JOIN profiles p ON p.id = ak.profile_id
+          WHERE ak.user_id = ${userId}
+          ORDER BY ak.created_at DESC
+        `;
 
     return NextResponse.json({ keys });
   } catch (error) {
