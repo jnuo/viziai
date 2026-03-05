@@ -44,20 +44,31 @@ export async function GET(request: Request) {
       );
     }
 
-    // Get processed files with metric counts and sample date
-    // Join with reports and metrics to get the count
+    // Get processed files with metric counts and sample date.
+    // Use DISTINCT ON to collapse multiple reports per file into one row
+    // (duplicate reports can occur if confirm was called multiple times).
     const files = await sql`
       SELECT
         pf.id,
         pf.file_name,
         pf.created_at,
-        r.sample_date,
-        COALESCE(COUNT(DISTINCT m.id), 0)::int as metric_count
+        sub.sample_date,
+        sub.metric_count
       FROM processed_files pf
-      LEFT JOIN reports r ON r.file_name = pf.file_name AND r.profile_id = pf.profile_id
-      LEFT JOIN metrics m ON m.report_id = r.id
+      LEFT JOIN LATERAL (
+        SELECT r.sample_date, COUNT(DISTINCT m.id)::int as metric_count
+        FROM reports r
+        LEFT JOIN metrics m ON m.report_id = r.id
+        WHERE r.profile_id = pf.profile_id
+          AND (
+            (pf.content_hash IS NOT NULL AND r.content_hash = pf.content_hash)
+            OR (pf.content_hash IS NULL AND r.file_name = pf.file_name)
+          )
+        GROUP BY r.id
+        ORDER BY r.created_at DESC
+        LIMIT 1
+      ) sub ON true
       WHERE pf.profile_id = ${profileId}
-      GROUP BY pf.id, pf.file_name, pf.created_at, r.sample_date
       ORDER BY pf.created_at DESC
     `;
 

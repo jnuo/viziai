@@ -38,6 +38,7 @@
     "hoursAgo": "il y a {count} h",
     "copyright": "© 2026 ViziAI. Tous droits réservés.",
     "privacyLink": "Politique de Confidentialité",
+    "faqLink": "FAQ",
     "blog": "Blog",
     "toggleTheme": "Changer le thème",
     "accessLevel": {
@@ -81,6 +82,9 @@
         "familyProfiles": "Profils familiaux",
         "metricAliases": "Alias de marqueurs",
         "description": "Suivez vos analyses de sang de laboratoires turcs, anglais, allemands, français et espagnols — le tout sur un seul tableau de bord."
+      },
+      "faq": {
+        "title": "Questions Fréquentes"
       }
     },
     "login": {
@@ -128,7 +132,58 @@
       "uploadNewFile": "Télécharger un nouveau fichier",
       "alreadyUploaded": "Ce fichier a déjà été téléchargé : {date}",
       "reportCapReached": "Limite de rapports atteinte",
-      "reportCapDescription": "Ce profil a atteint la limite du plan gratuit de {max} rapports. Plan Pro bientôt disponible."
+      "reportCapDescription": "Ce profil a atteint la limite du plan gratuit de {max} rapports. Plan Pro bientôt disponible.",
+      "orImportFromEnabiz": "ou importer depuis e-Nabız",
+      "enabizImportTitle": "Importer depuis e-Nabız",
+      "enabizImportDescription": "Importez vos résultats de laboratoire depuis e-Nabız vers ViziAI en un clic avec l'extension Chrome.",
+      "enabizStep1": "Installez l'extension Chrome",
+      "enabizStep2": "Créez une clé API et collez-la dans l'extension",
+      "enabizStep3": "Allez sur enabiz.gov.tr → Tahlillerim et cliquez sur « Envoyer à ViziAI »",
+      "installExtension": "Installer l'extension Chrome",
+      "createApiKey": "Créer une clé API"
+    },
+    "enabizImport": {
+      "reviewTitle": "Vérifier l'import e-Nabız",
+      "testDate": "Date du test",
+      "metricName": "Nom de la métrique",
+      "value": "Valeur",
+      "unit": "Unité",
+      "refMin": "Réf Min",
+      "refMax": "Réf Max",
+      "refMinAria": "Référence minimum",
+      "refMaxAria": "Référence maximum",
+      "refPrefix": "Réf :",
+      "metric": "Métrique",
+      "metrics": "Métriques ({count})",
+      "deleteMetric": "Supprimer la métrique",
+      "willBeAddedAs": "sera ajouté comme",
+      "willStayAs": "restera comme",
+      "confirmSave": "Confirmer et enregistrer",
+      "confirmFailed": "Échec de la confirmation",
+      "skipImport": "Ignorer",
+      "savedSuccessfully": "Enregistré avec succès",
+      "resultsAdded": "Résultats importés depuis e-Nabız",
+      "goToDashboard": "Aller au tableau de bord",
+      "loadFailed": "Impossible de charger les données d'import",
+      "alreadyProcessed": "Import déjà traité",
+      "alreadyProcessedDescription": "Cet import a déjà été confirmé ou a expiré.",
+      "collision": {
+        "title": "Rapport existant trouvé pour cette date",
+        "highSimilarity": "Ce rapport semble identique à celui déjà dans votre profil. Probablement un doublon.",
+        "lowSimilarity": "Un rapport différent existe pour la même date. Il peut s'agir d'un type de test différent.",
+        "overlapInfo": "{similarity}% similaire — {overlapping} métriques correspondantes sur {existingCount} existantes / {newCount} nouvelles (source : {source})",
+        "skip": "Ignorer l'import",
+        "skipDescription": "Ne pas importer ce rapport — c'est un doublon.",
+        "overwrite": "Écraser l'existant",
+        "overwriteDescription": "Remplacer les métriques du rapport existant par ces nouvelles valeurs.",
+        "createSeparate": "Créer un rapport séparé",
+        "createSeparateDescription": "Garder les deux rapports. Il s'agit d'un type de test différent pour la même date.",
+        "selectAction": "Comment souhaitez-vous gérer cela ?",
+        "recommendSkip": "Ces valeurs sont presque identiques au rapport existant. Nous recommandons de passer.",
+        "recommendSeparate": "Les valeurs diffèrent — probablement un type de test différent. Enregistrez comme rapport séparé.",
+        "existing": "Existant",
+        "new": "Nouveau"
+      }
     },
     "dashboard": {
       "loadingData": "Chargement des données…",
@@ -280,6 +335,26 @@
       "dragOrClick": "Glissez-déposez ou cliquez pour sélectionner",
       "skipForNow": "Passer pour l'instant"
     },
+    "apiKeys": {
+      "title": "Clés API",
+      "createKey": "Créer une clé",
+      "createKeyTitle": "Créer une clé API",
+      "keyNameLabel": "Nom de la clé",
+      "noKeys": "Pas encore de clés API",
+      "noKeysDescription": "Créez une clé API pour connecter l'extension Chrome e-Nabız à votre profil.",
+      "extensionTitle": "Extension Chrome e-Nabız",
+      "extensionDescription": "Importez les résultats de laboratoire directement depuis e-Nabız vers ViziAI — pas besoin de télécharger de PDF. Chrome bureau uniquement.",
+      "step1": "Créez une clé API ci-dessous pour votre profil",
+      "step2": "Installez l'extension Chrome (téléchargez le .zip depuis GitHub)",
+      "step3": "Collez la clé dans la fenêtre de l'extension et cliquez sur Tester la connexion",
+      "lastUsed": "Dernière utilisation",
+      "revokeKey": "Révoquer la clé",
+      "confirmRevoke": "Révoquer",
+      "revoked": "Révoquée",
+      "revokedKeys": "Clés révoquées",
+      "keyWarning": "Copiez cette clé maintenant. Vous ne pourrez plus la voir.",
+      "done": "Terminé"
+    },
     "invite": {
       "profileInvite": "Invitation au profil",
       "inviteNotFound": "Invitation introuvable",
@@ -319,7 +394,8 @@
       "logout": "Se déconnecter",
       "login": "Se connecter",
       "settings": "Paramètres",
-      "changeLanguage": "Changer de langue"
+      "changeLanguage": "Changer de langue",
+      "apiKeys": "Clés API"
     },
     "extraction": {
       "readingPdf": "Lecture du PDF…",
@@ -472,6 +548,83 @@
       "title": "Contact",
       "description": "Pour les questions liées à la confidentialité ou les demandes de données, contactez-nous à :",
       "email": "privacy@viziai.app"
+    }
+  },
+  "faq": {
+    "title": "Questions Fréquentes",
+    "subtitle": "Tout ce que vous devez savoir sur ViziAI",
+    "questions": {
+      "whatIsViziAI": {
+        "q": "Qu'est-ce que ViziAI ?",
+        "a": "ViziAI est une plateforme de suivi de santé qui vous permet de télécharger vos résultats d'analyses de sang en PDF et de les analyser avec l'IA. Suivez vos valeurs dans le temps avec des graphiques visuels et gérez les résultats de vos proches dans des profils séparés."
+      },
+      "howToUpload": {
+        "q": "Comment télécharger mes résultats d'analyses ?",
+        "a": "Cliquez sur « Télécharger un rapport » depuis le tableau de bord et glissez-déposez votre fichier PDF. Notre IA lit le PDF et extrait automatiquement les noms de mesures, valeurs et plages de référence. Vérifiez et confirmez les résultats, et ils seront enregistrés dans votre profil."
+      },
+      "enabizImport": {
+        "q": "Puis-je importer depuis e-Nabız ?",
+        "a": "Oui ! Installez notre extension Chrome, créez une clé API et collez-la dans l'extension. Puis allez sur la page Tahlillerim sur enabiz.gov.tr et cliquez sur « Envoyer à ViziAI » pour transférer vos résultats en un clic."
+      },
+      "dataSecure": {
+        "q": "Mes données sont-elles sécurisées ?",
+        "a": "Oui. Vos données sont stockées dans une base de données Neon Postgres sécurisée et toutes les connexions utilisent le chiffrement HTTPS. Les PDF téléchargés sont supprimés après le traitement. Seuls vous et les personnes auxquelles vous accordez explicitement l'accès peuvent consulter vos données."
+      },
+      "familyTracking": {
+        "q": "Comment suivre les données de ma famille ?",
+        "a": "Vous pouvez créer un profil séparé pour chaque membre de la famille. Partagez les profils avec d'autres et définissez les niveaux d'accès en tant que propriétaire, éditeur ou lecteur."
+      },
+      "isFree": {
+        "q": "ViziAI est-il gratuit ?",
+        "a": "ViziAI est actuellement entièrement gratuit. Nous ajouterons un plan payant avec des fonctionnalités avancées à l'avenir, mais il y aura toujours un niveau gratuit."
+      },
+      "languages": {
+        "q": "Quelles langues prenez-vous en charge ?",
+        "a": "L'interface de ViziAI prend en charge le turc, l'anglais, l'espagnol, l'allemand et le français. Notre IA peut également traiter des PDF de laboratoire dans les cinq langues."
+      },
+      "testsAbroad": {
+        "q": "Puis-je télécharger des analyses faites à l'étranger ?",
+        "a": "Oui ! Vous pouvez télécharger des rapports de laboratoire de n'importe quel pays dans les langues prises en charge (turc, anglais, espagnol, allemand, français). Tous les résultats sont unifiés dans un seul tableau de bord."
+      },
+      "afterUpload": {
+        "q": "Que se passe-t-il après le téléchargement d'un PDF ?",
+        "a": "Notre IA lit votre PDF et extrait chaque nom de mesure, valeur et plage de référence. Vous pouvez vérifier, modifier et confirmer les résultats dans une étape de révision. Une fois confirmées, les données sont enregistrées dans votre profil et apparaissent sur votre tableau de bord."
+      },
+      "whoCanSee": {
+        "q": "Qui peut voir mes données ?",
+        "a": "Uniquement vous et les personnes auxquelles vous accordez explicitement l'accès via les paramètres de partage de profil. Vous pouvez définir les niveaux d'accès pour chaque personne en tant que propriétaire, éditeur ou lecteur."
+      },
+      "deleteData": {
+        "q": "Puis-je supprimer mes données ?",
+        "a": "Oui. Vous pouvez supprimer des rapports individuels, des profils ou votre compte entier depuis la page Paramètres. Les données supprimées sont définitivement effacées de la base de données et ne peuvent pas être récupérées."
+      },
+      "colorMeaning": {
+        "q": "Que signifient les couleurs ?",
+        "a": "Le vert indique que la valeur est dans la plage de référence. L'ambre signale des valeurs limites. Le terracotta (brun orangé) signifie que la valeur est en dehors de la plage de référence. Nous utilisons le terracotta au lieu du rouge vif pour éviter toute alarme inutile."
+      },
+      "referenceRanges": {
+        "q": "D'où viennent les plages de référence ?",
+        "a": "Les plages de référence sont extraites directement du PDF que vous téléchargez — nous utilisons les plages réelles de votre laboratoire. Différents laboratoires peuvent utiliser des plages différentes, et c'est normal."
+      },
+      "mobileApp": {
+        "q": "Y a-t-il une application mobile ?",
+        "a": "ViziAI est actuellement une application web, mais elle est conçue pour fonctionner parfaitement sur les appareils mobiles. Visitez viziai.app depuis le navigateur de votre téléphone pour l'expérience complète."
+      },
+      "chromeExtension": {
+        "q": "Comment fonctionne l'extension Chrome ?",
+        "a": "Notre extension Chrome s'intègre au site web e-Nabız. Après l'avoir installée et collé votre clé API, un bouton « Envoyer à ViziAI » apparaît sur la page Tahlillerim dans e-Nabız. Cliquez dessus pour transférer vos résultats directement sans avoir à télécharger un PDF."
+      }
+    },
+    "contact": {
+      "title": "Encore des questions ?",
+      "subtitle": "Envoyez-nous un message et nous vous répondrons rapidement.",
+      "name": "Votre nom",
+      "email": "E-mail",
+      "message": "Votre message",
+      "send": "Envoyer",
+      "sending": "Envoi en cours…",
+      "success": "Message envoyé ! Nous vous répondrons bientôt.",
+      "error": "Échec de l'envoi. Veuillez réessayer."
     }
   },
   "blog": {

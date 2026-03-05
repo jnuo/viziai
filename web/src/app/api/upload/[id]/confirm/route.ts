@@ -101,65 +101,74 @@ export async function POST(
       );
     }
 
-    // Get the pending upload
+    // Atomically claim the upload — prevents duplicate confirms from double-clicks/retries.
+    // Only one request can transition from 'review' to 'confirming'.
     const uploads = await sql`
-      SELECT id, profile_id, file_name, content_hash, file_url, status
-      FROM pending_uploads
+      UPDATE pending_uploads
+      SET status = 'confirming', updated_at = NOW()
       WHERE id = ${uploadId}
-      AND user_id = ${userId}
+        AND user_id = ${userId}
+        AND status = 'review'
+      RETURNING id, profile_id, file_name, content_hash, file_url
     `;
 
     if (uploads.length === 0) {
-      return NextResponse.json(
-        { error: "Not Found", message: "Upload not found" },
-        { status: 404 },
-      );
-    }
-
-    const upload = uploads[0];
-
-    if (upload.status !== "review") {
+      // Either not found or already confirmed/confirming
+      const existing = await sql`
+        SELECT status FROM pending_uploads
+        WHERE id = ${uploadId} AND user_id = ${userId}
+      `;
+      if (existing.length === 0) {
+        return NextResponse.json(
+          { error: "Not Found", message: "Upload not found" },
+          { status: 404 },
+        );
+      }
       return NextResponse.json(
         {
           error: "Bad Request",
-          message: `Upload must be in 'review' status to confirm. Current: ${upload.status}`,
+          message: `Upload must be in 'review' status to confirm. Current: ${existing[0].status}`,
         },
         { status: 400 },
       );
     }
 
+    const upload = uploads[0];
+
     const profileId = upload.profile_id;
 
-    // Check if a report already exists for this profile and date
-    const existingReports = await sql`
-      SELECT id FROM reports
-      WHERE profile_id = ${profileId}
-      AND sample_date = ${body.sampleDate}
-    `;
-
-    let reportId: string;
-
-    if (existingReports.length > 0) {
-      // Use existing report
-      reportId = existingReports[0].id;
-      console.log(
-        `[API] Using existing report: ${reportId} for date ${body.sampleDate}`,
-      );
-    } else {
-      // Create new report
-      const reportResult = await sql`
-        INSERT INTO reports (profile_id, sample_date, file_name, source)
-        VALUES (${profileId}, ${body.sampleDate}, ${upload.file_name}, 'pdf')
-        RETURNING id
+    // Check if this exact file was already processed (dedup by content_hash)
+    if (upload.content_hash) {
+      const alreadyProcessed = await sql`
+        SELECT id FROM processed_files
+        WHERE profile_id = ${profileId} AND content_hash = ${upload.content_hash}
       `;
-      reportId = reportResult[0]?.id;
-      if (!reportId) {
-        throw new Error("Failed to create report");
+      if (alreadyProcessed.length > 0) {
+        // Revert status so the user can see the error
+        await sql`UPDATE pending_uploads SET status = 'review' WHERE id = ${uploadId}`;
+        return NextResponse.json(
+          {
+            error: "Duplicate",
+            message: "This file has already been processed",
+          },
+          { status: 409 },
+        );
       }
-      console.log(
-        `[API] Created new report: ${reportId} for date ${body.sampleDate}`,
-      );
     }
+
+    // Create report. Multiple reports on the same date are allowed (e.g. blood test + urine test).
+    const reportResult = await sql`
+      INSERT INTO reports (profile_id, sample_date, file_name, source, content_hash)
+      VALUES (${profileId}, ${body.sampleDate}, ${upload.file_name}, 'pdf', ${upload.content_hash})
+      RETURNING id
+    `;
+    const reportId = reportResult[0]?.id;
+    if (!reportId) {
+      throw new Error("Failed to create report");
+    }
+    console.log(
+      `[API] Created new report: ${reportId} for date ${body.sampleDate}`,
+    );
 
     // Insert metrics
     let insertedCount = 0;

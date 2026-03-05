@@ -31,12 +31,32 @@ export const staticPages = {
     de: "datenschutz",
     fr: "confidentialite",
   },
+  faq: {
+    tr: "sss",
+    en: "faq",
+    es: "preguntas-frecuentes",
+    de: "faq",
+    fr: "faq",
+  },
 } as const;
 
 export type StaticPageId = keyof typeof staticPages;
 
+export function toLocale(value: string): Locale {
+  return (locales as readonly string[]).includes(value)
+    ? (value as Locale)
+    : defaultLocale;
+}
+
 // Guard: translated slugs must not collide with static route segments
-const RESERVED_SLUGS = ["blog"] as const;
+const RESERVED_SLUGS = [
+  "blog",
+  "login",
+  "dashboard",
+  "settings",
+  "upload",
+  "import",
+] as const;
 for (const [pageId, slugs] of Object.entries(staticPages)) {
   for (const [locale, slug] of Object.entries(slugs)) {
     if ((RESERVED_SLUGS as readonly string[]).includes(slug)) {

@@ -38,6 +38,7 @@
     "hoursAgo": "{count}h ago",
     "copyright": "© 2026 ViziAI. All rights reserved.",
     "privacyLink": "Privacy Policy",
+    "faqLink": "FAQ",
     "blog": "Blog",
     "toggleTheme": "Toggle theme",
     "accessLevel": {
@@ -81,6 +82,9 @@
         "familyProfiles": "Family Profiles",
         "metricAliases": "Metric Aliases",
         "description": "Track blood tests from Turkish, English, German, French, and Spanish labs — all in one dashboard."
+      },
+      "faq": {
+        "title": "Frequently Asked Questions"
       }
     },
     "login": {
@@ -128,7 +132,58 @@
       "uploadNewFile": "Upload New File",
       "alreadyUploaded": "This file has already been uploaded: {date}",
       "reportCapReached": "Report limit reached",
-      "reportCapDescription": "This profile has reached the free plan limit of {max} reports. Pro plan coming soon."
+      "reportCapDescription": "This profile has reached the free plan limit of {max} reports. Pro plan coming soon.",
+      "orImportFromEnabiz": "or import from e-Nabız",
+      "enabizImportTitle": "Import from e-Nabız",
+      "enabizImportDescription": "Import your lab results from e-Nabız to ViziAI with one click using the Chrome extension.",
+      "enabizStep1": "Install the Chrome extension",
+      "enabizStep2": "Create an API key and paste it into the extension",
+      "enabizStep3": "Go to enabiz.gov.tr → Tahlillerim and click \"Send to ViziAI\"",
+      "installExtension": "Install Chrome Extension",
+      "createApiKey": "Create API Key"
+    },
+    "enabizImport": {
+      "reviewTitle": "Review e-Nabız Import",
+      "testDate": "Test Date",
+      "metricName": "Metric name",
+      "value": "Value",
+      "unit": "Unit",
+      "refMin": "Ref Min",
+      "refMax": "Ref Max",
+      "refMinAria": "Reference minimum",
+      "refMaxAria": "Reference maximum",
+      "refPrefix": "Ref:",
+      "metric": "Metric",
+      "metrics": "Metrics ({count})",
+      "deleteMetric": "Delete metric",
+      "willBeAddedAs": "will be added as",
+      "willStayAs": "will stay as",
+      "confirmSave": "Confirm & Save",
+      "confirmFailed": "Confirmation failed",
+      "skipImport": "Skip",
+      "savedSuccessfully": "Saved Successfully",
+      "resultsAdded": "Test results imported from e-Nabız",
+      "goToDashboard": "Go to Dashboard",
+      "loadFailed": "Failed to load import data",
+      "alreadyProcessed": "Import Already Processed",
+      "alreadyProcessedDescription": "This import has already been confirmed or has expired.",
+      "collision": {
+        "title": "Existing report found for this date",
+        "highSimilarity": "This report appears to already exist in your profile.",
+        "lowSimilarity": "A report with similar metrics exists for this date.",
+        "overlapInfo": "{similarity}% similar — {overlapping} matching metrics out of {existingCount} existing / {newCount} new (source: {source})",
+        "skip": "Skip import",
+        "skipDescription": "Don't import this report — it's a duplicate.",
+        "overwrite": "Overwrite existing",
+        "overwriteDescription": "Replace the existing report's metrics with these new values.",
+        "createSeparate": "Create separate report",
+        "createSeparateDescription": "Keep both reports. This is a different test type for the same date.",
+        "selectAction": "How should we handle this?",
+        "recommendSkip": "These values are nearly identical to the existing report. We recommend skipping.",
+        "recommendSeparate": "There are differences from the existing report. Review the comparison and choose an option.",
+        "existing": "Existing",
+        "new": "New"
+      }
     },
     "dashboard": {
       "loadingData": "Loading data…",
@@ -280,6 +335,26 @@
       "dragOrClick": "Drag and drop or click to select",
       "skipForNow": "Skip for Now"
     },
+    "apiKeys": {
+      "title": "API Keys",
+      "createKey": "Create Key",
+      "createKeyTitle": "Create API Key",
+      "keyNameLabel": "Key Name",
+      "noKeys": "No API keys yet",
+      "noKeysDescription": "Create an API key to connect the e-Nabız Chrome extension to your profile.",
+      "extensionTitle": "e-Nabız Chrome Extension",
+      "extensionDescription": "Import lab results directly from e-Nabız into ViziAI — no PDF upload needed. Desktop Chrome only.",
+      "step1": "Create an API key below for your profile",
+      "step2": "Install the Chrome extension (download .zip from GitHub)",
+      "step3": "Paste the key in the extension popup and click Test Connection",
+      "lastUsed": "Last used",
+      "revokeKey": "Revoke key",
+      "confirmRevoke": "Revoke",
+      "revoked": "Revoked",
+      "revokedKeys": "Revoked Keys",
+      "keyWarning": "Copy this key now. You won't be able to see it again.",
+      "done": "Done"
+    },
     "invite": {
       "profileInvite": "Profile Invite",
       "inviteNotFound": "Invite Not Found",
@@ -319,7 +394,8 @@
       "logout": "Sign Out",
       "login": "Sign In",
       "settings": "Settings",
-      "changeLanguage": "Change language"
+      "changeLanguage": "Change language",
+      "apiKeys": "API Keys"
     },
     "extraction": {
       "readingPdf": "Reading PDF…",
@@ -472,6 +548,83 @@
       "title": "Contact",
       "description": "For privacy-related questions or data requests, contact us at:",
       "email": "privacy@viziai.app"
+    }
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Everything you need to know about ViziAI",
+    "questions": {
+      "whatIsViziAI": {
+        "q": "What is ViziAI?",
+        "a": "ViziAI is a health tracking platform that lets you upload blood test results as PDFs and analyze them with AI. Track your values over time with visual charts and manage family members' results in separate profiles."
+      },
+      "howToUpload": {
+        "q": "How do I upload my test results?",
+        "a": "Click \"Upload Report\" from the dashboard and drag and drop your PDF file. Our AI reads the PDF and automatically extracts metric names, values, and reference ranges. Review and confirm the results, and they'll be saved to your profile."
+      },
+      "enabizImport": {
+        "q": "Can I import from e-Nabız?",
+        "a": "Yes! Install our Chrome extension, create an API key and paste it into the extension. Then go to enabiz.gov.tr's Tahlillerim page and click \"Send to ViziAI\" to transfer your results with one click."
+      },
+      "dataSecure": {
+        "q": "Is my data secure?",
+        "a": "Yes. Your data is stored in a secure Neon Postgres database and all connections use HTTPS encryption. Uploaded PDFs are deleted after processing. Only you and people you explicitly grant access to can view your data."
+      },
+      "familyTracking": {
+        "q": "How do I track family members' data?",
+        "a": "You can create a separate profile for each family member. Share profiles with others and set access levels as owner, editor, or viewer."
+      },
+      "isFree": {
+        "q": "Is ViziAI free?",
+        "a": "ViziAI is currently completely free. We'll add a paid plan with advanced features in the future, but there will always be a free tier."
+      },
+      "languages": {
+        "q": "What languages do you support?",
+        "a": "ViziAI's interface supports Turkish, English, Spanish, German, and French. Our AI can also process lab PDFs in all five languages."
+      },
+      "testsAbroad": {
+        "q": "Can I upload tests done abroad?",
+        "a": "Yes! You can upload lab reports from any country in supported languages (Turkish, English, Spanish, German, French). All results are unified in a single dashboard."
+      },
+      "afterUpload": {
+        "q": "What happens after I upload a PDF?",
+        "a": "Our AI reads your PDF and extracts every metric name, value, and reference range. You can review, edit, and confirm the results in a review step. Once confirmed, the data is saved to your profile and appears on your dashboard."
+      },
+      "whoCanSee": {
+        "q": "Who can see my data?",
+        "a": "Only you and people you explicitly grant access to through profile sharing settings. You can set access levels for each person as owner, editor, or viewer."
+      },
+      "deleteData": {
+        "q": "Can I delete my data?",
+        "a": "Yes. You can delete individual reports, profiles, or your entire account from the Settings page. Deleted data is permanently removed from the database and cannot be recovered."
+      },
+      "colorMeaning": {
+        "q": "What do the colors mean?",
+        "a": "Green indicates the value is within the reference range. Amber signals borderline values. Terracotta (orange-brown) means the value is outside the reference range. We use terracotta instead of bright red to avoid unnecessary alarm."
+      },
+      "referenceRanges": {
+        "q": "Where do reference ranges come from?",
+        "a": "Reference ranges are extracted directly from the PDF you upload — we use your lab's actual ranges. Different labs may use different ranges, and that's normal."
+      },
+      "mobileApp": {
+        "q": "Is there a mobile app?",
+        "a": "ViziAI is currently a web application, but it's designed to work great on mobile devices. Visit viziai.app from your phone's browser for the full experience."
+      },
+      "chromeExtension": {
+        "q": "How does the Chrome extension work?",
+        "a": "Our Chrome extension integrates with the e-Nabız website. After installing it and pasting your API key, a \"Send to ViziAI\" button appears on the Tahlillerim page in e-Nabız. Click it to transfer your results directly without needing to upload a PDF."
+      }
+    },
+    "contact": {
+      "title": "Still have questions?",
+      "subtitle": "Send us a message and we'll get back to you.",
+      "name": "Your name",
+      "email": "Email",
+      "message": "Your message",
+      "send": "Send",
+      "sending": "Sending…",
+      "success": "Message sent! We'll get back to you soon.",
+      "error": "Failed to send. Please try again."
     }
   },
   "blog": {
