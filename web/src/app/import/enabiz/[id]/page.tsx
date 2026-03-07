@@ -10,6 +10,7 @@ import {
   ChevronLeft,
   ArrowRight,
   Building2,
+  User,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
@@ -403,6 +404,18 @@ export default function EnabizImportPage(): React.ReactElement {
                     {importData.hospitalName}
                   </div>
                 )}
+              </div>
+            )}
+
+            {/* Profile indicator */}
+            {importData && (
+              <div className="flex items-center gap-2 px-3 py-2.5 rounded-lg bg-primary/5 border border-primary/20">
+                <User className="h-4 w-4 text-primary shrink-0" />
+                <p className="text-sm">
+                  {t("importingToProfile", {
+                    profileName: importData.profileName,
+                  })}
+                </p>
               </div>
             )}
 

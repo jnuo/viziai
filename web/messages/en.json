@@ -85,6 +85,13 @@
       },
       "faq": {
         "title": "Frequently Asked Questions"
+      },
+      "enabiz": {
+        "badge": "Chrome Extension",
+        "title": "e-Nabız Integration",
+        "description": "For e-Nabız users in Turkey: import your past lab results with one click using our Chrome extension. No need to download PDFs.",
+        "cta": "Install Chrome Extension",
+        "howItWorks": "How does it work?"
       }
     },
     "login": {
@@ -136,8 +143,8 @@
       "orImportFromEnabiz": "or import from e-Nabız",
       "enabizImportTitle": "Import from e-Nabız",
       "enabizImportDescription": "Import your lab results from e-Nabız to ViziAI with one click using the Chrome extension.",
-      "enabizStep1": "Install the Chrome extension",
-      "enabizStep2": "Create an API key and paste it into the extension",
+      "enabizStep1": "Install the extension from the Chrome Web Store",
+      "enabizStep2": "Create a key from Settings → API Keys",
       "enabizStep3": "Go to enabiz.gov.tr → Tahlillerim and click \"Send to ViziAI\"",
       "installExtension": "Install Chrome Extension",
       "createApiKey": "Create API Key"
@@ -183,7 +190,8 @@
         "recommendSeparate": "There are differences from the existing report. Review the comparison and choose an option.",
         "existing": "Existing",
         "new": "New"
-      }
+      },
+      "importingToProfile": "These results will be added to {profileName}'s profile"
     },
     "dashboard": {
       "loadingData": "Loading data…",
@@ -344,9 +352,9 @@
       "noKeysDescription": "Create an API key to connect the e-Nabız Chrome extension to your profile.",
       "extensionTitle": "e-Nabız Chrome Extension",
       "extensionDescription": "Import lab results directly from e-Nabız into ViziAI — no PDF upload needed. Desktop Chrome only.",
-      "step1": "Create an API key below for your profile",
-      "step2": "Install the Chrome extension (download .zip from GitHub)",
-      "step3": "Paste the key in the extension popup and click Test Connection",
+      "step1": "Select a profile below and create an API key",
+      "step2": "Install the extension from the Chrome Web Store",
+      "step3": "Click the extension icon, paste the key, and press Test Connection",
       "lastUsed": "Last used",
       "revokeKey": "Revoke key",
       "confirmRevoke": "Revoke",
@@ -616,7 +624,7 @@
       },
       "chromeExtension": {
         "q": "How does the Chrome extension work?",
-        "a": "Our Chrome extension integrates with the e-Nabız website. After installing it and pasting your API key, a \"Send to ViziAI\" button appears on the Tahlillerim page in e-Nabız. Click it to transfer your results directly without needing to upload a PDF."
+        "a": "Install our extension from the Chrome Web Store. Create an API key at viziai.app and paste it into the extension window. Then on enabiz.gov.tr → Tahlillerim, a \"Send to ViziAI\" button appears next to each report. One click transfers your results."
       }
     },
     "contact": {

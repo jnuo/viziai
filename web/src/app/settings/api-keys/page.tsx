@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/select";
 import { useActiveProfile } from "@/hooks/use-active-profile";
 import { reportError } from "@/lib/error-reporting";
+import { CHROME_EXTENSION_URL } from "@/lib/constants";
 
 interface ApiKey {
   id: string;
@@ -200,7 +201,16 @@ export default function ApiKeysPage() {
               </p>
               <ol className="text-sm text-muted-foreground list-decimal list-inside space-y-0.5 mt-2">
                 <li>{t("step1")}</li>
-                <li>{t("step2")}</li>
+                <li>
+                  <a
+                    href={CHROME_EXTENSION_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline"
+                  >
+                    {t("step2")}
+                  </a>
+                </li>
                 <li>{t("step3")}</li>
               </ol>
             </div>

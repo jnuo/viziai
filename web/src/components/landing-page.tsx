@@ -16,8 +16,10 @@ import {
   TrendingUp,
   Users,
   ChevronDown,
+  Chrome,
   LucideIcon,
 } from "lucide-react";
+import { CHROME_EXTENSION_URL } from "@/lib/constants";
 
 const COLOR_MAP = {
   primary: {
@@ -236,6 +238,39 @@ export async function LandingPage(): Promise<React.ReactElement> {
                   </div>
                 ),
               )}
+            </div>
+          </div>
+        </section>
+
+        {/* e-Nabız Integration */}
+        <section className="py-12 md:py-16 bg-muted/30">
+          <div className="container mx-auto px-4 max-w-3xl text-center">
+            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-4">
+              <Chrome className="h-4 w-4" />
+              {t("enabiz.badge")}
+            </div>
+            <h2 className="text-2xl md:text-3xl font-bold mb-3">
+              {t("enabiz.title")}
+            </h2>
+            <p className="text-muted-foreground mb-6 max-w-xl mx-auto">
+              {t("enabiz.description")}
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <Button size="lg" asChild>
+                <a
+                  href={CHROME_EXTENSION_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Chrome className="h-5 w-5 mr-2" />
+                  {t("enabiz.cta")}
+                </a>
+              </Button>
+              <Button variant="outline" size="lg" asChild>
+                <Link href="/faq#chrome-extension">
+                  {t("enabiz.howItWorks")}
+                </Link>
+              </Button>
             </div>
           </div>
         </section>
