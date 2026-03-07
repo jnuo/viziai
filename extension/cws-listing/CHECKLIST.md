@@ -3,10 +3,20 @@
 ## Assets in this folder
 
 - [x] `store-icon-128.png` — 128x128, no alpha, white background
-- [x] `screenshots/01-dashboard.png` — Dashboard with metric cards and trend chart (1280x800)
-- [x] `screenshots/02-api-keys.png` — API keys settings page (1280x800)
-- [x] `screenshots/03-upload.png` — Upload page with e-Nabız import section (1280x800)
-- [ ] `screenshots/enabiz-buttons.png` — e-Nabız page with "ViziAI'a Gönder" buttons (MANUAL: log into enabiz.gov.tr, go to Tahlillerim, screenshot the page with buttons visible)
+
+### Screenshots (1280x800, follow guide step order)
+
+- [x] `01-extension-installed.png` — Chrome extensions panel showing ViziAI installed
+- [ ] `02-api-keys.png` — API keys page with new redesigned dialog (RETAKE: old UI)
+- [ ] `03-paste-key.png` — Extension popup with key input field (NEEDED)
+- [x] `04-popup-connected.png` — Extension popup showing green "connected" state
+- [x] `05-enabiz-buttons.png` — e-Nabiz page with "ViziAI'a Gonder" buttons
+- [x] `06-dashboard.png` — Dashboard with metric cards and trend chart (end result)
+
+### Old screenshots (to delete after retaking)
+
+- `02-api-keys.png.old` — old API keys UI before redesign
+- `_old-upload.png` — old upload page with 3-step inline guide
 
 ## Store listing text
 
@@ -16,8 +26,8 @@ All text is in `LISTING.md` — copy-paste into CWS developer console.
 
 | Field          | Value                                                    |
 | -------------- | -------------------------------------------------------- |
-| Title          | ViziAI — e-Nabız                                         |
-| Summary        | e-Nabız tahlil sonuçlarınızı tek tıkla ViziAI'a aktarın. |
+| Title          | ViziAI — e-Nabiz                                         |
+| Summary        | e-Nabiz tahlil sonuclarinizi tek tikla ViziAI'a aktarin. |
 | Description    | See LISTING.md                                           |
 | Category       | Health or Productivity                                   |
 | Language       | Turkish                                                  |
@@ -27,20 +37,22 @@ All text is in `LISTING.md` — copy-paste into CWS developer console.
 
 ## Manual steps remaining
 
-1. Upload `viziai-enabiz-extension.zip` (already created at repo root)
-2. Upload store icon from `store-icon-128.png`
-3. Upload screenshots (3 automated + 1 manual e-Nabız screenshot)
-4. Copy description from LISTING.md
-5. Fill in additional fields
-6. Set privacy practices (extension only accesses enabiz.gov.tr and viziai.app)
-7. Submit for review
+1. Retake `02-api-keys.png` — new redesigned dialog with profile indicator
+2. Take `03-paste-key.png` — extension popup showing key input (before connecting)
+3. Upload `viziai-enabiz-extension.zip` (already created at repo root)
+4. Upload store icon from `store-icon-128.png`
+5. Upload all 6 screenshots in order
+6. Copy description from LISTING.md
+7. Fill in additional fields
+8. Set privacy practices
+9. Submit for review
 
 ## Privacy practices (CWS will ask)
 
-- **Single purpose:** Import lab results from e-Nabız into ViziAI
+- **Single purpose:** Import lab results from e-Nabiz into ViziAI
 - **Permissions justification:**
   - `storage` — Save API key locally for authentication
-  - `host_permissions (enabiz.gov.tr)` — Read lab results from e-Nabız pages
+  - `host_permissions (enabiz.gov.tr)` — Read lab results from e-Nabiz pages
   - `host_permissions (viziai.app)` — Send imported data to ViziAI API
 - **Data usage:**
   - Does NOT collect personal data for sale

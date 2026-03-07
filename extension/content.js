@@ -308,21 +308,12 @@
 
   // Watch for accordion changes — AJAX may replace the entire element or just its children
   function observeForAccordion() {
-    let currentAccordion = null;
-
     function tryInject() {
       const accordion = document.querySelector("#accordionTahlilListe");
       if (!accordion) return;
 
-      // Track if the accordion element was replaced
-      if (accordion !== currentAccordion) {
-        currentAccordion = accordion;
-      }
-
       const items = accordion.querySelectorAll(".accordion-item");
-      // Only inject if there are items and buttons aren't already present
-      const hasButtons = accordion.querySelector(".viziai-btn");
-      if (items.length > 0 && !hasButtons) {
+      if (items.length > 0 && !accordion.querySelector(".viziai-btn")) {
         injectButtons(accordion);
       }
     }
