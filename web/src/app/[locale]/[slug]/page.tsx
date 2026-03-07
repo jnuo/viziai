@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { FaqContent } from "@/app/faq/faq-content";
 import { PrivacyContent } from "@/app/privacy/privacy-content";
+import { EnabizGuideContent } from "@/app/enabiz-guide/enabiz-guide-content";
 import { locales, bcp47, staticPages, toLocale } from "@/i18n/config";
 import type { Locale, StaticPageId } from "@/i18n/config";
 import { BASE_URL } from "@/lib/constants";
@@ -11,6 +12,7 @@ import { BASE_URL } from "@/lib/constants";
 const pageComponents: Record<StaticPageId, ComponentType> = {
   privacy: PrivacyContent,
   faq: FaqContent,
+  enabizGuide: EnabizGuideContent,
 };
 
 interface StaticPageProps {
@@ -55,10 +57,16 @@ export async function generateMetadata({
   }
   alternateLanguages["x-default"] = `${BASE_URL}/en/${staticPages[pageId].en}`;
 
+  let description = t("title");
+  if (pageId === "privacy") {
+    description = t("intro");
+  } else if (t.has("subtitle")) {
+    description = t("subtitle");
+  }
+
   return {
     title: t("title"),
-    description:
-      { privacy: t("intro"), faq: t("subtitle") }[pageId] ?? t("title"),
+    description,
     alternates: {
       canonical: `${BASE_URL}/${locale}/${slug}`,
       languages: alternateLanguages,

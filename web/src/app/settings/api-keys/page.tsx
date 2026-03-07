@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import {
   Loader2,
   Plus,
@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/select";
 import { useActiveProfile } from "@/hooks/use-active-profile";
 import { reportError } from "@/lib/error-reporting";
+import { staticPages, toLocale } from "@/i18n/config";
 
 interface ApiKey {
   id: string;
@@ -46,6 +47,7 @@ interface ApiKey {
 export default function ApiKeysPage() {
   const t = useTranslations("pages.apiKeys");
   const tc = useTranslations("common");
+  const locale = useLocale();
   const {
     profiles,
     activeProfileId,
@@ -133,13 +135,15 @@ export default function ApiKeysPage() {
     if (!newKey) return;
     await navigator.clipboard.writeText(newKey);
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
   };
 
+  const activeKeys = keys.filter((k) => !k.revoked_at);
+  const revokedKeys = keys.filter((k) => k.revoked_at);
+  const writeProfiles = profiles.filter(
+    (p) => p.access_level === "owner" || p.access_level === "editor",
+  );
+
   const openCreateDialog = () => {
-    const writeProfiles = profiles.filter(
-      (p) => p.access_level === "owner" || p.access_level === "editor",
-    );
     const activeIsWritable = writeProfiles.find(
       (p) => p.id === activeProfileId,
     );
@@ -153,12 +157,6 @@ export default function ApiKeysPage() {
     setCopied(false);
     setShowCreateDialog(true);
   };
-
-  const activeKeys = keys.filter((k) => !k.revoked_at);
-  const revokedKeys = keys.filter((k) => k.revoked_at);
-  const writeProfiles = profiles.filter(
-    (p) => p.access_level === "owner" || p.access_level === "editor",
-  );
 
   if (profilesLoading || loading) {
     return (
@@ -185,7 +183,7 @@ export default function ApiKeysPage() {
         )}
       </div>
 
-      {/* Desktop-only notice */}
+      {/* Extension info */}
       <Card className="border-primary/20 bg-primary/5">
         <CardContent className="py-4">
           <div className="flex items-start gap-3">
@@ -193,16 +191,22 @@ export default function ApiKeysPage() {
               aria-hidden="true"
               className="h-5 w-5 text-primary shrink-0 mt-0.5"
             />
-            <div className="space-y-1">
+            <div className="space-y-2">
               <p className="text-sm font-medium">{t("extensionTitle")}</p>
               <p className="text-sm text-muted-foreground">
                 {t("extensionDescription")}
               </p>
-              <ol className="text-sm text-muted-foreground list-decimal list-inside space-y-0.5 mt-2">
-                <li>{t("step1")}</li>
-                <li>{t("step2")}</li>
-                <li>{t("step3")}</li>
-              </ol>
+              <div className="flex flex-wrap items-center gap-2 pt-1">
+                <Button variant="outline" size="sm" asChild>
+                  <a
+                    href={`/${locale}/${staticPages.enabizGuide[toLocale(locale)]}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {t("guideLink")}
+                  </a>
+                </Button>
+              </div>
             </div>
           </div>
         </CardContent>
@@ -278,7 +282,7 @@ export default function ApiKeysPage() {
                           size="sm"
                           onClick={() => setConfirmRevoke(null)}
                         >
-                          {tc("cancel")}
+                          {tc("back")}
                         </Button>
                       </div>
                     ) : (
@@ -361,23 +365,47 @@ export default function ApiKeysPage() {
                   {t("keyWarning")}
                 </p>
               </div>
-              <div className="relative">
-                <code className="block p-3 bg-muted rounded-md text-xs break-all font-mono">
+
+              {/* Profile indicator */}
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Key aria-hidden="true" className="h-3.5 w-3.5" />
+                <span>
+                  {tc("profile")}:{" "}
+                  <span className="font-medium text-foreground">
+                    {writeProfiles.find((p) => p.id === selectedProfileId)
+                      ?.display_name ?? "—"}
+                  </span>
+                </span>
+              </div>
+
+              {/* Key + copy */}
+              <div className="rounded-lg border border-border overflow-hidden">
+                <code className="block p-3 bg-muted text-xs break-all font-mono select-all leading-relaxed">
                   {newKey}
                 </code>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="absolute top-1 right-1"
+                <button
+                  type="button"
                   onClick={handleCopyKey}
+                  className={`flex items-center justify-center gap-1.5 w-full px-3 py-2 text-sm font-medium border-t border-border transition-colors cursor-pointer ${
+                    copied
+                      ? "bg-primary/5 text-primary"
+                      : "bg-card text-muted-foreground hover:bg-muted hover:text-foreground"
+                  }`}
                 >
                   {copied ? (
-                    <Check className="h-4 w-4 text-primary" />
+                    <>
+                      <Check aria-hidden="true" className="h-3.5 w-3.5" />
+                      {tc("copied")}
+                    </>
                   ) : (
-                    <Copy className="h-4 w-4" />
+                    <>
+                      <Copy aria-hidden="true" className="h-3.5 w-3.5" />
+                      {tc("copy")}
+                    </>
                   )}
-                </Button>
+                </button>
               </div>
+
               <DialogFooter>
                 <Button onClick={() => setShowCreateDialog(false)}>
                   {t("done")}

@@ -39,6 +39,7 @@
     "copyright": "© 2026 ViziAI. Tüm hakları saklıdır.",
     "privacyLink": "Gizlilik Politikası",
     "faqLink": "SSS",
+    "enabizGuideLink": "e-Nabız Rehberi",
     "blog": "Blog",
     "toggleTheme": "Tema değiştir",
     "accessLevel": {
@@ -82,6 +83,13 @@
         "familyProfiles": "Aile Profilleri",
         "metricAliases": "Metrik Takma Ad",
         "description": "Türkçe, İngilizce, Almanca, Fransızca ve İspanyolca laboratuvar sonuçlarını tek bir panoda takip edin."
+      },
+      "enabiz": {
+        "badge": "Chrome Eklentisi",
+        "title": "e-Nabız Entegrasyonu",
+        "description": "Türkiye'deki e-Nabız kullanıcıları için: Chrome eklentimizle geçmiş tahlillerinizi tek tıkla aktarın. PDF indirmeye gerek yok.",
+        "cta": "Chrome Eklentisini Yükle",
+        "howItWorks": "Nasıl çalışır?"
       },
       "faq": {
         "title": "Sıkça Sorulan Sorular"
@@ -136,11 +144,12 @@
       "orImportFromEnabiz": "veya e-Nabız'dan içe aktar",
       "enabizImportTitle": "e-Nabız'dan İçe Aktar",
       "enabizImportDescription": "e-Nabız'daki tahlil sonuçlarınızı Chrome eklentisiyle tek tıkla ViziAI'a aktarın.",
-      "enabizStep1": "Chrome eklentisini yükleyin",
-      "enabizStep2": "API anahtarı oluşturun ve eklentiye yapıştırın",
+      "enabizStep1": "Chrome Web Mağazası'ndan eklentiyi yükleyin",
+      "enabizStep2": "Ayarlar → API Anahtarları sayfasından bir anahtar oluşturun",
       "enabizStep3": "enabiz.gov.tr → Tahlillerim sayfasında \"ViziAI'a Gönder\" butonuna tıklayın",
       "installExtension": "Chrome Eklentisini Yükle",
-      "createApiKey": "API Anahtarı Oluştur"
+      "createApiKey": "API Anahtarı Oluştur",
+      "setupGuideLink": "Nasıl kurulur?"
     },
     "enabizImport": {
       "reviewTitle": "e-Nabız İçe Aktarımını İncele",
@@ -164,6 +173,7 @@
       "savedSuccessfully": "Başarıyla Kaydedildi",
       "resultsAdded": "Tahlil sonuçları e-Nabız'dan içe aktarıldı",
       "goToDashboard": "Dashboard'a Git",
+      "importingToProfile": "Bu tahliller {profileName} profiline eklenecek",
       "loadFailed": "İçe aktarım verileri yüklenemedi",
       "alreadyProcessed": "İçe Aktarım Zaten İşlendi",
       "alreadyProcessedDescription": "Bu içe aktarım zaten onaylanmış veya süresi dolmuş.",
@@ -344,9 +354,7 @@
       "noKeysDescription": "e-Nabız Chrome eklentisini profilinize bağlamak için bir API anahtarı oluşturun.",
       "extensionTitle": "e-Nabız Chrome Eklentisi",
       "extensionDescription": "Tahlil sonuçlarını e-Nabız'dan doğrudan ViziAI'a aktarın — PDF yüklemeye gerek yok. Sadece masaüstü Chrome.",
-      "step1": "Profiliniz için aşağıdan bir API anahtarı oluşturun",
-      "step2": "Chrome eklentisini yükleyin (GitHub'dan .zip indirin)",
-      "step3": "Anahtarı eklenti penceresine yapıştırın ve Bağlantıyı Test Et'e tıklayın",
+      "guideLink": "Kurulum Rehberi",
       "lastUsed": "Son kullanım",
       "revokeKey": "Anahtarı iptal et",
       "confirmRevoke": "İptal Et",
@@ -616,7 +624,7 @@
       },
       "chromeExtension": {
         "q": "Chrome eklentisi nasıl çalışır?",
-        "a": "Chrome eklentimiz e-Nabız web sitesine entegre olur. Yükledikten ve API anahtarınızı yapıştırdıktan sonra, e-Nabız'daki Tahlillerim sayfasında bir \"ViziAI'a Gönder\" butonu belirir. Bu butona tıklayarak sonuçlarınızı PDF yüklemeye gerek kalmadan doğrudan aktarabilirsiniz."
+        "a": "Chrome Web Mağazası'ndan eklentimizi yükleyin. viziai.app'de API anahtarı oluşturup eklenti penceresine yapıştırın. Ardından enabiz.gov.tr → Tahlillerim sayfasında her raporun yanında \"ViziAI'a Gönder\" butonu belirir. Tek tıkla sonuçlarınız aktarılır."
       }
     },
     "contact": {
@@ -630,6 +638,40 @@
       "success": "Mesajınız gönderildi! En kısa sürede size döneceğiz.",
       "error": "Gönderilemedi. Lütfen tekrar deneyin."
     }
+  },
+  "enabizGuide": {
+    "title": "e-Nabız Chrome Eklentisi Rehberi",
+    "subtitle": "e-Nabız'daki tahlil sonuçlarınızı ViziAI'a aktarmak için kurulum rehberi.",
+    "desktopOnly": "Chrome eklentileri sadece masaüstü Chrome ile çalışır. Mobil cihazlarda çalışmaz. İşlemi bir bilgisayardan yaptıktan sonra değerlerinizi mobil cihazlardan görüntüleyebilirsiniz.",
+    "steps": {
+      "step1": {
+        "title": "Eklentiyi yükleyin",
+        "desc": "<cws>Chrome Web Mağazası</cws>'ndan ViziAI e-Nabız eklentisini yükleyin."
+      },
+      "step2": {
+        "title": "API anahtarı oluşturun",
+        "desc": "<apikeys>viziai.app → Ayarlar → API Anahtarları</apikeys> sayfasından bir anahtar oluşturun. Birden fazla profiliniz varsa doğru profili seçtiğinizden emin olun — bu anahtar ile aktarılan tüm raporlar bu profile kaydedilecektir. Farklı profiller için farklı API anahtarları oluşturabilirsiniz."
+      },
+      "step3": {
+        "title": "Anahtarı kopyalayın",
+        "desc": "Oluşturulan anahtarı kopyala butonuyla kopyalayın."
+      },
+      "step4": {
+        "title": "Eklentiye yapıştırın",
+        "desc": "ViziAI eklentisini Chrome'daki eklentiler alanından açın. Açılan ekrana API anahtarınızı yapıştırıp Bağlantıyı Test Et butonuna basın."
+      },
+      "step5": {
+        "title": "e-Nabız'da \"ViziAI'a Gönder\" butonuna tıklayın",
+        "desc": "<enabiz>enabiz.gov.tr</enabiz>'ye giriş yapın ve Tahlillerim sayfasını açın. Her raporun yanında beliren yeşil \"ViziAI'a Gönder\" butonuna tıklayın.",
+        "hint": "Butonu göremiyorsanız API anahtarını eklentiye eklediğinizden emin olun ve sayfayı bir kez yenileyin."
+      },
+      "step6": {
+        "title": "Değerleri kontrol edin ve onaylayın",
+        "desc": "Açılan pencerede tahlil değerlerinizi görüntüleyin. Onayladığınızda veriler profilinize aktarılır."
+      }
+    },
+    "installCta": "Chrome Eklentisini Yükle",
+    "createKeyCta": "API Anahtarı Oluştur"
   },
   "blog": {
     "listTitle": "Blog — ViziAI",

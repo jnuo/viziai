@@ -308,21 +308,12 @@
 
   // Watch for accordion changes — AJAX may replace the entire element or just its children
   function observeForAccordion() {
-    let currentAccordion = null;
-
     function tryInject() {
       const accordion = document.querySelector("#accordionTahlilListe");
       if (!accordion) return;
 
-      // Track if the accordion element was replaced
-      if (accordion !== currentAccordion) {
-        currentAccordion = accordion;
-      }
-
       const items = accordion.querySelectorAll(".accordion-item");
-      // Only inject if there are items and buttons aren't already present
-      const hasButtons = accordion.querySelector(".viziai-btn");
-      if (items.length > 0 && !hasButtons) {
+      if (items.length > 0 && !accordion.querySelector(".viziai-btn")) {
         injectButtons(accordion);
       }
     }
@@ -333,6 +324,34 @@
 
     // Also try immediately
     tryInject();
+  }
+
+  // Show onboarding banner when extension is installed but not configured
+  function showOnboardingBanner() {
+    const banner = document.createElement("div");
+    banner.className = "viziai-onboarding-banner";
+    banner.innerHTML = `
+      <div class="viziai-onboarding-content">
+        ${VIZIAI_ICON}
+        <div class="viziai-onboarding-text">
+          <strong>ViziAI eklentisi yüklendi!</strong>
+          Tahlillerinizi aktarmak için kurulumu tamamlayın.
+        </div>
+        <a href="https://www.viziai.app/settings/api-keys" target="_blank" class="viziai-onboarding-btn">
+          Kurulumu Başlat
+        </a>
+        <button class="viziai-onboarding-close" aria-label="Kapat">✕</button>
+      </div>
+    `;
+
+    banner
+      .querySelector(".viziai-onboarding-close")
+      .addEventListener("click", () => {
+        banner.remove();
+        sessionStorage.setItem("viziai-banner-dismissed", "1");
+      });
+
+    document.body.appendChild(banner);
   }
 
   // Inject buttons into the page
@@ -346,7 +365,13 @@
 
     // Check if API key is configured
     const { apiKey } = await chrome.storage.local.get("apiKey");
-    if (!apiKey) return;
+    if (!apiKey) {
+      // Show onboarding banner if not dismissed this session
+      if (!sessionStorage.getItem("viziai-banner-dismissed")) {
+        showOnboardingBanner();
+      }
+      return;
+    }
 
     observeForAccordion();
   }

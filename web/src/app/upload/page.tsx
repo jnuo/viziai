@@ -21,7 +21,6 @@ import {
   ChevronLeft,
   ArrowRight,
   Chrome,
-  Key,
   ExternalLink,
 } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
@@ -44,7 +43,8 @@ import { formatDateTimeTR } from "@/lib/date";
 import { useTimezone } from "@/components/preference-sync";
 import { reportError } from "@/lib/error-reporting";
 import { trackEvent } from "@/lib/analytics";
-import { FREE_REPORT_CAP } from "@/lib/constants";
+import { FREE_REPORT_CAP, CHROME_EXTENSION_URL } from "@/lib/constants";
+import { staticPages, toLocale } from "@/i18n/config";
 import {
   checkOutOfRange,
   type ExtractedMetric,
@@ -612,7 +612,7 @@ function UploadPageContent(): React.ReactElement {
             )}
 
             {(status === "idle" || status === "error") && (
-              <div className="rounded-lg border bg-muted/30 p-5 space-y-4">
+              <div className="rounded-lg border bg-muted/30 p-5 space-y-3">
                 <div>
                   <h3 className="font-medium text-sm">
                     {t("enabizImportTitle")}
@@ -622,16 +622,10 @@ function UploadPageContent(): React.ReactElement {
                   </p>
                 </div>
 
-                <ol className="text-xs text-muted-foreground space-y-2 list-decimal list-inside">
-                  <li>{t("enabizStep1")}</li>
-                  <li>{t("enabizStep2")}</li>
-                  <li>{t("enabizStep3")}</li>
-                </ol>
-
-                <div className="flex flex-wrap gap-2">
-                  <Button variant="outline" size="sm" asChild>
+                <div className="flex flex-wrap items-center gap-2">
+                  <Button variant="default" size="sm" asChild>
                     <a
-                      href="https://chromewebstore.google.com/detail/viziai-e-nabiz-import/placeholder"
+                      href={CHROME_EXTENSION_URL}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
@@ -641,10 +635,13 @@ function UploadPageContent(): React.ReactElement {
                     </a>
                   </Button>
                   <Button variant="outline" size="sm" asChild>
-                    <Link href="/settings/api-keys">
-                      <Key className="h-4 w-4 mr-1.5" />
-                      {t("createApiKey")}
-                    </Link>
+                    <a
+                      href={`/${locale}/${staticPages.enabizGuide[toLocale(locale)]}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {t("setupGuideLink")}
+                    </a>
                   </Button>
                 </div>
               </div>

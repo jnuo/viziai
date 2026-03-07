@@ -52,7 +52,13 @@ export async function middleware(request: NextRequest) {
   }
 
   // Protected routes that require authentication
-  const protectedRoutes = ["/dashboard", "/upload", "/onboarding", "/import"];
+  const protectedRoutes = [
+    "/dashboard",
+    "/upload",
+    "/onboarding",
+    "/import",
+    "/settings",
+  ];
   const isProtectedRoute = protectedRoutes.some(
     (route) => pathname === route || pathname.startsWith(`${route}/`),
   );
