@@ -38,6 +38,13 @@ export const staticPages = {
     de: "faq",
     fr: "faq",
   },
+  enabizGuide: {
+    tr: "enabiz-rehberi",
+    en: "enabiz-guide",
+    es: "guia-enabiz",
+    de: "enabiz-anleitung",
+    fr: "guide-enabiz",
+  },
 } as const;
 
 export type StaticPageId = keyof typeof staticPages;

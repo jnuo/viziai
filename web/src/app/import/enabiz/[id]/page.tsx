@@ -231,11 +231,10 @@ export default function EnabizImportPage(): React.ReactElement {
     return map;
   }, [appliedRenames]);
 
-  const canConfirm = useMemo(() => {
-    if (!sampleDate || editedMetrics.length === 0) return false;
-    if (collision && !collisionAction) return false;
-    return true;
-  }, [sampleDate, editedMetrics, collision, collisionAction]);
+  const canConfirm =
+    !!sampleDate &&
+    editedMetrics.length > 0 &&
+    (!collision || !!collisionAction);
 
   async function handleConfirm(): Promise<void> {
     if (!canConfirm) return;
@@ -312,9 +311,9 @@ export default function EnabizImportPage(): React.ReactElement {
     [t, tc],
   );
 
-  const isHighSimilarity = collision ? collision.similarity > 0.8 : false;
-  const collisionLabels = useMemo(
-    () => ({
+  const collisionLabels = useMemo(() => {
+    const isHighSimilarity = collision ? collision.similarity > 0.8 : false;
+    return {
       title: t("collision.title"),
       skip: t("collision.skip"),
       skipDescription: t("collision.skipDescription"),
@@ -329,9 +328,8 @@ export default function EnabizImportPage(): React.ReactElement {
       existing: t("collision.existing"),
       new: t("collision.new"),
       metric: t("metric"),
-    }),
-    [t, isHighSimilarity],
-  );
+    };
+  }, [t, collision]);
 
   // Loading state
   if (state === "loading") {
@@ -706,9 +704,9 @@ export default function EnabizImportPage(): React.ReactElement {
                     onClick={handleConfirm}
                     disabled={!canConfirm || state === "confirming"}
                   >
-                    {state === "confirming" ? (
+                    {state === "confirming" && (
                       <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                    ) : null}
+                    )}
                     {t("confirmSave")}
                   </Button>
                 </div>

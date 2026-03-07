@@ -1,4 +1,4 @@
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
@@ -20,6 +20,7 @@ import {
   LucideIcon,
 } from "lucide-react";
 import { CHROME_EXTENSION_URL } from "@/lib/constants";
+import { staticPages, toLocale } from "@/i18n/config";
 
 const COLOR_MAP = {
   primary: {
@@ -135,6 +136,7 @@ const LANDING_FAQ_KEYS = [
 ] as const;
 
 export async function LandingPage(): Promise<React.ReactElement> {
+  const locale = await getLocale();
   const t = await getTranslations("pages.landing");
   const faqT = await getTranslations("faq");
 
@@ -220,7 +222,7 @@ export async function LandingPage(): Promise<React.ReactElement> {
             <div className="grid md:grid-cols-3 gap-8">
               {HOW_IT_WORKS_STEPS.map(
                 ({ icon: Icon, colorClass, titleKey, descKey }, index) => (
-                  <div key={index} className="text-center">
+                  <div key={titleKey} className="text-center">
                     <div className="flex justify-center mb-4">
                       <div className={`p-4 rounded-2xl ${colorClass}`}>
                         <Icon className="h-8 w-8" />
@@ -267,7 +269,9 @@ export async function LandingPage(): Promise<React.ReactElement> {
                 </a>
               </Button>
               <Button variant="outline" size="lg" asChild>
-                <Link href="/faq#chrome-extension">
+                <Link
+                  href={`/${locale}/${staticPages.enabizGuide[toLocale(locale)]}`}
+                >
                   {t("enabiz.howItWorks")}
                 </Link>
               </Button>
