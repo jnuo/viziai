@@ -104,4 +104,111 @@ export const readMinLabel: Record<string, string> = {
   fr: "min de lecture",
 };
 
+/**
+ * Extract FAQ Q&A pairs from blog MDX content.
+ * Looks for an H2 containing "Soru" / "FAQ" / "Questions" followed by
+ * H3 questions, each with the paragraph(s) below as the answer.
+ */
+export interface FaqPair {
+  question: string;
+  answer: string;
+}
+
+export function extractFaqFromContent(content: string): FaqPair[] {
+  const lines = content.split("\n");
+  const faqPairs: FaqPair[] = [];
+
+  let inFaqSection = false;
+  let currentQuestion: string | null = null;
+  let currentAnswerLines: string[] = [];
+
+  const faqHeadingPattern = /soru|faq|question|frequently/i;
+
+  for (const line of lines) {
+    // Detect H2 headings
+    if (line.startsWith("## ")) {
+      if (inFaqSection) {
+        // Hit the next H2 after FAQ section — flush & stop
+        if (currentQuestion) {
+          faqPairs.push({
+            question: currentQuestion,
+            answer: currentAnswerLines.join(" ").trim(),
+          });
+        }
+        break;
+      }
+      if (faqHeadingPattern.test(line)) {
+        inFaqSection = true;
+      }
+      continue;
+    }
+
+    if (!inFaqSection) continue;
+
+    // Detect H3 headings (questions)
+    if (line.startsWith("### ")) {
+      if (currentQuestion) {
+        faqPairs.push({
+          question: currentQuestion,
+          answer: currentAnswerLines.join(" ").trim(),
+        });
+      }
+      currentQuestion = line.replace(/^###\s+/, "");
+      currentAnswerLines = [];
+      continue;
+    }
+
+    // Accumulate answer text (skip empty lines and horizontal rules)
+    const trimmed = line.trim();
+    if (trimmed && trimmed !== "---" && currentQuestion) {
+      // Strip markdown links but keep text: [text](/url) -> text
+      const cleaned = trimmed.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1");
+      currentAnswerLines.push(cleaned);
+    }
+  }
+
+  // Flush last Q&A if content ended inside FAQ section
+  if (currentQuestion && currentAnswerLines.length > 0) {
+    faqPairs.push({
+      question: currentQuestion,
+      answer: currentAnswerLines.join(" ").trim(),
+    });
+  }
+
+  return faqPairs;
+}
+
+// --- Table of Contents utilities ---
+
+export interface TocHeading {
+  id: string;
+  text: string;
+  level: 2 | 3;
+}
+
+export function slugifyHeading(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}\s-]/gu, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+export function extractHeadings(content: string): TocHeading[] {
+  const headings: TocHeading[] = [];
+  for (const line of content.split("\n")) {
+    const m3 = line.match(/^###\s+(.+)/);
+    if (m3) {
+      headings.push({ id: slugifyHeading(m3[1]), text: m3[1], level: 3 });
+      continue;
+    }
+    const m2 = line.match(/^##\s+(.+)/);
+    if (m2) {
+      headings.push({ id: slugifyHeading(m2[1]), text: m2[1], level: 2 });
+    }
+  }
+  return headings;
+}
+
 export { slugifyAuthor } from "./blog-utils";
