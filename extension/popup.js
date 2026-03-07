@@ -1,5 +1,11 @@
 const API_BASE = "https://www.viziai.app";
 
+const ERROR_MESSAGES = {
+  "Invalid or expired API key": "Geçersiz veya süresi dolmuş API anahtarı",
+  "Profile not found": "Profil bulunamadı",
+  "Verification failed": "Doğrulama başarısız oldu",
+};
+
 const apiKeyInput = document.getElementById("apiKey");
 const testBtn = document.getElementById("testBtn");
 const testResult = document.getElementById("testResult");
@@ -20,12 +26,12 @@ testBtn.addEventListener("click", async () => {
   const key = apiKeyInput.value.trim();
   if (!key) return;
   if (!key.startsWith("viz_")) {
-    showResult("error", "Key must start with viz_");
+    showResult("error", "Anahtar viz_ ile başlamalıdır");
     return;
   }
 
   testBtn.disabled = true;
-  testBtn.textContent = "Testing…";
+  testBtn.textContent = "Test ediliyor…";
   testResult.classList.add("hidden");
 
   try {
@@ -35,7 +41,8 @@ testBtn.addEventListener("click", async () => {
 
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
-      showResult("error", data.error || "Invalid key");
+      const msg = ERROR_MESSAGES[data.error] || "Geçersiz API anahtarı";
+      showResult("error", msg);
       testBtn.disabled = false;
       testBtn.textContent = "Bağlantıyı Test Et";
       return;
@@ -52,7 +59,7 @@ testBtn.addEventListener("click", async () => {
 
     showConnected(data.profileName);
   } catch (err) {
-    showResult("error", "Connection failed: " + err.message);
+    showResult("error", "Bağlantı hatası: " + err.message);
     testBtn.disabled = false;
     testBtn.textContent = "Bağlantıyı Test Et";
   }

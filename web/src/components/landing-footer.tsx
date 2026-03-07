@@ -27,6 +27,13 @@ export async function LandingFooter() {
           </Link>
           <span className="text-border">|</span>
           <Link
+            href={`/${locale}/${staticPages.enabizGuide[toLocale(locale)]}`}
+            className="hover:text-foreground transition-colors"
+          >
+            {t("enabizGuideLink")}
+          </Link>
+          <span className="text-border">|</span>
+          <Link
             href={`/${locale}/blog`}
             className="hover:text-foreground transition-colors"
           >

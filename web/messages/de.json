@@ -39,6 +39,7 @@
     "copyright": "© 2026 ViziAI. Alle Rechte vorbehalten.",
     "privacyLink": "Datenschutzrichtlinie",
     "faqLink": "FAQ",
+    "enabizGuideLink": "e-Nabız Anleitung",
     "blog": "Blog",
     "toggleTheme": "Design wechseln",
     "accessLevel": {
@@ -85,6 +86,13 @@
       },
       "faq": {
         "title": "Häufig gestellte Fragen"
+      },
+      "enabiz": {
+        "badge": "Chrome-Erweiterung",
+        "title": "e-Nabız Integration",
+        "description": "Für e-Nabız-Nutzer in der Türkei: Importieren Sie Ihre bisherigen Laborergebnisse mit einem Klick über unsere Chrome-Erweiterung. Kein PDF-Download nötig.",
+        "cta": "Chrome-Erweiterung installieren",
+        "howItWorks": "Wie funktioniert es?"
       }
     },
     "login": {
@@ -136,11 +144,12 @@
       "orImportFromEnabiz": "oder von e-Nabız importieren",
       "enabizImportTitle": "Von e-Nabız importieren",
       "enabizImportDescription": "Importieren Sie Ihre Laborergebnisse von e-Nabız mit einem Klick über die Chrome-Erweiterung.",
-      "enabizStep1": "Chrome-Erweiterung installieren",
-      "enabizStep2": "API-Schlüssel erstellen und in die Erweiterung einfügen",
-      "enabizStep3": "Gehen Sie zu enabiz.gov.tr → Tahlillerim und klicken Sie auf \"An ViziAI senden\"",
+      "enabizStep1": "Installieren Sie die Erweiterung aus dem Chrome Web Store",
+      "enabizStep2": "Erstellen Sie einen Schlüssel unter Einstellungen → API-Schlüssel",
+      "enabizStep3": "Auf enabiz.gov.tr → Tahlillerim klicken Sie auf \"An ViziAI senden\"",
       "installExtension": "Chrome-Erweiterung installieren",
-      "createApiKey": "API-Schlüssel erstellen"
+      "createApiKey": "API-Schlüssel erstellen",
+      "setupGuideLink": "Wie einrichten?"
     },
     "enabizImport": {
       "reviewTitle": "e-Nabız-Import überprüfen",
@@ -183,7 +192,8 @@
         "recommendSeparate": "Die Werte unterscheiden sich — wahrscheinlich eine andere Testart. Als separaten Bericht speichern.",
         "existing": "Vorhanden",
         "new": "Neu"
-      }
+      },
+      "importingToProfile": "Diese Ergebnisse werden dem Profil von {profileName} hinzugefügt"
     },
     "dashboard": {
       "loadingData": "Daten werden geladen…",
@@ -344,9 +354,7 @@
       "noKeysDescription": "Erstellen Sie einen API-Schlüssel, um die e-Nabız Chrome-Erweiterung mit Ihrem Profil zu verbinden.",
       "extensionTitle": "e-Nabız Chrome-Erweiterung",
       "extensionDescription": "Importieren Sie Laborergebnisse direkt von e-Nabız in ViziAI — kein PDF-Upload nötig. Nur Desktop-Chrome.",
-      "step1": "Erstellen Sie unten einen API-Schlüssel für Ihr Profil",
-      "step2": "Installieren Sie die Chrome-Erweiterung (.zip von GitHub herunterladen)",
-      "step3": "Fügen Sie den Schlüssel im Erweiterungs-Popup ein und klicken Sie auf Verbindung testen",
+      "guideLink": "Einrichtungsanleitung",
       "lastUsed": "Zuletzt verwendet",
       "revokeKey": "Schlüssel widerrufen",
       "confirmRevoke": "Widerrufen",
@@ -616,7 +624,7 @@
       },
       "chromeExtension": {
         "q": "Wie funktioniert die Chrome-Erweiterung?",
-        "a": "Unsere Chrome-Erweiterung integriert sich in die e-Nabız-Website. Nach der Installation und dem Einfügen Ihres API-Schlüssels erscheint ein \"An ViziAI senden\"-Button auf der Tahlillerim-Seite in e-Nabız. Klicken Sie darauf, um Ihre Ergebnisse direkt zu übertragen, ohne ein PDF hochladen zu müssen."
+        "a": "Installieren Sie unsere Erweiterung aus dem Chrome Web Store. Erstellen Sie einen API-Schlüssel auf viziai.app und fügen Sie ihn in das Erweiterungsfenster ein. Auf enabiz.gov.tr → Tahlillerim erscheint dann neben jedem Bericht ein \"An ViziAI senden\"-Button. Ein Klick überträgt Ihre Ergebnisse."
       }
     },
     "contact": {
@@ -630,6 +638,40 @@
       "success": "Nachricht gesendet! Wir melden uns bald bei Ihnen.",
       "error": "Senden fehlgeschlagen. Bitte versuchen Sie es erneut."
     }
+  },
+  "enabizGuide": {
+    "title": "e-Nabız Chrome-Erweiterung Anleitung",
+    "subtitle": "Schritt-für-Schritt-Anleitung zum Importieren Ihrer e-Nabız-Laborergebnisse in ViziAI.",
+    "desktopOnly": "Chrome-Erweiterungen funktionieren nur mit Desktop-Chrome, nicht auf Mobilgeräten. Nach dem Import von einem Computer können Sie Ihre Ergebnisse auf jedem Gerät ansehen.",
+    "steps": {
+      "step1": {
+        "title": "Erweiterung installieren",
+        "desc": "Installieren Sie die ViziAI e-Nabız-Erweiterung aus dem <cws>Chrome Web Store</cws>."
+      },
+      "step2": {
+        "title": "API-Schlüssel erstellen",
+        "desc": "Gehen Sie zu <apikeys>viziai.app → Einstellungen → API-Schlüssel</apikeys> und erstellen Sie einen Schlüssel. Wenn Sie mehrere Profile haben, wählen Sie das richtige — alle mit diesem Schlüssel importierten Berichte werden in diesem Profil gespeichert. Sie können für verschiedene Profile separate API-Schlüssel erstellen."
+      },
+      "step3": {
+        "title": "Schlüssel kopieren",
+        "desc": "Kopieren Sie den generierten Schlüssel mit der Kopierschaltfläche."
+      },
+      "step4": {
+        "title": "In die Erweiterung einfügen",
+        "desc": "Öffnen Sie die ViziAI-Erweiterung über den Erweiterungsbereich von Chrome. Fügen Sie Ihren API-Schlüssel ein und klicken Sie auf Verbindung testen."
+      },
+      "step5": {
+        "title": "\"An ViziAI senden\" auf e-Nabız klicken",
+        "desc": "Melden Sie sich bei <enabiz>enabiz.gov.tr</enabiz> an und öffnen Sie die Seite Tahlillerim (Meine Laborergebnisse). Klicken Sie auf die grüne Schaltfläche \"An ViziAI senden\" neben einem Bericht.",
+        "hint": "Wenn die Schaltfläche nicht sichtbar ist, stellen Sie sicher, dass der API-Schlüssel in der Erweiterung hinterlegt ist, und laden Sie die Seite einmal neu."
+      },
+      "step6": {
+        "title": "Überprüfen und bestätigen",
+        "desc": "Ein Popup zeigt Ihre Laborwerte. Bestätigen Sie, um sie in Ihr Profil zu importieren."
+      }
+    },
+    "installCta": "Chrome-Erweiterung installieren",
+    "createKeyCta": "API-Schlüssel erstellen"
   },
   "blog": {
     "listTitle": "Blog — ViziAI",

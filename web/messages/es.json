@@ -39,6 +39,7 @@
     "copyright": "© 2026 ViziAI. Todos los derechos reservados.",
     "privacyLink": "Política de Privacidad",
     "faqLink": "Preguntas Frecuentes",
+    "enabizGuideLink": "Guía e-Nabız",
     "blog": "Blog",
     "toggleTheme": "Cambiar tema",
     "accessLevel": {
@@ -85,6 +86,13 @@
       },
       "faq": {
         "title": "Preguntas Frecuentes"
+      },
+      "enabiz": {
+        "badge": "Extensión de Chrome",
+        "title": "Integración con e-Nabız",
+        "description": "Para usuarios de e-Nabız en Turquía: importa tus análisis anteriores con un clic usando nuestra extensión de Chrome. Sin necesidad de descargar PDFs.",
+        "cta": "Instalar Extensión de Chrome",
+        "howItWorks": "¿Cómo funciona?"
       }
     },
     "login": {
@@ -136,11 +144,12 @@
       "orImportFromEnabiz": "o importar desde e-Nabız",
       "enabizImportTitle": "Importar desde e-Nabız",
       "enabizImportDescription": "Importe sus resultados de laboratorio de e-Nabız a ViziAI con un clic usando la extensión de Chrome.",
-      "enabizStep1": "Instale la extensión de Chrome",
-      "enabizStep2": "Cree una clave API y péguela en la extensión",
-      "enabizStep3": "Vaya a enabiz.gov.tr → Tahlillerim y haga clic en \"Enviar a ViziAI\"",
+      "enabizStep1": "Instala la extensión desde Chrome Web Store",
+      "enabizStep2": "Crea una clave en Ajustes → Claves API",
+      "enabizStep3": "En enabiz.gov.tr → Tahlillerim, haz clic en \"Enviar a ViziAI\"",
       "installExtension": "Instalar extensión de Chrome",
-      "createApiKey": "Crear clave API"
+      "createApiKey": "Crear clave API",
+      "setupGuideLink": "¿Cómo configurar?"
     },
     "enabizImport": {
       "reviewTitle": "Revisar importación de e-Nabız",
@@ -183,7 +192,8 @@
         "recommendSeparate": "Los valores difieren — probablemente un tipo de prueba diferente. Guarde como informe separado.",
         "existing": "Existente",
         "new": "Nuevo"
-      }
+      },
+      "importingToProfile": "Estos resultados se añadirán al perfil de {profileName}"
     },
     "dashboard": {
       "loadingData": "Cargando datos…",
@@ -344,9 +354,7 @@
       "noKeysDescription": "Crea una clave API para conectar la extensión de Chrome e-Nabız a tu perfil.",
       "extensionTitle": "Extensión Chrome e-Nabız",
       "extensionDescription": "Importa resultados de laboratorio directamente desde e-Nabız a ViziAI — sin necesidad de subir PDF. Solo Chrome de escritorio.",
-      "step1": "Crea una clave API abajo para tu perfil",
-      "step2": "Instala la extensión de Chrome (descarga .zip de GitHub)",
-      "step3": "Pega la clave en la ventana de la extensión y haz clic en Probar Conexión",
+      "guideLink": "Guía de Instalación",
       "lastUsed": "Último uso",
       "revokeKey": "Revocar clave",
       "confirmRevoke": "Revocar",
@@ -616,7 +624,7 @@
       },
       "chromeExtension": {
         "q": "¿Cómo funciona la extensión de Chrome?",
-        "a": "Nuestra extensión de Chrome se integra con el sitio web de e-Nabız. Después de instalarla y pegar tu clave API, aparece un botón \"Enviar a ViziAI\" en la página Tahlillerim de e-Nabız. Haz clic para transferir tus resultados directamente sin necesidad de subir un PDF."
+        "a": "Instala nuestra extensión desde Chrome Web Store. Crea una clave API en viziai.app y pégala en la ventana de la extensión. Luego en enabiz.gov.tr → Tahlillerim, aparecerá un botón \"Enviar a ViziAI\" junto a cada informe. Un clic transfiere tus resultados."
       }
     },
     "contact": {
@@ -630,6 +638,40 @@
       "success": "¡Mensaje enviado! Te responderemos pronto.",
       "error": "Error al enviar. Inténtalo de nuevo."
     }
+  },
+  "enabizGuide": {
+    "title": "Guía de la extensión Chrome e-Nabız",
+    "subtitle": "Configuración paso a paso para importar tus resultados de laboratorio de e-Nabız a ViziAI.",
+    "desktopOnly": "Las extensiones de Chrome solo funcionan en Chrome de escritorio, no en dispositivos móviles. Después de importar desde un ordenador, puedes ver tus resultados en cualquier dispositivo.",
+    "steps": {
+      "step1": {
+        "title": "Instala la extensión",
+        "desc": "Instala la extensión ViziAI e-Nabız desde <cws>Chrome Web Store</cws>."
+      },
+      "step2": {
+        "title": "Crea una clave API",
+        "desc": "Ve a <apikeys>viziai.app → Ajustes → Claves API</apikeys> y crea una clave. Si tienes varios perfiles, asegúrate de seleccionar el correcto — todos los informes importados con esta clave se guardarán en ese perfil. Puedes crear claves API diferentes para distintos perfiles."
+      },
+      "step3": {
+        "title": "Copia la clave",
+        "desc": "Copia la clave generada con el botón de copiar."
+      },
+      "step4": {
+        "title": "Pégala en la extensión",
+        "desc": "Abre la extensión ViziAI desde el área de extensiones de Chrome. Pega tu clave API y haz clic en Probar Conexión."
+      },
+      "step5": {
+        "title": "Haz clic en \"Enviar a ViziAI\" en e-Nabız",
+        "desc": "Inicia sesión en <enabiz>enabiz.gov.tr</enabiz> y abre la página Tahlillerim (Mis Resultados). Haz clic en el botón verde \"Enviar a ViziAI\" junto a cualquier informe.",
+        "hint": "Si no ves el botón, asegúrate de haber añadido la clave API a la extensión y actualiza la página."
+      },
+      "step6": {
+        "title": "Revisa y confirma",
+        "desc": "Una ventana muestra tus valores de laboratorio. Confirma para importarlos a tu perfil."
+      }
+    },
+    "installCta": "Instalar extensión Chrome",
+    "createKeyCta": "Crear clave API"
   },
   "blog": {
     "listTitle": "Blog — ViziAI",
