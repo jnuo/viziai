@@ -14,13 +14,23 @@
       </div>
 
       <div id="setup" class="section">
-        <p class="setup-hint">
-          API anahtarınızı
-          <a href="https://www.viziai.app/settings/api-keys" target="_blank"
-            >viziai.app</a
-          >'den oluşturun ve aşağıya yapıştırın.
-        </p>
-        <label for="apiKey">API Key</label>
+        <p class="section-title">Kurulum (3 adım)</p>
+        <ol class="setup-steps">
+          <li>
+            <a href="https://www.viziai.app/login" target="_blank">viziai.app</a
+            >'de hesap oluşturun veya giriş yapın
+          </li>
+          <li>
+            Ayarlar → API Anahtarları sayfasından bir anahtar oluşturun
+            <a
+              href="https://www.viziai.app/settings/api-keys"
+              target="_blank"
+              class="step-link"
+              >API Anahtarı Oluştur →</a
+            >
+          </li>
+          <li>Anahtarı buraya yapıştırın:</li>
+        </ol>
         <input
           type="password"
           id="apiKey"
@@ -37,10 +47,26 @@
           <span>Bağlı:</span>
           <span id="profileName" class="profile-name"></span>
         </div>
-        <p class="connected-hint">
-          enabiz.gov.tr → Tahlillerim sayfasında<br />
-          "ViziAI'a Gönder" butonlarını göreceksiniz.
-        </p>
+
+        <div class="usage-guide">
+          <p class="section-title">Nasıl kullanılır:</p>
+          <ol class="setup-steps">
+            <li>enabiz.gov.tr'ye gidin ve giriş yapın</li>
+            <li>Tahlillerim sayfasını açın</li>
+            <li>
+              Her tahlil raporunun yanındaki "ViziAI'a Gönder" butonuna tıklayın
+            </li>
+          </ol>
+        </div>
+
+        <a
+          href="https://enabiz.gov.tr/Home/Tahlillerim"
+          target="_blank"
+          class="btn btn-primary"
+          style="text-align: center; text-decoration: none"
+        >
+          enabiz.gov.tr → Tahlillerim
+        </a>
         <button id="disconnectBtn" class="btn btn-secondary">
           Bağlantıyı Kes
         </button>

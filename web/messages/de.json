@@ -85,6 +85,13 @@
       },
       "faq": {
         "title": "Häufig gestellte Fragen"
+      },
+      "enabiz": {
+        "badge": "Chrome-Erweiterung",
+        "title": "e-Nabız Integration",
+        "description": "Für e-Nabız-Nutzer in der Türkei: Importieren Sie Ihre bisherigen Laborergebnisse mit einem Klick über unsere Chrome-Erweiterung. Kein PDF-Download nötig.",
+        "cta": "Chrome-Erweiterung installieren",
+        "howItWorks": "Wie funktioniert es?"
       }
     },
     "login": {
@@ -136,9 +143,9 @@
       "orImportFromEnabiz": "oder von e-Nabız importieren",
       "enabizImportTitle": "Von e-Nabız importieren",
       "enabizImportDescription": "Importieren Sie Ihre Laborergebnisse von e-Nabız mit einem Klick über die Chrome-Erweiterung.",
-      "enabizStep1": "Chrome-Erweiterung installieren",
-      "enabizStep2": "API-Schlüssel erstellen und in die Erweiterung einfügen",
-      "enabizStep3": "Gehen Sie zu enabiz.gov.tr → Tahlillerim und klicken Sie auf \"An ViziAI senden\"",
+      "enabizStep1": "Installieren Sie die Erweiterung aus dem Chrome Web Store",
+      "enabizStep2": "Erstellen Sie einen Schlüssel unter Einstellungen → API-Schlüssel",
+      "enabizStep3": "Auf enabiz.gov.tr → Tahlillerim klicken Sie auf \"An ViziAI senden\"",
       "installExtension": "Chrome-Erweiterung installieren",
       "createApiKey": "API-Schlüssel erstellen"
     },
@@ -183,7 +190,8 @@
         "recommendSeparate": "Die Werte unterscheiden sich — wahrscheinlich eine andere Testart. Als separaten Bericht speichern.",
         "existing": "Vorhanden",
         "new": "Neu"
-      }
+      },
+      "importingToProfile": "Diese Ergebnisse werden dem Profil von {profileName} hinzugefügt"
     },
     "dashboard": {
       "loadingData": "Daten werden geladen…",
@@ -344,9 +352,9 @@
       "noKeysDescription": "Erstellen Sie einen API-Schlüssel, um die e-Nabız Chrome-Erweiterung mit Ihrem Profil zu verbinden.",
       "extensionTitle": "e-Nabız Chrome-Erweiterung",
       "extensionDescription": "Importieren Sie Laborergebnisse direkt von e-Nabız in ViziAI — kein PDF-Upload nötig. Nur Desktop-Chrome.",
-      "step1": "Erstellen Sie unten einen API-Schlüssel für Ihr Profil",
-      "step2": "Installieren Sie die Chrome-Erweiterung (.zip von GitHub herunterladen)",
-      "step3": "Fügen Sie den Schlüssel im Erweiterungs-Popup ein und klicken Sie auf Verbindung testen",
+      "step1": "Wählen Sie ein Profil und erstellen Sie einen API-Schlüssel",
+      "step2": "Installieren Sie die Erweiterung aus dem Chrome Web Store",
+      "step3": "Klicken Sie auf das Erweiterungssymbol, fügen Sie den Schlüssel ein und drücken Sie Verbindung testen",
       "lastUsed": "Zuletzt verwendet",
       "revokeKey": "Schlüssel widerrufen",
       "confirmRevoke": "Widerrufen",
@@ -616,7 +624,7 @@
       },
       "chromeExtension": {
         "q": "Wie funktioniert die Chrome-Erweiterung?",
-        "a": "Unsere Chrome-Erweiterung integriert sich in die e-Nabız-Website. Nach der Installation und dem Einfügen Ihres API-Schlüssels erscheint ein \"An ViziAI senden\"-Button auf der Tahlillerim-Seite in e-Nabız. Klicken Sie darauf, um Ihre Ergebnisse direkt zu übertragen, ohne ein PDF hochladen zu müssen."
+        "a": "Installieren Sie unsere Erweiterung aus dem Chrome Web Store. Erstellen Sie einen API-Schlüssel auf viziai.app und fügen Sie ihn in das Erweiterungsfenster ein. Auf enabiz.gov.tr → Tahlillerim erscheint dann neben jedem Bericht ein \"An ViziAI senden\"-Button. Ein Klick überträgt Ihre Ergebnisse."
       }
     },
     "contact": {

@@ -44,7 +44,7 @@ import { formatDateTimeTR } from "@/lib/date";
 import { useTimezone } from "@/components/preference-sync";
 import { reportError } from "@/lib/error-reporting";
 import { trackEvent } from "@/lib/analytics";
-import { FREE_REPORT_CAP } from "@/lib/constants";
+import { FREE_REPORT_CAP, CHROME_EXTENSION_URL } from "@/lib/constants";
 import {
   checkOutOfRange,
   type ExtractedMetric,
@@ -631,7 +631,7 @@ function UploadPageContent(): React.ReactElement {
                 <div className="flex flex-wrap gap-2">
                   <Button variant="outline" size="sm" asChild>
                     <a
-                      href="https://chromewebstore.google.com/detail/viziai-e-nabiz-import/placeholder"
+                      href={CHROME_EXTENSION_URL}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
