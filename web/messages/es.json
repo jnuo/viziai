@@ -592,11 +592,11 @@
       },
       "languages": {
         "q": "¿Qué idiomas soportan?",
-        "a": "La interfaz de ViziAI soporta turco, inglés, español, alemán y francés. Nuestra IA también puede procesar PDF de laboratorio en los cinco idiomas."
+        "a": "La interfaz de ViziAI soporta turco, inglés, español, alemán, francés y neerlandés. Nuestra IA también puede procesar PDF de laboratorio en los seis idiomas."
       },
       "testsAbroad": {
         "q": "¿Puedo subir análisis hechos en el extranjero?",
-        "a": "¡Sí! Puedes subir informes de laboratorio de cualquier país en los idiomas soportados (turco, inglés, español, alemán, francés). Todos los resultados se unifican en un solo panel."
+        "a": "¡Sí! Puedes subir informes de laboratorio de cualquier país en los idiomas soportados (turco, inglés, español, alemán, francés, neerlandés). Todos los resultados se unifican en un solo panel."
       },
       "afterUpload": {
         "q": "¿Qué pasa después de subir un PDF?",

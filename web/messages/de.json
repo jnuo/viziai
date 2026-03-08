@@ -592,11 +592,11 @@
       },
       "languages": {
         "q": "Welche Sprachen werden unterstützt?",
-        "a": "Die ViziAI-Oberfläche unterstützt Türkisch, Englisch, Spanisch, Deutsch und Französisch. Unsere KI kann auch Labor-PDFs in allen fünf Sprachen verarbeiten."
+        "a": "Die ViziAI-Oberfläche unterstützt Türkisch, Englisch, Spanisch, Deutsch, Französisch und Niederländisch. Unsere KI kann auch Labor-PDFs in allen sechs Sprachen verarbeiten."
       },
       "testsAbroad": {
         "q": "Kann ich im Ausland durchgeführte Tests hochladen?",
-        "a": "Ja! Sie können Laborberichte aus jedem Land in unterstützten Sprachen (Türkisch, Englisch, Spanisch, Deutsch, Französisch) hochladen. Alle Ergebnisse werden in einem einzigen Dashboard zusammengeführt."
+        "a": "Ja! Sie können Laborberichte aus jedem Land in unterstützten Sprachen (Türkisch, Englisch, Spanisch, Deutsch, Französisch, Niederländisch) hochladen. Alle Ergebnisse werden in einem einzigen Dashboard zusammengeführt."
       },
       "afterUpload": {
         "q": "Was passiert nach dem PDF-Upload?",

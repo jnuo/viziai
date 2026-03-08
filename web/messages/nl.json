@@ -592,11 +592,11 @@
       },
       "languages": {
         "q": "Welke talen worden ondersteund?",
-        "a": "De interface van ViziAI ondersteunt Turks, Engels, Spaans, Duits en Frans. Onze AI kan ook lab-PDF's in alle vijf talen verwerken."
+        "a": "De interface van ViziAI ondersteunt Turks, Engels, Spaans, Duits, Frans en Nederlands. Onze AI kan ook lab-PDF's in alle zes talen verwerken."
       },
       "testsAbroad": {
         "q": "Kan ik tests uploaden die in het buitenland zijn gedaan?",
-        "a": "Ja! Je kunt labrapporten uploaden uit elk land in ondersteunde talen (Turks, Engels, Spaans, Duits, Frans). Alle resultaten worden samengevoegd in één dashboard."
+        "a": "Ja! Je kunt labrapporten uploaden uit elk land in ondersteunde talen (Turks, Engels, Spaans, Duits, Frans, Nederlands). Alle resultaten worden samengevoegd in één dashboard."
       },
       "afterUpload": {
         "q": "Wat gebeurt er nadat ik een PDF upload?",

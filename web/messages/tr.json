@@ -592,11 +592,11 @@
       },
       "languages": {
         "q": "Hangi dilleri destekliyorsunuz?",
-        "a": "ViziAI arayüzü Türkçe, İngilizce, İspanyolca, Almanca ve Fransızca dillerini destekler. Yapay zekamız bu beş dildeki laboratuvar PDF'lerini de işleyebilir."
+        "a": "ViziAI arayüzü Türkçe, İngilizce, İspanyolca, Almanca, Fransızca ve Felemenkçe dillerini destekler. Yapay zekamız bu altı dildeki laboratuvar PDF'lerini de işleyebilir."
       },
       "testsAbroad": {
         "q": "Yurt dışında yaptırdığım testleri yükleyebilir miyim?",
-        "a": "Evet! Desteklenen dillerdeki (Türkçe, İngilizce, İspanyolca, Almanca, Fransızca) herhangi bir ülkenin laboratuvar raporlarını yükleyebilirsiniz. Tüm sonuçlar tek bir panoda birleştirilir."
+        "a": "Evet! Desteklenen dillerdeki (Türkçe, İngilizce, İspanyolca, Almanca, Fransızca, Felemenkçe) herhangi bir ülkenin laboratuvar raporlarını yükleyebilirsiniz. Tüm sonuçlar tek bir panoda birleştirilir."
       },
       "afterUpload": {
         "q": "PDF yükledikten sonra ne olur?",

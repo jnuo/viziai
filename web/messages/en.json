@@ -592,11 +592,11 @@
       },
       "languages": {
         "q": "What languages do you support?",
-        "a": "ViziAI's interface supports Turkish, English, Spanish, German, and French. Our AI can also process lab PDFs in all five languages."
+        "a": "ViziAI's interface supports Turkish, English, Spanish, German, French, and Dutch. Our AI can also process lab PDFs in all six languages."
       },
       "testsAbroad": {
         "q": "Can I upload tests done abroad?",
-        "a": "Yes! You can upload lab reports from any country in supported languages (Turkish, English, Spanish, German, French). All results are unified in a single dashboard."
+        "a": "Yes! You can upload lab reports from any country in supported languages (Turkish, English, Spanish, German, French, Dutch). All results are unified in a single dashboard."
       },
       "afterUpload": {
         "q": "What happens after I upload a PDF?",
