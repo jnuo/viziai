@@ -122,7 +122,8 @@ export function extractFaqFromContent(content: string): FaqPair[] {
   let currentQuestion: string | null = null;
   let currentAnswerLines: string[] = [];
 
-  const faqHeadingPattern = /soru|faq|question|frequently/i;
+  const faqHeadingPattern =
+    /soru|faq|question|frequently|häufige|veelgestelde/i;
 
   for (const line of lines) {
     // Detect H2 headings
