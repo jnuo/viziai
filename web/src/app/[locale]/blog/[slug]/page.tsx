@@ -181,7 +181,7 @@ export default async function BlogArticlePage({ params }: ArticlePageProps) {
         />
       )}
 
-      <TableOfContents headings={headings} />
+      <TableOfContents headings={headings} label={t("tocLabel")} />
 
       <main className="container mx-auto px-4 py-12 max-w-3xl">
         <Link

@@ -3,7 +3,13 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import type { TocHeading } from "@/lib/blog";
 
-export function TableOfContents({ headings }: { headings: TocHeading[] }) {
+export function TableOfContents({
+  headings,
+  label = "Contents",
+}: {
+  headings: TocHeading[];
+  label?: string;
+}) {
   const [activeId, setActiveId] = useState("");
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -66,7 +72,7 @@ export function TableOfContents({ headings }: { headings: TocHeading[] }) {
           className="mr-2 w-[220px] rounded-lg border border-border bg-background/95 shadow-lg backdrop-blur-sm p-3 max-h-[60vh] overflow-y-auto"
         >
           <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-2">
-            Contents
+            {label}
           </p>
           <ul className="space-y-0.5">
             {headings.map((h) => (
