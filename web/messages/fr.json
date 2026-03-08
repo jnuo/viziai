@@ -576,7 +576,7 @@
       },
       "enabizImport": {
         "q": "Puis-je importer depuis e-Nabız ?",
-        "a": "Oui ! Installez notre extension Chrome, créez une clé API et collez-la dans l'extension. Puis allez sur la page Tahlillerim sur enabiz.gov.tr et cliquez sur « Envoyer à ViziAI » pour transférer vos résultats en un clic."
+        "a": "Oui ! Installez notre <cws>extension Chrome</cws>, créez une clé API et collez-la dans l'extension. Puis allez sur la page Tahlillerim sur enabiz.gov.tr et cliquez sur « Envoyer à ViziAI » pour transférer vos résultats en un clic. Consultez notre <guide>guide de configuration</guide> pour des instructions étape par étape."
       },
       "dataSecure": {
         "q": "Mes données sont-elles sécurisées ?",
@@ -624,7 +624,7 @@
       },
       "chromeExtension": {
         "q": "Comment fonctionne l'extension Chrome ?",
-        "a": "Installez notre extension depuis le Chrome Web Store. Créez une clé API sur viziai.app et collez-la dans la fenêtre de l'extension. Ensuite sur enabiz.gov.tr → Tahlillerim, un bouton \"Envoyer à ViziAI\" apparaît à côté de chaque rapport. Un clic transfère vos résultats."
+        "a": "Installez notre extension depuis le <cws>Chrome Web Store</cws>. Créez une clé API sur viziai.app et collez-la dans la fenêtre de l'extension. Ensuite sur enabiz.gov.tr → Tahlillerim, un bouton \"Envoyer à ViziAI\" apparaît à côté de chaque rapport. Un clic transfère vos résultats. Pour des instructions détaillées, consultez notre <guide>guide de configuration</guide>."
       }
     },
     "contact": {

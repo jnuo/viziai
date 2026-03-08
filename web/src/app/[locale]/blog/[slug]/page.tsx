@@ -13,7 +13,11 @@ import {
   formatBlogDate,
   readMinLabel,
   slugifyAuthor,
+  extractFaqFromContent,
+  extractHeadings,
+  slugifyHeading,
 } from "@/lib/blog";
+import { TableOfContents } from "@/components/blog/TableOfContents";
 import { locales, bcp47 } from "@/i18n/config";
 import type { Locale } from "@/i18n/config";
 import { BASE_URL } from "@/lib/constants";
@@ -47,7 +51,7 @@ export async function generateMetadata({
   const canonicalUrl = `${BASE_URL}/${locale}/blog/${slug}`;
 
   return {
-    title: `${frontmatter.title} — ViziAI`,
+    title: frontmatter.title,
     description: frontmatter.description,
     alternates: {
       canonical: canonicalUrl,
@@ -92,9 +96,91 @@ export default async function BlogArticlePage({ params }: ArticlePageProps) {
     namespace: "blog",
   });
 
+  const canonicalUrl = `${BASE_URL}/${locale}/blog/${slug}`;
+
+  // BlogPosting JSON-LD
+  const blogPostingJsonLd: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: frontmatter.title,
+    description: frontmatter.description,
+    datePublished: frontmatter.publishedAt,
+    dateModified: frontmatter.publishedAt,
+    author: {
+      "@type": "Person",
+      name: frontmatter.author?.name ?? "Onur O.",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "ViziAI",
+      url: BASE_URL,
+    },
+    image: `${BASE_URL}/og/blog-${locale}.jpg`,
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": canonicalUrl,
+    },
+    inLanguage: bcp47[locale as Locale],
+  };
+
+  const headings = extractHeadings(content);
+
+  // Custom MDX components to inject id attributes on headings
+  const mdxComponents = {
+    h2: (props: React.ComponentProps<"h2">) => {
+      const text =
+        typeof props.children === "string"
+          ? props.children
+          : String(props.children);
+      return <h2 id={slugifyHeading(text)} {...props} />;
+    },
+    h3: (props: React.ComponentProps<"h3">) => {
+      const text =
+        typeof props.children === "string"
+          ? props.children
+          : String(props.children);
+      return <h3 id={slugifyHeading(text)} {...props} />;
+    },
+  };
+
+  // FAQPage JSON-LD (only if the post has FAQ content)
+  const faqPairs = extractFaqFromContent(content);
+  let faqJsonLd: Record<string, unknown> | null = null;
+  if (faqPairs.length > 0) {
+    faqJsonLd = {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: faqPairs.map((faq) => ({
+        "@type": "Question",
+        name: faq.question,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: faq.answer,
+        },
+      })),
+    };
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(blogPostingJsonLd),
+        }}
+      />
+      {faqJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(faqJsonLd),
+          }}
+        />
+      )}
+
+      <TableOfContents headings={headings} />
 
       <main className="container mx-auto px-4 py-12 max-w-3xl">
         <Link
@@ -127,7 +213,7 @@ export default async function BlogArticlePage({ params }: ArticlePageProps) {
             {frontmatter.author && (
               <Link
                 href={`/${locale}/blog?author=${slugifyAuthor(frontmatter.author.name)}`}
-                className="flex items-center gap-1.5 hover:text-foreground transition-colors"
+                className="flex items-center gap-1.5 text-primary underline underline-offset-2 hover:text-primary/80 transition-colors"
               >
                 <User aria-hidden="true" className="h-3.5 w-3.5" />
                 {frontmatter.author.name}
@@ -137,7 +223,7 @@ export default async function BlogArticlePage({ params }: ArticlePageProps) {
         </header>
 
         <article className="prose prose-lg prose-neutral dark:prose-invert max-w-none prose-headings:font-semibold prose-a:text-primary prose-a:underline">
-          <MDXRemote source={content} />
+          <MDXRemote source={content} components={mdxComponents} />
         </article>
 
         <section className="mt-12 p-6 sm:p-8 rounded-2xl bg-primary/5 border border-primary/20 text-center">
