@@ -72,7 +72,7 @@
       "howItWorks": "Comment ça marche",
       "howItWorksSteps": {
         "step1Title": "Téléchargez votre PDF",
-        "step1Desc": "Glissez-déposez votre rapport d'analyse de sang. Nous acceptons les PDF de laboratoires en turc, anglais, allemand, français et espagnol.",
+        "step1Desc": "Glissez-déposez votre rapport d'analyse de sang. Nous acceptons les PDF de laboratoires en turc, anglais, allemand, néerlandais, français et espagnol.",
         "step2Title": "L'IA extrait les résultats",
         "step2Desc": "Notre IA lit votre PDF et extrait chaque marqueur, valeur et plage de référence — même à partir de documents scannés.",
         "step3Title": "Suivez vos tendances",

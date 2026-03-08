@@ -72,7 +72,7 @@
       "howItWorks": "Cómo Funciona",
       "howItWorksSteps": {
         "step1Title": "Sube tu PDF",
-        "step1Desc": "Arrastra y suelta tu informe de análisis de sangre. Aceptamos PDF de laboratorios en turco, inglés, alemán, francés y español.",
+        "step1Desc": "Arrastra y suelta tu informe de análisis de sangre. Aceptamos PDF de laboratorios en turco, inglés, alemán, neerlandés, francés y español.",
         "step2Title": "La IA Extrae los Resultados",
         "step2Desc": "Nuestra IA lee tu PDF y extrae cada métrica, valor y rango de referencia — incluso de documentos escaneados.",
         "step3Title": "Sigue tus Tendencias",

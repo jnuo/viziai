@@ -72,7 +72,7 @@
       "howItWorks": "How It Works",
       "howItWorksSteps": {
         "step1Title": "Upload Your PDF",
-        "step1Desc": "Drag and drop your blood test report. We support lab PDFs in Turkish, English, German, French, and Spanish.",
+        "step1Desc": "Drag and drop your blood test report. We support lab PDFs in Turkish, English, German, Dutch, French, and Spanish.",
         "step2Title": "AI Extracts Results",
         "step2Desc": "Our AI reads your PDF and extracts every metric, value, and reference range — even from scanned documents.",
         "step3Title": "Track Your Trends",

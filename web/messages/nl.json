@@ -72,7 +72,7 @@
       "howItWorks": "Hoe het werkt",
       "howItWorksSteps": {
         "step1Title": "Upload je PDF",
-        "step1Desc": "Sleep je bloedtestrapport naar het venster. We ondersteunen lab-PDF's in het Turks, Engels, Duits, Frans en Spaans.",
+        "step1Desc": "Sleep je bloedtestrapport naar het venster. We ondersteunen lab-PDF's in het Turks, Engels, Duits, Nederlands, Frans en Spaans.",
         "step2Title": "AI extraheert resultaten",
         "step2Desc": "Onze AI leest je PDF en haalt elke meting, waarde en referentiebereik eruit — zelfs uit gescande documenten.",
         "step3Title": "Volg je trends",
