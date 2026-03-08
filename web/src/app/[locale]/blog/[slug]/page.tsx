@@ -17,6 +17,7 @@ import {
   extractFaqFromContent,
   extractHeadings,
   slugifyHeading,
+  getHreflangAlternates,
 } from "@/lib/blog";
 import { TableOfContents } from "@/components/blog/TableOfContents";
 import { locales, bcp47 } from "@/i18n/config";
@@ -51,11 +52,22 @@ export async function generateMetadata({
   const { frontmatter } = post;
   const canonicalUrl = `${BASE_URL}/${locale}/blog/${slug}`;
 
+  // Build hreflang alternates if this post belongs to a group
+  const languages: Record<string, string> = {};
+  if (frontmatter.hreflangGroup) {
+    const alternates = getHreflangAlternates(frontmatter.hreflangGroup);
+    for (const [altLocale, altSlug] of Object.entries(alternates)) {
+      languages[bcp47[altLocale as Locale]] =
+        `${BASE_URL}/${altLocale}/blog/${altSlug}`;
+    }
+  }
+
   return {
     title: frontmatter.title,
     description: frontmatter.description,
     alternates: {
       canonical: canonicalUrl,
+      languages: Object.keys(languages).length > 0 ? languages : undefined,
     },
     openGraph: {
       title: frontmatter.title,

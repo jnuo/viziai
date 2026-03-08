@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
-import type { Locale } from "@/i18n/config";
+import { locales, type Locale } from "@/i18n/config";
 
 const CONTENT_DIR = path.join(process.cwd(), "content", "blog");
 
@@ -13,6 +13,7 @@ export interface BlogFrontmatter {
   publishedAt: string;
   tags: string[];
   author?: { name: string; email: string };
+  hreflangGroup?: string;
 }
 
 export interface BlogPost {
@@ -210,6 +211,27 @@ export function extractHeadings(content: string): TocHeading[] {
     }
   }
   return headings;
+}
+
+/**
+ * Find all blog posts that share the same hreflangGroup.
+ * Returns a map of locale → slug for cross-linking.
+ */
+export function getHreflangAlternates(
+  group: string,
+  excludeLocale?: string,
+): Record<string, string> {
+  const alternates: Record<string, string> = {};
+  for (const locale of locales) {
+    if (locale === excludeLocale) continue;
+    for (const post of getAllBlogPosts(locale)) {
+      if (post.frontmatter.hreflangGroup === group) {
+        alternates[locale] = post.frontmatter.slug;
+        break;
+      }
+    }
+  }
+  return alternates;
 }
 
 export { slugifyAuthor } from "./blog-utils";

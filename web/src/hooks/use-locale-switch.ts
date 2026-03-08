@@ -4,7 +4,7 @@ import { useRef, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
 import { setLocale } from "@/app/actions/locale";
-import { locales, staticPages, type Locale } from "@/i18n/config";
+import { locales, staticPages, bcp47, type Locale } from "@/i18n/config";
 import { trackEvent } from "@/lib/analytics";
 
 /** Resolve target URL when switching locale on a locale-prefixed page. */
@@ -31,8 +31,20 @@ function resolveLocalePath(
     }
   }
 
-  // Blog post — redirect to blog listing (posts have unique per-language slugs)
+  // Blog post — check for hreflang alternate, else fall back to blog listing
   if (rest.startsWith("/blog/") && rest.length > "/blog/".length) {
+    const targetBcp47 = bcp47[target];
+    const altLink = document.querySelector<HTMLLinkElement>(
+      `link[rel="alternate"][hreflang="${targetBcp47}"]`,
+    );
+    if (altLink?.href) {
+      try {
+        const url = new URL(altLink.href);
+        return url.pathname;
+      } catch {
+        // fall through
+      }
+    }
     return `/${target}/blog`;
   }
 
