@@ -20,7 +20,7 @@ import {
   getHreflangAlternates,
 } from "@/lib/blog";
 import { TableOfContents } from "@/components/blog/TableOfContents";
-import { locales, bcp47 } from "@/i18n/config";
+import { locales, bcp47, toLocale } from "@/i18n/config";
 import type { Locale } from "@/i18n/config";
 import { BASE_URL } from "@/lib/constants";
 
@@ -45,20 +45,29 @@ export async function generateMetadata({
   params,
 }: ArticlePageProps): Promise<Metadata> {
   const { locale, slug } = await params;
-  if (!locales.includes(locale as Locale)) return { title: "Not Found" };
+  const loc = toLocale(locale);
+  if (!locales.includes(loc)) return { title: "Not Found" };
   const post = getBlogPost(locale, slug);
   if (!post) return { title: "Not Found" };
 
   const { frontmatter } = post;
   const canonicalUrl = `${BASE_URL}/${locale}/blog/${slug}`;
+  const ogImage = `${BASE_URL}/og/blog-${locale}.jpg`;
 
-  // Build hreflang alternates if this post belongs to a group
   const languages: Record<string, string> = {};
   if (frontmatter.hreflangGroup) {
     const alternates = getHreflangAlternates(frontmatter.hreflangGroup);
     for (const [altLocale, altSlug] of Object.entries(alternates)) {
       languages[bcp47[altLocale as Locale]] =
         `${BASE_URL}/${altLocale}/blog/${altSlug}`;
+    }
+    const defaultLocale = alternates.en ? "en" : Object.keys(alternates)[0];
+    const defaultSlug = alternates.en
+      ? alternates.en
+      : Object.values(alternates)[0];
+    if (defaultLocale && defaultSlug) {
+      languages["x-default"] =
+        `${BASE_URL}/${defaultLocale}/blog/${defaultSlug}`;
     }
   }
 
@@ -77,42 +86,46 @@ export async function generateMetadata({
       tags: frontmatter.tags,
       url: canonicalUrl,
       siteName: "ViziAI",
-      locale: bcp47[locale as Locale],
+      locale: bcp47[loc],
       images: [
-        {
-          url: `${BASE_URL}/og/blog-${locale}.jpg`,
-          width: 1280,
-          height: 838,
-          alt: frontmatter.title,
-        },
+        { url: ogImage, width: 1280, height: 838, alt: frontmatter.title },
       ],
     },
     twitter: {
       card: "summary_large_image",
       title: frontmatter.title,
       description: frontmatter.description,
-      images: [`${BASE_URL}/og/blog-${locale}.jpg`],
+      images: [ogImage],
     },
   };
 }
 
+function headingWithId(
+  Tag: "h2" | "h3",
+  props: React.ComponentProps<"h2">,
+): React.ReactNode {
+  const text = String(props.children);
+  return <Tag id={slugifyHeading(text)} {...props} />;
+}
+
+const mdxComponents = {
+  h2: (props: React.ComponentProps<"h2">) => headingWithId("h2", props),
+  h3: (props: React.ComponentProps<"h3">) => headingWithId("h3", props),
+};
+
 export default async function BlogArticlePage({ params }: ArticlePageProps) {
   const { locale, slug } = await params;
-  if (!locales.includes(locale as Locale)) notFound();
+  const loc = toLocale(locale);
+  if (!locales.includes(loc)) notFound();
 
   const post = getBlogPost(locale, slug);
   if (!post) notFound();
 
   const { frontmatter, content, readingTime } = post;
-  const t = await getTranslations({
-    locale: locale as Locale,
-    namespace: "blog",
-  });
-
+  const t = await getTranslations({ locale: loc, namespace: "blog" });
   const canonicalUrl = `${BASE_URL}/${locale}/blog/${slug}`;
 
-  // BlogPosting JSON-LD
-  const blogPostingJsonLd: Record<string, unknown> = {
+  const blogPostingJsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     headline: frontmatter.title,
@@ -133,46 +146,27 @@ export default async function BlogArticlePage({ params }: ArticlePageProps) {
       "@type": "WebPage",
       "@id": canonicalUrl,
     },
-    inLanguage: bcp47[locale as Locale],
+    inLanguage: bcp47[loc],
   };
 
   const headings = extractHeadings(content);
 
-  // Custom MDX components to inject id attributes on headings
-  const mdxComponents = {
-    h2: (props: React.ComponentProps<"h2">) => {
-      const text =
-        typeof props.children === "string"
-          ? props.children
-          : String(props.children);
-      return <h2 id={slugifyHeading(text)} {...props} />;
-    },
-    h3: (props: React.ComponentProps<"h3">) => {
-      const text =
-        typeof props.children === "string"
-          ? props.children
-          : String(props.children);
-      return <h3 id={slugifyHeading(text)} {...props} />;
-    },
-  };
-
-  // FAQPage JSON-LD (only if the post has FAQ content)
   const faqPairs = extractFaqFromContent(content);
-  let faqJsonLd: Record<string, unknown> | null = null;
-  if (faqPairs.length > 0) {
-    faqJsonLd = {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      mainEntity: faqPairs.map((faq) => ({
-        "@type": "Question",
-        name: faq.question,
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: faq.answer,
-        },
-      })),
-    };
-  }
+  const faqJsonLd =
+    faqPairs.length > 0
+      ? {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: faqPairs.map((faq) => ({
+            "@type": "Question",
+            name: faq.question,
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: faq.answer,
+            },
+          })),
+        }
+      : null;
 
   return (
     <div className="min-h-screen bg-background">
