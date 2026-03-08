@@ -561,6 +561,7 @@
   "faq": {
     "title": "Sıkça Sorulan Sorular",
     "subtitle": "ViziAI hakkında merak ettikleriniz",
+    "metaDescription": "ViziAI nasıl çalışır, tahlil nasıl yüklenir, e-Nabız aktarımı nasıl yapılır? Kan tahlili takip platformu hakkında sık sorulan sorular ve yanıtları.",
     "questions": {
       "whatIsViziAI": {
         "q": "ViziAI nedir?",
@@ -642,6 +643,7 @@
   "enabizGuide": {
     "title": "e-Nabız Chrome Eklentisi Rehberi",
     "subtitle": "e-Nabız'daki tahlil sonuçlarınızı ViziAI'a aktarmak için kurulum rehberi.",
+    "metaDescription": "e-Nabız'daki tüm tahlil geçmişinizi ViziAI'a aktarın. Yılların kan tahlili verilerini grafiklerle görün, trendleri takip edin, aile profillerini yönetin.",
     "desktopOnly": "Chrome eklentileri sadece masaüstü Chrome ile çalışır. Mobil cihazlarda çalışmaz. İşlemi bir bilgisayardan yaptıktan sonra değerlerinizi mobil cihazlardan görüntüleyebilirsiniz.",
     "steps": {
       "step1": {
@@ -674,8 +676,8 @@
     "createKeyCta": "API Anahtarı Oluştur"
   },
   "blog": {
-    "listTitle": "Blog — ViziAI",
-    "listDescription": "Kan testi takibi, sağlık analizi ve ViziAI hakkında yazılar.",
+    "listTitle": "Kan Tahlili Rehberleri ve Sağlık Yazıları | ViziAI",
+    "listDescription": "Kan tahlili sonuçlarını anlama, e-Nabız aktarımı ve yurt dışı tahlil karşılaştırması rehberleri. PDF raporlarınızı yapay zeka ile analiz edin.",
     "listHeading": "Blog",
     "listEmpty": "Henüz yazı yayınlanmadı.",
     "back": "Blog'a dön",

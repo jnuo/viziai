@@ -561,6 +561,7 @@
   "faq": {
     "title": "Preguntas Frecuentes",
     "subtitle": "Todo lo que necesitas saber sobre ViziAI",
+    "metaDescription": "Cómo funciona ViziAI, cómo subir resultados de laboratorio, importar desde e-Nabız, seguir tendencias y gestionar perfiles familiares.",
     "questions": {
       "whatIsViziAI": {
         "q": "¿Qué es ViziAI?",
@@ -642,6 +643,7 @@
   "enabizGuide": {
     "title": "Guía de la extensión Chrome e-Nabız",
     "subtitle": "Configuración paso a paso para importar tus resultados de laboratorio de e-Nabız a ViziAI.",
+    "metaDescription": "Importa todo tu historial de e-Nabız a ViziAI con un clic. Visualiza años de análisis de sangre en gráficos, sigue tendencias y gestiona perfiles familiares.",
     "desktopOnly": "Las extensiones de Chrome solo funcionan en Chrome de escritorio, no en dispositivos móviles. Después de importar desde un ordenador, puedes ver tus resultados en cualquier dispositivo.",
     "steps": {
       "step1": {
@@ -674,8 +676,8 @@
     "createKeyCta": "Crear clave API"
   },
   "blog": {
-    "listTitle": "Blog — ViziAI",
-    "listDescription": "Artículos sobre seguimiento de análisis de sangre, salud y ViziAI.",
+    "listTitle": "Guías de Análisis de Sangre y Salud | ViziAI",
+    "listDescription": "Guías sobre análisis de sangre, importación desde e-Nabız, seguimiento de tendencias de salud y comparación de resultados de laboratorio entre países con IA.",
     "listHeading": "Blog",
     "listEmpty": "Aún no se han publicado artículos.",
     "back": "Volver al Blog",
