@@ -7,7 +7,7 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 cd "$PROJECT_ROOT"
 
-echo "Starting Ralph - Phase 1: Ship the Free Product"
+echo "Starting Ralph - SEO Content & Localization"
 echo "Max iterations: $MAX_ITERATIONS"
 echo "Branch: $(git branch --show-current)"
 echo "Ralph dir: $SCRIPT_DIR"
