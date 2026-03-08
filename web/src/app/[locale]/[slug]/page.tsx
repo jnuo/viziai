@@ -42,24 +42,24 @@ export async function generateMetadata({
   params,
 }: StaticPageProps): Promise<Metadata> {
   const { locale, slug } = await params;
-  const pageId = resolvePageId(toLocale(locale), slug);
+  const loc = toLocale(locale);
+  const pageId = resolvePageId(loc, slug);
   if (!pageId) return { title: "Not Found" };
 
-  const t = await getTranslations({
-    locale: toLocale(locale),
-    namespace: pageId,
-  });
+  const t = await getTranslations({ locale: loc, namespace: pageId });
 
-  const alternateLanguages: Record<string, string> = {};
-  for (const loc of locales) {
-    alternateLanguages[bcp47[loc]] =
-      `${BASE_URL}/${loc}/${staticPages[pageId][loc]}`;
+  const alternateLanguages: Record<string, string> = {
+    "x-default": `${BASE_URL}/en/${staticPages[pageId].en}`,
+  };
+  for (const l of locales) {
+    alternateLanguages[bcp47[l]] = `${BASE_URL}/${l}/${staticPages[pageId][l]}`;
   }
-  alternateLanguages["x-default"] = `${BASE_URL}/en/${staticPages[pageId].en}`;
 
   let description = t("title");
   if (pageId === "privacy") {
     description = t("intro");
+  } else if (t.has("metaDescription")) {
+    description = t("metaDescription");
   } else if (t.has("subtitle")) {
     description = t("subtitle");
   }
@@ -94,16 +94,14 @@ const FAQ_KEYS = [
 
 export default async function StaticPage({ params }: StaticPageProps) {
   const { locale, slug } = await params;
-  const pageId = resolvePageId(toLocale(locale), slug);
+  const loc = toLocale(locale);
+  const pageId = resolvePageId(loc, slug);
   if (!pageId) notFound();
 
   const Component = pageComponents[pageId];
 
   if (pageId === "faq") {
-    const faqT = await getTranslations({
-      locale: toLocale(locale),
-      namespace: "faq",
-    });
+    const faqT = await getTranslations({ locale: loc, namespace: "faq" });
     const faqSchema = {
       "@context": "https://schema.org",
       "@type": "FAQPage",

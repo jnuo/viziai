@@ -561,6 +561,7 @@
   "faq": {
     "title": "Veelgestelde vragen",
     "subtitle": "Alles wat je moet weten over ViziAI",
+    "metaDescription": "Hoe ViziAI werkt, hoe je labresultaten uploadt, importeert vanuit e-Nabız, trends volgt en familieprofielen beheert. Antwoorden op veelgestelde vragen.",
     "questions": {
       "whatIsViziAI": {
         "q": "Wat is ViziAI?",
@@ -642,6 +643,7 @@
   "enabizGuide": {
     "title": "e-Nabız Chrome-extensie Handleiding",
     "subtitle": "Stapsgewijze installatie om je e-Nabız labresultaten te importeren in ViziAI.",
+    "metaDescription": "Importeer je volledige e-Nabız labhistorie in ViziAI met één klik. Bekijk jaren aan bloedwaarden als grafieken, volg trends en beheer familieprofielen.",
     "desktopOnly": "Chrome-extensies werken alleen op desktop Chrome, niet op mobiele apparaten. Na het importeren vanaf een computer kun je je resultaten op elk apparaat bekijken.",
     "steps": {
       "step1": {
@@ -674,8 +676,8 @@
     "createKeyCta": "API-sleutel aanmaken"
   },
   "blog": {
-    "listTitle": "Blog — ViziAI",
-    "listDescription": "Artikelen over het volgen van bloedtests, gezondheidsanalyse en ViziAI.",
+    "listTitle": "Bloedwaarden-gidsen en Gezondheidstips | ViziAI",
+    "listDescription": "Gidsen over bloedwaarden, importeren vanuit e-Nabız, gezondheidstrends volgen en labresultaten uit verschillende landen vergelijken met AI.",
     "listHeading": "Blog",
     "listEmpty": "Nog geen artikelen gepubliceerd.",
     "back": "Terug naar Blog",

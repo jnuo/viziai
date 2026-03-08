@@ -561,6 +561,7 @@
   "faq": {
     "title": "Häufig gestellte Fragen",
     "subtitle": "Alles, was Sie über ViziAI wissen müssen",
+    "metaDescription": "Wie ViziAI funktioniert, wie Sie Laborergebnisse hochladen, aus e-Nabız importieren, Trends verfolgen und Familienprofile verwalten.",
     "questions": {
       "whatIsViziAI": {
         "q": "Was ist ViziAI?",
@@ -642,6 +643,7 @@
   "enabizGuide": {
     "title": "e-Nabız Chrome-Erweiterung Anleitung",
     "subtitle": "Schritt-für-Schritt-Anleitung zum Importieren Ihrer e-Nabız-Laborergebnisse in ViziAI.",
+    "metaDescription": "Importieren Sie Ihre e-Nabız-Laborhistorie mit einem Klick in ViziAI. Sehen Sie Jahre von Blutwerten als Diagramme, verfolgen Sie Trends und verwalten Sie Familienprofile.",
     "desktopOnly": "Chrome-Erweiterungen funktionieren nur mit Desktop-Chrome, nicht auf Mobilgeräten. Nach dem Import von einem Computer können Sie Ihre Ergebnisse auf jedem Gerät ansehen.",
     "steps": {
       "step1": {
@@ -674,8 +676,8 @@
     "createKeyCta": "API-Schlüssel erstellen"
   },
   "blog": {
-    "listTitle": "Blog — ViziAI",
-    "listDescription": "Artikel über Blutwerte-Tracking, Gesundheitsanalyse und ViziAI.",
+    "listTitle": "Blutwerte-Ratgeber und Gesundheitstipps | ViziAI",
+    "listDescription": "Ratgeber zu Blutwerten, e-Nabız-Import, Gesundheitstrends verfolgen und Laborergebnisse aus verschiedenen Ländern mit KI vergleichen.",
     "listHeading": "Blog",
     "listEmpty": "Noch keine Artikel veröffentlicht.",
     "back": "Zurück zum Blog",
