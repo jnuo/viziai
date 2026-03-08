@@ -112,7 +112,7 @@ export default async function StaticPage({ params }: StaticPageProps) {
         name: faqT(`questions.${key}.q`),
         acceptedAnswer: {
           "@type": "Answer",
-          text: faqT(`questions.${key}.a`),
+          text: String(faqT.raw(`questions.${key}.a`)).replace(/<[^>]+>/g, ""),
         },
       })),
     };

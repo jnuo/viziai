@@ -576,7 +576,7 @@
       },
       "enabizImport": {
         "q": "e-Nabız'dan aktarım yapabilir miyim?",
-        "a": "Evet! Chrome eklentimizi yükleyin, bir API anahtarı oluşturun ve eklentiye yapıştırın. Ardından enabiz.gov.tr'deki Tahlillerim sayfasında \"ViziAI'a Gönder\" butonuna tıklayarak sonuçlarınızı tek tıkla aktarabilirsiniz."
+        "a": "Evet! <cws>Chrome eklentimizi</cws> yükleyin, bir API anahtarı oluşturun ve eklentiye yapıştırın. Ardından enabiz.gov.tr'deki Tahlillerim sayfasında \"ViziAI'a Gönder\" butonuna tıklayarak sonuçlarınızı tek tıkla aktarabilirsiniz. Adım adım talimatlar için <guide>kurulum rehberimize</guide> bakın."
       },
       "dataSecure": {
         "q": "Verilerim güvende mi?",
@@ -624,7 +624,7 @@
       },
       "chromeExtension": {
         "q": "Chrome eklentisi nasıl çalışır?",
-        "a": "Chrome Web Mağazası'ndan eklentimizi yükleyin. viziai.app'de API anahtarı oluşturup eklenti penceresine yapıştırın. Ardından enabiz.gov.tr → Tahlillerim sayfasında her raporun yanında \"ViziAI'a Gönder\" butonu belirir. Tek tıkla sonuçlarınız aktarılır."
+        "a": "<cws>Chrome Web Mağazası'ndan eklentimizi</cws> yükleyin. viziai.app'de API anahtarı oluşturup eklenti penceresine yapıştırın. Ardından enabiz.gov.tr → Tahlillerim sayfasında her raporun yanında \"ViziAI'a Gönder\" butonu belirir. Tek tıkla sonuçlarınız aktarılır. Detaylı talimatlar için <guide>kurulum rehberimize</guide> göz atın."
       }
     },
     "contact": {

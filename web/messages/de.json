@@ -576,7 +576,7 @@
       },
       "enabizImport": {
         "q": "Kann ich aus e-Nabız importieren?",
-        "a": "Ja! Installieren Sie unsere Chrome-Erweiterung, erstellen Sie einen API-Schlüssel und fügen Sie ihn in die Erweiterung ein. Gehen Sie dann auf enabiz.gov.tr zur Tahlillerim-Seite und klicken Sie auf \"An ViziAI senden\", um Ihre Ergebnisse mit einem Klick zu übertragen."
+        "a": "Ja! Installieren Sie unsere <cws>Chrome-Erweiterung</cws>, erstellen Sie einen API-Schlüssel und fügen Sie ihn in die Erweiterung ein. Gehen Sie dann auf enabiz.gov.tr zur Tahlillerim-Seite und klicken Sie auf \"An ViziAI senden\", um Ihre Ergebnisse mit einem Klick zu übertragen. Eine Schritt-für-Schritt-Anleitung finden Sie in unserem <guide>Einrichtungsleitfaden</guide>."
       },
       "dataSecure": {
         "q": "Sind meine Daten sicher?",
@@ -624,7 +624,7 @@
       },
       "chromeExtension": {
         "q": "Wie funktioniert die Chrome-Erweiterung?",
-        "a": "Installieren Sie unsere Erweiterung aus dem Chrome Web Store. Erstellen Sie einen API-Schlüssel auf viziai.app und fügen Sie ihn in das Erweiterungsfenster ein. Auf enabiz.gov.tr → Tahlillerim erscheint dann neben jedem Bericht ein \"An ViziAI senden\"-Button. Ein Klick überträgt Ihre Ergebnisse."
+        "a": "Installieren Sie unsere Erweiterung aus dem <cws>Chrome Web Store</cws>. Erstellen Sie einen API-Schlüssel auf viziai.app und fügen Sie ihn in das Erweiterungsfenster ein. Auf enabiz.gov.tr → Tahlillerim erscheint dann neben jedem Bericht ein \"An ViziAI senden\"-Button. Ein Klick überträgt Ihre Ergebnisse. Detaillierte Anweisungen finden Sie in unserem <guide>Einrichtungsleitfaden</guide>."
       }
     },
     "contact": {

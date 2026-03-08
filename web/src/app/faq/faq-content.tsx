@@ -6,8 +6,9 @@ import { ChevronDown } from "lucide-react";
 import Script from "next/script";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
-import { toLocale } from "@/i18n/config";
+import { toLocale, staticPages } from "@/i18n/config";
 import type { Locale } from "@/i18n/config";
+import { CHROME_EXTENSION_URL } from "@/lib/constants";
 
 const FAQ_CATEGORIES = [
   {
@@ -221,9 +222,34 @@ function ContactForm(): React.ReactElement {
   );
 }
 
+const LINK_CLASS =
+  "text-primary underline underline-offset-2 hover:text-primary/80 transition-colors";
+
+const RICH_KEYS = new Set(["enabizImport", "chromeExtension"]);
+
 export function FaqContent(): React.ReactElement {
   const t = useTranslations("faq");
   const locale = useLocale();
+  const loc = toLocale(locale);
+  const guideSlug = staticPages.enabizGuide[loc];
+
+  const richTags = {
+    cws: (chunks: React.ReactNode) => (
+      <a
+        href={CHROME_EXTENSION_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={LINK_CLASS}
+      >
+        {chunks}
+      </a>
+    ),
+    guide: (chunks: React.ReactNode) => (
+      <a href={`/${locale}/${guideSlug}`} className={LINK_CLASS}>
+        {chunks}
+      </a>
+    ),
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -237,7 +263,7 @@ export function FaqContent(): React.ReactElement {
         {FAQ_CATEGORIES.map((category) => (
           <section key={category.titleKey} className="mb-8">
             <h2 className="text-lg font-semibold mb-4 text-primary">
-              {CATEGORY_LABELS[category.titleKey][toLocale(locale)]}
+              {CATEGORY_LABELS[category.titleKey][loc]}
             </h2>
             <div className="space-y-3">
               {category.keys.map((key) => (
@@ -250,7 +276,9 @@ export function FaqContent(): React.ReactElement {
                     <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-180" />
                   </summary>
                   <div className="px-5 pb-4 text-muted-foreground leading-relaxed">
-                    {t(`questions.${key}.a`)}
+                    {RICH_KEYS.has(key)
+                      ? t.rich(`questions.${key}.a`, richTags)
+                      : t(`questions.${key}.a`)}
                   </div>
                 </details>
               ))}
