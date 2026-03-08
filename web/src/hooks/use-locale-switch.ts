@@ -31,7 +31,12 @@ function resolveLocalePath(
     }
   }
 
-  // Blog and other pages — swap locale prefix, keep path
+  // Blog post — redirect to blog listing (posts have unique per-language slugs)
+  if (rest.startsWith("/blog/") && rest.length > "/blog/".length) {
+    return `/${target}/blog`;
+  }
+
+  // Other pages — swap locale prefix, keep path
   return `/${target}${rest}`;
 }
 
