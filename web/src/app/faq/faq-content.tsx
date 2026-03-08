@@ -49,6 +49,7 @@ const CATEGORY_LABELS: Record<
     es: "General",
     de: "Allgemein",
     fr: "Général",
+    nl: "Algemeen",
   },
   dataUpload: {
     tr: "Veri ve Yükleme",
@@ -56,6 +57,7 @@ const CATEGORY_LABELS: Record<
     es: "Datos y Subida",
     de: "Daten & Upload",
     fr: "Données & Téléchargement",
+    nl: "Gegevens & Upload",
   },
   security: {
     tr: "Güvenlik ve Gizlilik",
@@ -63,6 +65,7 @@ const CATEGORY_LABELS: Record<
     es: "Seguridad y Privacidad",
     de: "Sicherheit & Datenschutz",
     fr: "Sécurité & Confidentialité",
+    nl: "Beveiliging & Privacy",
   },
   features: {
     tr: "Özellikler",
@@ -70,6 +73,7 @@ const CATEGORY_LABELS: Record<
     es: "Funcionalidades",
     de: "Funktionen",
     fr: "Fonctionnalités",
+    nl: "Functies",
   },
   technical: {
     tr: "Teknik",
@@ -77,6 +81,7 @@ const CATEGORY_LABELS: Record<
     es: "Técnico",
     de: "Technisch",
     fr: "Technique",
+    nl: "Technisch",
   },
 };
 

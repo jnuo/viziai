@@ -1,0 +1,730 @@
+{
+  "common": {
+    "save": "Opslaan",
+    "cancel": "Annuleren",
+    "delete": "Verwijderen",
+    "edit": "Bewerken",
+    "change": "Wijzigen",
+    "ok": "OK",
+    "back": "Terug",
+    "confirm": "Bevestigen",
+    "loading": "Laden...",
+    "error": "Fout",
+    "errorOccurred": "Er is een fout opgetreden",
+    "errorRetry": "Er is een fout opgetreden. Probeer het opnieuw.",
+    "somethingWentWrong": "Er is iets misgegaan",
+    "errorLogged": "Fout geregistreerd. Probeer het opnieuw.",
+    "deleting": "Verwijderen...",
+    "deleteFailed": "Verwijderen mislukt",
+    "saveFailed": "Opslaan mislukt",
+    "updated": "Bijgewerkt",
+    "recordDeleted": "Record verwijderd",
+    "confirmDelete": "Verwijderen?",
+    "yesDelete": "Ja, verwijderen",
+    "copy": "Kopiëren",
+    "copied": "Gekopieerd",
+    "redirecting": "Doorsturen…",
+    "creating": "Aanmaken…",
+    "profile": "Profiel",
+    "selectProfile": "Selecteer profiel",
+    "low": "Laag",
+    "high": "Hoog",
+    "normal": "Normaal",
+    "highNormal": "Hoog normaal",
+    "ascending": "oplopend",
+    "descending": "aflopend",
+    "justNow": "Zojuist",
+    "yesterday": "Gisteren",
+    "hoursAgo": "{count} uur geleden",
+    "copyright": "© 2026 ViziAI. Alle rechten voorbehouden.",
+    "privacyLink": "Privacybeleid",
+    "faqLink": "Veelgestelde vragen",
+    "enabizGuideLink": "e-Nabız Handleiding",
+    "blog": "Blog",
+    "toggleTheme": "Thema wisselen",
+    "accessLevel": {
+      "owner": "Eigenaar",
+      "editor": "Bewerker",
+      "viewer": "Lezer"
+    }
+  },
+  "pages": {
+    "landing": {
+      "heroTitle": "<highlight>Volg</highlight> je bloedtestresultaten en begrijp gezondsheidstrends",
+      "heroDescription": "Upload bloedtest-PDF's en laat ViziAI je resultaten analyseren met AI. Volg gezondheidstrends in de tijd met duidelijke visuele grafieken en dashboards.",
+      "getStarted": "Aan de slag",
+      "getStartedFree": "Gratis beginnen",
+      "tryFree": "Gratis proberen",
+      "dashboardAlt": "ViziAI Dashboard - Volg je testresultaten visueel",
+      "whyPrefix": "Waarom",
+      "startTracking": "Begin met het volgen van je gezondheid",
+      "neverEasier": "Het begrijpen van je testresultaten was nog nooit zo eenvoudig.",
+      "features": {
+        "aiAnalysis": "AI-gestuurde analyse",
+        "aiAnalysisDesc": "Haalt automatisch testgegevens uit PDF's met behulp van kunstmatige intelligentie.",
+        "visualDashboard": "Visueel dashboard",
+        "visualDashboardDesc": "Volg en vergelijk je waarden in de tijd met visuele grafieken.",
+        "easyUpload": "Eenvoudig PDF uploaden",
+        "easyUploadDesc": "Upload je testrapporten eenvoudig in PDF-formaat met drag-and-drop.",
+        "securePrivate": "Veilig & privé",
+        "securePrivateDesc": "Je gegevens worden opgeslagen op beveiligde infrastructuur, alleen toegankelijk voor jou."
+      },
+      "howItWorks": "Hoe het werkt",
+      "howItWorksSteps": {
+        "step1Title": "Upload je PDF",
+        "step1Desc": "Sleep je bloedtestrapport naar het venster. We ondersteunen lab-PDF's in het Turks, Engels, Duits, Nederlands, Frans en Spaans.",
+        "step2Title": "AI extraheert resultaten",
+        "step2Desc": "Onze AI leest je PDF en haalt elke meting, waarde en referentiebereik eruit — zelfs uit gescande documenten.",
+        "step3Title": "Volg je trends",
+        "step3Desc": "Bekijk al je resultaten op één dashboard met trendgrafieken. Ontdek veranderingen in één oogopslag uit rapporten van elk land."
+      },
+      "socialProof": {
+        "languages": "Ondersteunde talen",
+        "familyProfiles": "Familieprofielen",
+        "metricAliases": "Metriek-aliassen",
+        "description": "Volg bloedtests van Turkse, Engelse, Duitse, Franse en Spaanse laboratoria — alles in één dashboard."
+      },
+      "faq": {
+        "title": "Veelgestelde vragen"
+      },
+      "enabiz": {
+        "badge": "Chrome-extensie",
+        "title": "e-Nabız Integratie",
+        "description": "Voor e-Nabız-gebruikers in Turkije: importeer je eerdere labresultaten met één klik via onze Chrome-extensie. Geen PDF's downloaden nodig.",
+        "cta": "Chrome-extensie installeren",
+        "howItWorks": "Hoe werkt het?"
+      }
+    },
+    "login": {
+      "testResults": "Testresultaten",
+      "signInWithGoogle": "Inloggen met Google",
+      "signingIn": "Bezig met inloggen…",
+      "accessDenied": "Je hebt geen toestemming om in te loggen met dit e-mailadres.",
+      "loginError": "Er is een fout opgetreden bij het inloggen",
+      "termsAgreement": "Door in te loggen ga je akkoord met onze Servicevoorwaarden en Privacybeleid."
+    },
+    "upload": {
+      "title": "Testrapport uploaden",
+      "selectPdf": "Selecteer PDF-bestand",
+      "testDate": "Testdatum",
+      "metricName": "Naam meting",
+      "value": "Waarde",
+      "deleteMetric": "Meting verwijderen",
+      "reviewTitle": "Resultaten controleren",
+      "confirmSave": "Bevestigen & opslaan",
+      "resultsAdded": "Testresultaten toegevoegd aan je profiel",
+      "selectProfile": "Selecteer een profiel",
+      "onlyPdf": "Alleen PDF-bestanden worden geaccepteerd",
+      "uploadFailed": "Uploaden mislukt",
+      "extractionFailed": "Gegevensextractie mislukt",
+      "dataLoadFailed": "Gegevens laden mislukt",
+      "confirmFailed": "Bevestiging mislukt",
+      "timeout": "Kon niet binnen 5 minuten voltooien. Probeer het opnieuw.",
+      "dropHere": "Sleep PDF-bestand hierheen",
+      "dragOrClick": "Sleep een PDF-bestand of klik om te selecteren",
+      "uploading": "Bestand uploaden…",
+      "metrics": "Metingen ({count})",
+      "metric": "Meting",
+      "unit": "Eenheid",
+      "refMin": "Ref min",
+      "refMax": "Ref max",
+      "refMinAria": "Referentie minimum",
+      "refMaxAria": "Referentie maximum",
+      "refPrefix": "Ref:",
+      "willBeAddedAs": "wordt toegevoegd als",
+      "willStayAs": "blijft als",
+      "saving": "Opslaan…",
+      "savedSuccessfully": "Succesvol opgeslagen",
+      "uploadAnother": "Nog een bestand uploaden",
+      "goToDashboard": "Naar dashboard",
+      "uploadNewFile": "Nieuw bestand uploaden",
+      "alreadyUploaded": "Dit bestand is al geüpload: {date}",
+      "reportCapReached": "Rapportlimiet bereikt",
+      "reportCapDescription": "Dit profiel heeft de limiet van {max} rapporten voor het gratis plan bereikt. Pro-plan komt binnenkort.",
+      "orImportFromEnabiz": "of importeren vanuit e-Nabız",
+      "enabizImportTitle": "Importeren vanuit e-Nabız",
+      "enabizImportDescription": "Importeer je labresultaten van e-Nabız naar ViziAI met één klik via de Chrome-extensie.",
+      "enabizStep1": "Installeer de extensie vanuit de Chrome Web Store",
+      "enabizStep2": "Maak een sleutel aan via Instellingen → API-sleutels",
+      "enabizStep3": "Ga naar enabiz.gov.tr → Tahlillerim en klik op \"Verstuur naar ViziAI\"",
+      "installExtension": "Chrome-extensie installeren",
+      "createApiKey": "API-sleutel aanmaken",
+      "setupGuideLink": "Hoe in te stellen?"
+    },
+    "enabizImport": {
+      "reviewTitle": "e-Nabız Import controleren",
+      "testDate": "Testdatum",
+      "metricName": "Naam meting",
+      "value": "Waarde",
+      "unit": "Eenheid",
+      "refMin": "Ref min",
+      "refMax": "Ref max",
+      "refMinAria": "Referentie minimum",
+      "refMaxAria": "Referentie maximum",
+      "refPrefix": "Ref:",
+      "metric": "Meting",
+      "metrics": "Metingen ({count})",
+      "deleteMetric": "Meting verwijderen",
+      "willBeAddedAs": "wordt toegevoegd als",
+      "willStayAs": "blijft als",
+      "confirmSave": "Bevestigen & opslaan",
+      "confirmFailed": "Bevestiging mislukt",
+      "skipImport": "Overslaan",
+      "savedSuccessfully": "Succesvol opgeslagen",
+      "resultsAdded": "Testresultaten geïmporteerd vanuit e-Nabız",
+      "goToDashboard": "Naar dashboard",
+      "loadFailed": "Importgegevens laden mislukt",
+      "alreadyProcessed": "Import al verwerkt",
+      "alreadyProcessedDescription": "Deze import is al bevestigd of is verlopen.",
+      "collision": {
+        "title": "Bestaand rapport gevonden voor deze datum",
+        "highSimilarity": "Dit rapport lijkt al in je profiel te bestaan.",
+        "lowSimilarity": "Er bestaat al een rapport met vergelijkbare metingen voor deze datum.",
+        "overlapInfo": "{similarity}% vergelijkbaar — {overlapping} overeenkomende metingen van {existingCount} bestaande / {newCount} nieuwe (bron: {source})",
+        "skip": "Import overslaan",
+        "skipDescription": "Dit rapport niet importeren — het is een duplicaat.",
+        "overwrite": "Bestaande overschrijven",
+        "overwriteDescription": "Vervang de metingen van het bestaande rapport door deze nieuwe waarden.",
+        "createSeparate": "Apart rapport aanmaken",
+        "createSeparateDescription": "Beide rapporten behouden. Dit is een ander type test voor dezelfde datum.",
+        "selectAction": "Hoe wil je dit afhandelen?",
+        "recommendSkip": "Deze waarden zijn bijna identiek aan het bestaande rapport. We raden aan om over te slaan.",
+        "recommendSeparate": "Er zijn verschillen met het bestaande rapport. Bekijk de vergelijking en kies een optie.",
+        "existing": "Bestaand",
+        "new": "Nieuw"
+      },
+      "importingToProfile": "Deze resultaten worden toegevoegd aan het profiel van {profileName}"
+    },
+    "dashboard": {
+      "loadingData": "Gegevens laden…",
+      "metricOrderFailed": "Metingvolgorde laden mislukt.",
+      "sortSaveFailed": "Volgorde opslaan mislukt. Probeer het opnieuw.",
+      "sortReset": "Volgorde teruggezet naar standaard.",
+      "sortResetFailed": "Volgorde resetten mislukt. Probeer het opnieuw.",
+      "moveTopFailed": "Meting naar boven verplaatsen mislukt. Probeer het opnieuw.",
+      "clearSearch": "Zoekopdracht wissen",
+      "closeSearch": "Zoeken sluiten",
+      "resizeMetricGrid": "Metingenraster aanpassen",
+      "values": "Waarden",
+      "lastValue": "Laatste",
+      "lastValueShort": "Laatste",
+      "average": "Gemiddelde",
+      "averageShort": "Gem.",
+      "all": "Alles",
+      "last90": "Laatste 90 dagen",
+      "last30": "Laatste 30 dagen",
+      "last15": "Laatste 15 dagen",
+      "search": "Zoeken",
+      "searchPlaceholder": "Zoeken…",
+      "searchMetric": "Metingen zoeken",
+      "sort": "Sorteren",
+      "sortTitle": "Metingen sorteren",
+      "sortDescription": "Sleep metingen om de volgorde te wijzigen",
+      "resetDefault": "Standaard herstellen",
+      "sendToTop": "Naar boven verplaatsen",
+      "details": "Details",
+      "refRange": "Referentiebereik",
+      "minimum": "Minimum",
+      "maximum": "Maximum",
+      "status": "Status",
+      "noData": "Geen gegevens",
+      "nValues": "{count} waarden",
+      "weight": "Gewicht",
+      "bpSystolic": "Bloeddruk (systolisch)",
+      "bpDiastolic": "Bloeddruk (diastolisch)",
+      "dataLoadFailed": "Gegevens laden mislukt"
+    },
+    "settings": {
+      "testReports": "Testrapporten",
+      "weight": "Gewicht",
+      "bloodPressure": "Bloeddruk",
+      "uploadDate": "Uploaddatum",
+      "testDate": "Testdatum",
+      "noTestDate": "Geen testdatum",
+      "filesLoadFailed": "Bestanden laden mislukt",
+      "filesLoadError": "Er is een fout opgetreden bij het laden van bestanden",
+      "deletionFailed": "Verwijderen mislukt",
+      "fileNotFound": "Bestand niet gevonden",
+      "fileDetailsFailed": "Bestandsdetails laden mislukt",
+      "valueRequired": "Waarde mag niet leeg zijn",
+      "metricUpdated": "Meting bijgewerkt",
+      "uploadedFiles": "Geüploade bestanden",
+      "fileName": "Bestandsnaam",
+      "metricCount": "Meting",
+      "viewValues": "Waarden bekijken",
+      "metricsWillBeDeleted": "{count} metingen worden verwijderd.",
+      "fileDeleted": "Bestand verwijderd",
+      "fileDeleteError": "Fout bij verwijderen van bestand",
+      "noFilesYet": "Nog geen bestanden geüpload.",
+      "testPrefix": "Test:",
+      "testName": "Testnaam",
+      "reference": "Referentie",
+      "noMetricsFound": "Geen metingen gevonden in dit bestand.",
+      "testDateLabel": "Testdatum: {date}",
+      "refMinLabel": "Ref. min",
+      "refMaxLabel": "Ref. max",
+      "refPrefix": "Ref:",
+      "unsorted": "ongesorteerd",
+      "actions": "Acties"
+    },
+    "preferences": {
+      "title": "Instellingen",
+      "account": "Account",
+      "displayName": "Weergavenaam",
+      "displayNamePlaceholder": "Je naam",
+      "displayNameHint": "Zo wordt je naam weergegeven in gedeelde profielen.",
+      "email": "E-mail",
+      "emailHint": "Beheerd door je Google-account. Kan hier niet worden gewijzigd.",
+      "language": "Taal",
+      "languageLabel": "Interfacetaal",
+      "languageHint": "Wijzigt de taal op alle apparaten wanneer je inlogt.",
+      "timezone": "Tijdzone",
+      "timezoneLabel": "Jouw tijdzone",
+      "timezoneHint": "Wordt gebruikt voor het weergeven van datums en tijden.",
+      "theme": "Uiterlijk",
+      "themeLabel": "Thema",
+      "themeSystem": "Systeemstandaard",
+      "themeLight": "Licht",
+      "themeDark": "Donker",
+      "themeHint": "Gesynchroniseerd tussen apparaten wanneer je inlogt."
+    },
+    "access": {
+      "profileDescription": "Upload testresultaten en volg veranderingen in de tijd.",
+      "createProfile": "Nieuw profiel aanmaken",
+      "leaveProfile": "Profiel verlaten",
+      "deleteProfile": "Profiel verwijderen",
+      "accessManagement": "Toegangsbeheer",
+      "noProfilesYet": "Nog geen profielen",
+      "createProfileDescription": "Maak een nieuw profiel aan voor de persoon die je wilt volgen. Upload testresultaten en volg veranderingen in de tijd.",
+      "membersWithAccess": "Leden met toegang",
+      "leaveConfirm": "Weet je zeker dat je dit profiel wilt verlaten? Een nieuwe uitnodiging is nodig om opnieuw toegang te krijgen.",
+      "yesLeave": "Ja, verlaten",
+      "invite": "Uitnodigen",
+      "pendingInvites": "Openstaande uitnodigingen",
+      "notYetJoined": "Nog niet aangemeld",
+      "deleteConfirm": "Weet je zeker dat je dit profiel wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
+      "deleteDataTitle": "Gegevens die worden verwijderd:",
+      "deleteReportCount": "{count} testrapporten",
+      "deleteBpCount": "{count} bloeddrukmetingen",
+      "deleteWeightCount": "{count} gewichtsmetingen",
+      "deleteSharedWarning": "Dit profiel wordt gedeeld met {count} personen. Zij verliezen toegang:",
+      "removeMember": "Lid verwijderen",
+      "removeConfirmText": "{name} heeft geen toegang meer tot dit profiel.",
+      "removeConfirm": "Verwijderen",
+      "copyLink": "Link kopiëren",
+      "revokeInvite": "Uitnodiging intrekken",
+      "revokeInviteConfirm": "De uitnodiging voor {email} wordt ingetrokken. Ze kunnen de uitnodigingslink niet meer gebruiken.",
+      "removeAllowedEmail": "Verwijderen",
+      "removeAllowedEmailConfirm": "{email} heeft geen toegang meer tot dit profiel, zelfs als ze zich aanmelden.",
+      "pending": "In afwachting",
+      "accountNotCreated": "Account niet aangemaakt",
+      "awaitingRegistration": "Wacht op registratie"
+    },
+    "onboarding": {
+      "visualize": "Visualiseer je testresultaten en volg je gezondheidstrends.",
+      "createProfileTitle": "Maak een profiel aan",
+      "addProfile": "Nieuw profiel toevoegen",
+      "profileNameLabel": "Profielnaam",
+      "profileNamePlaceholder": "bijv. Jan D.",
+      "profileNameRequired": "Profielnaam is verplicht",
+      "profileCreated": "Profiel aangemaakt",
+      "profileCreateFailed": "Profiel aanmaken mislukt",
+      "enterPersonName": "Voer de naam in van de persoon wiens testresultaten je wilt volgen",
+      "welcomeTitle": "Welkom bij ViziAI",
+      "step1Title": "Maak een profiel aan",
+      "step1Description": "Voor jezelf of familieleden",
+      "step2Title": "Upload PDF",
+      "step2Description": "AI analyseert je testrapporten automatisch",
+      "step3Title": "Volg trends",
+      "step3Description": "Visualiseer veranderingen in de tijd",
+      "getStarted": "Aan de slag",
+      "nameHint": "Deze naam is alleen zichtbaar voor jou en je kunt het altijd wijzigen",
+      "uploadPromptDescription": "Je kunt nu je eerste testrapport uploaden",
+      "uploadPdf": "PDF uploaden",
+      "dropHere": "Sleep PDF-bestand hierheen",
+      "dragOrClick": "Slepen of klik om te selecteren",
+      "skipForNow": "Voorlopig overslaan"
+    },
+    "apiKeys": {
+      "title": "API-sleutels",
+      "createKey": "Sleutel aanmaken",
+      "createKeyTitle": "API-sleutel aanmaken",
+      "keyNameLabel": "Sleutelnaam",
+      "noKeys": "Nog geen API-sleutels",
+      "noKeysDescription": "Maak een API-sleutel aan om de e-Nabız Chrome-extensie te koppelen aan je profiel.",
+      "extensionTitle": "e-Nabız Chrome-extensie",
+      "extensionDescription": "Importeer labresultaten rechtstreeks vanuit e-Nabız in ViziAI — geen PDF-upload nodig. Alleen desktop Chrome.",
+      "guideLink": "Installatiehandleiding",
+      "lastUsed": "Laatst gebruikt",
+      "revokeKey": "Sleutel intrekken",
+      "confirmRevoke": "Intrekken",
+      "revoked": "Ingetrokken",
+      "revokedKeys": "Ingetrokken sleutels",
+      "keyWarning": "Kopieer deze sleutel nu. Je kunt hem hierna niet meer zien.",
+      "done": "Klaar"
+    },
+    "invite": {
+      "profileInvite": "Profieluitnodiging",
+      "inviteNotFound": "Uitnodiging niet gevonden",
+      "linkInvalid": "Deze link is ongeldig.",
+      "inviteCancelled": "Uitnodiging geannuleerd",
+      "inviteAlreadyUsed": "Uitnodiging al gebruikt",
+      "inviteAlreadyAccepted": "Deze uitnodiging is al geaccepteerd.",
+      "inviteExpired": "Uitnodiging verlopen",
+      "inviteLoadError": "Er is een fout opgetreden bij het laden van uitnodigingsdetails.",
+      "accessGranted": "Toegang verleend",
+      "inviteLink": "Uitnodigingslink",
+      "now": "nu",
+      "revokedDescription": "De toegangsuitnodiging voor het profiel {profileName} is ingetrokken.",
+      "expiredDescription": "De toegangsuitnodiging voor het profiel {profileName} is verlopen.",
+      "invitedToProfile": "Je bent uitgenodigd voor het volgende profiel:",
+      "accessLevelLabel": "Toegangsniveau:",
+      "emailMismatchTitle": "E-mailadres komt niet overeen",
+      "emailMismatchDescription": "Deze uitnodiging is verstuurd naar {email}.",
+      "loggedInAs": "Je bent momenteel ingelogd als {email}.",
+      "acceptInvite": "Uitnodiging accepteren",
+      "claimFailed": "Uitnodiging kon niet worden geaccepteerd"
+    }
+  },
+  "components": {
+    "header": {
+      "mainNav": "Hoofdnavigatie",
+      "home": "ViziAI - Home",
+      "testReports": "Testrapporten",
+      "add": "Toevoegen",
+      "addBP": "Bloeddruk toevoegen",
+      "addWeight": "Gewicht toevoegen",
+      "uploadReport": "Rapport uploaden",
+      "userMenu": "Gebruikersmenu",
+      "profiles": "Profielen",
+      "lightTheme": "Licht thema",
+      "darkTheme": "Donker thema",
+      "logout": "Uitloggen",
+      "login": "Inloggen",
+      "settings": "Instellingen",
+      "changeLanguage": "Taal wijzigen",
+      "apiKeys": "API-sleutels"
+    },
+    "extraction": {
+      "readingPdf": "PDF lezen…",
+      "scanningPages": "Pagina's scannen…",
+      "findingValues": "Testwaarden zoeken…",
+      "checkingRanges": "Referentiebereiken controleren…",
+      "normalizingNames": "Metingnamen normaliseren…",
+      "structuringData": "Gegevens structureren…",
+      "aiAnalyzing": "AI analyseert"
+    },
+    "emptyState": {
+      "noReports": "Nog geen testrapporten",
+      "startByUploading": "Begin met het uploaden van je eerste rapport.",
+      "startByUploadingFor": "— begin met het uploaden van het eerste testrapport.",
+      "aiExtracts": "Ons AI-systeem haalt automatisch gegevens uit PDF's.",
+      "uploadFirst": "Eerste test uploaden"
+    },
+    "onboardingChecklist": {
+      "title": "Aan de slag",
+      "subtitle": "Voltooi deze stappen om het meeste uit ViziAI te halen.",
+      "uploadReports": "Rapporten uploaden ({count}/3)",
+      "logWeight": "Gewicht registreren",
+      "logBloodPressure": "Bloeddruk registreren",
+      "uploadNext": "Volgend rapport uploaden"
+    },
+    "ghostedChart": {
+      "needMoreData": "Upload nog een rapport om trends in de tijd te zien.",
+      "uploadAnother": "Rapport uploaden"
+    },
+    "profileSwitcher": {
+      "selectProfile": "Profiel selecteren",
+      "addProfile": "Nieuw profiel toevoegen",
+      "reportCount": "{count}/{max} rapporten"
+    },
+    "inviteModal": {
+      "sendFailed": "Uitnodiging versturen mislukt",
+      "inviteTitle": "{profileName} — Uitnodiging",
+      "knownUsers": "Bekende gebruikers",
+      "orEnterEmail": "Of voer e-mail in",
+      "emailLabel": "E-mail",
+      "accessLevelLabel": "Toegangsniveau",
+      "invite": "Uitnodigen",
+      "shareLink": "Deel deze link met de uitgenodigde persoon:",
+      "shareOnWhatsApp": "Delen via WhatsApp",
+      "whatsAppMessage": "Ik wil het profiel {profileName} met je delen. Je kunt het openen via deze link: {url}",
+      "directAccessGranted": "{name} heeft nu toegang tot het profiel {profileName}. We hebben een e-mail gestuurd om dit te laten weten.",
+      "directWhatsAppHint": "Je kunt het ook laten weten via WhatsApp:",
+      "directWhatsApp": "Melden via WhatsApp",
+      "whatsAppMessageDirect": "Ik heb het profiel {profileName} met je gedeeld op ViziAI. Log in op {url} om de waarden te bekijken.",
+      "pickContact": "Kies uit contacten",
+      "emailSent": "Uitnodigingsmail verstuurd naar {email}",
+      "inviteSentTitle": "Uitnodiging verstuurd",
+      "inviteSentBody": "We hebben een uitnodigingsmail gestuurd naar {email}. Ze krijgen toegang zodra ze zich aanmelden. De uitnodiging verloopt na 30 dagen.",
+      "shareAlternative": "Je kunt ook delen via WhatsApp:",
+      "linkDisclaimer": "Deze link is niet openbaar. Alleen gebruikers die inloggen met {email} hebben toegang tot dit profiel."
+    },
+    "metricChart": {
+      "removeChart": "Grafiek verwijderen",
+      "noData": "Geen gegevens gevonden",
+      "noValue": "Geen gegevens",
+      "range": "Bereik",
+      "refMin": "Min",
+      "refMax": "Max"
+    },
+    "notification": {
+      "viewProfiles": "Profielen bekijken",
+      "someone": "Iemand",
+      "addedToProfile": "{grantor} heeft je toegevoegd aan {profileName} als {level}."
+    }
+  },
+  "tracking": {
+    "systolicFriendly": "Systolische bloeddruk",
+    "diastolicFriendly": "Diastolische bloeddruk",
+    "pulse": "Hartslag",
+    "weightPlaceholder": "Ochtend, nuchtere maag…",
+    "dataLoadFailed": "Gegevens laden mislukt",
+    "dataLoadError": "Er is een fout opgetreden bij het laden van gegevens",
+    "validWeight": "Voer een geldig gewicht in (1-500)",
+    "validBP": "Voer geldige bloeddrukwaarden in",
+    "validPulse": "Voer een geldige hartslag in (20-250)",
+    "registrationFailed": "Registratie mislukt",
+    "profilesLoadFailed": "Profielen laden mislukt",
+    "addBPTitle": "Bloeddruk toevoegen",
+    "addWeightTitle": "Gewicht toevoegen",
+    "bpSaved": "Bloeddruk opgeslagen",
+    "addingMeasurementFor": "Meting toevoegen voor {profileName}",
+    "systolicUpper": "Systolisch (boven)",
+    "diastolicLower": "Diastolisch (onder)",
+    "pulseOptional": "Hartslag (optioneel)",
+    "existingEntryWarning": "Er bestaat al een vermelding voor vandaag ({values} om {time}). Wil je deze vervangen?",
+    "recentMeasurements": "Recente metingen",
+    "date": "Datum",
+    "weightKgLabel": "Gewicht (kg)",
+    "note": "Notitie",
+    "actions": "Acties",
+    "noRecords": "Nog geen gegevens.",
+    "systolicDiastolic": "Systolisch/Diastolisch",
+    "systolic": "Systolisch",
+    "diastolic": "Diastolisch",
+    "replace": "Vervangen",
+    "weightLabel": "Gewicht",
+    "weightSaved": "Gewicht opgeslagen",
+    "kgFromLast": "{diff} kg sinds laatste meting",
+    "noteOptional": "Notitie (optioneel)",
+    "existingWeightWarning": "Er bestaat al een vermelding voor vandaag ({weight} kg om {time}). Wil je deze vervangen?"
+  },
+  "privacy": {
+    "title": "Privacybeleid",
+    "lastUpdated": "Laatst bijgewerkt: 28 februari 2026",
+    "intro": "ViziAI neemt je privacy serieus. Dit beleid legt uit welke gegevens we verzamelen, hoe we ze gebruiken en wat je rechten zijn. We houden het eenvoudig en transparant — geen juridisch jargon.",
+    "dataCollection": {
+      "title": "Wat we verzamelen",
+      "description": "Wanneer je ViziAI gebruikt, verzamelen we:",
+      "items": {
+        "account": "Je Google-account e-mail en naam (voor authenticatie)",
+        "bloodTests": "Bloedtest-PDF-bestanden die je uploadt (tijdelijk opgeslagen tijdens verwerking)",
+        "labValues": "Geëxtraheerde labwaarden, metingnamen en referentiebereiken",
+        "tracking": "Gezondheidsgegevens die je handmatig invoert (gewicht, bloeddruk)",
+        "usage": "Basis gebruiksanalyse (paginabezoeken, functiegebruik) via Google Analytics"
+      }
+    },
+    "dataStorage": {
+      "title": "Hoe we je gegevens opslaan",
+      "description": "Je gegevens worden veilig opgeslagen in een Neon Postgres-database. PDF-bestanden worden tijdelijk opgeslagen in Vercel Blob tijdens de verwerking en verwijderd nadat de extractie is voltooid. Alle verbindingen gebruiken HTTPS-versleuteling."
+    },
+    "aiProcessing": {
+      "title": "AI-verwerking",
+      "description": "Wanneer je een bloedtest-PDF uploadt, gebruiken we de API van OpenAI om labwaarden uit het document te extraheren. De PDF-inhoud wordt naar OpenAI gestuurd voor verwerking en valt onder het gegevensgebruiksbeleid van OpenAI. We gebruiken je gezondheidsgegevens niet om AI-modellen te trainen."
+    },
+    "cookies": {
+      "title": "Cookies",
+      "description": "We gebruiken essentiële cookies voor authenticatie (om je ingelogd te houden) en een cookie voor taalvoorkeur (om je taalkeuze te onthouden). Google Analytics gebruikt cookies voor anonieme gebruiksstatistieken. We gebruiken geen reclame- of trackingcookies."
+    },
+    "gdpr": {
+      "title": "Jouw rechten",
+      "description": "Je hebt het recht om:",
+      "items": {
+        "access": "Toegang te krijgen tot alle gegevens die we over je opslaan",
+        "export": "Je gegevens te exporteren in een standaardformaat",
+        "delete": "Verwijdering van je account en alle bijbehorende gegevens te vragen",
+        "correct": "Onjuiste gegevens te corrigeren",
+        "withdraw": "Toestemming in te trekken en op elk moment te stoppen met het gebruik van de dienst"
+      }
+    },
+    "dataDeletion": {
+      "title": "Gegevens verwijderen",
+      "description": "Je kunt individuele rapporten, profielen of je hele account verwijderen via de instellingenpagina. Wanneer je gegevens verwijdert, worden ze permanent uit onze database verwijderd. Herstel is niet mogelijk."
+    },
+    "contact": {
+      "title": "Contact",
+      "description": "Voor privacygerelateerde vragen of gegevensverzoeken, neem contact met ons op via:",
+      "email": "privacy@viziai.app"
+    }
+  },
+  "faq": {
+    "title": "Veelgestelde vragen",
+    "subtitle": "Alles wat je moet weten over ViziAI",
+    "questions": {
+      "whatIsViziAI": {
+        "q": "Wat is ViziAI?",
+        "a": "ViziAI is een platform voor het volgen van je gezondheid waarmee je bloedtestresultaten als PDF kunt uploaden en analyseren met AI. Volg je waarden in de tijd met visuele grafieken en beheer de resultaten van familieleden in aparte profielen."
+      },
+      "noMedicalAdvice": {
+        "q": "Interpreteert ViziAI mijn resultaten of stelt het diagnoses?",
+        "a": "Nee. ViziAI organiseert alleen je labresultaten — het verzamelt rapporten uit verschillende talen en laboratoria op één plek, koppelt metingnamen en toont je trends in de tijd. Het biedt geen medische interpretatie, diagnose of behandeladvies. Bespreek je resultaten altijd met je arts."
+      },
+      "howToUpload": {
+        "q": "Hoe upload ik mijn testresultaten?",
+        "a": "Klik op \"Rapport uploaden\" vanuit het dashboard en sleep je PDF-bestand. Onze AI leest de PDF en haalt automatisch metingnamen, waarden en referentiebereiken eruit. Controleer en bevestig de resultaten, en ze worden opgeslagen in je profiel."
+      },
+      "enabizImport": {
+        "q": "Kan ik importeren vanuit e-Nabız?",
+        "a": "Ja! Installeer onze <cws>Chrome-extensie</cws>, maak een API-sleutel aan en plak deze in de extensie. Ga vervolgens naar de Tahlillerim-pagina op enabiz.gov.tr en klik op \"Verstuur naar ViziAI\" om je resultaten met één klik over te zetten. Bekijk onze <guide>installatiehandleiding</guide> voor stapsgewijze instructies."
+      },
+      "dataSecure": {
+        "q": "Zijn mijn gegevens veilig?",
+        "a": "Ja. Je gegevens worden opgeslagen in een beveiligde Neon Postgres-database en alle verbindingen gebruiken HTTPS-versleuteling. Geüploade PDF's worden na verwerking verwijderd. Alleen jij en de mensen aan wie je expliciet toegang verleent, kunnen je gegevens bekijken."
+      },
+      "familyTracking": {
+        "q": "Hoe kan ik de gegevens van familieleden volgen?",
+        "a": "Je kunt een apart profiel aanmaken voor elk familielid. Deel profielen met anderen en stel toegangsniveaus in als eigenaar, bewerker of lezer."
+      },
+      "isFree": {
+        "q": "Is ViziAI gratis?",
+        "a": "ViziAI is momenteel volledig gratis. In de toekomst voegen we een betaald plan toe met geavanceerde functies, maar er zal altijd een gratis versie beschikbaar zijn."
+      },
+      "languages": {
+        "q": "Welke talen worden ondersteund?",
+        "a": "De interface van ViziAI ondersteunt Turks, Engels, Spaans, Duits, Frans en Nederlands. Onze AI kan ook lab-PDF's in alle zes talen verwerken."
+      },
+      "testsAbroad": {
+        "q": "Kan ik tests uploaden die in het buitenland zijn gedaan?",
+        "a": "Ja! Je kunt labrapporten uploaden uit elk land in ondersteunde talen (Turks, Engels, Spaans, Duits, Frans, Nederlands). Alle resultaten worden samengevoegd in één dashboard."
+      },
+      "afterUpload": {
+        "q": "Wat gebeurt er nadat ik een PDF upload?",
+        "a": "Onze AI leest je PDF en haalt elke metingnaam, waarde en referentiebereik eruit. Je kunt de resultaten bekijken, bewerken en bevestigen in een controlestap. Na bevestiging worden de gegevens opgeslagen in je profiel en verschijnen ze op je dashboard."
+      },
+      "whoCanSee": {
+        "q": "Wie kan mijn gegevens zien?",
+        "a": "Alleen jij en de mensen aan wie je expliciet toegang verleent via de instellingen voor profieldeling. Je kunt voor elke persoon het toegangsniveau instellen als eigenaar, bewerker of lezer."
+      },
+      "deleteData": {
+        "q": "Kan ik mijn gegevens verwijderen?",
+        "a": "Ja. Je kunt individuele rapporten, profielen of je hele account verwijderen via de instellingenpagina. Verwijderde gegevens worden permanent uit de database verwijderd en kunnen niet worden hersteld."
+      },
+      "colorMeaning": {
+        "q": "Wat betekenen de kleuren?",
+        "a": "Groen geeft aan dat de waarde binnen het referentiebereik valt. Amber wijst op grenswaarden. Terracotta (oranjebruin) betekent dat de waarde buiten het referentiebereik valt. We gebruiken terracotta in plaats van felrood om onnodige ongerustheid te voorkomen."
+      },
+      "referenceRanges": {
+        "q": "Waar komen de referentiebereiken vandaan?",
+        "a": "Referentiebereiken worden rechtstreeks uit de geüploade PDF gehaald — we gebruiken de daadwerkelijke bereiken van je laboratorium. Verschillende laboratoria kunnen verschillende bereiken hanteren, en dat is normaal."
+      },
+      "mobileApp": {
+        "q": "Is er een mobiele app?",
+        "a": "ViziAI is momenteel een webapplicatie, maar het is ontworpen om uitstekend te werken op mobiele apparaten. Bezoek viziai.app vanuit de browser op je telefoon voor de volledige ervaring."
+      },
+      "chromeExtension": {
+        "q": "Hoe werkt de Chrome-extensie?",
+        "a": "Installeer onze extensie vanuit de <cws>Chrome Web Store</cws>. Maak een API-sleutel aan op viziai.app en plak deze in het extensievenster. Vervolgens verschijnt op enabiz.gov.tr → Tahlillerim een groene knop \"Verstuur naar ViziAI\" naast elk rapport. Eén klik zet je resultaten over. Bekijk onze <guide>installatiehandleiding</guide> voor gedetailleerde instructies."
+      }
+    },
+    "contact": {
+      "title": "Nog vragen?",
+      "subtitle": "Stuur ons een bericht en we nemen zo snel mogelijk contact met je op.",
+      "name": "Je naam",
+      "email": "E-mail",
+      "message": "Je bericht",
+      "send": "Versturen",
+      "sending": "Versturen…",
+      "success": "Bericht verstuurd! We nemen snel contact met je op.",
+      "error": "Versturen mislukt. Probeer het opnieuw."
+    }
+  },
+  "enabizGuide": {
+    "title": "e-Nabız Chrome-extensie Handleiding",
+    "subtitle": "Stapsgewijze installatie om je e-Nabız labresultaten te importeren in ViziAI.",
+    "desktopOnly": "Chrome-extensies werken alleen op desktop Chrome, niet op mobiele apparaten. Na het importeren vanaf een computer kun je je resultaten op elk apparaat bekijken.",
+    "steps": {
+      "step1": {
+        "title": "Installeer de extensie",
+        "desc": "Installeer de ViziAI e-Nabız extensie vanuit de <cws>Chrome Web Store</cws>."
+      },
+      "step2": {
+        "title": "Maak een API-sleutel aan",
+        "desc": "Ga naar <apikeys>viziai.app → Instellingen → API-sleutels</apikeys> en maak een sleutel aan. Als je meerdere profielen hebt, zorg er dan voor dat je het juiste selecteert — alle rapporten die met deze sleutel worden geïmporteerd, worden opgeslagen in dat profiel. Je kunt aparte API-sleutels aanmaken voor verschillende profielen."
+      },
+      "step3": {
+        "title": "Kopieer de sleutel",
+        "desc": "Kopieer de gegenereerde sleutel met de kopieerknop."
+      },
+      "step4": {
+        "title": "Plak het in de extensie",
+        "desc": "Open de ViziAI-extensie vanuit het extensiegebied van Chrome. Plak je API-sleutel en klik op Verbinding testen."
+      },
+      "step5": {
+        "title": "Klik op \"Verstuur naar ViziAI\" op e-Nabız",
+        "desc": "Log in op <enabiz>enabiz.gov.tr</enabiz> en open de pagina Tahlillerim (Mijn labresultaten). Klik op de groene knop \"Verstuur naar ViziAI\" naast een rapport.",
+        "hint": "Als je de knop niet ziet, controleer dan of je de API-sleutel aan de extensie hebt toegevoegd en vernieuw de pagina."
+      },
+      "step6": {
+        "title": "Controleer en bevestig",
+        "desc": "Een pop-up toont je labwaarden. Bevestig om ze te importeren in je profiel."
+      }
+    },
+    "installCta": "Chrome-extensie installeren",
+    "createKeyCta": "API-sleutel aanmaken"
+  },
+  "blog": {
+    "listTitle": "Blog — ViziAI",
+    "listDescription": "Artikelen over het volgen van bloedtests, gezondheidsanalyse en ViziAI.",
+    "listHeading": "Blog",
+    "listEmpty": "Nog geen artikelen gepubliceerd.",
+    "back": "Terug naar Blog",
+    "ctaHeading": "Upload je eerste bloedtest gratis",
+    "ctaButton": "Gratis beginnen",
+    "ctaDesc": "Begin vandaag met het volgen van je bloedtestresultaten met ViziAI.",
+    "by": "Door",
+    "articlesBy": "Artikelen van {author}",
+    "tocLabel": "Inhoud",
+    "allPosts": "Alle berichten",
+    "filterByTag": "Filteren op tag",
+    "alsoIn": "Ook beschikbaar in:",
+    "privacyLink": "Privacybeleid"
+  },
+  "seo": {
+    "siteTitle": "ViziAI",
+    "titleTemplate": "{page} | ViziAI",
+    "defaultDescription": "Upload je bloedtestresultaten en krijg AI-gestuurde analyse met visuele gezondheidsinzichten. Volg trends over tijd en in verschillende talen.",
+    "landingTitle": "Volg je bloedtestresultaten en begrijp gezondheidstrends",
+    "landingDescription": "Upload bloedtest-PDF's en laat ViziAI je resultaten analyseren met AI. Volg gezondheidstrends in de tijd met duidelijke visuele grafieken en dashboards.",
+    "ogImageAlt": "ViziAI — AI-gestuurde bloedtest tracking"
+  },
+  "api": {
+    "profileNotFound": "Profiel niet gevonden",
+    "profileDeleteFailed": "Profiel verwijderen mislukt",
+    "profileCreateFailed": "Er is een fout opgetreden bij het aanmaken van het profiel. Probeer het opnieuw.",
+    "noProfileAccess": "Je hebt geen toegang tot dit profiel",
+    "ownerCannotLeave": "De eigenaar kan het profiel niet verlaten",
+    "leaveFailed": "Profiel verlaten mislukt",
+    "cannotChangeOwnAccess": "Je kunt je eigen toegangsniveau niet wijzigen",
+    "invalidAccessLevel": "Toegangsniveau moet 'viewer' of 'editor' zijn",
+    "userAccessNotFound": "Gebruikerstoegang niet gevonden",
+    "accessUpdateFailed": "Toegangsniveau bijwerken mislukt",
+    "cannotRemoveOwnAccess": "Je kunt je eigen toegang niet verwijderen",
+    "accessRemoveFailed": "Toegang verwijderen mislukt",
+    "invalidEmail": "Ongeldig e-mailadres",
+    "userAlreadyHasAccess": "Deze gebruiker heeft al toegang",
+    "inviteAlreadyPending": "Er staat al een openstaande uitnodiging voor dit e-mailadres",
+    "inviteCreateFailed": "Uitnodiging aanmaken mislukt",
+    "onlyPdf": "Alleen PDF-bestanden worden geaccepteerd",
+    "invalidPdf": "Ongeldig PDF-bestand",
+    "fileAlreadyUploaded": "Dit bestand is al geüpload",
+    "reportCapReached": "Dit profiel heeft de limiet van {max} rapporten voor het gratis plan bereikt",
+    "inviteNotFound": "Uitnodiging niet gevonden",
+    "inviteInfoFailed": "Uitnodigingsdetails ophalen mislukt",
+    "inviteCancelled": "Deze uitnodiging is geannuleerd",
+    "inviteAlreadyUsed": "Deze uitnodiging is al gebruikt",
+    "inviteExpired": "Uitnodiging is verlopen",
+    "emailMismatch": "E-mailadres komt niet overeen",
+    "inviteNotFoundOrProcessed": "Uitnodiging niet gevonden of al verwerkt"
+  }
+}

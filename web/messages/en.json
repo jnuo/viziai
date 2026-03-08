@@ -72,7 +72,7 @@
       "howItWorks": "How It Works",
       "howItWorksSteps": {
         "step1Title": "Upload Your PDF",
-        "step1Desc": "Drag and drop your blood test report. We support lab PDFs in Turkish, English, German, French, and Spanish.",
+        "step1Desc": "Drag and drop your blood test report. We support lab PDFs in Turkish, English, German, Dutch, French, and Spanish.",
         "step2Title": "AI Extracts Results",
         "step2Desc": "Our AI reads your PDF and extracts every metric, value, and reference range — even from scanned documents.",
         "step3Title": "Track Your Trends",
@@ -592,11 +592,11 @@
       },
       "languages": {
         "q": "What languages do you support?",
-        "a": "ViziAI's interface supports Turkish, English, Spanish, German, and French. Our AI can also process lab PDFs in all five languages."
+        "a": "ViziAI's interface supports Turkish, English, Spanish, German, French, and Dutch. Our AI can also process lab PDFs in all six languages."
       },
       "testsAbroad": {
         "q": "Can I upload tests done abroad?",
-        "a": "Yes! You can upload lab reports from any country in supported languages (Turkish, English, Spanish, German, French). All results are unified in a single dashboard."
+        "a": "Yes! You can upload lab reports from any country in supported languages (Turkish, English, Spanish, German, French, Dutch). All results are unified in a single dashboard."
       },
       "afterUpload": {
         "q": "What happens after I upload a PDF?",
@@ -684,6 +684,7 @@
     "ctaDesc": "Start tracking your blood test results with ViziAI today.",
     "by": "By",
     "articlesBy": "Articles by {author}",
+    "tocLabel": "Contents",
     "allPosts": "All posts",
     "filterByTag": "Filter by tag",
     "alsoIn": "Also available in:",

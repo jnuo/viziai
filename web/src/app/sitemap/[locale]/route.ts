@@ -72,29 +72,56 @@ export async function GET(
     ),
   );
 
-  // Blog posts
+  // Blog posts — cross-link by hreflangGroup when available, else by slug
   const posts = getAllBlogPosts(locale);
-  const allSlugs = new Map<string, Set<string>>();
+
+  // Build a map of hreflangGroup → { locale → slug }
+  const groupMap = new Map<string, Map<string, string>>();
+  const slugLocales = new Map<string, Set<string>>();
   for (const loc of locales) {
     for (const post of getAllBlogPosts(loc)) {
-      const { slug } = post.frontmatter;
-      if (!allSlugs.has(slug)) allSlugs.set(slug, new Set());
-      allSlugs.get(slug)!.add(loc);
+      const { slug, hreflangGroup } = post.frontmatter;
+      if (hreflangGroup) {
+        if (!groupMap.has(hreflangGroup))
+          groupMap.set(hreflangGroup, new Map());
+        groupMap.get(hreflangGroup)!.set(loc, slug);
+      } else {
+        if (!slugLocales.has(slug)) slugLocales.set(slug, new Set());
+        slugLocales.get(slug)!.add(loc);
+      }
     }
   }
 
   for (const post of posts) {
-    const { slug, publishedAt } = post.frontmatter;
-    const available = allSlugs.get(slug) ?? new Set();
-    const links = [...available]
-      .map(
-        (l) =>
-          `    <xhtml:link rel="alternate" hreflang="${bcp47[l as Locale]}" href="${escapeXml(`${BASE_URL}/${l}/blog/${slug}`)}" />`,
-      )
-      .join("\n");
-    const xDefault = available.has("en")
-      ? `\n    <xhtml:link rel="alternate" hreflang="x-default" href="${escapeXml(`${BASE_URL}/en/blog/${slug}`)}" />`
-      : "";
+    const { slug, publishedAt, hreflangGroup } = post.frontmatter;
+
+    let links: string;
+    let xDefault = "";
+
+    if (hreflangGroup && groupMap.has(hreflangGroup)) {
+      const alternates = groupMap.get(hreflangGroup)!;
+      links = [...alternates.entries()]
+        .map(
+          ([l, s]) =>
+            `    <xhtml:link rel="alternate" hreflang="${bcp47[l as Locale]}" href="${escapeXml(`${BASE_URL}/${l}/blog/${s}`)}" />`,
+        )
+        .join("\n");
+      const enSlug = alternates.get("en");
+      if (enSlug) {
+        xDefault = `\n    <xhtml:link rel="alternate" hreflang="x-default" href="${escapeXml(`${BASE_URL}/en/blog/${enSlug}`)}" />`;
+      }
+    } else {
+      const available = slugLocales.get(slug) ?? new Set();
+      links = [...available]
+        .map(
+          (l) =>
+            `    <xhtml:link rel="alternate" hreflang="${bcp47[l as Locale]}" href="${escapeXml(`${BASE_URL}/${l}/blog/${slug}`)}" />`,
+        )
+        .join("\n");
+      if (available.has("en")) {
+        xDefault = `\n    <xhtml:link rel="alternate" hreflang="x-default" href="${escapeXml(`${BASE_URL}/en/blog/${slug}`)}" />`;
+      }
+    }
 
     entries.push(
       urlEntry(`${BASE_URL}/${locale}/blog/${slug}`, links + xDefault, {

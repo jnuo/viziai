@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
+import remarkGfm from "remark-gfm";
 import { Calendar, Clock, ArrowLeft, User } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { Button } from "@/components/ui/button";
@@ -16,6 +17,7 @@ import {
   extractFaqFromContent,
   extractHeadings,
   slugifyHeading,
+  getHreflangAlternates,
 } from "@/lib/blog";
 import { TableOfContents } from "@/components/blog/TableOfContents";
 import { locales, bcp47 } from "@/i18n/config";
@@ -50,11 +52,22 @@ export async function generateMetadata({
   const { frontmatter } = post;
   const canonicalUrl = `${BASE_URL}/${locale}/blog/${slug}`;
 
+  // Build hreflang alternates if this post belongs to a group
+  const languages: Record<string, string> = {};
+  if (frontmatter.hreflangGroup) {
+    const alternates = getHreflangAlternates(frontmatter.hreflangGroup);
+    for (const [altLocale, altSlug] of Object.entries(alternates)) {
+      languages[bcp47[altLocale as Locale]] =
+        `${BASE_URL}/${altLocale}/blog/${altSlug}`;
+    }
+  }
+
   return {
     title: frontmatter.title,
     description: frontmatter.description,
     alternates: {
       canonical: canonicalUrl,
+      languages: Object.keys(languages).length > 0 ? languages : undefined,
     },
     openGraph: {
       title: frontmatter.title,
@@ -180,7 +193,7 @@ export default async function BlogArticlePage({ params }: ArticlePageProps) {
         />
       )}
 
-      <TableOfContents headings={headings} />
+      <TableOfContents headings={headings} label={t("tocLabel")} />
 
       <main className="container mx-auto px-4 py-12 max-w-3xl">
         <Link
@@ -223,7 +236,11 @@ export default async function BlogArticlePage({ params }: ArticlePageProps) {
         </header>
 
         <article className="prose prose-lg prose-neutral dark:prose-invert max-w-none prose-headings:font-semibold prose-a:text-primary prose-a:underline">
-          <MDXRemote source={content} components={mdxComponents} />
+          <MDXRemote
+            source={content}
+            components={mdxComponents}
+            options={{ mdxOptions: { remarkPlugins: [remarkGfm] } }}
+          />
         </article>
 
         <section className="mt-12 p-6 sm:p-8 rounded-2xl bg-primary/5 border border-primary/20 text-center">
