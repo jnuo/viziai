@@ -1,4 +1,4 @@
-export const locales = ["tr", "en", "es", "de", "fr"] as const;
+export const locales = ["tr", "en", "es", "de", "fr", "nl"] as const;
 export type Locale = (typeof locales)[number];
 export const defaultLocale: Locale = "tr";
 
@@ -8,6 +8,7 @@ export const localeLabels: Record<Locale, string> = {
   es: "Español",
   de: "Deutsch",
   fr: "Français",
+  nl: "Nederlands",
 };
 
 export const bcp47: Record<Locale, string> = {
@@ -16,6 +17,7 @@ export const bcp47: Record<Locale, string> = {
   es: "es-ES",
   de: "de-DE",
   fr: "fr-FR",
+  nl: "nl-NL",
 };
 
 /**
@@ -30,6 +32,7 @@ export const staticPages = {
     es: "privacidad",
     de: "datenschutz",
     fr: "confidentialite",
+    nl: "privacybeleid",
   },
   faq: {
     tr: "sss",
@@ -37,6 +40,7 @@ export const staticPages = {
     es: "preguntas-frecuentes",
     de: "faq",
     fr: "faq",
+    nl: "veelgestelde-vragen",
   },
   enabizGuide: {
     tr: "enabiz-rehberi",
@@ -44,6 +48,7 @@ export const staticPages = {
     es: "guia-enabiz",
     de: "enabiz-anleitung",
     fr: "guide-enabiz",
+    nl: "enabiz-gids",
   },
 } as const;
 

@@ -72,7 +72,7 @@
       "howItWorks": "So funktioniert es",
       "howItWorksSteps": {
         "step1Title": "PDF hochladen",
-        "step1Desc": "Ziehen Sie Ihren Bluttest-Bericht per Drag & Drop. Wir unterstützen Labor-PDFs auf Türkisch, Englisch, Deutsch, Französisch und Spanisch.",
+        "step1Desc": "Ziehen Sie Ihren Bluttest-Bericht per Drag & Drop. Wir unterstützen Labor-PDFs auf Türkisch, Englisch, Deutsch, Niederländisch, Französisch und Spanisch.",
         "step2Title": "KI extrahiert Ergebnisse",
         "step2Desc": "Unsere KI liest Ihr PDF und extrahiert jeden Messwert, Wert und Referenzbereich — auch aus gescannten Dokumenten.",
         "step3Title": "Trends verfolgen",
@@ -592,11 +592,11 @@
       },
       "languages": {
         "q": "Welche Sprachen werden unterstützt?",
-        "a": "Die ViziAI-Oberfläche unterstützt Türkisch, Englisch, Spanisch, Deutsch und Französisch. Unsere KI kann auch Labor-PDFs in allen fünf Sprachen verarbeiten."
+        "a": "Die ViziAI-Oberfläche unterstützt Türkisch, Englisch, Spanisch, Deutsch, Französisch und Niederländisch. Unsere KI kann auch Labor-PDFs in allen sechs Sprachen verarbeiten."
       },
       "testsAbroad": {
         "q": "Kann ich im Ausland durchgeführte Tests hochladen?",
-        "a": "Ja! Sie können Laborberichte aus jedem Land in unterstützten Sprachen (Türkisch, Englisch, Spanisch, Deutsch, Französisch) hochladen. Alle Ergebnisse werden in einem einzigen Dashboard zusammengeführt."
+        "a": "Ja! Sie können Laborberichte aus jedem Land in unterstützten Sprachen (Türkisch, Englisch, Spanisch, Deutsch, Französisch, Niederländisch) hochladen. Alle Ergebnisse werden in einem einzigen Dashboard zusammengeführt."
       },
       "afterUpload": {
         "q": "Was passiert nach dem PDF-Upload?",
@@ -684,6 +684,7 @@
     "ctaDesc": "Beginne noch heute mit der Verfolgung deiner Blutwerte mit ViziAI.",
     "by": "Von",
     "articlesBy": "Artikel von {author}",
+    "tocLabel": "Inhalt",
     "allPosts": "Alle Artikel",
     "filterByTag": "Nach Tag filtern",
     "alsoIn": "Auch verfügbar auf:",

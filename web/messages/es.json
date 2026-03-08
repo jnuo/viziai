@@ -72,7 +72,7 @@
       "howItWorks": "Cómo Funciona",
       "howItWorksSteps": {
         "step1Title": "Sube tu PDF",
-        "step1Desc": "Arrastra y suelta tu informe de análisis de sangre. Aceptamos PDF de laboratorios en turco, inglés, alemán, francés y español.",
+        "step1Desc": "Arrastra y suelta tu informe de análisis de sangre. Aceptamos PDF de laboratorios en turco, inglés, alemán, neerlandés, francés y español.",
         "step2Title": "La IA Extrae los Resultados",
         "step2Desc": "Nuestra IA lee tu PDF y extrae cada métrica, valor y rango de referencia — incluso de documentos escaneados.",
         "step3Title": "Sigue tus Tendencias",
@@ -592,11 +592,11 @@
       },
       "languages": {
         "q": "¿Qué idiomas soportan?",
-        "a": "La interfaz de ViziAI soporta turco, inglés, español, alemán y francés. Nuestra IA también puede procesar PDF de laboratorio en los cinco idiomas."
+        "a": "La interfaz de ViziAI soporta turco, inglés, español, alemán, francés y neerlandés. Nuestra IA también puede procesar PDF de laboratorio en los seis idiomas."
       },
       "testsAbroad": {
         "q": "¿Puedo subir análisis hechos en el extranjero?",
-        "a": "¡Sí! Puedes subir informes de laboratorio de cualquier país en los idiomas soportados (turco, inglés, español, alemán, francés). Todos los resultados se unifican en un solo panel."
+        "a": "¡Sí! Puedes subir informes de laboratorio de cualquier país en los idiomas soportados (turco, inglés, español, alemán, francés, neerlandés). Todos los resultados se unifican en un solo panel."
       },
       "afterUpload": {
         "q": "¿Qué pasa después de subir un PDF?",
@@ -684,6 +684,7 @@
     "ctaDesc": "Comienza a seguir tus análisis de sangre con ViziAI hoy.",
     "by": "Por",
     "articlesBy": "Artículos de {author}",
+    "tocLabel": "Contenido",
     "allPosts": "Todos los artículos",
     "filterByTag": "Filtrar por etiqueta",
     "alsoIn": "También disponible en:",

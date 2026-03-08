@@ -72,7 +72,7 @@
       "howItWorks": "Comment ça marche",
       "howItWorksSteps": {
         "step1Title": "Téléchargez votre PDF",
-        "step1Desc": "Glissez-déposez votre rapport d'analyse de sang. Nous acceptons les PDF de laboratoires en turc, anglais, allemand, français et espagnol.",
+        "step1Desc": "Glissez-déposez votre rapport d'analyse de sang. Nous acceptons les PDF de laboratoires en turc, anglais, allemand, néerlandais, français et espagnol.",
         "step2Title": "L'IA extrait les résultats",
         "step2Desc": "Notre IA lit votre PDF et extrait chaque marqueur, valeur et plage de référence — même à partir de documents scannés.",
         "step3Title": "Suivez vos tendances",
@@ -592,11 +592,11 @@
       },
       "languages": {
         "q": "Quelles langues prenez-vous en charge ?",
-        "a": "L'interface de ViziAI prend en charge le turc, l'anglais, l'espagnol, l'allemand et le français. Notre IA peut également traiter des PDF de laboratoire dans les cinq langues."
+        "a": "L'interface de ViziAI prend en charge le turc, l'anglais, l'espagnol, l'allemand, le français et le néerlandais. Notre IA peut également traiter des PDF de laboratoire dans les six langues."
       },
       "testsAbroad": {
         "q": "Puis-je télécharger des analyses faites à l'étranger ?",
-        "a": "Oui ! Vous pouvez télécharger des rapports de laboratoire de n'importe quel pays dans les langues prises en charge (turc, anglais, espagnol, allemand, français). Tous les résultats sont unifiés dans un seul tableau de bord."
+        "a": "Oui ! Vous pouvez télécharger des rapports de laboratoire de n'importe quel pays dans les langues prises en charge (turc, anglais, espagnol, allemand, français, néerlandais). Tous les résultats sont unifiés dans un seul tableau de bord."
       },
       "afterUpload": {
         "q": "Que se passe-t-il après le téléchargement d'un PDF ?",
@@ -684,6 +684,7 @@
     "ctaDesc": "Commencez à suivre vos analyses de sang avec ViziAI dès aujourd'hui.",
     "by": "Par",
     "articlesBy": "Articles de {author}",
+    "tocLabel": "Sommaire",
     "allPosts": "Tous les articles",
     "filterByTag": "Filtrer par tag",
     "alsoIn": "Également disponible en :",
