@@ -1,3 +1,29 @@
 # Ralph Progress Log - SEO Content & Localization
 # Started: 2026-03-08
 
+---
+## 2026-03-08 - STORY-002: Dutch (nl) product localization
+- Added "nl" to locales array, localeLabels, bcp47, staticPages in config.ts
+- Created web/messages/nl.json with all keys translated from en.json (729 lines)
+- Added nl: "min leestijd" to readMinLabel in blog.ts
+- Added nl entries to CATEGORY_LABELS in faq-content.tsx (required by Record<Locale>)
+- Files changed: config.ts, nl.json, blog.ts, faq-content.tsx
+- Learnings: Adding a locale requires updating FAQ CATEGORY_LABELS too (Record<Locale> type)
+
+---
+## 2026-03-08 - STORY-001: German blog article
+- SEO research: "Blutwerte verstehen Türkisch" as primary keyword, zero SERP competition
+- Discovered "großes Blutbild türkisch" and "kleines Blutbild türkisch" via autocomplete
+- Wrote 1100+ word article at web/content/blog/de/blutwerte-verstehen-tuerkisch-deutsch.mdx
+- Content review: 2 iterations, 4 agents each. Iteration 1 found factual error (Hemogram/Tam Kan Sayımı mapping) and SEO gaps. Fixed and passed iteration 2.
+- Files changed: web/content/blog/de/blutwerte-verstehen-tuerkisch-deutsch.mdx
+- Learnings: "Hemogram" and "Tam Kan Sayımı" are synonyms in Turkish (both = CBC). "Großes Blutbild" = Hemogram + Lökosit Formülü.
+
+---
+## 2026-03-08 - STORY-003: Dutch blog article
+- SEO research: "bloedwaarden begrijpen Turks" as primary keyword, zero SERP competition
+- Dutch market completely untapped — no autocomplete suggestions for Turkish blood test queries
+- Wrote 1000+ word article at web/content/blog/nl/bloedwaarden-begrijpen-turks-nederlands.mdx
+- Content review: 2 iterations, 4 agents each. Iteration 1 found spelling errors (sedimantasyon, doktor, Glikoz), verb agreement, iron description. Fixed and passed iteration 2.
+- Files changed: web/content/blog/nl/bloedwaarden-begrijpen-turks-nederlands.mdx
+- Learnings: "Sedimentasyon" not "sedimantasyon". Dutch "dokter" not Turkish "doktor". IJzer = circulating iron, not iron storage (that's ferritine).
