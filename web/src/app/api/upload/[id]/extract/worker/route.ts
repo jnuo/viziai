@@ -359,77 +359,78 @@ async function handler(
       };
       const testSourcePage: Record<string, number> = {};
 
+      // Phase 1: Render all pages sequentially (keeps memory usage low)
+      const allImages: PageImage[] = [];
       for (let p = 0; p < pdf.pageCount; p++) {
-        // Render one page at a time to keep memory low
         const pageImages = await renderPage(pdf, p);
+        allImages.push(...pageImages);
+      }
+      console.log(
+        `[Worker] Rendered ${pdf.pageCount} page(s) into ${allImages.length} image(s), sending to OpenAI in parallel...`,
+      );
 
-        // Send all images from this page in parallel (1 for vector, 2 for split image-based)
-        // allSettled so one failed half doesn't discard the other
-        const settled = await Promise.allSettled(
-          pageImages.map(async (img) => {
-            console.log(
-              `[Worker] Processing page ${img.pageIndex + 1} (${img.crop ?? "full"}, detail=${img.detail})...`,
-            );
-            const data = await callOpenAI(openaiApiKey, img);
-            return data ? { img, data } : null;
-          }),
-        );
+      // Phase 2: Send ALL images to OpenAI in parallel
+      const settled = await Promise.allSettled(
+        allImages.map(async (img) => {
+          console.log(
+            `[Worker] Processing page ${img.pageIndex + 1} (${img.crop ?? "full"}, detail=${img.detail})...`,
+          );
+          const data = await callOpenAI(openaiApiKey, img);
+          return data ? { img, data } : null;
+        }),
+      );
 
-        // Merge results from this page
-        for (const outcome of settled) {
-          if (outcome.status === "rejected") {
-            console.warn(
-              `[Worker] Page ${p + 1} image failed:`,
-              outcome.reason,
-            );
-            continue;
-          }
-          const result = outcome.value;
-          if (!result) continue;
-          const { img, data: pageData } = result;
+      // Phase 3: Merge results in page order (settled preserves input order)
+      for (const outcome of settled) {
+        if (outcome.status === "rejected") {
+          console.warn(`[Worker] OpenAI call failed:`, outcome.reason);
+          continue;
+        }
+        const result = outcome.value;
+        if (!result) continue;
+        const { img, data: pageData } = result;
 
-          if (pageData.tests) {
-            let accepted = 0;
-            for (const [name, val] of Object.entries(pageData.tests)) {
-              // Skip non-numeric values (GPT hallucination guard)
-              if (typeof val.value !== "number") continue;
+        if (pageData.tests) {
+          let accepted = 0;
+          for (const [name, val] of Object.entries(pageData.tests)) {
+            // Skip non-numeric values (GPT hallucination guard)
+            if (typeof val.value !== "number") continue;
 
-              // Normalize flag to H/L/N
-              val.flag = normalizeFlag(val.flag);
+            // Normalize flag to H/L/N
+            val.flag = normalizeFlag(val.flag);
 
-              if (!(name in mergedResult.tests)) {
+            if (!(name in mergedResult.tests)) {
+              mergedResult.tests[name] = val;
+              testSourcePage[name] = img.pageIndex;
+              accepted++;
+            } else if (testSourcePage[name] === img.pageIndex) {
+              // Same page (other half of a split) — prefer the more complete entry
+              const existing = mergedResult.tests[name];
+              const existingFields =
+                (existing.ref_low != null ? 1 : 0) +
+                (existing.ref_high != null ? 1 : 0) +
+                (existing.unit ? 1 : 0);
+              const newFields =
+                (val.ref_low != null ? 1 : 0) +
+                (val.ref_high != null ? 1 : 0) +
+                (val.unit ? 1 : 0);
+              if (newFields > existingFields) {
                 mergedResult.tests[name] = val;
-                testSourcePage[name] = img.pageIndex;
                 accepted++;
-              } else if (testSourcePage[name] === img.pageIndex) {
-                // Same page (other half of a split) — prefer the more complete entry
-                const existing = mergedResult.tests[name];
-                const existingFields =
-                  (existing.ref_low != null ? 1 : 0) +
-                  (existing.ref_high != null ? 1 : 0) +
-                  (existing.unit ? 1 : 0);
-                const newFields =
-                  (val.ref_low != null ? 1 : 0) +
-                  (val.ref_high != null ? 1 : 0) +
-                  (val.unit ? 1 : 0);
-                if (newFields > existingFields) {
-                  mergedResult.tests[name] = val;
-                  accepted++;
-                }
               }
-              // Different page — first-writer-wins (prevents footer page hallucinations)
             }
-            console.log(
-              `[Worker] Page ${img.pageIndex + 1} (${img.crop ?? "full"}): ${accepted} tests accepted`,
-            );
+            // Different page — first-writer-wins (prevents footer page hallucinations)
           }
+          console.log(
+            `[Worker] Page ${img.pageIndex + 1} (${img.crop ?? "full"}): ${accepted} tests accepted`,
+          );
+        }
 
-          if (
-            !mergedResult.sample_date &&
-            isValidISODate(pageData.sample_date)
-          ) {
-            mergedResult.sample_date = pageData.sample_date;
-          }
+        if (
+          !mergedResult.sample_date &&
+          isValidISODate(pageData.sample_date)
+        ) {
+          mergedResult.sample_date = pageData.sample_date;
         }
       }
 
