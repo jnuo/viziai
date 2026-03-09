@@ -50,49 +50,35 @@
   },
   "pages": {
     "landing": {
-      "heroTitle": "<highlight>Track</highlight> Your Blood Test Results and Understand Health Trends",
-      "heroDescription": "Upload blood test PDFs and let ViziAI analyze your results with AI. Track health trends over time with clear visual charts and dashboards.",
-      "getStarted": "Get Started",
+      "heroTitle": "Finally understand what's changing in your blood tests",
+      "heroDescription": "Upload your lab PDFs. See your values over time. Share with family.",
       "getStartedFree": "Get Started Free",
-      "tryFree": "Try for Free",
-      "dashboardAlt": "ViziAI Dashboard - Visually track your test results",
-      "whyPrefix": "Why",
-      "startTracking": "Start Tracking Your Health",
-      "neverEasier": "Understanding your test results has never been easier.",
-      "features": {
-        "aiAnalysis": "AI-Powered Analysis",
-        "aiAnalysisDesc": "Automatically extracts and organizes test data from PDFs using artificial intelligence.",
-        "visualDashboard": "Visual Dashboard",
-        "visualDashboardDesc": "Track and compare your values over time with visual charts.",
-        "easyUpload": "Easy PDF Upload",
-        "easyUploadDesc": "Easily upload your test reports in PDF format with drag and drop.",
-        "securePrivate": "Secure & Private",
-        "securePrivateDesc": "Your data is stored on secure infrastructure, accessible only by you."
+      "benefits": {
+        "uploadPdf": "Upload any lab PDF",
+        "uploadPdfDesc": "Reads and interprets lab results in any language. Including scanned documents.",
+        "seeTrends": "See trends over time",
+        "seeTrendsDesc": "Easily observe how the metrics that matter to you change over time.",
+        "familyProfiles": "Family profiles",
+        "familyProfilesDesc": "Share your profile with spouse. Create a profile for dad, share with your siblings."
       },
-      "howItWorks": "How It Works",
-      "howItWorksSteps": {
-        "step1Title": "Upload Your PDF",
-        "step1Desc": "Drag and drop your blood test report. We support lab PDFs in Turkish, English, German, Dutch, French, and Spanish.",
-        "step2Title": "AI Extracts Results",
-        "step2Desc": "Our AI reads your PDF and extracts every metric, value, and reference range — even from scanned documents.",
-        "step3Title": "Track Your Trends",
-        "step3Desc": "See all your results on a unified dashboard with trend charts. Spot changes at a glance across reports from any country."
+      "enabiz": {
+        "badge": "For Users in Turkey",
+        "title": "e-Nabız Integration",
+        "description": "Import all your e-Nabız lab results directly with our Chrome extension — no AI processing, no PDF downloads. One click.",
+        "cta": "Install Chrome Extension",
+        "howItWorks": "How does it work?"
       },
-      "socialProof": {
-        "languages": "Languages Supported",
-        "familyProfiles": "Family Profiles",
-        "metricAliases": "Metric Aliases",
-        "description": "Track blood tests from Turkish, English, German, French, and Spanish labs — all in one dashboard."
+      "trust": {
+        "encrypted": "Encrypted",
+        "private": "Private",
+        "free": "Free"
       },
       "faq": {
         "title": "Frequently Asked Questions"
       },
-      "enabiz": {
-        "badge": "Chrome Extension",
-        "title": "e-Nabız Integration",
-        "description": "For e-Nabız users in Turkey: import your past lab results with one click using our Chrome extension. No need to download PDFs.",
-        "cta": "Install Chrome Extension",
-        "howItWorks": "How does it work?"
+      "finalCta": {
+        "title": "Start tracking your health today",
+        "subtitle": "Free forever. No credit card required."
       }
     },
     "login": {

@@ -50,49 +50,35 @@
   },
   "pages": {
     "landing": {
-      "heroTitle": "<highlight>Blutwerte</highlight> verstehen — Laborbefund hochladen und verfolgen",
-      "heroDescription": "Laden Sie Ihr Blutbild als PDF hoch. ViziAI analysiert Ihre Blutwerte mit KI und zeigt Trends in übersichtlichen Diagrammen. Kostenlos starten.",
-      "getStarted": "Jetzt starten",
+      "heroTitle": "Endlich verstehen, was sich in Ihren Blutwerten verändert",
+      "heroDescription": "Laden Sie Ihre Labor-PDFs hoch. Sehen Sie Ihre Werte im Zeitverlauf. Teilen Sie mit Ihrer Familie.",
       "getStartedFree": "Kostenlos starten",
-      "tryFree": "Kostenlos testen",
-      "dashboardAlt": "ViziAI Dashboard - Verfolgen Sie Ihre Testergebnisse visuell",
-      "whyPrefix": "Warum",
-      "startTracking": "Beginnen Sie, Ihre Gesundheit zu verfolgen",
-      "neverEasier": "Das Verstehen Ihrer Testergebnisse war noch nie so einfach.",
-      "features": {
-        "aiAnalysis": "KI-gestützte Analyse",
-        "aiAnalysisDesc": "Extrahiert und organisiert Testdaten automatisch aus PDFs mithilfe künstlicher Intelligenz.",
-        "visualDashboard": "Visuelles Dashboard",
-        "visualDashboardDesc": "Verfolgen und vergleichen Sie Ihre Werte im Zeitverlauf mit visuellen Diagrammen.",
-        "easyUpload": "Einfacher PDF-Upload",
-        "easyUploadDesc": "Laden Sie Ihre Testberichte einfach per Drag & Drop im PDF-Format hoch.",
-        "securePrivate": "Sicher & Privat",
-        "securePrivateDesc": "Ihre Daten werden auf einer sicheren Infrastruktur gespeichert und sind nur für Sie zugänglich."
-      },
-      "howItWorks": "So funktioniert es",
-      "howItWorksSteps": {
-        "step1Title": "PDF hochladen",
-        "step1Desc": "Ziehen Sie Ihren Bluttest-Bericht per Drag & Drop. Wir unterstützen Labor-PDFs auf Türkisch, Englisch, Deutsch, Niederländisch, Französisch und Spanisch.",
-        "step2Title": "KI extrahiert Ergebnisse",
-        "step2Desc": "Unsere KI liest Ihr PDF und extrahiert jeden Messwert, Wert und Referenzbereich — auch aus gescannten Dokumenten.",
-        "step3Title": "Trends verfolgen",
-        "step3Desc": "Sehen Sie alle Ergebnisse in einem einheitlichen Dashboard mit Trenddiagrammen. Erkennen Sie Veränderungen auf einen Blick über Berichte aus jedem Land."
-      },
-      "socialProof": {
-        "languages": "Unterstützte Sprachen",
+      "benefits": {
+        "uploadPdf": "Beliebiges Labor-PDF hochladen",
+        "uploadPdfDesc": "Liest und interpretiert Laborergebnisse in jeder Sprache. Auch gescannte Dokumente.",
+        "seeTrends": "Trends im Zeitverlauf sehen",
+        "seeTrendsDesc": "Beobachten Sie einfach, wie sich die für Sie wichtigen Werte im Laufe der Zeit verändern.",
         "familyProfiles": "Familienprofile",
-        "metricAliases": "Metrik-Aliase",
-        "description": "Verfolgen Sie Bluttests aus türkischen, englischen, deutschen, französischen und spanischen Laboren — alles in einem Dashboard."
+        "familyProfilesDesc": "Teilen Sie Ihr Profil mit Ihrem Partner. Erstellen Sie ein Profil für Ihren Vater, teilen Sie es mit Ihren Geschwistern."
+      },
+      "enabiz": {
+        "badge": "Für Nutzer in der Türkei",
+        "title": "e-Nabız Integration",
+        "description": "Importieren Sie alle Ihre e-Nabız-Laborergebnisse direkt mit unserer Chrome-Erweiterung — keine KI-Verarbeitung, kein PDF-Download. Ein Klick.",
+        "cta": "Chrome-Erweiterung installieren",
+        "howItWorks": "Wie funktioniert es?"
+      },
+      "trust": {
+        "encrypted": "Verschlüsselt",
+        "private": "Privat",
+        "free": "Kostenlos"
       },
       "faq": {
         "title": "Häufig gestellte Fragen"
       },
-      "enabiz": {
-        "badge": "Chrome-Erweiterung",
-        "title": "e-Nabız Integration",
-        "description": "Für e-Nabız-Nutzer in der Türkei: Importieren Sie Ihre bisherigen Laborergebnisse mit einem Klick über unsere Chrome-Erweiterung. Kein PDF-Download nötig.",
-        "cta": "Chrome-Erweiterung installieren",
-        "howItWorks": "Wie funktioniert es?"
+      "finalCta": {
+        "title": "Beginnen Sie heute, Ihre Gesundheit zu verfolgen",
+        "subtitle": "Für immer kostenlos. Keine Kreditkarte erforderlich."
       }
     },
     "login": {
