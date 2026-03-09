@@ -17,6 +17,8 @@
  *   node evals/run-eval.mjs --case 2025-06-23_Enabiz-Tahlilleri
  *   node evals/run-eval.mjs --model gpt-4o-mini
  *   node evals/run-eval.mjs --concurrency 5
+ *   node evals/run-eval.mjs --strategy parallel    # all OpenAI calls at once (new default)
+ *   node evals/run-eval.mjs --strategy sequential  # page-by-page (old behavior)
  */
 
 import fs from "fs";
@@ -265,7 +267,46 @@ async function callOpenAI(apiKey, img, model) {
   return null; // All retries exhausted
 }
 
-async function extractFromPdf(pdfBuffer, model, apiKey) {
+function mergeSettledResults(settled, mergedResult, testSourcePage) {
+  for (const outcome of settled) {
+    if (outcome.status === "rejected") {
+      console.warn(`  OpenAI call failed:`, outcome.reason);
+      continue;
+    }
+    const result = outcome.value;
+    if (!result) continue;
+    const { img, data: pageData } = result;
+
+    if (pageData.tests) {
+      let accepted = 0;
+      for (const [name, val] of Object.entries(pageData.tests)) {
+        if (typeof val.value !== "number") continue;
+        val.flag = normalizeFlag(val.flag);
+
+        if (!(name in mergedResult.tests)) {
+          mergedResult.tests[name] = val;
+          testSourcePage[name] = img.pageIndex;
+          accepted++;
+        } else if (testSourcePage[name] === img.pageIndex) {
+          const existing = mergedResult.tests[name];
+          const existingFields = (existing.ref_low != null ? 1 : 0) + (existing.ref_high != null ? 1 : 0) + (existing.unit ? 1 : 0);
+          const newFields = (val.ref_low != null ? 1 : 0) + (val.ref_high != null ? 1 : 0) + (val.unit ? 1 : 0);
+          if (newFields > existingFields) {
+            mergedResult.tests[name] = val;
+            accepted++;
+          }
+        }
+      }
+      console.log(`  Page ${img.pageIndex + 1} (${img.crop ?? "full"}): ${accepted} tests accepted`);
+    }
+
+    if (!mergedResult.sample_date && isValidISODate(pageData.sample_date)) {
+      mergedResult.sample_date = pageData.sample_date;
+    }
+  }
+}
+
+async function extractFromPdf(pdfBuffer, model, apiKey, strategy = "parallel") {
   const pdf = await preparePdf(pdfBuffer);
 
   if (pdf.pageCount === 0) {
@@ -275,14 +316,21 @@ async function extractFromPdf(pdfBuffer, model, apiKey) {
   const mergedResult = { sample_date: null, tests: {} };
   const testSourcePage = {};
 
-  for (let p = 0; p < pdf.pageCount; p++) {
-    // Render one page at a time to keep memory low
-    const pageImages = await renderPage(pdf, p);
+  // Collect all page images
+  let allImages;
 
-    // Send all images from this page in parallel (1 for vector, 2 for split image-based)
-    // allSettled so one failed half doesn't discard the other
+  if (strategy === "parallel") {
+    // Phase 1: Render all pages sequentially (keeps memory low)
+    allImages = [];
+    for (let p = 0; p < pdf.pageCount; p++) {
+      const pageImages = await renderPage(pdf, p);
+      allImages.push(...pageImages);
+    }
+    console.log(`  Rendered ${pdf.pageCount} page(s) into ${allImages.length} image(s), sending to OpenAI in parallel...`);
+
+    // Phase 2: Send ALL images to OpenAI in parallel
     const settled = await Promise.allSettled(
-      pageImages.map(async (img) => {
+      allImages.map(async (img) => {
         console.log(
           `  Processing page ${img.pageIndex + 1} (${img.crop ?? "full"}, detail=${img.detail})...`,
         );
@@ -291,47 +339,24 @@ async function extractFromPdf(pdfBuffer, model, apiKey) {
       }),
     );
 
-    // Merge results from this page
-    for (const outcome of settled) {
-      if (outcome.status === "rejected") {
-        console.warn(`  Page ${p + 1} image failed:`, outcome.reason);
-        continue;
-      }
-      const result = outcome.value;
-      if (!result) continue;
-      const { img, data: pageData } = result;
+    // Phase 3: Merge results in page order (settled preserves input order)
+    mergeSettledResults(settled, mergedResult, testSourcePage);
+  } else {
+    // Sequential: original page-by-page approach
+    for (let p = 0; p < pdf.pageCount; p++) {
+      const pageImages = await renderPage(pdf, p);
 
-      if (pageData.tests) {
-        let accepted = 0;
-        for (const [name, val] of Object.entries(pageData.tests)) {
-          // Skip non-numeric values (GPT hallucination guard)
-          if (typeof val.value !== "number") continue;
+      const settled = await Promise.allSettled(
+        pageImages.map(async (img) => {
+          console.log(
+            `  Processing page ${img.pageIndex + 1} (${img.crop ?? "full"}, detail=${img.detail})...`,
+          );
+          const data = await callOpenAI(apiKey, img, model);
+          return data ? { img, data } : null;
+        }),
+      );
 
-          // Normalize flag to H/L/N
-          val.flag = normalizeFlag(val.flag);
-
-          if (!(name in mergedResult.tests)) {
-            mergedResult.tests[name] = val;
-            testSourcePage[name] = img.pageIndex;
-            accepted++;
-          } else if (testSourcePage[name] === img.pageIndex) {
-            // Same page (other half of a split) — prefer the more complete entry
-            const existing = mergedResult.tests[name];
-            const existingFields = (existing.ref_low != null ? 1 : 0) + (existing.ref_high != null ? 1 : 0) + (existing.unit ? 1 : 0);
-            const newFields = (val.ref_low != null ? 1 : 0) + (val.ref_high != null ? 1 : 0) + (val.unit ? 1 : 0);
-            if (newFields > existingFields) {
-              mergedResult.tests[name] = val;
-              accepted++;
-            }
-          }
-          // Different page — first-writer-wins (prevents footer page hallucinations)
-        }
-        console.log(`  Page ${img.pageIndex + 1} (${img.crop ?? "full"}): ${accepted} tests accepted`);
-      }
-
-      if (!mergedResult.sample_date && isValidISODate(pageData.sample_date)) {
-        mergedResult.sample_date = pageData.sample_date;
-      }
+      mergeSettledResults(settled, mergedResult, testSourcePage);
     }
   }
 
@@ -436,6 +461,14 @@ async function main() {
   const concurrency = args.includes("--concurrency")
     ? parseInt(args[args.indexOf("--concurrency") + 1], 10) || 3
     : 3;
+  const strategy = args.includes("--strategy")
+    ? args[args.indexOf("--strategy") + 1]
+    : "parallel";
+
+  if (!["parallel", "sequential"].includes(strategy)) {
+    console.error("--strategy must be 'parallel' or 'sequential'");
+    process.exit(1);
+  }
 
   // Load API key
   const envPath = path.join(__dirname, "..", ".env");
@@ -452,14 +485,14 @@ async function main() {
   );
   if (caseFilter) cases = cases.filter((c) => c.includes(caseFilter));
 
-  console.log(`Running ${cases.length} test case(s) with model: ${model}, concurrency: ${concurrency}\n`);
+  console.log(`Running ${cases.length} test case(s) with model: ${model}, concurrency: ${concurrency}, strategy: ${strategy}\n`);
 
   // Create run directory — append suffix if dir already exists
-  let runId = `${new Date().toISOString().slice(0, 10)}_${model}`;
+  let runId = `${new Date().toISOString().slice(0, 10)}_${model}_${strategy}`;
   let runDir = path.join(RUNS_DIR, runId);
   let suffix = 2;
   while (fs.existsSync(runDir)) {
-    runId = `${new Date().toISOString().slice(0, 10)}_${model}_${suffix}`;
+    runId = `${new Date().toISOString().slice(0, 10)}_${model}_${strategy}_${suffix}`;
     runDir = path.join(RUNS_DIR, runId);
     suffix++;
   }
@@ -479,7 +512,7 @@ async function main() {
     const startTime = Date.now();
     const pdfBuffer = fs.readFileSync(pdfPath);
 
-    const output = await extractFromPdf(pdfBuffer, model, apiKey);
+    const output = await extractFromPdf(pdfBuffer, model, apiKey, strategy);
     const elapsedSeconds = ((Date.now() - startTime) / 1000).toFixed(1);
 
     const pageType = output.metrics.some((m) => m) ? "extracted" : "empty"; // simplified; real detection below
@@ -521,6 +554,7 @@ async function main() {
   const settings = {
     model,
     concurrency,
+    strategy,
     date: new Date().toISOString(),
     pipeline: {
       pdf_renderer: "mupdf (PDFDocument.openDocument only)",
@@ -537,6 +571,9 @@ async function main() {
         strategy: "split into top/bottom halves",
         detection: `PDF XObject inspection: largest embedded image > ${IMAGE_PIXEL_THRESHOLD} pixels`,
       },
+      openai_strategy: strategy === "parallel"
+        ? "all pages rendered first, then all OpenAI calls fired in parallel"
+        : "page-by-page sequential (render + OpenAI per page before next)",
       merge_strategy: "first-writer-wins across pages, prefer-more-complete within same page splits",
       guards: "non-numeric value filter, flag normalization (H/L/N), ISO date validation",
       retry: "2 retries with exponential backoff on transient status codes (429, 500, 502, 503)",
@@ -549,7 +586,7 @@ async function main() {
 
   // Save run results
   const runData = {
-    config: { model, concurrency, prompt_hash: settings.prompt_hash, date: settings.date },
+    config: { model, concurrency, strategy, prompt_hash: settings.prompt_hash, date: settings.date },
     results,
   };
   fs.writeFileSync(path.join(runDir, "results.json"), JSON.stringify(runData, null, 2));
