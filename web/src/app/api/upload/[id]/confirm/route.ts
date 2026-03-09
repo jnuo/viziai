@@ -271,7 +271,10 @@ export async function POST(
   } catch (error) {
     reportError(error, { op: "upload.confirm.POST" });
     return NextResponse.json(
-      { error: "Failed to confirm upload" },
+      {
+        error: "Failed to confirm upload",
+        message: "Failed to confirm upload",
+      },
       { status: 500 },
     );
   }
