@@ -18,7 +18,7 @@ export async function LandingHeader() {
           className="hover:opacity-80 transition-opacity focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-sm"
           aria-label={t("home")}
         >
-          <ViziAILogo />
+          <ViziAILogo className="text-lg sm:text-xl" />
         </Link>
 
         <div className="flex items-center gap-1.5 sm:gap-2">

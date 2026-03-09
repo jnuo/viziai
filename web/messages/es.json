@@ -46,7 +46,10 @@
       "owner": "Propietario",
       "editor": "Editor",
       "viewer": "Visor"
-    }
+    },
+    "footerProduct": "Producto",
+    "footerSupport": "Soporte",
+    "footerPreferences": "Idioma y Tema"
   },
   "pages": {
     "landing": {
@@ -67,6 +70,36 @@
         "description": "Importa todos tus resultados de e-Nabız directamente con nuestra extensión de Chrome — sin procesamiento de IA, sin descargar PDFs. Un clic.",
         "cta": "Instalar Extensión de Chrome",
         "howItWorks": "¿Cómo funciona?"
+      },
+      "track": {
+        "badge": "Seguimiento de tendencias",
+        "title": "Observa cómo cambian tus valores con el tiempo",
+        "description": "Cada informe que subes se agrega a tus gráficos. Ve los cambios de un vistazo.",
+        "imageAlt": "Panel de ViziAI mostrando gráficos de tendencias de análisis de sangre",
+        "features": {
+          "autoUpdate": "Los gráficos se actualizan automáticamente con cada informe que subes",
+          "atAGlance": "Normal, alto o bajo — entiende de un vistazo con colores",
+          "familyTrends": "Sigue las tendencias de cada familiar por separado"
+        }
+      },
+      "security": {
+        "title": "Tus datos están seguros",
+        "euServers": {
+          "title": "Servidores en la UE",
+          "description": "Tus datos se almacenan en Frankfurt, Alemania. Cumple con el RGPD."
+        },
+        "noPasswords": {
+          "title": "Sin contraseñas",
+          "description": "Inicio de sesión solo con Google. Sin contraseñas en nuestro sistema."
+        },
+        "encrypted": {
+          "title": "Comunicación cifrada",
+          "description": "Todos los datos se cifran en tránsito (HTTPS)."
+        },
+        "rightToDelete": {
+          "title": "Derecho a eliminar",
+          "description": "Elimina todos tus datos cuando quieras."
+        }
       },
       "trust": {
         "encrypted": "Cifrado",

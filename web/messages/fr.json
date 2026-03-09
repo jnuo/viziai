@@ -46,7 +46,10 @@
       "owner": "Propriétaire",
       "editor": "Éditeur",
       "viewer": "Lecteur"
-    }
+    },
+    "footerProduct": "Produit",
+    "footerSupport": "Assistance",
+    "footerPreferences": "Langue et Thème"
   },
   "pages": {
     "landing": {
@@ -67,6 +70,36 @@
         "description": "Importez tous vos résultats e-Nabız directement avec notre extension Chrome — sans traitement IA, sans télécharger de PDF. Un clic.",
         "cta": "Installer l'extension Chrome",
         "howItWorks": "Comment ça marche ?"
+      },
+      "track": {
+        "badge": "Suivi des tendances",
+        "title": "Suivez l'évolution de vos valeurs dans le temps",
+        "description": "Chaque rapport téléchargé est ajouté à vos graphiques. Voyez les changements d'un coup d'œil.",
+        "imageAlt": "Tableau de bord ViziAI affichant les graphiques de tendances d'analyses de sang",
+        "features": {
+          "autoUpdate": "Les graphiques se mettent à jour automatiquement à chaque rapport téléchargé",
+          "atAGlance": "Normal, élevé ou bas — comprenez d'un coup d'œil grâce aux couleurs",
+          "familyTrends": "Suivez les tendances de chaque membre de la famille séparément"
+        }
+      },
+      "security": {
+        "title": "Vos données sont en sécurité",
+        "euServers": {
+          "title": "Serveurs UE",
+          "description": "Vos données sont stockées à Francfort, Allemagne. Conforme au RGPD."
+        },
+        "noPasswords": {
+          "title": "Aucun mot de passe",
+          "description": "Connexion uniquement via Google. Aucun mot de passe dans notre système."
+        },
+        "encrypted": {
+          "title": "Communication chiffrée",
+          "description": "Toutes les données sont chiffrées en transit (HTTPS)."
+        },
+        "rightToDelete": {
+          "title": "Droit à l'effacement",
+          "description": "Supprimez toutes vos données quand vous le souhaitez."
+        }
       },
       "trust": {
         "encrypted": "Chiffré",

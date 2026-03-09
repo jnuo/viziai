@@ -66,25 +66,50 @@ export default async function LocaleHomePage({ params }: HomePageProps) {
 
   const t = await getTranslations({ locale: loc, namespace: "seo" });
 
-  const jsonLd = {
+  const organizationJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "ViziAI",
+    url: BASE_URL,
+    logo: `${BASE_URL}/icon-512.png`,
+    description: t("landingDescription"),
+    sameAs: [
+      "https://www.linkedin.com/company/viziai",
+      "https://x.com/viziai_app",
+      "https://github.com/jnuo/viziai",
+    ],
+    knowsAbout: [
+      "Blood test analysis",
+      "Health tracking",
+      "e-Nabız integration",
+      "Lab result interpretation",
+      "Biomarker trend analysis",
+    ],
+  };
+
+  const webSiteJsonLd = {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: "ViziAI",
     url: BASE_URL,
     inLanguage: bcp47[loc],
     description: t("landingDescription"),
-    publisher: {
-      "@type": "Organization",
-      name: "ViziAI",
-      url: BASE_URL,
-    },
+    publisher: { "@id": BASE_URL },
   };
+
+  // TODO: Add SoftwareApplication schema when real reviews/ratings exist (#111)
 
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(organizationJsonLd),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteJsonLd) }}
       />
       <LandingPage />
     </>

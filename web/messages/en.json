@@ -46,11 +46,14 @@
       "owner": "Owner",
       "editor": "Editor",
       "viewer": "Viewer"
-    }
+    },
+    "footerProduct": "Product",
+    "footerSupport": "Support",
+    "footerPreferences": "Language & Theme"
   },
   "pages": {
     "landing": {
-      "heroTitle": "Finally understand what's changing in your blood tests",
+      "heroTitle": "Easily understand what's changing in your blood tests",
       "heroDescription": "Upload your lab PDFs. See your values over time. Share with family.",
       "getStartedFree": "Get Started Free",
       "benefits": {
@@ -67,6 +70,36 @@
         "description": "Import all your e-Nabız lab results directly with our Chrome extension — no AI processing, no PDF downloads. One click.",
         "cta": "Install Chrome Extension",
         "howItWorks": "How does it work?"
+      },
+      "track": {
+        "badge": "Trend Tracking",
+        "title": "Track how your values change over time",
+        "description": "Every report you upload is added to your charts. See changes at a glance.",
+        "imageAlt": "ViziAI dashboard showing blood test trend charts",
+        "features": {
+          "autoUpdate": "Charts update automatically with every report you upload",
+          "atAGlance": "Normal, high, or low — understand at a glance with color coding",
+          "familyTrends": "Track each family member's trends separately"
+        }
+      },
+      "security": {
+        "title": "Your data is safe",
+        "euServers": {
+          "title": "EU Servers",
+          "description": "Your data is stored in Frankfurt, Germany. GDPR compliant."
+        },
+        "noPasswords": {
+          "title": "No Passwords Stored",
+          "description": "Sign in with Google only. No passwords in our system."
+        },
+        "encrypted": {
+          "title": "Encrypted Communication",
+          "description": "All data is encrypted in transit (HTTPS)."
+        },
+        "rightToDelete": {
+          "title": "Right to Delete",
+          "description": "Delete all your data anytime you want."
+        }
       },
       "trust": {
         "encrypted": "Encrypted",

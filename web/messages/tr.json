@@ -46,11 +46,14 @@
       "owner": "Sahip",
       "editor": "Düzenleyici",
       "viewer": "Görüntüleyici"
-    }
+    },
+    "footerProduct": "Ürün",
+    "footerSupport": "Destek",
+    "footerPreferences": "Dil & Tema"
   },
   "pages": {
     "landing": {
-      "heroTitle": "Kan tahlillerinizdeki değişiklikleri sonunda anlayın",
+      "heroTitle": "Kan tahlillerinizdeki değişiklikleri kolayca anlayın",
       "heroDescription": "Laboratuvar PDF'lerinizi yükleyin. Değerlerinizi zaman içinde görün. Ailenizle paylaşın.",
       "getStartedFree": "Ücretsiz Başla",
       "benefits": {
@@ -67,6 +70,36 @@
         "description": "Chrome eklentisi ile e-Nabız'daki tüm tahlillerinizi AI'a göndermeden, doğrudan aktarın. PDF indirmeye gerek yok.",
         "cta": "Chrome Eklentisini Yükle",
         "howItWorks": "Nasıl çalışır?"
+      },
+      "track": {
+        "badge": "Trend Takibi",
+        "title": "Değerlerinizin değişimini takip edin",
+        "description": "Her yüklediğiniz tahlil, grafiklerinize eklenir. Zaman içindeki değişimleri tek bakışta görün.",
+        "imageAlt": "ViziAI paneli - kan tahlili trendlerini gösteren grafikler",
+        "features": {
+          "autoUpdate": "Her tahlil yüklediğinizde grafikler otomatik güncellenir",
+          "atAGlance": "Normal, yüksek veya düşük — renkleriyle bir bakışta anlayın",
+          "familyTrends": "Aile bireylerinin trendlerini ayrı ayrı takip edin"
+        }
+      },
+      "security": {
+        "title": "Verileriniz güvende",
+        "euServers": {
+          "title": "AB Sunucuları",
+          "description": "Verileriniz Frankfurt, Almanya'da saklanır. KVKK/GDPR uyumlu."
+        },
+        "noPasswords": {
+          "title": "Şifre Saklanmaz",
+          "description": "Sadece Google ile giriş. Sistemimizde şifre tutulmaz."
+        },
+        "encrypted": {
+          "title": "Şifreli İletişim",
+          "description": "Tüm veriler aktarım sırasında şifrelenir (HTTPS)."
+        },
+        "rightToDelete": {
+          "title": "Silme Hakkı",
+          "description": "Tüm verilerinizi istediğiniz zaman silebilirsiniz."
+        }
       },
       "trust": {
         "encrypted": "Şifreli",

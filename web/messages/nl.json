@@ -46,7 +46,10 @@
       "owner": "Eigenaar",
       "editor": "Bewerker",
       "viewer": "Lezer"
-    }
+    },
+    "footerProduct": "Product",
+    "footerSupport": "Ondersteuning",
+    "footerPreferences": "Taal & Thema"
   },
   "pages": {
     "landing": {
@@ -67,6 +70,36 @@
         "description": "Importeer al je e-Nabız-labresultaten direct met onze Chrome-extensie — geen AI-verwerking, geen PDF's downloaden. Eén klik.",
         "cta": "Chrome-extensie installeren",
         "howItWorks": "Hoe werkt het?"
+      },
+      "track": {
+        "badge": "Trendopvolging",
+        "title": "Volg hoe je waarden veranderen in de tijd",
+        "description": "Elk rapport dat je uploadt wordt toegevoegd aan je grafieken. Zie veranderingen in één oogopslag.",
+        "imageAlt": "ViziAI-dashboard met bloedwaarde-trendgrafieken",
+        "features": {
+          "autoUpdate": "Grafieken worden automatisch bijgewerkt met elk rapport dat je uploadt",
+          "atAGlance": "Normaal, hoog of laag — begrijp het in één oogopslag met kleurcodering",
+          "familyTrends": "Volg de trends van elk familielid apart"
+        }
+      },
+      "security": {
+        "title": "Je gegevens zijn veilig",
+        "euServers": {
+          "title": "EU-servers",
+          "description": "Je gegevens worden opgeslagen in Frankfurt, Duitsland. AVG-conform."
+        },
+        "noPasswords": {
+          "title": "Geen wachtwoorden",
+          "description": "Alleen inloggen met Google. Geen wachtwoorden in ons systeem."
+        },
+        "encrypted": {
+          "title": "Versleutelde communicatie",
+          "description": "Alle gegevens worden versleuteld tijdens overdracht (HTTPS)."
+        },
+        "rightToDelete": {
+          "title": "Recht op verwijdering",
+          "description": "Verwijder al je gegevens wanneer je wilt."
+        }
       },
       "trust": {
         "encrypted": "Versleuteld",
