@@ -1,0 +1,400 @@
+{
+  "project": "Extraction Quality System",
+  "issues": ["#105", "#106"],
+  "branch": "feature/extraction-quality-system",
+  "stories": [
+    {
+      "id": "QS-001",
+      "phase": 1,
+      "title": "DB migration: quality system tables",
+      "description": "Create migration adding tables for the extraction quality system: `unmapped_metrics` (tracks metrics not matching any alias or canonical name), `extraction_reviews` (admin review decisions on reports), and add `blob_url` column to `reports` table (to preserve PDF for re-extraction). Also add `is_admin` boolean column to `users` table for admin auth.",
+      "acceptanceCriteria": [
+        "`unmapped_metrics` table exists with columns: id, metric_name, unit, ref_low, ref_high, report_id, profile_id, upload_id, status (pending/mapped/accepted), suggested_canonical, created_at",
+        "`extraction_reviews` table exists with columns: id, report_id, reviewer_user_id, status (pending/approved/corrected), notes, reviewed_at, created_at",
+        "`reports` table has new `blob_url` column (nullable text)",
+        "`users` table has new `is_admin` boolean column (default false)",
+        "Migration uses BEGIN/COMMIT",
+        "Indexes on unmapped_metrics(status), unmapped_metrics(report_id), extraction_reviews(report_id), extraction_reviews(status)"
+      ],
+      "files": ["db-schema/migrations/20260310_extraction_quality_tables.sql"],
+      "dependencies": [],
+      "capabilities": [],
+      "status": "done"
+    },
+    {
+      "id": "QS-002",
+      "phase": 1,
+      "title": "Admin auth helper + middleware",
+      "description": "Add `requireAdmin()` helper to `web/src/lib/auth.ts` that checks `users.is_admin` flag. Add `/admin` route group with layout that gates access to admin-only users. Non-admin users see a 403 page.",
+      "acceptanceCriteria": [
+        "`requireAdmin()` returns userId if admin, null otherwise",
+        "`isAdmin(userId)` helper returns boolean",
+        "Admin check queries `users.is_admin` column from DB",
+        "Admin layout at `web/src/app/admin/layout.tsx` blocks non-admin users",
+        "Non-admin users see a clean 403 'Access Denied' page",
+        "All admin API routes can use `requireAdmin()` for auth"
+      ],
+      "files": [
+        "web/src/lib/auth.ts",
+        "web/src/app/admin/layout.tsx",
+        "web/src/app/admin/denied/page.tsx"
+      ],
+      "dependencies": ["QS-001"],
+      "capabilities": [],
+      "status": "done"
+    },
+    {
+      "id": "QS-003",
+      "phase": 1,
+      "title": "Stop deleting blobs, store blob_url on confirm",
+      "description": "Modify the upload confirm flow to STOP deleting PDFs from Vercel Blob after confirmation. Instead, save the `blob_url` to the `reports` table so the PDF is available for admin review and re-extraction later. Remove the `del()` call from the confirm route.",
+      "acceptanceCriteria": [
+        "Confirm route no longer calls `del()` from @vercel/blob",
+        "Confirm route saves `upload.file_url` to `reports.blob_url`",
+        "Existing flow (report creation, metric insertion) unchanged",
+        "`pending_uploads.file_url` is preserved (not nulled out)",
+        "No unused imports of `del` remain"
+      ],
+      "files": ["web/src/app/api/upload/[id]/confirm/route.ts"],
+      "dependencies": ["QS-001"],
+      "capabilities": [],
+      "status": "done"
+    },
+    {
+      "id": "QS-004",
+      "phase": 1,
+      "title": "User-facing report detail API + page",
+      "description": "Create a report detail page at `/dashboard/reports/[id]` that shows all metrics from a specific report, the sample date, lab name (file_name), and a link to the original PDF (blob_url). Also create the API route `GET /api/reports/[id]` that returns report data with metrics. This page is for regular users viewing their own reports — not the admin review page (that comes later). Auth check: user must have profile access to the report's profile_id.",
+      "acceptanceCriteria": [
+        "GET /api/reports/[id] returns report with all metrics, sample_date, file_name, blob_url",
+        "API enforces auth: user must have access to the report's profile_id",
+        "Page at /dashboard/reports/[id] renders report details with metric table",
+        "PDF link shown if blob_url exists (opens in new tab)",
+        "Page handles loading/error states gracefully",
+        "Mobile-responsive layout"
+      ],
+      "files": [
+        "web/src/app/api/reports/[id]/route.ts",
+        "web/src/app/dashboard/reports/[id]/page.tsx"
+      ],
+      "dependencies": ["QS-001", "QS-003"],
+      "capabilities": ["frontend-design"],
+      "status": "done"
+    },
+    {
+      "id": "QS-005",
+      "phase": 1,
+      "title": "Phase 1 checkpoint: staging deploy + verify",
+      "description": "Verify all Phase 1 stories work on staging. Check: (1) migration SQL is valid, (2) confirm flow no longer deletes blobs, (3) report detail page renders, (4) admin route blocks non-admin users. Run full test suite.",
+      "acceptanceCriteria": [
+        "npm run build passes",
+        "npm run typecheck passes",
+        "npm run lint passes",
+        "All Phase 1 stories verified on staging preview",
+        "Migration SQL reviewed for correctness"
+      ],
+      "files": [],
+      "dependencies": ["QS-002", "QS-004"],
+      "capabilities": [],
+      "requiresUserApproval": true,
+      "status": "done"
+    },
+    {
+      "id": "QS-006",
+      "phase": 2,
+      "title": "Canonical metrics constant + unit normalization module",
+      "description": "Create `web/src/lib/canonical-metrics.ts` — a TypeScript constant defining all known canonical metric names with their expected units, unit conversion rules, and reference ranges. Create `web/src/lib/unit-normalization.ts` — a module that converts metric values between known unit pairs (e.g., g/L → g/dL for Hemoglobin). This is the source of truth for what 'correct' metric data looks like. Use the real conversion table from issue #105.",
+      "acceptanceCriteria": [
+        "CANONICAL_METRICS constant maps metric names to { canonicalUnit, conversions: [{fromUnit, factor, operation}], typicalRefRange }",
+        "Covers all metrics from issue #105: Hemoglobin, Glukoz, Kolesterol, Kreatinin, Urik Asit, Eritrosit, Lokosit + common Turkish lab metrics",
+        "normalizeUnit(metricName, value, unit) returns { value, unit, converted: boolean }",
+        "Unit conversion is accurate (verified against issue #105 table)",
+        "Module is pure TypeScript with no DB or API dependencies",
+        "Includes JSDoc comments for conversion factors"
+      ],
+      "files": [
+        "web/src/lib/canonical-metrics.ts",
+        "web/src/lib/unit-normalization.ts"
+      ],
+      "dependencies": [],
+      "capabilities": [],
+      "status": "done"
+    },
+    {
+      "id": "QS-007",
+      "phase": 2,
+      "title": "Unmapped metric detection in confirm flow",
+      "description": "After metrics are inserted in the confirm route, check each metric name against: (1) `metric_aliases` table, (2) `CANONICAL_METRICS` constant. If a metric name is not found in either, insert a row into `unmapped_metrics` with status='pending'. This gives admins visibility into extraction gaps without blocking the user flow.",
+      "acceptanceCriteria": [
+        "After confirm, each metric is checked against aliases and canonical list",
+        "Unknown metrics inserted into `unmapped_metrics` table",
+        "Known metrics (matching alias or canonical name) are NOT flagged",
+        "Detection does not block or slow the confirm flow (fire-and-forget pattern)",
+        "Includes report_id, profile_id, upload context for admin review"
+      ],
+      "files": [
+        "web/src/app/api/upload/[id]/confirm/route.ts",
+        "web/src/lib/canonical-metrics.ts"
+      ],
+      "dependencies": ["QS-001", "QS-006"],
+      "capabilities": [],
+      "status": "done"
+    },
+    {
+      "id": "QS-008",
+      "phase": 2,
+      "title": "Unit conversion suggestions in upload review UI",
+      "description": "In the upload review table (before confirm), show inline conversion suggestions when a metric's unit doesn't match the canonical unit. Similar to alias rename suggestions — show a toggle row like 'Hemoglobin: 159 g/L → 15.9 g/dL'. User can accept or dismiss. If accepted, the converted value+unit is sent to the confirm endpoint.",
+      "acceptanceCriteria": [
+        "Upload review table shows conversion suggestion rows for unit mismatches",
+        "Suggestion shows: original value+unit → converted value+unit",
+        "User can toggle to accept/dismiss each conversion",
+        "Accepted conversions modify the metric data sent to confirm",
+        "Suggestion uses the normalizeUnit function from unit-normalization.ts",
+        "Works alongside existing alias rename suggestions (both can appear)",
+        "Mobile-responsive"
+      ],
+      "files": [
+        "web/src/app/upload/page.tsx",
+        "web/src/lib/unit-normalization.ts"
+      ],
+      "dependencies": ["QS-006"],
+      "capabilities": ["frontend-design"],
+      "status": "todo"
+    },
+    {
+      "id": "QS-009",
+      "phase": 2,
+      "title": "AI-assisted alias suggester",
+      "description": "Create a utility that uses OpenAI to suggest canonical Turkish metric name mappings for foreign/unknown metric names. Given an unmapped metric name + unit + ref range, the LLM suggests the most likely Turkish canonical name. This powers the 'suggested_canonical' field in unmapped_metrics. Can be called from admin review or batch processing.",
+      "acceptanceCriteria": [
+        "Function `suggestCanonicalName(metricName, unit, refRange)` returns { suggestedName, confidence }",
+        "Uses OpenAI gpt-5-mini with a focused prompt for medical metric translation",
+        "Prompt includes list of known canonical names for matching",
+        "Returns null/low confidence if no good match found",
+        "Handles API errors gracefully (returns null, doesn't throw)",
+        "Cost-efficient: single short prompt, not a chat"
+      ],
+      "files": ["web/src/lib/alias-suggester.ts"],
+      "dependencies": ["QS-006"],
+      "capabilities": [],
+      "status": "done"
+    },
+    {
+      "id": "QS-010",
+      "phase": 2,
+      "title": "Phase 2 checkpoint: staging deploy + verify",
+      "description": "Verify all Phase 2 stories work on staging. Check: (1) canonical metrics list is complete, (2) unit conversions are accurate, (3) unmapped metrics are detected on confirm, (4) conversion suggestions show in upload review, (5) AI alias suggester returns reasonable results.",
+      "acceptanceCriteria": [
+        "npm run build passes",
+        "npm run typecheck passes",
+        "Upload a PDF with non-Turkish units → conversion suggestion appears",
+        "Upload a PDF with unknown metric → unmapped_metrics row created",
+        "AI suggester returns plausible match for common foreign metric names"
+      ],
+      "files": [],
+      "dependencies": ["QS-007", "QS-008", "QS-009"],
+      "capabilities": [],
+      "requiresUserApproval": true,
+      "status": "todo"
+    },
+    {
+      "id": "QS-011",
+      "phase": 3,
+      "title": "Admin layout + quality dashboard APIs",
+      "description": "Create admin API routes for the quality dashboard: (1) GET /api/admin/quality/stats — summary counts of unmapped metrics, pending reviews, recent reports, (2) GET /api/admin/quality/unmapped — paginated list of unmapped metrics with report context, (3) GET /api/admin/quality/reviews — list of reports needing review. All routes gated by requireAdmin().",
+      "acceptanceCriteria": [
+        "GET /api/admin/quality/stats returns { unmappedCount, pendingReviewCount, totalReports, recentReports }",
+        "GET /api/admin/quality/unmapped returns paginated list with metric_name, unit, report context, suggested_canonical",
+        "GET /api/admin/quality/reviews returns reports with review status",
+        "All routes use requireAdmin() — 403 for non-admins",
+        "Efficient queries with proper indexes"
+      ],
+      "files": [
+        "web/src/app/api/admin/quality/stats/route.ts",
+        "web/src/app/api/admin/quality/unmapped/route.ts",
+        "web/src/app/api/admin/quality/reviews/route.ts"
+      ],
+      "dependencies": ["QS-002", "QS-001"],
+      "capabilities": [],
+      "status": "done"
+    },
+    {
+      "id": "QS-012",
+      "phase": 3,
+      "title": "Admin quality dashboard page",
+      "description": "Create the admin quality dashboard at `/admin/quality` showing: (1) summary stats cards (unmapped metrics count, pending reviews, total reports), (2) table of recent unmapped metrics with suggested mappings, (3) table of reports needing review. Links to individual report review pages (built in QS-015). Follow brand guidelines — this is an internal tool but should still be clean and usable.",
+      "acceptanceCriteria": [
+        "Dashboard at /admin/quality with stats cards at top",
+        "Unmapped metrics table with columns: metric_name, unit, suggested_canonical, report date, lab, status",
+        "Quick 'Map to...' action on unmapped metrics (creates alias entry)",
+        "Quick 'Accept as new' action (marks as accepted)",
+        "Reports needing review table with links",
+        "Brand-compliant design (teal primary, clean layout)",
+        "Responsive for tablet/desktop (admin pages don't need mobile)"
+      ],
+      "files": [
+        "web/src/app/admin/quality/page.tsx",
+        "web/src/app/api/admin/quality/unmapped/[id]/route.ts"
+      ],
+      "dependencies": ["QS-011"],
+      "capabilities": ["frontend-design"],
+      "status": "todo"
+    },
+    {
+      "id": "QS-013",
+      "phase": 3,
+      "title": "Phase 3 checkpoint: staging deploy + verify",
+      "description": "Verify admin dashboard works on staging. Test with admin user: dashboard loads, stats are accurate, unmapped metrics table shows data, map/accept actions work.",
+      "acceptanceCriteria": [
+        "npm run build passes",
+        "Admin dashboard loads for admin user",
+        "Non-admin user sees 403 on /admin routes",
+        "Stats cards show correct counts",
+        "Map and accept actions update unmapped_metrics status"
+      ],
+      "files": [],
+      "dependencies": ["QS-012"],
+      "capabilities": [],
+      "requiresUserApproval": true,
+      "status": "todo"
+    },
+    {
+      "id": "QS-014",
+      "phase": 4,
+      "title": "Admin report detail API + review API",
+      "description": "Create admin APIs for viewing and reviewing individual reports: (1) GET /api/admin/reports/[id] — returns full report with metrics, blob_url, extraction metadata, (2) POST /api/admin/reports/[id]/review — submit review decision (approved/corrected) with optional notes and metric corrections. Review creates/updates an extraction_reviews row.",
+      "acceptanceCriteria": [
+        "GET /api/admin/reports/[id] returns report with all metrics, blob_url, profile info",
+        "POST /api/admin/reports/[id]/review accepts { status, notes, corrections[] }",
+        "Corrections array allows metric edits: { metricId, name?, value?, unit?, ref_low?, ref_high? }",
+        "Review creates extraction_reviews row with reviewer_user_id",
+        "Metric corrections are applied to the metrics table",
+        "Both routes gated by requireAdmin()"
+      ],
+      "files": [
+        "web/src/app/api/admin/reports/[id]/route.ts",
+        "web/src/app/api/admin/reports/[id]/review/route.ts"
+      ],
+      "dependencies": ["QS-011"],
+      "capabilities": [],
+      "status": "todo"
+    },
+    {
+      "id": "QS-015",
+      "phase": 4,
+      "title": "Review workbench page (side-by-side PDF + metrics)",
+      "description": "Create the admin review workbench at `/admin/reports/[id]/review` that shows the original PDF (via blob_url in an iframe/embed) side-by-side with the extracted metrics table. Admin can: (1) verify each metric against the PDF, (2) correct values/names/units inline, (3) mark the report as approved or corrected. This is the core quality assurance interface.",
+      "acceptanceCriteria": [
+        "Page at /admin/reports/[id]/review with two-column layout",
+        "Left: PDF viewer (iframe embed of blob_url)",
+        "Right: editable metrics table with name, value, unit, ref_low, ref_high",
+        "Admin can edit any metric field inline",
+        "Approve button (no changes needed) and Correct button (saves edits + marks corrected)",
+        "After review, redirects back to quality dashboard",
+        "Brand-compliant design",
+        "Works well on tablet/desktop (min 1024px)"
+      ],
+      "files": ["web/src/app/admin/reports/[id]/review/page.tsx"],
+      "dependencies": ["QS-014", "QS-004"],
+      "capabilities": ["frontend-design"],
+      "status": "todo"
+    },
+    {
+      "id": "QS-016",
+      "phase": 4,
+      "title": "Phase 4 checkpoint: staging deploy + verify",
+      "description": "Verify the review workbench works on staging. Test: admin can view a report with PDF side-by-side, edit metric values, approve/correct a report.",
+      "acceptanceCriteria": [
+        "npm run build passes",
+        "Review workbench loads with PDF and metrics side-by-side",
+        "Admin can edit metric values and submit corrections",
+        "Approve/correct actions update extraction_reviews table",
+        "Quality dashboard reflects review status changes"
+      ],
+      "files": [],
+      "dependencies": ["QS-015"],
+      "capabilities": [],
+      "requiresUserApproval": true,
+      "status": "todo"
+    },
+    {
+      "id": "QS-017",
+      "phase": 5,
+      "title": "Re-extract API + add-to-evals API + local script",
+      "description": "Create: (1) POST /api/admin/reports/[id]/re-extract — triggers a new PDF extraction using the stored blob_url and writes results to a new report (doesn't overwrite original), (2) POST /api/admin/reports/[id]/add-to-evals — saves the reviewed report as an eval case (correct input→output pair for testing extraction quality), (3) A local script `scripts/run-evals.ts` that runs all eval cases against the current extraction prompt and reports accuracy.",
+      "acceptanceCriteria": [
+        "Re-extract API creates new extraction from stored blob_url",
+        "New extraction uses the same QStash worker pipeline",
+        "Add-to-evals API saves report+metrics as eval test case",
+        "Eval cases stored in a new `extraction_evals` table or JSON file",
+        "Local eval script runs all cases and reports accuracy %",
+        "All admin routes gated by requireAdmin()"
+      ],
+      "files": [
+        "web/src/app/api/admin/reports/[id]/re-extract/route.ts",
+        "web/src/app/api/admin/reports/[id]/add-to-evals/route.ts",
+        "scripts/run-evals.ts",
+        "db-schema/migrations/20260310_extraction_evals.sql"
+      ],
+      "dependencies": ["QS-014", "QS-006"],
+      "capabilities": [],
+      "status": "todo"
+    },
+    {
+      "id": "QS-018",
+      "phase": 5,
+      "title": "Phase 5 checkpoint: staging deploy + verify",
+      "description": "Verify re-extraction and eval system work. Test: re-extract a report from stored PDF, add a reviewed report to evals, run eval script locally.",
+      "acceptanceCriteria": [
+        "npm run build passes",
+        "Re-extract produces new extraction results from stored PDF",
+        "Add-to-evals saves correct test case",
+        "Eval script runs and reports results"
+      ],
+      "files": [],
+      "dependencies": ["QS-017"],
+      "capabilities": [],
+      "requiresUserApproval": true,
+      "status": "todo"
+    },
+    {
+      "id": "QS-019",
+      "phase": 6,
+      "title": "Anomaly detection + alias coverage APIs",
+      "description": "Create APIs for automated quality monitoring: (1) GET /api/admin/quality/anomalies — detects metrics with suspicious values (>3 std dev from profile average, or value outside any known ref range), (2) GET /api/admin/quality/alias-coverage — shows what % of extracted metric names are covered by aliases vs. unknown. These feed the quality dashboard and future cron automation.",
+      "acceptanceCriteria": [
+        "Anomalies API detects outlier values using statistical analysis",
+        "Anomalies include: metric name, value, expected range, report context",
+        "Alias coverage API returns { totalMetricNames, coveredByAlias, unmapped, coveragePercent }",
+        "Both routes gated by requireAdmin()",
+        "Results are efficient (doesn't scan all metrics on every call — use recent window)"
+      ],
+      "files": [
+        "web/src/app/api/admin/quality/anomalies/route.ts",
+        "web/src/app/api/admin/quality/alias-coverage/route.ts"
+      ],
+      "dependencies": ["QS-011", "QS-006"],
+      "capabilities": [],
+      "status": "todo"
+    },
+    {
+      "id": "QS-020",
+      "phase": 6,
+      "title": "Daily quality loop cron setup",
+      "description": "Set up a daily QStash cron that runs the quality checks (anomaly detection, unmapped metric flagging, alias coverage) and logs results. Uses the existing Upstash QStash integration. Creates a new API route `/api/cron/quality-check` that QStash calls daily. Results are logged and optionally surfaced in the admin dashboard.",
+      "acceptanceCriteria": [
+        "Cron route at /api/cron/quality-check runs anomaly + coverage checks",
+        "QStash schedule configured for daily execution",
+        "Route verifies QStash signature (existing pattern)",
+        "Results logged with counts and any new anomalies",
+        "Admin dashboard stats updated from cron results",
+        "Cron failure doesn't affect user-facing app"
+      ],
+      "files": ["web/src/app/api/cron/quality-check/route.ts"],
+      "dependencies": ["QS-019"],
+      "capabilities": [],
+      "status": "todo"
+    }
+  ]
+}
