@@ -13,6 +13,7 @@ import { PreferenceProvider } from "@/components/preference-sync";
 const inter = Inter({
   variable: "--font-sans",
   subsets: ["latin", "latin-ext"],
+  display: "swap",
 });
 
 export const viewport: Viewport = {
@@ -51,6 +52,7 @@ export default async function RootLayout({
           content="hsl(240 10% 3.9%)"
           media="(prefers-color-scheme: dark)"
         />
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
         {/* Google Analytics */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-TWM75R9VKP"
