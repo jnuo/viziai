@@ -7,12 +7,12 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ToastProvider } from "@/components/ui/toast";
 import { Providers } from "@/components/providers";
-import { NotificationChecker } from "@/components/notification-checker";
-import { PreferenceProvider } from "@/components/preference-sync";
+import { AuthProviders } from "@/components/auth-providers";
 
 const inter = Inter({
   variable: "--font-sans",
   subsets: ["latin", "latin-ext"],
+  display: "swap",
 });
 
 export const viewport: Viewport = {
@@ -51,6 +51,7 @@ export default async function RootLayout({
           content="hsl(240 10% 3.9%)"
           media="(prefers-color-scheme: dark)"
         />
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
         {/* Google Analytics */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-TWM75R9VKP"
@@ -70,8 +71,7 @@ export default async function RootLayout({
           <NextIntlClientProvider locale={locale} messages={messages}>
             <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
               <ToastProvider>
-                <NotificationChecker />
-                <PreferenceProvider>{children}</PreferenceProvider>
+                <AuthProviders>{children}</AuthProviders>
               </ToastProvider>
             </ThemeProvider>
           </NextIntlClientProvider>
