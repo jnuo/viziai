@@ -99,3 +99,16 @@
 - Code review caught: redundant N+1 ownership SELECT (removed — WHERE clause already guards), missing input validation (added: type checks, length limits, isFinite, array cap)
 - Files changed: web/src/app/api/admin/reports/[id]/route.ts, web/src/app/api/admin/reports/[id]/review/route.ts
 - Learnings: CASE WHEN ${bool} THEN ${val} ELSE column END is the clean pattern for partial updates with Neon tagged templates. No need for separate ownership SELECT when the UPDATE WHERE clause already includes the guard.
+
+---
+## 2026-03-10 - QS-012: Admin quality dashboard page
+- Created /admin/quality page with stats cards, unmapped metrics table, and reports-needing-review table
+- Stats cards: 4 summary cards (unmapped, pending review, total reports, this week) using Promise.all parallel fetch
+- Unmapped table: "Map to..." opens dialog with AI suggestion pre-fill, "Accept" marks as new
+- Created PATCH /api/admin/quality/unmapped/[id] for map/accept actions
+- Map action creates global alias in metric_aliases (ON CONFLICT upsert), updates status to 'mapped'
+- Reports table: review status badges (Approved/Corrected/Unreviewed), links to review workbench
+- Dialog uses controlled Radix pattern: open={!!mapTarget} with onOpenChange cleanup
+- Design review: all 3 agents PASS on first attempt (brand, a11y, quality)
+- Files changed: web/src/app/admin/quality/page.tsx, web/src/app/api/admin/quality/unmapped/[id]/route.ts
+- Learnings: Controlled Dialog pattern with nullable state (mapTarget) is cleaner than separate open boolean. Pre-populate dialog inputs from existing data (suggested_canonical).

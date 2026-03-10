@@ -239,7 +239,7 @@
       ],
       "dependencies": ["QS-011"],
       "capabilities": ["frontend-design"],
-      "status": "todo"
+      "status": "done"
     },
     {
       "id": "QS-013",
