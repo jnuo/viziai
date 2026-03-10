@@ -147,6 +147,34 @@ export default async function BlogArticlePage({ params }: ArticlePageProps) {
       "@id": canonicalUrl,
     },
     inLanguage: bcp47[loc],
+    speakable: {
+      "@type": "SpeakableSpecification",
+      cssSelector: ["article h1", "article > p:first-of-type"],
+    },
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: `${BASE_URL}/${locale}`,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Blog",
+        item: `${BASE_URL}/${locale}/blog`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: frontmatter.title,
+      },
+    ],
   };
 
   const headings = extractHeadings(content);
@@ -176,6 +204,12 @@ export default async function BlogArticlePage({ params }: ArticlePageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(blogPostingJsonLd),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbJsonLd),
         }}
       />
       {faqJsonLd && (

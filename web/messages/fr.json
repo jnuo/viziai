@@ -46,53 +46,72 @@
       "owner": "Propriétaire",
       "editor": "Éditeur",
       "viewer": "Lecteur"
-    }
+    },
+    "footerProduct": "Produit",
+    "footerSupport": "Assistance",
+    "footerPreferences": "Langue et Thème"
   },
   "pages": {
     "landing": {
-      "heroTitle": "<highlight>Comprendre</highlight> vos analyses de sang et suivre les résultats",
-      "heroDescription": "Téléchargez vos résultats de prise de sang en PDF. ViziAI analyse vos valeurs avec l'IA et affiche les tendances dans des graphiques clairs.",
-      "getStarted": "Commencer",
+      "heroTitle": "Comprenez enfin ce qui change dans vos analyses de sang",
+      "heroDescription": "Téléchargez vos PDF de laboratoire. Voyez vos valeurs dans le temps. Partagez avec votre famille.",
       "getStartedFree": "Commencer gratuitement",
-      "tryFree": "Essayer gratuitement",
-      "dashboardAlt": "Tableau de bord ViziAI - Suivez visuellement vos résultats d'analyses",
-      "whyPrefix": "Pourquoi",
-      "startTracking": "Commencez à suivre votre santé",
-      "neverEasier": "Comprendre vos résultats d'analyses n'a jamais été aussi simple.",
-      "features": {
-        "aiAnalysis": "Analyse par IA",
-        "aiAnalysisDesc": "Extrait et organise automatiquement les données de test à partir de PDF grâce à l'intelligence artificielle.",
-        "visualDashboard": "Tableau de bord visuel",
-        "visualDashboardDesc": "Suivez et comparez vos valeurs dans le temps grâce à des graphiques visuels.",
-        "easyUpload": "Téléchargement PDF facile",
-        "easyUploadDesc": "Téléchargez facilement vos rapports d'analyses au format PDF par glisser-déposer.",
-        "securePrivate": "Sécurisé et privé",
-        "securePrivateDesc": "Vos données sont stockées sur une infrastructure sécurisée, accessibles uniquement par vous."
-      },
-      "howItWorks": "Comment ça marche",
-      "howItWorksSteps": {
-        "step1Title": "Téléchargez votre PDF",
-        "step1Desc": "Glissez-déposez votre rapport d'analyse de sang. Nous acceptons les PDF de laboratoires en turc, anglais, allemand, néerlandais, français et espagnol.",
-        "step2Title": "L'IA extrait les résultats",
-        "step2Desc": "Notre IA lit votre PDF et extrait chaque marqueur, valeur et plage de référence — même à partir de documents scannés.",
-        "step3Title": "Suivez vos tendances",
-        "step3Desc": "Consultez tous vos résultats sur un tableau de bord unifié avec des graphiques de tendances. Repérez les changements en un coup d'œil sur des rapports de n'importe quel pays."
-      },
-      "socialProof": {
-        "languages": "Langues supportées",
+      "benefits": {
+        "uploadPdf": "Téléchargez n'importe quel PDF de labo",
+        "uploadPdfDesc": "Lit et interprète les résultats de labo dans toutes les langues. Y compris les documents scannés.",
+        "seeTrends": "Voyez les tendances dans le temps",
+        "seeTrendsDesc": "Observez facilement l'évolution des valeurs qui comptent pour vous.",
         "familyProfiles": "Profils familiaux",
-        "metricAliases": "Alias de marqueurs",
-        "description": "Suivez vos analyses de sang de laboratoires turcs, anglais, allemands, français et espagnols — le tout sur un seul tableau de bord."
+        "familyProfilesDesc": "Partagez votre profil avec votre conjoint. Créez un profil pour votre père, partagez-le avec vos frères et sœurs."
+      },
+      "enabiz": {
+        "badge": "Pour les Utilisateurs en Turquie",
+        "title": "Intégration e-Nabız",
+        "description": "Importez tous vos résultats e-Nabız directement avec notre extension Chrome — sans traitement IA, sans télécharger de PDF. Un clic.",
+        "cta": "Installer l'extension Chrome",
+        "howItWorks": "Comment ça marche ?"
+      },
+      "track": {
+        "badge": "Suivi des tendances",
+        "title": "Suivez l'évolution de vos valeurs dans le temps",
+        "description": "Chaque rapport téléchargé est ajouté à vos graphiques. Voyez les changements d'un coup d'œil.",
+        "imageAlt": "Tableau de bord ViziAI affichant les graphiques de tendances d'analyses de sang",
+        "features": {
+          "autoUpdate": "Les graphiques se mettent à jour automatiquement à chaque rapport téléchargé",
+          "atAGlance": "Normal, élevé ou bas — comprenez d'un coup d'œil grâce aux couleurs",
+          "familyTrends": "Suivez les tendances de chaque membre de la famille séparément"
+        }
+      },
+      "security": {
+        "title": "Vos données sont en sécurité",
+        "euServers": {
+          "title": "Serveurs UE",
+          "description": "Vos données sont stockées à Francfort, Allemagne. Conforme au RGPD."
+        },
+        "noPasswords": {
+          "title": "Aucun mot de passe",
+          "description": "Connexion uniquement via Google. Aucun mot de passe dans notre système."
+        },
+        "encrypted": {
+          "title": "Communication chiffrée",
+          "description": "Toutes les données sont chiffrées en transit (HTTPS)."
+        },
+        "rightToDelete": {
+          "title": "Droit à l'effacement",
+          "description": "Supprimez toutes vos données quand vous le souhaitez."
+        }
+      },
+      "trust": {
+        "encrypted": "Chiffré",
+        "private": "Privé",
+        "free": "Gratuit"
       },
       "faq": {
         "title": "Questions Fréquentes"
       },
-      "enabiz": {
-        "badge": "Extension Chrome",
-        "title": "Intégration e-Nabız",
-        "description": "Pour les utilisateurs d'e-Nabız en Turquie : importez vos anciens résultats d'analyses en un clic avec notre extension Chrome. Pas besoin de télécharger de PDF.",
-        "cta": "Installer l'extension Chrome",
-        "howItWorks": "Comment ça marche ?"
+      "finalCta": {
+        "title": "Commencez à suivre votre santé dès aujourd'hui",
+        "subtitle": "Gratuit pour toujours. Pas de carte bancaire requise."
       }
     },
     "login": {

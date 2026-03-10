@@ -1,130 +1,24 @@
 import { getLocale, getTranslations } from "next-intl/server";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 import Link from "next/link";
+import Image from "next/image";
 import { LandingHeader } from "@/components/landing-header";
 import { LandingFooter } from "@/components/landing-footer";
 import { ViziAILogo } from "@/components/viziai-logo";
 import {
   FileText,
-  BarChart3,
-  Shield,
-  Zap,
-  Upload,
-  Sparkles,
   TrendingUp,
   Users,
   ChevronDown,
   Chrome,
-  LucideIcon,
+  Shield,
+  Lock,
+  Heart,
+  Server,
+  Trash2,
 } from "lucide-react";
 import { CHROME_EXTENSION_URL } from "@/lib/constants";
 import { staticPages, toLocale } from "@/i18n/config";
-
-const COLOR_MAP = {
-  primary: {
-    border: "border-l-primary",
-    bg: "bg-primary/10",
-    text: "text-primary",
-  },
-  secondary: {
-    border: "border-l-secondary",
-    bg: "bg-secondary/10",
-    text: "text-secondary",
-  },
-  "status-normal": {
-    border: "border-l-status-normal",
-    bg: "bg-status-normal/10",
-    text: "text-status-normal",
-  },
-} as const;
-
-type ColorKey = keyof typeof COLOR_MAP;
-
-function FeatureCard({
-  icon: Icon,
-  title,
-  description,
-  colorKey,
-}: {
-  icon: LucideIcon;
-  title: string;
-  description: string;
-  colorKey: ColorKey;
-}) {
-  const colors = COLOR_MAP[colorKey];
-  return (
-    <Card
-      className={`border-l-4 ${colors.border} hover:shadow-lg transition-shadow duration-200`}
-    >
-      <CardHeader className="pb-2">
-        <div className="flex items-center gap-3">
-          <div className={`p-2 rounded-lg ${colors.bg}`}>
-            <Icon className={`h-5 w-5 ${colors.text}`} />
-          </div>
-          <CardTitle className="text-lg">{title}</CardTitle>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <p className="text-muted-foreground">{description}</p>
-      </CardContent>
-    </Card>
-  );
-}
-
-const FEATURE_KEYS = [
-  {
-    icon: Zap,
-    titleKey: "aiAnalysis",
-    descKey: "aiAnalysisDesc",
-    colorKey: "primary",
-  },
-  {
-    icon: BarChart3,
-    titleKey: "visualDashboard",
-    descKey: "visualDashboardDesc",
-    colorKey: "secondary",
-  },
-  {
-    icon: FileText,
-    titleKey: "easyUpload",
-    descKey: "easyUploadDesc",
-    colorKey: "status-normal",
-  },
-  {
-    icon: Shield,
-    titleKey: "securePrivate",
-    descKey: "securePrivateDesc",
-    colorKey: "primary",
-  },
-] as const satisfies readonly {
-  icon: LucideIcon;
-  titleKey: string;
-  descKey: string;
-  colorKey: ColorKey;
-}[];
-
-const HOW_IT_WORKS_STEPS = [
-  {
-    icon: Upload,
-    colorClass: "text-primary bg-primary/10",
-    titleKey: "howItWorksSteps.step1Title",
-    descKey: "howItWorksSteps.step1Desc",
-  },
-  {
-    icon: Sparkles,
-    colorClass: "text-secondary bg-secondary/10",
-    titleKey: "howItWorksSteps.step2Title",
-    descKey: "howItWorksSteps.step2Desc",
-  },
-  {
-    icon: TrendingUp,
-    colorClass: "text-status-normal bg-status-normal/10",
-    titleKey: "howItWorksSteps.step3Title",
-    descKey: "howItWorksSteps.step3Desc",
-  },
-] as const;
 
 const LANDING_FAQ_KEYS = [
   "whatIsViziAI",
@@ -135,10 +29,47 @@ const LANDING_FAQ_KEYS = [
   "isFree",
 ] as const;
 
+const RICH_FAQ_KEYS = new Set(["enabizImport"]);
+
+const TRACK_FEATURES = [
+  { icon: TrendingUp, key: "autoUpdate" },
+  { icon: Heart, key: "atAGlance" },
+  { icon: Users, key: "familyTrends" },
+] as const;
+
+const SECURITY_ITEMS = [
+  { icon: Server, key: "euServers" },
+  { icon: Lock, key: "noPasswords" },
+  { icon: Shield, key: "encrypted" },
+  { icon: Trash2, key: "rightToDelete" },
+] as const;
+
+const LINK_CLASS =
+  "text-primary underline underline-offset-2 hover:text-primary/80 transition-colors";
+
 export async function LandingPage(): Promise<React.ReactElement> {
   const locale = await getLocale();
   const t = await getTranslations("pages.landing");
   const faqT = await getTranslations("faq");
+  const guideSlug = staticPages.enabizGuide[toLocale(locale)];
+
+  const richTags = {
+    cws: (chunks: React.ReactNode) => (
+      <a
+        href={CHROME_EXTENSION_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={LINK_CLASS}
+      >
+        {chunks}
+      </a>
+    ),
+    guide: (chunks: React.ReactNode) => (
+      <a href={`/${locale}/${guideSlug}`} className={LINK_CLASS}>
+        {chunks}
+      </a>
+    ),
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -146,17 +77,12 @@ export async function LandingPage(): Promise<React.ReactElement> {
 
       <main>
         {/* Hero Section */}
-        <section className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5" />
-
-          <div className="container relative mx-auto px-4 py-12 md:py-16 max-w-4xl">
-            <div className="text-center mb-8">
+        <section className="bg-primary/5 pb-12 md:pb-16">
+          <div className="container mx-auto px-4 pt-16 md:pt-24 max-w-4xl">
+            <div className="text-center">
+              <ViziAILogo className="text-4xl sm:text-5xl md:text-6xl mb-6 justify-center" />
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 tracking-tight">
-                {t.rich("heroTitle", {
-                  highlight: (chunks) => (
-                    <span className="text-primary">{chunks}</span>
-                  ),
-                })}
+                {t("heroTitle")}
               </h1>
               <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
                 {t("heroDescription")}
@@ -169,151 +95,206 @@ export async function LandingPage(): Promise<React.ReactElement> {
                 <Link href="/login">{t("getStartedFree")}</Link>
               </Button>
             </div>
-
-            {/* Dashboard Preview */}
-            <div className="mb-8">
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-primary/20">
-                <Image
-                  src="/dashboard.jpeg"
-                  alt="ViziAI Dashboard Preview"
-                  width={1200}
-                  height={800}
-                  sizes="(max-width: 768px) 100vw, 896px"
-                  className="w-full h-auto"
-                  priority
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent" />
-              </div>
-              <p className="text-center text-sm text-muted-foreground mt-4">
-                {t("dashboardAlt")}
-              </p>
+            <div className="mt-12 relative">
+              <Image
+                src="/dashboard.jpeg"
+                alt="ViziAI dashboard showing blood test trends"
+                width={1200}
+                height={800}
+                priority
+                sizes="(max-width: 768px) 100vw, 896px"
+                className="rounded-xl border border-border shadow-2xl"
+              />
             </div>
           </div>
         </section>
 
-        {/* Features Section */}
-        <section className="py-12 md:py-16 bg-muted/30">
-          <div className="container mx-auto px-4 max-w-4xl">
-            <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 flex items-center justify-center gap-2">
-              {t("whyPrefix")} <ViziAILogo className="text-2xl md:text-3xl" />?
-            </h2>
+        {/* How It Works - Numbered Steps */}
+        <section className="py-12 md:py-16">
+          <div className="container mx-auto px-4 max-w-3xl">
+            <div className="space-y-8">
+              {/* Step 1 */}
+              <div className="flex gap-4">
+                <div className="flex-none w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg">
+                  1
+                </div>
+                <div className="pt-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <FileText
+                      className="h-5 w-5 text-primary"
+                      aria-hidden="true"
+                    />
+                    <h3 className="font-semibold text-lg">
+                      {t("benefits.uploadPdf")}
+                    </h3>
+                  </div>
+                  <p className="text-muted-foreground">
+                    {t("benefits.uploadPdfDesc")}
+                  </p>
+                </div>
+              </div>
 
-            <div className="grid md:grid-cols-2 gap-6">
-              {FEATURE_KEYS.map((feature) => (
-                <FeatureCard
-                  key={feature.titleKey}
-                  icon={feature.icon}
-                  title={t(`features.${feature.titleKey}`)}
-                  description={t(`features.${feature.descKey}`)}
-                  colorKey={feature.colorKey}
+              {/* Step 2 */}
+              <div className="flex gap-4">
+                <div className="flex-none w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg">
+                  2
+                </div>
+                <div className="pt-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <TrendingUp
+                      className="h-5 w-5 text-primary"
+                      aria-hidden="true"
+                    />
+                    <h3 className="font-semibold text-lg">
+                      {t("benefits.seeTrends")}
+                    </h3>
+                  </div>
+                  <p className="text-muted-foreground">
+                    {t("benefits.seeTrendsDesc")}
+                  </p>
+                </div>
+              </div>
+
+              {/* Step 3 */}
+              <div className="flex gap-4">
+                <div className="flex-none w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg">
+                  3
+                </div>
+                <div className="pt-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Users
+                      className="h-5 w-5 text-primary"
+                      aria-hidden="true"
+                    />
+                    <h3 className="font-semibold text-lg">
+                      {t("benefits.familyProfiles")}
+                    </h3>
+                  </div>
+                  <p className="text-muted-foreground">
+                    {t("benefits.familyProfilesDesc")}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Track Your Values Section */}
+        <section className="py-12 md:py-16 bg-primary/5">
+          <div className="container mx-auto px-4 max-w-5xl">
+            <div className="grid md:grid-cols-2 gap-8 items-center">
+              <div>
+                <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium mb-4">
+                  <TrendingUp className="h-4 w-4" aria-hidden="true" />
+                  {t("track.badge")}
+                </div>
+                <h2 className="text-2xl md:text-3xl font-bold mb-3">
+                  {t("track.title")}
+                </h2>
+                <p className="text-muted-foreground mb-6">
+                  {t("track.description")}
+                </p>
+                <ul className="space-y-3">
+                  {TRACK_FEATURES.map(({ icon: Icon, key }) => (
+                    <li key={key} className="flex items-start gap-3">
+                      <Icon
+                        className="h-5 w-5 text-primary mt-0.5 shrink-0"
+                        aria-hidden="true"
+                      />
+                      <span className="text-muted-foreground">
+                        {t(`track.features.${key}`)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="hidden md:block">
+                <Image
+                  src="/dashboard.jpeg"
+                  alt={t("track.imageAlt")}
+                  width={640}
+                  height={360}
+                  className="rounded-lg border border-border shadow-lg"
                 />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Security Section */}
+        <section className="py-12 md:py-16">
+          <div className="container mx-auto px-4 max-w-3xl">
+            <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
+              {t("security.title")}
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+              {SECURITY_ITEMS.map(({ icon: Icon, key }) => (
+                <div key={key} className="text-center">
+                  <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-3">
+                    <Icon className="h-5 w-5 text-primary" aria-hidden="true" />
+                  </div>
+                  <h3 className="font-semibold text-sm mb-1">
+                    {t(`security.${key}.title`)}
+                  </h3>
+                  <p className="text-xs text-muted-foreground">
+                    {t(`security.${key}.description`)}
+                  </p>
+                </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* How It Works Section */}
-        <section className="py-12 md:py-16">
-          <div className="container mx-auto px-4 max-w-4xl">
-            <h2 className="text-2xl md:text-3xl font-bold text-center mb-10">
-              {t("howItWorks")}
-            </h2>
-
-            <div className="grid md:grid-cols-3 gap-8">
-              {HOW_IT_WORKS_STEPS.map(
-                ({ icon: Icon, colorClass, titleKey, descKey }, index) => (
-                  <div key={titleKey} className="text-center">
-                    <div className="flex justify-center mb-4">
-                      <div className={`p-4 rounded-2xl ${colorClass}`}>
-                        <Icon className="h-8 w-8" />
-                      </div>
-                    </div>
-                    <div className="text-2xl font-bold text-muted-foreground/50 mb-2">
-                      {index + 1}
-                    </div>
-                    <h3 className="text-lg font-semibold mb-2">
-                      {t(titleKey)}
-                    </h3>
-                    <p className="text-muted-foreground text-sm">
-                      {t(descKey)}
-                    </p>
-                  </div>
-                ),
-              )}
-            </div>
-          </div>
-        </section>
-
-        {/* e-Nabız Integration */}
-        <section className="py-12 md:py-16 bg-muted/30">
-          <div className="container mx-auto px-4 max-w-3xl text-center">
-            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-4">
-              <Chrome className="h-4 w-4" />
-              {t("enabiz.badge")}
-            </div>
-            <h2 className="text-2xl md:text-3xl font-bold mb-3">
-              {t("enabiz.title")}
-            </h2>
-            <p className="text-muted-foreground mb-6 max-w-xl mx-auto">
-              {t("enabiz.description")}
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-              <Button size="lg" asChild>
-                <a
-                  href={CHROME_EXTENSION_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Chrome className="h-5 w-5 mr-2" />
-                  {t("enabiz.cta")}
-                </a>
-              </Button>
-              <Button variant="outline" size="lg" asChild>
-                <Link
-                  href={`/${locale}/${staticPages.enabizGuide[toLocale(locale)]}`}
-                >
-                  {t("enabiz.howItWorks")}
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </section>
-
-        {/* Social Proof */}
-        <section className="py-12 md:py-16 bg-muted/30">
-          <div className="container mx-auto px-4 max-w-3xl text-center">
-            <div className="flex items-center justify-center gap-6 mb-6">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-primary">5</div>
-                <div className="text-sm text-muted-foreground">
-                  {t("socialProof.languages")}
+        {/* e-Nabız Integration - Full width banner */}
+        <section className="py-12 md:py-16 bg-primary/5 border-y border-primary/10">
+          <div className="container mx-auto px-4 max-w-5xl">
+            <div className="grid md:grid-cols-2 gap-8 items-center">
+              <div>
+                <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium mb-4">
+                  <Chrome className="h-4 w-4" aria-hidden="true" />
+                  {t("enabiz.badge")}
+                </div>
+                <h2 className="text-2xl md:text-3xl font-bold mb-3">
+                  {t("enabiz.title")}
+                </h2>
+                <p className="text-muted-foreground mb-6">
+                  {t("enabiz.description")}
+                </p>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Button size="lg" asChild>
+                    <a
+                      href={CHROME_EXTENSION_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Chrome className="h-5 w-5 mr-2" aria-hidden="true" />
+                      {t("enabiz.cta")}
+                    </a>
+                  </Button>
+                  <Button variant="outline" size="lg" asChild>
+                    <Link
+                      href={`/${locale}/${staticPages.enabizGuide[toLocale(locale)]}`}
+                    >
+                      {t("enabiz.howItWorks")}
+                    </Link>
+                  </Button>
                 </div>
               </div>
-              <div className="h-8 w-px bg-border" />
-              <div className="text-center">
-                <div className="text-3xl font-bold text-primary">
-                  <Users className="h-8 w-8 inline" />
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  {t("socialProof.familyProfiles")}
-                </div>
-              </div>
-              <div className="h-8 w-px bg-border" />
-              <div className="text-center">
-                <div className="text-3xl font-bold text-primary">100+</div>
-                <div className="text-sm text-muted-foreground">
-                  {t("socialProof.metricAliases")}
-                </div>
+              <div className="hidden md:block">
+                <Image
+                  src="/guide-send-button.png"
+                  alt="e-Nabız Tahlillerim page with Send to ViziAI button"
+                  width={640}
+                  height={360}
+                  className="rounded-lg border border-border shadow-lg"
+                />
               </div>
             </div>
-            <p className="text-muted-foreground text-sm">
-              {t("socialProof.description")}
-            </p>
           </div>
         </section>
 
         {/* FAQ Section */}
-        <section className="py-12 md:py-16">
+        <section className="py-12 md:py-16 bg-muted/30">
           <div className="container mx-auto px-4 max-w-4xl">
             <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
               {t("faq.title")}
@@ -326,10 +307,15 @@ export async function LandingPage(): Promise<React.ReactElement> {
                 >
                   <summary className="cursor-pointer select-none px-5 py-4 font-medium flex items-center justify-between gap-2 hover:bg-muted/50 transition-colors rounded-lg">
                     {faqT(`questions.${key}.q`)}
-                    <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-180" />
+                    <ChevronDown
+                      className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-180"
+                      aria-hidden="true"
+                    />
                   </summary>
                   <div className="px-5 pb-4 text-muted-foreground leading-relaxed">
-                    {faqT(`questions.${key}.a`)}
+                    {RICH_FAQ_KEYS.has(key)
+                      ? faqT.rich(`questions.${key}.a`, richTags)
+                      : faqT(`questions.${key}.a`)}
                   </div>
                 </details>
               ))}
@@ -337,19 +323,21 @@ export async function LandingPage(): Promise<React.ReactElement> {
           </div>
         </section>
 
-        {/* CTA Section */}
+        {/* Final CTA Section */}
         <section className="py-12 md:py-16">
           <div className="container mx-auto px-4 max-w-2xl text-center">
             <h2 className="text-2xl md:text-3xl font-bold mb-4">
-              {t("startTracking")}
+              {t("finalCta.title")}
             </h2>
-            <p className="text-muted-foreground mb-6">{t("neverEasier")}</p>
+            <p className="text-muted-foreground mb-6">
+              {t("finalCta.subtitle")}
+            </p>
             <Button
               size="lg"
               asChild
               className="px-8 py-6 text-lg font-semibold"
             >
-              <Link href="/login">{t("tryFree")}</Link>
+              <Link href="/login">{t("getStartedFree")}</Link>
             </Button>
           </div>
         </section>
