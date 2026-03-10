@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions, getDbUserId } from "@/lib/auth";
 import { sql } from "@/lib/db";
-import { del } from "@vercel/blob";
 import { reportError } from "@/lib/error-reporting";
 
 export const runtime = "nodejs";
@@ -158,8 +157,8 @@ export async function POST(
 
     // Create report. Multiple reports on the same date are allowed (e.g. blood test + urine test).
     const reportResult = await sql`
-      INSERT INTO reports (profile_id, sample_date, file_name, source, content_hash)
-      VALUES (${profileId}, ${body.sampleDate}, ${upload.file_name}, 'pdf', ${upload.content_hash})
+      INSERT INTO reports (profile_id, sample_date, file_name, source, content_hash, blob_url)
+      VALUES (${profileId}, ${body.sampleDate}, ${upload.file_name}, 'pdf', ${upload.content_hash}, ${upload.file_url || null})
       RETURNING id
     `;
     const reportId = reportResult[0]?.id;
@@ -231,28 +230,10 @@ export async function POST(
       reportError(e, { op: "upload.confirm.processedFiles", uploadId });
     }
 
-    // Delete PDF from Vercel Blob storage BEFORE clearing file_url
-    // This ensures we don't lose the reference if deletion fails
-    let blobDeleted = false;
-    if (upload.file_url && upload.file_url.startsWith("https://")) {
-      try {
-        await del(upload.file_url);
-        console.log(`[API] Deleted blob: ${upload.file_url}`);
-        blobDeleted = true;
-      } catch (blobError) {
-        reportError(blobError, {
-          op: "upload.confirm.deleteBlob",
-          uploadId,
-          fileUrl: upload.file_url,
-        });
-      }
-    }
-
-    // Update pending upload status, only clear file_url if blob was deleted
+    // Update pending upload status — blob is preserved for admin review and re-extraction
     await sql`
       UPDATE pending_uploads
       SET status = 'confirmed',
-          file_url = ${blobDeleted ? null : upload.file_url},
           updated_at = NOW()
       WHERE id = ${uploadId}
     `;
