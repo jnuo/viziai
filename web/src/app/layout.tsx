@@ -12,7 +12,7 @@ import { AuthProviders } from "@/components/auth-providers";
 const inter = Inter({
   variable: "--font-sans",
   subsets: ["latin", "latin-ext"],
-  display: "optional",
+  display: "swap",
 });
 
 export const viewport: Viewport = {
