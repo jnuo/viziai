@@ -52,13 +52,6 @@ export default async function RootLayout({
           media="(prefers-color-scheme: dark)"
         />
         <link rel="preconnect" href="https://www.googletagmanager.com" />
-        <link
-          rel="preload"
-          as="image"
-          imageSrcSet="/_next/image?url=%2Fdashboard.jpeg&amp;w=640&amp;q=65 640w, /_next/image?url=%2Fdashboard.jpeg&amp;w=750&amp;q=65 750w, /_next/image?url=%2Fdashboard.jpeg&amp;w=828&amp;q=65 828w, /_next/image?url=%2Fdashboard.jpeg&amp;w=1080&amp;q=65 1080w, /_next/image?url=%2Fdashboard.jpeg&amp;w=1200&amp;q=65 1200w"
-          imageSizes="(max-width: 768px) 100vw, 896px"
-          fetchPriority="high"
-        />
         {/* Google Analytics */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-TWM75R9VKP"
