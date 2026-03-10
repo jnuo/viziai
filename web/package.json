@@ -4,14 +4,15 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build --turbopack && node scripts/verify-sitemap.js",
+    "build": "next build && node scripts/verify-sitemap.js",
     "start": "next start",
     "lint": "eslint",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "test:e2e": "playwright test",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "deploy:staging": "git push origin HEAD:staging --force"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
