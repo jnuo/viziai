@@ -159,6 +159,6 @@ export const config = {
      * - public files (images, etc.)
      * - api/auth (NextAuth routes)
      */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$|api/auth).*)",
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|txt|xml)$|api/auth).*)",
   ],
 };
