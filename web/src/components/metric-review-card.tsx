@@ -11,6 +11,7 @@ import {
   type ExtractedMetric,
   type MetricField,
   type RenameInfo,
+  type ConversionInfo,
 } from "@/lib/metrics";
 
 export interface MetricCardLabels {
@@ -23,6 +24,8 @@ export interface MetricCardLabels {
   deleteMetric: string;
   willBeAddedAs: string;
   willStayAs: string;
+  willConvertTo: string;
+  willKeepOriginal: string;
   yesDelete: string;
   cancel: string;
 }
@@ -32,6 +35,7 @@ interface MetricReviewCardProps {
   index: number;
   labels: MetricCardLabels;
   renameInfo: RenameInfo | null;
+  conversionInfo: ConversionInfo | null;
   onMetricChange: (
     index: number,
     field: MetricField,
@@ -39,6 +43,11 @@ interface MetricReviewCardProps {
   ) => void;
   onRemove: (index: number) => void;
   onAliasToggle: (index: number, checked: boolean, info: RenameInfo) => void;
+  onConversionToggle: (
+    index: number,
+    checked: boolean,
+    info: ConversionInfo,
+  ) => void;
 }
 
 function formatRefRange(
@@ -58,9 +67,11 @@ export const MetricReviewCard = React.memo(function MetricReviewCard({
   index,
   labels,
   renameInfo,
+  conversionInfo,
   onMetricChange,
   onRemove,
   onAliasToggle,
+  onConversionToggle,
 }: MetricReviewCardProps) {
   const [expanded, setExpanded] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
@@ -87,7 +98,6 @@ export const MetricReviewCard = React.memo(function MetricReviewCard({
         onClick={() => setExpanded(!expanded)}
         className="w-full text-left p-3 flex items-center gap-3 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset rounded-lg"
         aria-expanded={expanded}
-        aria-controls={expandedId}
       >
         <div className="flex-1 min-w-0">
           <p className="font-medium text-sm truncate">{metric.name}</p>
@@ -107,7 +117,10 @@ export const MetricReviewCard = React.memo(function MetricReviewCard({
             )}
             {refRange && (
               <>
-                <span className="text-muted-foreground/30 mx-0.5">
+                <span
+                  className="text-muted-foreground/30 mx-0.5"
+                  aria-hidden="true"
+                >
                   &middot;
                 </span>
                 <span className="text-xs text-muted-foreground tabular-nums">
@@ -122,6 +135,7 @@ export const MetricReviewCard = React.memo(function MetricReviewCard({
             "h-4 w-4 text-muted-foreground/40 shrink-0 motion-safe:transition-transform",
             expanded && "rotate-180",
           )}
+          aria-hidden="true"
         />
       </button>
 
@@ -133,7 +147,7 @@ export const MetricReviewCard = React.memo(function MetricReviewCard({
               <span className="font-medium line-through">
                 {renameInfo.original}
               </span>
-              <ArrowRight className="inline h-3 w-3 mx-1" />
+              <ArrowRight className="inline h-3 w-3 mx-1" aria-hidden="true" />
               <span className="font-medium text-primary">
                 {renameInfo.canonical}
               </span>
@@ -141,13 +155,46 @@ export const MetricReviewCard = React.memo(function MetricReviewCard({
                 {renameInfo.applied ? labels.willBeAddedAs : labels.willStayAs}
               </span>
             </span>
-            <Switch
-              checked={renameInfo.applied}
-              onCheckedChange={(checked) =>
-                onAliasToggle(index, checked, renameInfo)
-              }
-              aria-label={`${renameInfo.original} \u2192 ${renameInfo.canonical}`}
-            />
+            <span className="inline-flex min-w-[44px] min-h-[44px] items-center justify-center shrink-0">
+              <Switch
+                checked={renameInfo.applied}
+                onCheckedChange={(checked) =>
+                  onAliasToggle(index, checked, renameInfo)
+                }
+                aria-label={`${renameInfo.original} \u2192 ${renameInfo.canonical}`}
+              />
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* Conversion suggestion — always visible when present */}
+      {conversionInfo && (
+        <div className={cn("px-3 pb-3", expanded && "pb-0")}>
+          <div className="flex items-center gap-2 text-xs bg-muted/50 rounded-md px-2.5 py-2">
+            <span className="text-muted-foreground flex-1 min-w-0">
+              <span className="font-medium line-through">
+                {conversionInfo.originalValue} {conversionInfo.originalUnit}
+              </span>
+              <ArrowRight className="inline h-3 w-3 mx-1" aria-hidden="true" />
+              <span className="font-medium text-primary">
+                {conversionInfo.convertedValue} {conversionInfo.convertedUnit}
+              </span>
+              <span className="ml-1">
+                {conversionInfo.applied
+                  ? labels.willConvertTo
+                  : labels.willKeepOriginal}
+              </span>
+            </span>
+            <span className="inline-flex min-w-[44px] min-h-[44px] items-center justify-center shrink-0">
+              <Switch
+                checked={conversionInfo.applied}
+                onCheckedChange={(checked) =>
+                  onConversionToggle(index, checked, conversionInfo)
+                }
+                aria-label={`${conversionInfo.originalValue} ${conversionInfo.originalUnit} \u2192 ${conversionInfo.convertedValue} ${conversionInfo.convertedUnit}`}
+              />
+            </span>
           </div>
         </div>
       )}
@@ -289,7 +336,7 @@ export const MetricReviewCard = React.memo(function MetricReviewCard({
                 className="w-full"
                 onClick={() => onRemove(index)}
               >
-                <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+                <Trash2 className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
                 {labels.yesDelete}
               </Button>
               <Button
@@ -308,7 +355,7 @@ export const MetricReviewCard = React.memo(function MetricReviewCard({
               className="text-muted-foreground hover:text-destructive w-full"
               onClick={() => setConfirmingDelete(true)}
             >
-              <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+              <Trash2 className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
               {labels.deleteMetric}
             </Button>
           )}

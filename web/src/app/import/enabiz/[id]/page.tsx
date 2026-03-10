@@ -222,6 +222,10 @@ export default function EnabizImportPage(): React.ReactElement {
     [],
   );
 
+  const handleConversionToggle = useCallback(() => {
+    // No-op: e-Nabız imports use canonical Turkish units, no conversions needed
+  }, []);
+
   const renameInfoMap = useMemo(() => {
     const map = new Map<string, RenameInfo>();
     for (const entry of Object.values(appliedRenames)) {
@@ -305,6 +309,8 @@ export default function EnabizImportPage(): React.ReactElement {
       deleteMetric: t("deleteMetric"),
       willBeAddedAs: t("willBeAddedAs"),
       willStayAs: t("willStayAs"),
+      willConvertTo: t("willConvertTo"),
+      willKeepOriginal: t("willKeepOriginal"),
       yesDelete: tc("yesDelete"),
       cancel: tc("cancel"),
     }),
@@ -662,9 +668,11 @@ export default function EnabizImportPage(): React.ReactElement {
                             index={index}
                             labels={cardLabels}
                             renameInfo={renameInfoMap.get(metric.name) ?? null}
+                            conversionInfo={null}
                             onMetricChange={handleMetricChange}
                             onRemove={handleRemoveMetric}
                             onAliasToggle={handleAliasToggle}
+                            onConversionToggle={handleConversionToggle}
                           />
                         ))}
                       </div>
