@@ -142,8 +142,13 @@ function UploadPageContent(): React.ReactElement {
           } else if (pendingUpload.status === "review") {
             await loadExtractedData(pendingUpload.id);
           } else if (pendingUpload.status === "pending") {
-            setStatus("extracting");
-            startExtraction(pendingUpload.id);
+            if (pendingUpload.error_message) {
+              setStatus("error");
+              setError(pendingUpload.error_message);
+            } else {
+              setStatus("extracting");
+              startExtraction(pendingUpload.id);
+            }
           }
         }
       } catch (error) {
