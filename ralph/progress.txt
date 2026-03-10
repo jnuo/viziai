@@ -89,3 +89,13 @@
 - All Phase 1 stories (QS-001 through QS-004) verified
 - Files changed: none (verification only)
 - Learnings: Pre-existing lint issues in other files don't block — focus on changes from the current work.
+
+---
+## 2026-03-10 - QS-014: Admin report detail API + review API
+- Created GET /api/admin/reports/[id] — returns full report with metrics, profile info, and existing review data
+- Created POST /api/admin/reports/[id]/review — submit review (approved/corrected) with optional metric corrections
+- Review uses UPSERT (ON CONFLICT report_id) — one review per report, can re-review
+- Metric corrections use CASE WHEN pattern for partial updates (only provided fields change)
+- Code review caught: redundant N+1 ownership SELECT (removed — WHERE clause already guards), missing input validation (added: type checks, length limits, isFinite, array cap)
+- Files changed: web/src/app/api/admin/reports/[id]/route.ts, web/src/app/api/admin/reports/[id]/review/route.ts
+- Learnings: CASE WHEN ${bool} THEN ${val} ELSE column END is the clean pattern for partial updates with Neon tagged templates. No need for separate ownership SELECT when the UPDATE WHERE clause already includes the guard.
