@@ -51,7 +51,9 @@ import {
   type EditableMetric,
   type MetricField,
   type RenameInfo,
+  type ConversionInfo,
 } from "@/lib/metrics";
+import { normalizeUnit } from "@/lib/unit-normalization";
 import {
   MetricReviewCard,
   type MetricCardLabels,
@@ -98,6 +100,9 @@ function UploadPageContent(): React.ReactElement {
   const [uploadCreatedAt, setUploadCreatedAt] = useState<string | null>(null);
   const [appliedRenames, setAppliedRenames] = useState<
     Record<string, RenameInfo>
+  >({});
+  const [appliedConversions, setAppliedConversions] = useState<
+    Record<number, ConversionInfo>
   >({});
   const pollIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const pollStartTimeRef = useRef<number | null>(null);
@@ -244,11 +249,35 @@ function UploadPageContent(): React.ReactElement {
         const { metrics, renames } = await applyAliases(
           extracted.metrics || [],
         );
+
+        // Detect unit conversion opportunities
+        const conversions: Record<number, ConversionInfo> = {};
+        const convertedMetrics = metrics.map((m, i) => {
+          if (m.value == null || !m.unit) return m;
+          const result = normalizeUnit(m.name, m.value, m.unit);
+          if (result.converted) {
+            conversions[i] = {
+              originalValue: m.value,
+              originalUnit: m.unit,
+              convertedValue: result.value,
+              convertedUnit: result.unit,
+              description: result.conversionDescription || "",
+              applied: true,
+            };
+            return { ...m, value: result.value, unit: result.unit };
+          }
+          return m;
+        });
+
         const ts = Date.now();
         setEditedMetrics(
-          metrics.map((m, i) => ({ ...m, _key: `metric-${i}-${ts}` })),
+          convertedMetrics.map((m, i) => ({
+            ...m,
+            _key: `metric-${i}-${ts}`,
+          })),
         );
         setAppliedRenames(renames);
+        setAppliedConversions(conversions);
         setStatus("review");
       }
     } catch (err) {
@@ -462,6 +491,23 @@ function UploadPageContent(): React.ReactElement {
     [],
   );
 
+  const handleConversionToggle = useCallback(
+    (index: number, checked: boolean, info: ConversionInfo) => {
+      const newValue = checked ? info.convertedValue : info.originalValue;
+      const newUnit = checked ? info.convertedUnit : info.originalUnit;
+      setEditedMetrics((prev) =>
+        prev.map((m, i) =>
+          i === index ? { ...m, value: newValue, unit: newUnit } : m,
+        ),
+      );
+      setAppliedConversions((prev) => ({
+        ...prev,
+        [index]: { ...prev[index], applied: checked },
+      }));
+    },
+    [],
+  );
+
   const renameInfoMap = useMemo(() => {
     const map = new Map<string, RenameInfo>();
     for (const entry of Object.values(appliedRenames)) {
@@ -489,6 +535,7 @@ function UploadPageContent(): React.ReactElement {
     setExtractedData(null);
     setEditedMetrics([]);
     setAppliedRenames({});
+    setAppliedConversions({});
     setSampleDate("");
     setError(null);
   }
@@ -508,6 +555,8 @@ function UploadPageContent(): React.ReactElement {
       deleteMetric: t("deleteMetric"),
       willBeAddedAs: t("willBeAddedAs"),
       willStayAs: t("willStayAs"),
+      willConvertTo: t("willConvertTo"),
+      willKeepOriginal: t("willKeepOriginal"),
       yesDelete: tc("yesDelete"),
       cancel: tc("cancel"),
     }),
@@ -729,6 +778,8 @@ function UploadPageContent(): React.ReactElement {
                             );
                             const renameInfo =
                               renameInfoMap.get(metric.name) ?? null;
+                            const conversionInfo =
+                              appliedConversions[index] ?? null;
                             return (
                               <React.Fragment key={metric._key}>
                                 <tr
@@ -879,6 +930,55 @@ function UploadPageContent(): React.ReactElement {
                                     </td>
                                   </tr>
                                 )}
+                                {conversionInfo && (
+                                  <tr>
+                                    <td colSpan={6} className="px-2 pb-2 pt-0">
+                                      <div className="flex items-center gap-2.5 text-xs">
+                                        <span className="text-muted-foreground shrink-0">
+                                          <span className="font-medium line-through">
+                                            {conversionInfo.originalValue}{" "}
+                                            {conversionInfo.originalUnit}
+                                          </span>
+                                          <ArrowRight className="inline h-3 w-3 mx-1" />
+                                          <span className="font-medium text-primary">
+                                            {conversionInfo.convertedValue}{" "}
+                                            {conversionInfo.convertedUnit}
+                                          </span>
+                                        </span>
+                                        <Switch
+                                          checked={conversionInfo.applied}
+                                          onCheckedChange={(checked) =>
+                                            handleConversionToggle(
+                                              index,
+                                              checked,
+                                              conversionInfo,
+                                            )
+                                          }
+                                          aria-label={`${conversionInfo.originalValue} ${conversionInfo.originalUnit} → ${conversionInfo.convertedValue} ${conversionInfo.convertedUnit}`}
+                                        />
+                                        <span className="text-muted-foreground/70">
+                                          {conversionInfo.applied ? (
+                                            <>
+                                              <span className="font-medium text-primary">
+                                                {conversionInfo.convertedValue}{" "}
+                                                {conversionInfo.convertedUnit}
+                                              </span>{" "}
+                                              {t("willConvertTo")}
+                                            </>
+                                          ) : (
+                                            <>
+                                              <span className="font-medium">
+                                                {conversionInfo.originalValue}{" "}
+                                                {conversionInfo.originalUnit}
+                                              </span>{" "}
+                                              {t("willKeepOriginal")}
+                                            </>
+                                          )}
+                                        </span>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                )}
                               </React.Fragment>
                             );
                           })}
@@ -896,9 +996,11 @@ function UploadPageContent(): React.ReactElement {
                         index={index}
                         labels={cardLabels}
                         renameInfo={renameInfoMap.get(metric.name) ?? null}
+                        conversionInfo={appliedConversions[index] ?? null}
                         onMetricChange={handleMetricChange}
                         onRemove={handleRemoveMetric}
                         onAliasToggle={handleAliasToggle}
+                        onConversionToggle={handleConversionToggle}
                       />
                     ))}
                   </div>

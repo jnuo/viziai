@@ -160,7 +160,7 @@
       ],
       "dependencies": ["QS-006"],
       "capabilities": ["frontend-design"],
-      "status": "todo"
+      "status": "done"
     },
     {
       "id": "QS-009",
@@ -196,7 +196,7 @@
       "dependencies": ["QS-007", "QS-008", "QS-009"],
       "capabilities": [],
       "requiresUserApproval": true,
-      "status": "todo"
+      "status": "done"
     },
     {
       "id": "QS-011",
@@ -257,7 +257,7 @@
       "dependencies": ["QS-012"],
       "capabilities": [],
       "requiresUserApproval": true,
-      "status": "todo"
+      "status": "done"
     },
     {
       "id": "QS-014",
@@ -298,7 +298,7 @@
       "files": ["web/src/app/admin/reports/[id]/review/page.tsx"],
       "dependencies": ["QS-014", "QS-004"],
       "capabilities": ["frontend-design"],
-      "status": "todo"
+      "status": "done"
     },
     {
       "id": "QS-016",
@@ -316,7 +316,7 @@
       "dependencies": ["QS-015"],
       "capabilities": [],
       "requiresUserApproval": true,
-      "status": "todo"
+      "status": "done"
     },
     {
       "id": "QS-017",
@@ -339,7 +339,7 @@
       ],
       "dependencies": ["QS-014", "QS-006"],
       "capabilities": [],
-      "status": "todo"
+      "status": "done"
     },
     {
       "id": "QS-018",
@@ -356,7 +356,7 @@
       "dependencies": ["QS-017"],
       "capabilities": [],
       "requiresUserApproval": true,
-      "status": "todo"
+      "status": "done"
     },
     {
       "id": "QS-019",
@@ -376,7 +376,7 @@
       ],
       "dependencies": ["QS-011", "QS-006"],
       "capabilities": [],
-      "status": "todo"
+      "status": "done"
     },
     {
       "id": "QS-020",
@@ -394,7 +394,7 @@
       "files": ["web/src/app/api/cron/quality-check/route.ts"],
       "dependencies": ["QS-019"],
       "capabilities": [],
-      "status": "todo"
+      "status": "done"
     }
   ]
 }

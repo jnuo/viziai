@@ -112,3 +112,55 @@
 - Design review: all 3 agents PASS on first attempt (brand, a11y, quality)
 - Files changed: web/src/app/admin/quality/page.tsx, web/src/app/api/admin/quality/unmapped/[id]/route.ts
 - Learnings: Controlled Dialog pattern with nullable state (mapTarget) is cleaner than separate open boolean. Pre-populate dialog inputs from existing data (suggested_canonical).
+
+---
+## 2026-03-10 - QS-015: Review workbench page (side-by-side PDF + metrics)
+- Created /admin/reports/[id]/review with two-column layout: PDF left (iframe), editable metrics right
+- Inline editing: editingId tracks active row, edits Record accumulates all changes until submit
+- buildCorrections() only diffs changed fields — sends minimal payload to review API
+- Approve button (no edits) vs Submit Corrections button (with edits) — mutually exclusive based on hasEdits
+- PDF iframe with title attribute for a11y, sticky table header for scrollable metrics
+- Review notes textarea, pre-populated from existing review if re-reviewing
+- Design review: 2/3 PASS on first attempt, 1 FAIL on unused saveEdit param (fixed)
+- Files changed: web/src/app/admin/reports/[id]/review/page.tsx
+- Learnings: Remove unused function params before commit. saveEdit() doesn't need metric param since it only clears editingId. Use hasEdits boolean to drive conditional button rendering.
+
+---
+## 2026-03-10 - QS-008: Unit conversion suggestions in upload review UI
+- Conversion detection logic and desktop table UI were already implemented in upload/page.tsx (from QS-006)
+- Gap was MetricReviewCard (mobile) missing conversionInfo/onConversionToggle props — TypeScript error was silently present
+- Added conversion suggestion UI to MetricReviewCard mirroring the existing alias suggestion pattern
+- Fixed enabiz import page: added missing props (conversionInfo={null}, stable useCallback no-op)
+- A11y improvements: aria-hidden on decorative icons (ArrowRight, ChevronDown, Trash2), 44px min touch targets on Switch, aria-hidden on mid-dot separator
+- Design review: 3 iterations (fixed a11y issues found by agents)
+- Code review: P2 finding — inline `() => {}` breaks React.memo, fixed with useCallback
+- Files changed: web/src/components/metric-review-card.tsx, web/src/app/import/enabiz/[id]/page.tsx
+- Learnings: When adding props to a shared component, always check ALL consumers (not just the primary one). Inline arrow functions as props defeat React.memo — always use useCallback for stable references. Design review agents keep finding pre-existing issues — focus fixes on new code scope.
+
+---
+## 2026-03-10 - QS-017: Re-extract API + add-to-evals API + local script
+- Created POST /api/admin/reports/[id]/re-extract with in-flight guard (checks pending_uploads for same blob_url)
+- Uses randomUUID for content hash to avoid leaking report ID + timestamp
+- Created POST /api/admin/reports/[id]/add-to-evals — upserts extraction_evals with current metrics as ground truth
+- Created scripts/run-evals.ts — polls extraction worker, compares output vs expected, reports accuracy %
+- Created db-schema/migrations/20260310_extraction_evals.sql — extraction_evals table with JSONB expected_metrics
+- Security review: caught resource exhaustion (fixed with in-flight guard) and content hash info leak (fixed with randomUUID)
+- Pattern review: consistent with existing admin API patterns, QStash integration
+- Files changed: 4 new files (2 API routes, 1 migration, 1 script)
+- Learnings: Always guard async job endpoints against spam/re-triggering. Use randomUUID instead of predictable patterns for content hashes. Align polling timeouts with the actual job timeout (5 min for QStash extraction).
+
+---
+## 2026-03-10 - QS-019: Anomaly detection + alias coverage APIs
+- Created GET /api/admin/quality/anomalies with two detection methods: out-of-range and statistical (>3 std dev)
+- Created GET /api/admin/quality/alias-coverage — classifies metric names as canonical/alias/unmapped, reports coverage %
+- Both scoped to 90-day window, gated by requireAdmin()
+- Files changed: 2 new API routes
+- Learnings: Use HAVING COUNT(*) >= 3 for statistical analysis. Report both name-level and occurrence-level coverage.
+
+---
+## 2026-03-10 - QS-020: Daily quality loop cron setup
+- Created POST /api/cron/quality-check with QStash signature verification
+- Runs 4 checks: pending unmapped count, new unmapped (24h), out-of-range anomalies (7d), alias coverage (90d)
+- Uses same verifySignatureAppRouter pattern as extraction worker
+- Files changed: 1 new API route
+- Learnings: Follow exact same QStash verification pattern (hasSigningKey conditional export). Keep cron lightweight — count queries only.

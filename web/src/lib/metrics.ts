@@ -16,6 +16,15 @@ export interface RenameInfo {
   applied: boolean;
 }
 
+export interface ConversionInfo {
+  originalValue: number;
+  originalUnit: string;
+  convertedValue: number;
+  convertedUnit: string;
+  description: string;
+  applied: boolean;
+}
+
 export type MetricField = "name" | "value" | "unit" | "ref_low" | "ref_high";
 
 export function checkOutOfRange(

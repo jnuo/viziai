@@ -244,6 +244,28 @@ export async function requireApiKey(request: Request): Promise<string | null> {
   }
 }
 
+export async function isAdmin(userId: string): Promise<boolean> {
+  try {
+    const result = await sql`
+      SELECT is_admin FROM users WHERE id = ${userId}
+    `;
+    return result[0]?.is_admin === true;
+  } catch (error) {
+    reportError(error, { op: "auth.isAdmin", userId });
+    return false;
+  }
+}
+
+export async function requireAdmin(): Promise<string | null> {
+  const userId = await requireAuth();
+  if (!userId) return null;
+
+  const admin = await isAdmin(userId);
+  if (!admin) return null;
+
+  return userId;
+}
+
 export async function requireProfileOwner(
   profileId: string,
 ): Promise<string | null> {

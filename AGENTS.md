@@ -2,6 +2,11 @@
 
 Each Ralph iteration spawns a fresh Claude instance. This file ensures every instance understands the codebase without re-discovering patterns.
 
+## Current Phase: Extraction Quality System (#105 + #106)
+
+Branch: `feature/extraction-quality-system`
+Stories: `ralph/prd.json` (QS-001 through QS-020)
+
 ## Tech Stack
 
 - **Framework**: Next.js 15 (App Router) with Turbopack
@@ -119,6 +124,19 @@ if (!level || level === "viewer")
   return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 ```
 
+### Admin Auth Pattern
+
+For admin-only routes (under `/api/admin/*`), use `requireAdmin()`:
+
+```ts
+import { requireAdmin } from "@/lib/auth";
+
+const userId = await requireAdmin();
+if (!userId) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+```
+
+`requireAdmin()` checks `users.is_admin` flag in the database. Regular users get 403.
+
 ## Brand Guidelines
 
 **Always read `product/brand-guidelines/BRAND.md` before any UI/design work.** Key rules:
@@ -224,11 +242,43 @@ Review (3 parallel) → All PASS? → YES → Phase 3
 
 No iteration cap. See `ralph/prompt.md` for full agent prompts.
 
+## Extraction Quality System
+
+### Canonical Metrics
+
+`web/src/lib/canonical-metrics.ts` is the source of truth for known metric names and their canonical units. Canonical names are Turkish (the original lab report language). Foreign metric names (Spanish, German, French, English) are mapped to Turkish canonical names via `metric_aliases` table.
+
+### Unit Normalization
+
+`web/src/lib/unit-normalization.ts` converts metric values between known unit pairs:
+
+- `g/L → g/dL` (÷ 10) for Hemoglobin
+- `mmol/L → mg/dL` (× 18.018) for Glukoz
+- `µmol/L → mg/dL` (metric-specific factor) for Kreatinin, Urik Asit
+- `10^9/L → 10^3/µL` (same value, rename) for Lokosit
+
+### Unmapped Metrics
+
+The `unmapped_metrics` table tracks metric names from uploads that don't match any alias or canonical name. Status workflow: `pending` → `mapped` (alias created) or `accepted` (genuinely new metric).
+
+### Blob Preservation
+
+PDFs are **no longer deleted** from Vercel Blob after confirm. The `reports.blob_url` column stores the URL for:
+
+- Admin side-by-side review (PDF + extracted metrics)
+- Re-extraction with improved prompts
+- Eval dataset building
+
+### Admin Routes
+
+All admin routes live under `/api/admin/*` and `/admin/*`. They use `requireAdmin()` for auth. Admin pages have a shared layout at `web/src/app/admin/layout.tsx` that blocks non-admin users.
+
 ## Common Gotchas
 
 1. **Never deploy via CLI** — `npx vercel --prod` produces broken builds. Vercel auto-deploys from GitHub.
 2. **Neon HTTP driver** — No `sql.begin()`. Use sequential queries.
 3. **Refs don't trigger re-renders** — Never use `disabled={ref.current}`, use state.
 4. **next-intl** — All message keys must exist in ALL locale files or the build fails.
-5. **GA ID** — `G-7SD063Z4ST` is the old personal site ID. STORY-012 replaces it with `G-TWM75R9VKP` for viziai.app.
+5. **Canonical metric names are Turkish** — foreign names map TO Turkish canonical names via aliases.
 6. **viziai.app** — Domain is live on Vercel. Production NEXTAUTH_URL should be `https://www.viziai.app`.
+7. **Blobs are preserved** — PDFs are NOT deleted after confirm. `reports.blob_url` stores the URL.
