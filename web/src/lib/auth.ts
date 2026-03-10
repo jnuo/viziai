@@ -114,6 +114,9 @@ export const authOptions: NextAuthOptions = {
         if (token.dbId) {
           session.user.dbId = token.dbId as string;
         }
+        if (token.isAdmin) {
+          (session.user as { isAdmin?: boolean }).isAdmin = true;
+        }
       }
       return session;
     },
@@ -125,10 +128,11 @@ export const authOptions: NextAuthOptions = {
         } else if (user.email) {
           try {
             const result = await sql`
-              SELECT id FROM users WHERE LOWER(email) = LOWER(${user.email})
+              SELECT id, is_admin FROM users WHERE LOWER(email) = LOWER(${user.email})
             `;
             if (result[0]?.id) {
               token.dbId = result[0].id;
+              token.isAdmin = result[0].is_admin === true;
             }
           } catch (error) {
             reportError(error, {

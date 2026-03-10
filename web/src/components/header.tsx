@@ -31,6 +31,7 @@ import {
   Check,
   Settings,
   Key,
+  ShieldCheck,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { locales, localeLabels } from "@/i18n/config";
@@ -223,6 +224,18 @@ export function Header({
                     <Key className="h-4 w-4" />
                     {t("apiKeys")}
                   </DropdownMenuItem>
+                  {(session?.user as { isAdmin?: boolean })?.isAdmin && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        onClick={() => router.push("/admin/quality")}
+                        className="cursor-pointer"
+                      >
+                        <ShieldCheck className="h-4 w-4" />
+                        Admin
+                      </DropdownMenuItem>
+                    </>
+                  )}
                   <DropdownMenuSeparator />
                   {mounted && (
                     <DropdownMenuSub>
