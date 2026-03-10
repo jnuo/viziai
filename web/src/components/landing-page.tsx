@@ -102,6 +102,7 @@ export async function LandingPage(): Promise<React.ReactElement> {
                 width={1200}
                 height={800}
                 priority
+                loading="eager"
                 quality={65}
                 sizes="(max-width: 768px) 100vw, 896px"
                 className="rounded-xl border border-border shadow-2xl"
