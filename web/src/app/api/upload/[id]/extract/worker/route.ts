@@ -470,18 +470,26 @@ async function handler(
         metricCount: metrics.length,
       });
     } catch (extractionError) {
+      const errMsg =
+        extractionError instanceof Error
+          ? extractionError.message
+          : String(extractionError);
+      console.error(`[Worker] Extraction failed for ${uploadId}:`, errMsg);
       reportError(extractionError, { op: "worker.extraction", uploadId });
 
       await sql`
         UPDATE pending_uploads
         SET
           status = 'pending',
-          error_message = 'Veri çıkarma başarısız',
+          error_message = ${`Veri çıkarma başarısız: ${errMsg.slice(0, 200)}`},
           updated_at = NOW()
         WHERE id = ${uploadId}
       `;
 
-      return NextResponse.json({ error: "Extraction failed" }, { status: 500 });
+      return NextResponse.json(
+        { error: "Extraction failed", detail: errMsg },
+        { status: 500 },
+      );
     }
   } catch (error) {
     reportError(error, { op: "worker.handler", uploadId });
