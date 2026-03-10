@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions, getDbUserId } from "@/lib/auth";
 import { sql } from "@/lib/db";
 import { reportError } from "@/lib/error-reporting";
+import { CANONICAL_METRIC_NAMES } from "@/lib/canonical-metrics";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -228,6 +229,30 @@ export async function POST(
       console.log(`[API] processed_files recorded: ${upload.file_name}`);
     } catch (e) {
       reportError(e, { op: "upload.confirm.processedFiles", uploadId });
+    }
+
+    // Detect unmapped metrics (fire-and-forget — don't block confirm flow)
+    try {
+      // Get all known aliases in one query
+      const aliasRows = await sql`SELECT alias FROM metric_aliases`;
+      const knownAliases = new Set(aliasRows.map((r) => r.alias));
+
+      for (const metric of body.metrics) {
+        if (!isValidMetricValue(metric.value)) continue;
+
+        const isCanonical = CANONICAL_METRIC_NAMES.has(metric.name);
+        const isAlias = knownAliases.has(metric.name);
+
+        if (!isCanonical && !isAlias) {
+          await sql`
+            INSERT INTO unmapped_metrics (metric_name, unit, ref_low, ref_high, report_id, profile_id, upload_id, status)
+            VALUES (${metric.name}, ${metric.unit || null}, ${metric.ref_low ?? null}, ${metric.ref_high ?? null}, ${reportId}, ${profileId}, ${uploadId}, 'pending')
+            ON CONFLICT (report_id, metric_name) DO NOTHING
+          `;
+        }
+      }
+    } catch (e) {
+      reportError(e, { op: "upload.confirm.unmappedMetrics", uploadId });
     }
 
     // Update pending upload status — blob is preserved for admin review and re-extraction
