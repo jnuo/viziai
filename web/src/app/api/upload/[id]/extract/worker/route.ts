@@ -426,10 +426,7 @@ async function handler(
           );
         }
 
-        if (
-          !mergedResult.sample_date &&
-          isValidISODate(pageData.sample_date)
-        ) {
+        if (!mergedResult.sample_date && isValidISODate(pageData.sample_date)) {
           mergedResult.sample_date = pageData.sample_date;
         }
       }
@@ -492,22 +489,20 @@ async function handler(
   }
 }
 
-const isLocalDev = process.env.NODE_ENV === "development";
-const hasSigningKey = !!process.env.QSTASH_CURRENT_SIGNING_KEY;
+// verifySignatureAppRouter wraps the handler and checks QStash signatures at request time.
+// In local dev (no signing keys), skip verification and call handler directly.
+const verified = verifySignatureAppRouter(handler);
 
-// verifySignatureAppRouter reads keys at import time, so only call it when keys exist.
-// In local dev, skip verification. In production without keys, fail closed.
-export const POST = hasSigningKey
-  ? verifySignatureAppRouter(handler)
-  : async (...args: Parameters<typeof handler>) => {
-      if (!isLocalDev) {
-        console.error(
-          "[Worker] Production deploy missing QSTASH_CURRENT_SIGNING_KEY",
-        );
-        return NextResponse.json(
-          { error: "Server misconfigured" },
-          { status: 500 },
-        );
-      }
-      return handler(...args);
-    };
+export const POST = async (...args: Parameters<typeof handler>) => {
+  if (process.env.QSTASH_CURRENT_SIGNING_KEY) {
+    return verified(...args);
+  }
+  // Local dev without QStash keys — skip signature check
+  if (process.env.NODE_ENV === "development") {
+    return handler(...args);
+  }
+  console.error(
+    "[Worker] Production deploy missing QSTASH_CURRENT_SIGNING_KEY",
+  );
+  return NextResponse.json({ error: "Server misconfigured" }, { status: 500 });
+};
