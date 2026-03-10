@@ -46,53 +46,72 @@
       "owner": "Propietario",
       "editor": "Editor",
       "viewer": "Visor"
-    }
+    },
+    "footerProduct": "Producto",
+    "footerSupport": "Soporte",
+    "footerPreferences": "Idioma y Tema"
   },
   "pages": {
     "landing": {
-      "heroTitle": "Entiende tus Análisis de Sangre y <highlight>Sigue</highlight> los Resultados",
-      "heroDescription": "Sube tus resultados de análisis de sangre en PDF. ViziAI analiza tus valores con IA y muestra tendencias en gráficos claros. Empieza gratis.",
-      "getStarted": "Empezar",
+      "heroTitle": "Por fin entiende qué está cambiando en tus análisis de sangre",
+      "heroDescription": "Sube tus PDF de laboratorio. Ve tus valores a lo largo del tiempo. Comparte con tu familia.",
       "getStartedFree": "Empezar Gratis",
-      "tryFree": "Probar Gratis",
-      "dashboardAlt": "ViziAI Dashboard - Seguimiento visual de tus resultados de análisis",
-      "whyPrefix": "Por qué",
-      "startTracking": "Empieza a Controlar tu Salud",
-      "neverEasier": "Entender tus resultados de análisis nunca ha sido tan fácil.",
-      "features": {
-        "aiAnalysis": "Análisis con IA",
-        "aiAnalysisDesc": "Extrae y organiza automáticamente los datos de análisis de los PDF mediante inteligencia artificial.",
-        "visualDashboard": "Panel Visual",
-        "visualDashboardDesc": "Sigue y compara tus valores a lo largo del tiempo con gráficos visuales.",
-        "easyUpload": "Subida Fácil de PDF",
-        "easyUploadDesc": "Sube fácilmente tus informes de análisis en formato PDF arrastrando y soltando.",
-        "securePrivate": "Seguro y Privado",
-        "securePrivateDesc": "Tus datos se almacenan en una infraestructura segura, accesible solo por ti."
+      "benefits": {
+        "uploadPdf": "Sube cualquier PDF de laboratorio",
+        "uploadPdfDesc": "Lee e interpreta resultados de laboratorio en cualquier idioma. Incluso documentos escaneados.",
+        "seeTrends": "Ve tendencias a lo largo del tiempo",
+        "seeTrendsDesc": "Observa fácilmente cómo cambian con el tiempo las métricas que te importan.",
+        "familyProfiles": "Perfiles familiares",
+        "familyProfilesDesc": "Comparte tu perfil con tu pareja. Crea un perfil para tu padre, compártelo con tus hermanos."
       },
-      "howItWorks": "Cómo Funciona",
-      "howItWorksSteps": {
-        "step1Title": "Sube tu PDF",
-        "step1Desc": "Arrastra y suelta tu informe de análisis de sangre. Aceptamos PDF de laboratorios en turco, inglés, alemán, neerlandés, francés y español.",
-        "step2Title": "La IA Extrae los Resultados",
-        "step2Desc": "Nuestra IA lee tu PDF y extrae cada métrica, valor y rango de referencia — incluso de documentos escaneados.",
-        "step3Title": "Sigue tus Tendencias",
-        "step3Desc": "Ve todos tus resultados en un panel unificado con gráficos de tendencias. Detecta cambios de un vistazo en informes de cualquier país."
+      "enabiz": {
+        "badge": "Para Usuarios en Turquía",
+        "title": "Integración con e-Nabız",
+        "description": "Importa todos tus resultados de e-Nabız directamente con nuestra extensión de Chrome — sin procesamiento de IA, sin descargar PDFs. Un clic.",
+        "cta": "Instalar Extensión de Chrome",
+        "howItWorks": "¿Cómo funciona?"
       },
-      "socialProof": {
-        "languages": "Idiomas Soportados",
-        "familyProfiles": "Perfiles Familiares",
-        "metricAliases": "Alias de Métricas",
-        "description": "Sigue análisis de sangre de laboratorios turcos, ingleses, alemanes, franceses y españoles — todo en un solo panel."
+      "track": {
+        "badge": "Seguimiento de tendencias",
+        "title": "Observa cómo cambian tus valores con el tiempo",
+        "description": "Cada informe que subes se agrega a tus gráficos. Ve los cambios de un vistazo.",
+        "imageAlt": "Panel de ViziAI mostrando gráficos de tendencias de análisis de sangre",
+        "features": {
+          "autoUpdate": "Los gráficos se actualizan automáticamente con cada informe que subes",
+          "atAGlance": "Normal, alto o bajo — entiende de un vistazo con colores",
+          "familyTrends": "Sigue las tendencias de cada familiar por separado"
+        }
+      },
+      "security": {
+        "title": "Tus datos están seguros",
+        "euServers": {
+          "title": "Servidores en la UE",
+          "description": "Tus datos se almacenan en Frankfurt, Alemania. Cumple con el RGPD."
+        },
+        "noPasswords": {
+          "title": "Sin contraseñas",
+          "description": "Inicio de sesión solo con Google. Sin contraseñas en nuestro sistema."
+        },
+        "encrypted": {
+          "title": "Comunicación cifrada",
+          "description": "Todos los datos se cifran en tránsito (HTTPS)."
+        },
+        "rightToDelete": {
+          "title": "Derecho a eliminar",
+          "description": "Elimina todos tus datos cuando quieras."
+        }
+      },
+      "trust": {
+        "encrypted": "Cifrado",
+        "private": "Privado",
+        "free": "Gratis"
       },
       "faq": {
         "title": "Preguntas Frecuentes"
       },
-      "enabiz": {
-        "badge": "Extensión de Chrome",
-        "title": "Integración con e-Nabız",
-        "description": "Para usuarios de e-Nabız en Turquía: importa tus análisis anteriores con un clic usando nuestra extensión de Chrome. Sin necesidad de descargar PDFs.",
-        "cta": "Instalar Extensión de Chrome",
-        "howItWorks": "¿Cómo funciona?"
+      "finalCta": {
+        "title": "Empieza a controlar tu salud hoy",
+        "subtitle": "Gratis para siempre. Sin tarjeta de crédito."
       }
     },
     "login": {

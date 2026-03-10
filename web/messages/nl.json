@@ -46,53 +46,72 @@
       "owner": "Eigenaar",
       "editor": "Bewerker",
       "viewer": "Lezer"
-    }
+    },
+    "footerProduct": "Product",
+    "footerSupport": "Ondersteuning",
+    "footerPreferences": "Taal & Thema"
   },
   "pages": {
     "landing": {
-      "heroTitle": "<highlight>Volg</highlight> je bloedtestresultaten en begrijp gezondsheidstrends",
-      "heroDescription": "Upload bloedtest-PDF's en laat ViziAI je resultaten analyseren met AI. Volg gezondheidstrends in de tijd met duidelijke visuele grafieken en dashboards.",
-      "getStarted": "Aan de slag",
+      "heroTitle": "Begrijp eindelijk wat er verandert in je bloedtests",
+      "heroDescription": "Upload je lab-PDF's. Bekijk je waarden in de tijd. Deel met je familie.",
       "getStartedFree": "Gratis beginnen",
-      "tryFree": "Gratis proberen",
-      "dashboardAlt": "ViziAI Dashboard - Volg je testresultaten visueel",
-      "whyPrefix": "Waarom",
-      "startTracking": "Begin met het volgen van je gezondheid",
-      "neverEasier": "Het begrijpen van je testresultaten was nog nooit zo eenvoudig.",
-      "features": {
-        "aiAnalysis": "AI-gestuurde analyse",
-        "aiAnalysisDesc": "Haalt automatisch testgegevens uit PDF's met behulp van kunstmatige intelligentie.",
-        "visualDashboard": "Visueel dashboard",
-        "visualDashboardDesc": "Volg en vergelijk je waarden in de tijd met visuele grafieken.",
-        "easyUpload": "Eenvoudig PDF uploaden",
-        "easyUploadDesc": "Upload je testrapporten eenvoudig in PDF-formaat met drag-and-drop.",
-        "securePrivate": "Veilig & privé",
-        "securePrivateDesc": "Je gegevens worden opgeslagen op beveiligde infrastructuur, alleen toegankelijk voor jou."
-      },
-      "howItWorks": "Hoe het werkt",
-      "howItWorksSteps": {
-        "step1Title": "Upload je PDF",
-        "step1Desc": "Sleep je bloedtestrapport naar het venster. We ondersteunen lab-PDF's in het Turks, Engels, Duits, Nederlands, Frans en Spaans.",
-        "step2Title": "AI extraheert resultaten",
-        "step2Desc": "Onze AI leest je PDF en haalt elke meting, waarde en referentiebereik eruit — zelfs uit gescande documenten.",
-        "step3Title": "Volg je trends",
-        "step3Desc": "Bekijk al je resultaten op één dashboard met trendgrafieken. Ontdek veranderingen in één oogopslag uit rapporten van elk land."
-      },
-      "socialProof": {
-        "languages": "Ondersteunde talen",
+      "benefits": {
+        "uploadPdf": "Upload elke lab-PDF",
+        "uploadPdfDesc": "Leest en interpreteert labresultaten in elke taal. Inclusief gescande documenten.",
+        "seeTrends": "Bekijk trends in de tijd",
+        "seeTrendsDesc": "Bekijk eenvoudig hoe de waarden die voor jou belangrijk zijn in de loop van de tijd veranderen.",
         "familyProfiles": "Familieprofielen",
-        "metricAliases": "Metriek-aliassen",
-        "description": "Volg bloedtests van Turkse, Engelse, Duitse, Franse en Spaanse laboratoria — alles in één dashboard."
+        "familyProfilesDesc": "Deel je profiel met je partner. Maak een profiel voor je vader, deel het met je broers en zussen."
+      },
+      "enabiz": {
+        "badge": "Voor Gebruikers in Turkije",
+        "title": "e-Nabız Integratie",
+        "description": "Importeer al je e-Nabız-labresultaten direct met onze Chrome-extensie — geen AI-verwerking, geen PDF's downloaden. Eén klik.",
+        "cta": "Chrome-extensie installeren",
+        "howItWorks": "Hoe werkt het?"
+      },
+      "track": {
+        "badge": "Trendopvolging",
+        "title": "Volg hoe je waarden veranderen in de tijd",
+        "description": "Elk rapport dat je uploadt wordt toegevoegd aan je grafieken. Zie veranderingen in één oogopslag.",
+        "imageAlt": "ViziAI-dashboard met bloedwaarde-trendgrafieken",
+        "features": {
+          "autoUpdate": "Grafieken worden automatisch bijgewerkt met elk rapport dat je uploadt",
+          "atAGlance": "Normaal, hoog of laag — begrijp het in één oogopslag met kleurcodering",
+          "familyTrends": "Volg de trends van elk familielid apart"
+        }
+      },
+      "security": {
+        "title": "Je gegevens zijn veilig",
+        "euServers": {
+          "title": "EU-servers",
+          "description": "Je gegevens worden opgeslagen in Frankfurt, Duitsland. AVG-conform."
+        },
+        "noPasswords": {
+          "title": "Geen wachtwoorden",
+          "description": "Alleen inloggen met Google. Geen wachtwoorden in ons systeem."
+        },
+        "encrypted": {
+          "title": "Versleutelde communicatie",
+          "description": "Alle gegevens worden versleuteld tijdens overdracht (HTTPS)."
+        },
+        "rightToDelete": {
+          "title": "Recht op verwijdering",
+          "description": "Verwijder al je gegevens wanneer je wilt."
+        }
+      },
+      "trust": {
+        "encrypted": "Versleuteld",
+        "private": "Privé",
+        "free": "Gratis"
       },
       "faq": {
         "title": "Veelgestelde vragen"
       },
-      "enabiz": {
-        "badge": "Chrome-extensie",
-        "title": "e-Nabız Integratie",
-        "description": "Voor e-Nabız-gebruikers in Turkije: importeer je eerdere labresultaten met één klik via onze Chrome-extensie. Geen PDF's downloaden nodig.",
-        "cta": "Chrome-extensie installeren",
-        "howItWorks": "Hoe werkt het?"
+      "finalCta": {
+        "title": "Begin vandaag met het volgen van je gezondheid",
+        "subtitle": "Voor altijd gratis. Geen creditcard nodig."
       }
     },
     "login": {
