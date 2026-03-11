@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import Link from "next/link";
 import {
   Card,
   CardContent,
@@ -14,13 +13,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn, friendlyMetricName } from "@/lib/utils";
-import {
-  ArrowLeft,
-  FileText,
-  Calendar,
-  FlaskConical,
-  ExternalLink,
-} from "lucide-react";
+import { ArrowLeft, FileText, Calendar, FlaskConical } from "lucide-react";
+import { ReportReviewLayout } from "@/components/report-review-layout";
 
 interface ReportMetric {
   id: string;
@@ -157,7 +151,12 @@ export default function ReportDetailPage() {
   ).length;
 
   return (
-    <main className="max-w-4xl mx-auto px-4 py-8 space-y-6">
+    <main
+      className={cn(
+        "mx-auto px-4 py-8 space-y-6",
+        report.blobUrl ? "px-6" : "max-w-4xl",
+      )}
+    >
       {/* Header */}
       <div className="flex items-center gap-3">
         <Button
@@ -178,10 +177,7 @@ export default function ReportDetailPage() {
       {/* Summary cards */}
       <section
         aria-label="Report summary"
-        className={cn(
-          "grid grid-cols-1 gap-4",
-          report.blobUrl ? "sm:grid-cols-3" : "sm:grid-cols-2",
-        )}
+        className="grid grid-cols-1 sm:grid-cols-2 gap-4"
       >
         <Card className="py-4">
           <CardContent className="flex items-center gap-3">
@@ -216,168 +212,161 @@ export default function ReportDetailPage() {
             </div>
           </CardContent>
         </Card>
-
-        {report.blobUrl && (
-          <Card className="py-4">
-            <CardContent className="flex items-center gap-3">
-              <div className="rounded-lg bg-primary/10 p-2">
-                <FileText className="size-5 text-primary" aria-hidden="true" />
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Original PDF</p>
-                <Link
-                  href={report.blobUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm font-medium text-primary hover:underline inline-flex items-center gap-1"
-                >
-                  View PDF
-                  <span className="sr-only">(opens in new tab)</span>
-                  <ExternalLink className="size-3" aria-hidden="true" />
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
-        )}
       </section>
 
-      {/* Metrics table */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Extracted Metrics</CardTitle>
-          <CardDescription>
-            {normalCount} normal, {outOfRangeCount} out of range
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {metrics.length === 0 ? (
-            <div className="flex flex-col items-center gap-3 py-8">
-              <FlaskConical
-                className="size-10 text-muted-foreground"
-                aria-hidden="true"
-              />
-              <p className="text-sm text-muted-foreground">
-                No metrics found in this report.
-              </p>
-            </div>
-          ) : (
-            <>
-              {/* Desktop table */}
-              <div className="hidden sm:block overflow-x-auto">
-                <table className="w-full text-sm" aria-label="Report metrics">
-                  <thead>
-                    <tr className="border-b text-left text-muted-foreground">
-                      <th scope="col" className="pb-3 font-medium">
-                        Metric
-                      </th>
-                      <th scope="col" className="pb-3 font-medium text-right">
-                        Value
-                      </th>
-                      <th scope="col" className="pb-3 font-medium">
-                        Unit
-                      </th>
-                      <th scope="col" className="pb-3 font-medium text-right">
-                        Ref. Range
-                      </th>
-                      <th scope="col" className="pb-3 font-medium text-center">
-                        Status
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {metrics.map((m) => (
-                      <tr
-                        key={m.id}
-                        className="border-b last:border-0 hover:bg-muted/50 transition-colors"
-                      >
-                        <td className="py-3 font-medium">
+      {/* PDF + Metrics layout */}
+      <ReportReviewLayout pdfUrl={report.blobUrl}>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Extracted Metrics</CardTitle>
+            <CardDescription>
+              {normalCount} normal, {outOfRangeCount} out of range
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {metrics.length === 0 ? (
+              <div className="flex flex-col items-center gap-3 py-8">
+                <FlaskConical
+                  className="size-10 text-muted-foreground"
+                  aria-hidden="true"
+                />
+                <p className="text-sm text-muted-foreground">
+                  No metrics found in this report.
+                </p>
+              </div>
+            ) : (
+              <>
+                {/* Desktop table — hidden when PDF sidebar narrows the column */}
+                <div
+                  className={cn(
+                    "overflow-x-auto",
+                    report.blobUrl ? "hidden" : "hidden sm:block",
+                  )}
+                >
+                  <table className="w-full text-sm" aria-label="Report metrics">
+                    <thead>
+                      <tr className="border-b text-left text-muted-foreground">
+                        <th scope="col" className="pb-3 font-medium">
+                          Metric
+                        </th>
+                        <th scope="col" className="pb-3 font-medium text-right">
+                          Value
+                        </th>
+                        <th scope="col" className="pb-3 font-medium">
+                          Unit
+                        </th>
+                        <th scope="col" className="pb-3 font-medium text-right">
+                          Ref. Range
+                        </th>
+                        <th
+                          scope="col"
+                          className="pb-3 font-medium text-center"
+                        >
+                          Status
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {metrics.map((m) => (
+                        <tr
+                          key={m.id}
+                          className="border-b last:border-0 hover:bg-muted/50 transition-colors"
+                        >
+                          <td className="py-3 font-medium">
+                            {friendlyMetricName(m.name)}
+                          </td>
+                          <td
+                            className={cn(
+                              "py-3 text-right tabular-nums font-semibold",
+                              FLAG_STYLES[m.flag ?? ""]?.color ??
+                                "text-muted-foreground",
+                            )}
+                          >
+                            {m.value}
+                          </td>
+                          <td className="py-3 text-muted-foreground">
+                            {m.unit || "—"}
+                          </td>
+                          <td className="py-3 text-right text-muted-foreground tabular-nums">
+                            {m.refLow != null || m.refHigh != null
+                              ? `${m.refLow ?? "—"} – ${m.refHigh ?? "—"}`
+                              : "—"}
+                          </td>
+                          <td className="py-3 text-center">
+                            {m.flag ? (
+                              <Badge
+                                variant="outline"
+                                className={FLAG_STYLES[m.flag]?.badge}
+                              >
+                                {FLAG_STYLES[m.flag]?.label}
+                              </Badge>
+                            ) : null}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Card view — always visible when PDF sidebar is present, otherwise mobile only */}
+                <ul
+                  className={cn("space-y-3", !report.blobUrl && "sm:hidden")}
+                  aria-label="Report metrics"
+                >
+                  {metrics.map((m) => (
+                    <li
+                      key={m.id}
+                      className={cn(
+                        "rounded-lg border p-3 space-y-1",
+                        m.flag === "H" && "border-l-4 border-l-status-critical",
+                        m.flag === "L" && "border-l-4 border-l-status-warning",
+                        m.flag === "N" && "border-l-4 border-l-status-normal",
+                      )}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="font-medium text-sm">
                           {friendlyMetricName(m.name)}
-                        </td>
-                        <td
+                        </span>
+                        {m.flag && (
+                          <Badge
+                            variant="outline"
+                            className={cn(
+                              "text-xs",
+                              FLAG_STYLES[m.flag]?.badge,
+                            )}
+                          >
+                            {FLAG_STYLES[m.flag]?.label}
+                          </Badge>
+                        )}
+                      </div>
+                      <div className="flex items-baseline gap-2">
+                        <span
                           className={cn(
-                            "py-3 text-right tabular-nums font-semibold",
-                            FLAG_STYLES[m.flag ?? ""]?.color ??
-                              "text-muted-foreground",
+                            "text-lg font-semibold tabular-nums",
+                            m.flag && FLAG_STYLES[m.flag]
+                              ? FLAG_STYLES[m.flag].color
+                              : "text-muted-foreground",
                           )}
                         >
                           {m.value}
-                        </td>
-                        <td className="py-3 text-muted-foreground">
-                          {m.unit || "—"}
-                        </td>
-                        <td className="py-3 text-right text-muted-foreground tabular-nums">
-                          {m.refLow != null || m.refHigh != null
-                            ? `${m.refLow ?? "—"} – ${m.refHigh ?? "—"}`
-                            : "—"}
-                        </td>
-                        <td className="py-3 text-center">
-                          {m.flag ? (
-                            <Badge
-                              variant="outline"
-                              className={FLAG_STYLES[m.flag]?.badge}
-                            >
-                              {FLAG_STYLES[m.flag]?.label}
-                            </Badge>
-                          ) : null}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              {/* Mobile cards */}
-              <ul className="sm:hidden space-y-3" aria-label="Report metrics">
-                {metrics.map((m) => (
-                  <li
-                    key={m.id}
-                    className={cn(
-                      "rounded-lg border p-3 space-y-1",
-                      m.flag === "H" && "border-l-4 border-l-status-critical",
-                      m.flag === "L" && "border-l-4 border-l-status-warning",
-                      m.flag === "N" && "border-l-4 border-l-status-normal",
-                    )}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="font-medium text-sm">
-                        {friendlyMetricName(m.name)}
-                      </span>
-                      {m.flag && (
-                        <Badge
-                          variant="outline"
-                          className={cn("text-xs", FLAG_STYLES[m.flag]?.badge)}
-                        >
-                          {FLAG_STYLES[m.flag]?.label}
-                        </Badge>
+                        </span>
+                        <span className="text-sm text-muted-foreground">
+                          {m.unit || ""}
+                        </span>
+                      </div>
+                      {(m.refLow != null || m.refHigh != null) && (
+                        <p className="text-xs text-muted-foreground">
+                          Ref: {m.refLow ?? "—"} – {m.refHigh ?? "—"}
+                        </p>
                       )}
-                    </div>
-                    <div className="flex items-baseline gap-2">
-                      <span
-                        className={cn(
-                          "text-lg font-semibold tabular-nums",
-                          m.flag && FLAG_STYLES[m.flag]
-                            ? FLAG_STYLES[m.flag].color
-                            : "text-muted-foreground",
-                        )}
-                      >
-                        {m.value}
-                      </span>
-                      <span className="text-sm text-muted-foreground">
-                        {m.unit || ""}
-                      </span>
-                    </div>
-                    {(m.refLow != null || m.refHigh != null) && (
-                      <p className="text-xs text-muted-foreground">
-                        Ref: {m.refLow ?? "—"} – {m.refHigh ?? "—"}
-                      </p>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
-        </CardContent>
-      </Card>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </CardContent>
+        </Card>
+      </ReportReviewLayout>
     </main>
   );
 }

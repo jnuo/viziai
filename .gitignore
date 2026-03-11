@@ -44,3 +44,10 @@ token_*.json
 .vercel
 .env.prod
 test-results/
+
+# Claude Code
+.claude/
+
+# Ralph temp files
+ralph/.iter_output.tmp
+ralph/ralph.log

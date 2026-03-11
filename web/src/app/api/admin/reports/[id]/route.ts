@@ -49,10 +49,10 @@ export async function GET(
 
     const [metrics, review] = await Promise.all([
       sql`
-        SELECT id, name, value, unit, ref_low, ref_high, flag
+        SELECT id, name, value, unit, ref_low, ref_high, flag, metric_definition_id
         FROM metrics
         WHERE report_id = ${id}
-        ORDER BY name ASC
+        ORDER BY sort_order ASC NULLS LAST, name ASC
       `,
       sql`
         SELECT id, status, notes, reviewer_user_id, reviewed_at, created_at
@@ -80,6 +80,7 @@ export async function GET(
         refLow: m.ref_low != null ? Number(m.ref_low) : null,
         refHigh: m.ref_high != null ? Number(m.ref_high) : null,
         flag: m.flag,
+        metricDefinitionId: m.metric_definition_id || null,
       })),
       review:
         review.length > 0

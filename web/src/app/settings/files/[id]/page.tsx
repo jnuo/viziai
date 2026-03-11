@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { formatDateTR } from "@/lib/date";
 import { useTimezone } from "@/components/preference-sync";
 import { checkOutOfRange } from "@/lib/metrics";
+import { ReportReviewLayout } from "@/components/report-review-layout";
 
 const EMPTY_FORM = { value: "", unit: "", ref_low: "", ref_high: "" };
 
@@ -32,6 +33,7 @@ interface FileData {
   file_name: string;
   created_at: string;
   sample_date: string | null;
+  blob_url: string | null;
   profile_id: string;
 }
 
@@ -194,8 +196,10 @@ export default function FileDetailPage(): React.ReactElement {
     );
   }
 
+  const hasPdf = !!file.blob_url;
+
   return (
-    <div className="space-y-6">
+    <div className={cn("space-y-6", !hasPdf && "max-w-4xl mx-auto")}>
       <div className="flex items-center gap-2">
         <Button variant="ghost" size="sm" onClick={() => router.back()}>
           <ChevronLeft aria-hidden="true" className="h-4 w-4 mr-1" />
@@ -203,376 +207,383 @@ export default function FileDetailPage(): React.ReactElement {
         </Button>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <FileText aria-hidden="true" className="h-5 w-5 shrink-0" />
-            <span className="truncate">{file.file_name}</span>
-          </CardTitle>
-          {file.sample_date && (
-            <p className="text-sm text-muted-foreground">
-              {t("testDateLabel", {
-                date: formatDateTR(file.sample_date, locale, timezone),
-              })}
-            </p>
-          )}
-        </CardHeader>
-        <CardContent>
-          {metrics.length === 0 ? (
-            <p className="text-sm text-muted-foreground py-4">
-              {t("noMetricsFound")}
-            </p>
-          ) : (
-            <>
-              {/* Desktop table view */}
-              <div className="hidden md:block border rounded-lg overflow-hidden">
-                <div className="max-h-[600px] overflow-y-auto">
-                  <table className="w-full text-sm">
-                    <thead className="bg-muted sticky top-0">
-                      <tr>
-                        <th className="text-left p-3 font-medium">
-                          {t("testName")}
-                        </th>
-                        <th className="text-right p-3 font-medium">
-                          {tu("value")}
-                        </th>
-                        <th className="text-right p-3 font-medium">
-                          {tu("unit")}
-                        </th>
-                        <th className="text-right p-3 font-medium">
-                          {t("reference")}
-                        </th>
-                        <th className="w-24">
-                          <span className="sr-only">{tc("edit")}</span>
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {metrics.map((metric) => {
-                        const isOutOfRange = checkOutOfRange(
-                          metric.value,
-                          metric.ref_low,
-                          metric.ref_high,
-                        );
-                        return (
-                          <tr
-                            key={metric.id}
-                            className={cn(
-                              "border-t hover:bg-muted/50",
-                              isOutOfRange &&
-                                "bg-status-critical/10 hover:bg-status-critical/15",
-                            )}
+      <ReportReviewLayout pdfUrl={file.blob_url}>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <FileText aria-hidden="true" className="h-5 w-5 shrink-0" />
+              <span className="truncate">{file.file_name}</span>
+            </CardTitle>
+            {file.sample_date && (
+              <p className="text-sm text-muted-foreground">
+                {t("testDateLabel", {
+                  date: formatDateTR(file.sample_date, locale, timezone),
+                })}
+              </p>
+            )}
+          </CardHeader>
+          <CardContent>
+            {metrics.length === 0 ? (
+              <p className="text-sm text-muted-foreground py-4">
+                {t("noMetricsFound")}
+              </p>
+            ) : (
+              <>
+                {/* Desktop table view — hidden when PDF sidebar narrows the column */}
+                <div
+                  className={cn(
+                    "border rounded-lg overflow-hidden",
+                    hasPdf ? "hidden" : "hidden md:block",
+                  )}
+                >
+                  <div className="max-h-[600px] overflow-y-auto">
+                    <table className="w-full text-sm">
+                      <thead className="bg-muted sticky top-0">
+                        <tr>
+                          <th className="text-left p-3 font-medium">
+                            {t("testName")}
+                          </th>
+                          <th className="text-right p-3 font-medium">
+                            {tu("value")}
+                          </th>
+                          <th className="text-right p-3 font-medium">
+                            {tu("unit")}
+                          </th>
+                          <th className="text-right p-3 font-medium">
+                            {t("reference")}
+                          </th>
+                          <th className="w-24">
+                            <span className="sr-only">{tc("edit")}</span>
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {metrics.map((metric) => {
+                          const isOutOfRange = checkOutOfRange(
+                            metric.value,
+                            metric.ref_low,
+                            metric.ref_high,
+                          );
+                          return (
+                            <tr
+                              key={metric.id}
+                              className={cn(
+                                "border-t hover:bg-muted/50",
+                                isOutOfRange &&
+                                  "bg-status-critical/10 hover:bg-status-critical/15",
+                              )}
+                            >
+                              {editingId === metric.id ? (
+                                <>
+                                  <td className="p-3 font-medium">
+                                    {metric.name}
+                                  </td>
+                                  <td className="p-2">
+                                    <Input
+                                      type="number"
+                                      value={editForm.value}
+                                      onChange={(e) =>
+                                        setEditForm((prev) => ({
+                                          ...prev,
+                                          value: e.target.value,
+                                        }))
+                                      }
+                                      className="h-8 text-sm text-right w-24"
+                                      aria-label={tu("value")}
+                                    />
+                                  </td>
+                                  <td className="p-2">
+                                    <Input
+                                      value={editForm.unit}
+                                      onChange={(e) =>
+                                        setEditForm((prev) => ({
+                                          ...prev,
+                                          unit: e.target.value,
+                                        }))
+                                      }
+                                      className="h-8 text-sm text-right w-20"
+                                      placeholder="-"
+                                      aria-label={tu("unit")}
+                                    />
+                                  </td>
+                                  <td className="p-2">
+                                    <div className="flex items-center gap-1 justify-end">
+                                      <Input
+                                        type="number"
+                                        value={editForm.ref_low}
+                                        onChange={(e) =>
+                                          setEditForm((prev) => ({
+                                            ...prev,
+                                            ref_low: e.target.value,
+                                          }))
+                                        }
+                                        className="h-8 text-sm text-right w-16"
+                                        placeholder="Min"
+                                        aria-label={tu("refMinAria")}
+                                      />
+                                      <span className="text-muted-foreground">
+                                        -
+                                      </span>
+                                      <Input
+                                        type="number"
+                                        value={editForm.ref_high}
+                                        onChange={(e) =>
+                                          setEditForm((prev) => ({
+                                            ...prev,
+                                            ref_high: e.target.value,
+                                          }))
+                                        }
+                                        className="h-8 text-sm text-right w-16"
+                                        placeholder="Max"
+                                        aria-label={tu("refMaxAria")}
+                                      />
+                                    </div>
+                                  </td>
+                                  <td className="p-2">
+                                    <div className="flex items-center gap-1 justify-end">
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-8 w-8"
+                                        onClick={() => saveMetric(metric.id)}
+                                        disabled={saving}
+                                        aria-label={tc("save")}
+                                      >
+                                        {saving ? (
+                                          <Loader2 className="h-4 w-4 animate-spin" />
+                                        ) : (
+                                          <Check className="h-4 w-4 text-status-normal" />
+                                        )}
+                                      </Button>
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-8 w-8"
+                                        onClick={cancelEditing}
+                                        aria-label={tc("cancel")}
+                                      >
+                                        <X className="h-4 w-4" />
+                                      </Button>
+                                    </div>
+                                  </td>
+                                </>
+                              ) : (
+                                <>
+                                  <td className="p-3 font-medium">
+                                    {metric.name}
+                                  </td>
+                                  <td
+                                    className={cn(
+                                      "p-3 text-right tabular-nums",
+                                      isOutOfRange &&
+                                        "text-status-critical font-medium",
+                                    )}
+                                  >
+                                    {metric.value}
+                                  </td>
+                                  <td className="p-3 text-right text-muted-foreground">
+                                    {metric.unit || "-"}
+                                  </td>
+                                  <td className="p-3 text-right text-muted-foreground">
+                                    {formatRefRange(
+                                      metric.ref_low,
+                                      metric.ref_high,
+                                    )}
+                                  </td>
+                                  <td className="p-3 text-right">
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => startEditing(metric)}
+                                      className="gap-1"
+                                    >
+                                      <Pencil
+                                        aria-hidden="true"
+                                        className="h-3 w-3"
+                                      />
+                                      {tc("edit")}
+                                    </Button>
+                                  </td>
+                                </>
+                              )}
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* Card view — always visible when PDF sidebar is present, otherwise mobile only */}
+                <div className={cn("space-y-2", !hasPdf && "md:hidden")}>
+                  {metrics.map((metric) => {
+                    const isOutOfRange = checkOutOfRange(
+                      metric.value,
+                      metric.ref_low,
+                      metric.ref_high,
+                    );
+                    const isEditing = editingId === metric.id;
+
+                    return (
+                      <div
+                        key={metric.id}
+                        className={cn(
+                          "border rounded-lg p-3",
+                          isOutOfRange &&
+                            "bg-status-critical/10 border-status-critical/20",
+                        )}
+                      >
+                        {isEditing ? (
+                          <div className="space-y-3">
+                            <p className="font-medium text-sm">{metric.name}</p>
+                            <div className="grid grid-cols-2 gap-2">
+                              <div>
+                                <label className="text-xs text-muted-foreground mb-1 block">
+                                  {tu("value")}
+                                </label>
+                                <Input
+                                  type="number"
+                                  value={editForm.value}
+                                  onChange={(e) =>
+                                    setEditForm((prev) => ({
+                                      ...prev,
+                                      value: e.target.value,
+                                    }))
+                                  }
+                                  className="h-8 text-sm"
+                                  aria-label={tu("value")}
+                                />
+                              </div>
+                              <div>
+                                <label className="text-xs text-muted-foreground mb-1 block">
+                                  {tu("unit")}
+                                </label>
+                                <Input
+                                  value={editForm.unit}
+                                  onChange={(e) =>
+                                    setEditForm((prev) => ({
+                                      ...prev,
+                                      unit: e.target.value,
+                                    }))
+                                  }
+                                  className="h-8 text-sm"
+                                  placeholder="-"
+                                  aria-label={tu("unit")}
+                                />
+                              </div>
+                              <div>
+                                <label className="text-xs text-muted-foreground mb-1 block">
+                                  {t("refMinLabel")}
+                                </label>
+                                <Input
+                                  type="number"
+                                  value={editForm.ref_low}
+                                  onChange={(e) =>
+                                    setEditForm((prev) => ({
+                                      ...prev,
+                                      ref_low: e.target.value,
+                                    }))
+                                  }
+                                  className="h-8 text-sm"
+                                  placeholder="-"
+                                  aria-label={tu("refMinAria")}
+                                />
+                              </div>
+                              <div>
+                                <label className="text-xs text-muted-foreground mb-1 block">
+                                  {t("refMaxLabel")}
+                                </label>
+                                <Input
+                                  type="number"
+                                  value={editForm.ref_high}
+                                  onChange={(e) =>
+                                    setEditForm((prev) => ({
+                                      ...prev,
+                                      ref_high: e.target.value,
+                                    }))
+                                  }
+                                  className="h-8 text-sm"
+                                  placeholder="-"
+                                  aria-label={tu("refMaxAria")}
+                                />
+                              </div>
+                            </div>
+                            <div className="flex gap-2">
+                              <Button
+                                size="sm"
+                                onClick={() => saveMetric(metric.id)}
+                                disabled={saving}
+                                className="flex-1"
+                              >
+                                {saving ? (
+                                  <Loader2 className="h-4 w-4 animate-spin mr-1.5" />
+                                ) : (
+                                  <Check
+                                    aria-hidden="true"
+                                    className="h-4 w-4 mr-1.5"
+                                  />
+                                )}
+                                {tc("save")}
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={cancelEditing}
+                              >
+                                {tc("cancel")}
+                              </Button>
+                            </div>
+                          </div>
+                        ) : (
+                          <button
+                            type="button"
+                            className="w-full text-left"
+                            onClick={() => startEditing(metric)}
                           >
-                            {editingId === metric.id ? (
-                              <>
-                                <td className="p-3 font-medium">
-                                  {metric.name}
-                                </td>
-                                <td className="p-2">
-                                  <Input
-                                    type="number"
-                                    value={editForm.value}
-                                    onChange={(e) =>
-                                      setEditForm((prev) => ({
-                                        ...prev,
-                                        value: e.target.value,
-                                      }))
-                                    }
-                                    className="h-8 text-sm text-right w-24"
-                                    aria-label={tu("value")}
-                                  />
-                                </td>
-                                <td className="p-2">
-                                  <Input
-                                    value={editForm.unit}
-                                    onChange={(e) =>
-                                      setEditForm((prev) => ({
-                                        ...prev,
-                                        unit: e.target.value,
-                                      }))
-                                    }
-                                    className="h-8 text-sm text-right w-20"
-                                    placeholder="-"
-                                    aria-label={tu("unit")}
-                                  />
-                                </td>
-                                <td className="p-2">
-                                  <div className="flex items-center gap-1 justify-end">
-                                    <Input
-                                      type="number"
-                                      value={editForm.ref_low}
-                                      onChange={(e) =>
-                                        setEditForm((prev) => ({
-                                          ...prev,
-                                          ref_low: e.target.value,
-                                        }))
-                                      }
-                                      className="h-8 text-sm text-right w-16"
-                                      placeholder="Min"
-                                      aria-label={tu("refMinAria")}
-                                    />
-                                    <span className="text-muted-foreground">
-                                      -
-                                    </span>
-                                    <Input
-                                      type="number"
-                                      value={editForm.ref_high}
-                                      onChange={(e) =>
-                                        setEditForm((prev) => ({
-                                          ...prev,
-                                          ref_high: e.target.value,
-                                        }))
-                                      }
-                                      className="h-8 text-sm text-right w-16"
-                                      placeholder="Max"
-                                      aria-label={tu("refMaxAria")}
-                                    />
-                                  </div>
-                                </td>
-                                <td className="p-2">
-                                  <div className="flex items-center gap-1 justify-end">
-                                    <Button
-                                      variant="ghost"
-                                      size="icon"
-                                      className="h-8 w-8"
-                                      onClick={() => saveMetric(metric.id)}
-                                      disabled={saving}
-                                      aria-label={tc("save")}
-                                    >
-                                      {saving ? (
-                                        <Loader2 className="h-4 w-4 animate-spin" />
-                                      ) : (
-                                        <Check className="h-4 w-4 text-status-normal" />
-                                      )}
-                                    </Button>
-                                    <Button
-                                      variant="ghost"
-                                      size="icon"
-                                      className="h-8 w-8"
-                                      onClick={cancelEditing}
-                                      aria-label={tc("cancel")}
-                                    >
-                                      <X className="h-4 w-4" />
-                                    </Button>
-                                  </div>
-                                </td>
-                              </>
-                            ) : (
-                              <>
-                                <td className="p-3 font-medium">
-                                  {metric.name}
-                                </td>
-                                <td
-                                  className={cn(
-                                    "p-3 text-right tabular-nums",
-                                    isOutOfRange &&
-                                      "text-status-critical font-medium",
-                                  )}
-                                >
-                                  {metric.value}
-                                </td>
-                                <td className="p-3 text-right text-muted-foreground">
-                                  {metric.unit || "-"}
-                                </td>
-                                <td className="p-3 text-right text-muted-foreground">
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="font-medium text-sm">
+                                {metric.name}
+                              </span>
+                              <Pencil
+                                aria-hidden="true"
+                                className="h-3 w-3 text-muted-foreground shrink-0"
+                              />
+                            </div>
+                            <div className="flex items-baseline gap-2 mt-1">
+                              <span
+                                className={cn(
+                                  "text-lg tabular-nums",
+                                  isOutOfRange &&
+                                    "text-status-critical font-medium",
+                                )}
+                              >
+                                {metric.value}
+                              </span>
+                              <span className="text-xs text-muted-foreground">
+                                {metric.unit || ""}
+                              </span>
+                              {(metric.ref_low != null ||
+                                metric.ref_high != null) && (
+                                <span className="text-xs text-muted-foreground ml-auto">
+                                  {t("refPrefix")}{" "}
                                   {formatRefRange(
                                     metric.ref_low,
                                     metric.ref_high,
                                   )}
-                                </td>
-                                <td className="p-3 text-right">
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => startEditing(metric)}
-                                    className="gap-1"
-                                  >
-                                    <Pencil
-                                      aria-hidden="true"
-                                      className="h-3 w-3"
-                                    />
-                                    {tc("edit")}
-                                  </Button>
-                                </td>
-                              </>
-                            )}
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
+                                </span>
+                              )}
+                            </div>
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
-              </div>
-
-              {/* Mobile card view */}
-              <div className="md:hidden space-y-2">
-                {metrics.map((metric) => {
-                  const isOutOfRange = checkOutOfRange(
-                    metric.value,
-                    metric.ref_low,
-                    metric.ref_high,
-                  );
-                  const isEditing = editingId === metric.id;
-
-                  return (
-                    <div
-                      key={metric.id}
-                      className={cn(
-                        "border rounded-lg p-3",
-                        isOutOfRange &&
-                          "bg-status-critical/10 border-status-critical/20",
-                      )}
-                    >
-                      {isEditing ? (
-                        <div className="space-y-3">
-                          <p className="font-medium text-sm">{metric.name}</p>
-                          <div className="grid grid-cols-2 gap-2">
-                            <div>
-                              <label className="text-xs text-muted-foreground mb-1 block">
-                                {tu("value")}
-                              </label>
-                              <Input
-                                type="number"
-                                value={editForm.value}
-                                onChange={(e) =>
-                                  setEditForm((prev) => ({
-                                    ...prev,
-                                    value: e.target.value,
-                                  }))
-                                }
-                                className="h-8 text-sm"
-                                aria-label={tu("value")}
-                              />
-                            </div>
-                            <div>
-                              <label className="text-xs text-muted-foreground mb-1 block">
-                                {tu("unit")}
-                              </label>
-                              <Input
-                                value={editForm.unit}
-                                onChange={(e) =>
-                                  setEditForm((prev) => ({
-                                    ...prev,
-                                    unit: e.target.value,
-                                  }))
-                                }
-                                className="h-8 text-sm"
-                                placeholder="-"
-                                aria-label={tu("unit")}
-                              />
-                            </div>
-                            <div>
-                              <label className="text-xs text-muted-foreground mb-1 block">
-                                {t("refMinLabel")}
-                              </label>
-                              <Input
-                                type="number"
-                                value={editForm.ref_low}
-                                onChange={(e) =>
-                                  setEditForm((prev) => ({
-                                    ...prev,
-                                    ref_low: e.target.value,
-                                  }))
-                                }
-                                className="h-8 text-sm"
-                                placeholder="-"
-                                aria-label={tu("refMinAria")}
-                              />
-                            </div>
-                            <div>
-                              <label className="text-xs text-muted-foreground mb-1 block">
-                                {t("refMaxLabel")}
-                              </label>
-                              <Input
-                                type="number"
-                                value={editForm.ref_high}
-                                onChange={(e) =>
-                                  setEditForm((prev) => ({
-                                    ...prev,
-                                    ref_high: e.target.value,
-                                  }))
-                                }
-                                className="h-8 text-sm"
-                                placeholder="-"
-                                aria-label={tu("refMaxAria")}
-                              />
-                            </div>
-                          </div>
-                          <div className="flex gap-2">
-                            <Button
-                              size="sm"
-                              onClick={() => saveMetric(metric.id)}
-                              disabled={saving}
-                              className="flex-1"
-                            >
-                              {saving ? (
-                                <Loader2 className="h-4 w-4 animate-spin mr-1.5" />
-                              ) : (
-                                <Check
-                                  aria-hidden="true"
-                                  className="h-4 w-4 mr-1.5"
-                                />
-                              )}
-                              {tc("save")}
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={cancelEditing}
-                            >
-                              {tc("cancel")}
-                            </Button>
-                          </div>
-                        </div>
-                      ) : (
-                        <button
-                          type="button"
-                          className="w-full text-left"
-                          onClick={() => startEditing(metric)}
-                        >
-                          <div className="flex items-center justify-between gap-2">
-                            <span className="font-medium text-sm">
-                              {metric.name}
-                            </span>
-                            <Pencil
-                              aria-hidden="true"
-                              className="h-3 w-3 text-muted-foreground shrink-0"
-                            />
-                          </div>
-                          <div className="flex items-baseline gap-2 mt-1">
-                            <span
-                              className={cn(
-                                "text-lg tabular-nums",
-                                isOutOfRange &&
-                                  "text-status-critical font-medium",
-                              )}
-                            >
-                              {metric.value}
-                            </span>
-                            <span className="text-xs text-muted-foreground">
-                              {metric.unit || ""}
-                            </span>
-                            {(metric.ref_low != null ||
-                              metric.ref_high != null) && (
-                              <span className="text-xs text-muted-foreground ml-auto">
-                                {t("refPrefix")}{" "}
-                                {formatRefRange(
-                                  metric.ref_low,
-                                  metric.ref_high,
-                                )}
-                              </span>
-                            )}
-                          </div>
-                        </button>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </>
-          )}
-        </CardContent>
-      </Card>
+              </>
+            )}
+          </CardContent>
+        </Card>
+      </ReportReviewLayout>
     </div>
   );
 }

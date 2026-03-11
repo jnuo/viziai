@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions, getDbUserId } from "@/lib/auth";
 import { sql } from "@/lib/db";
 import { reportError } from "@/lib/error-reporting";
-import { CANONICAL_METRIC_NAMES } from "@/lib/canonical-metrics";
+import { resolveMetricName, convertUnit } from "@/lib/metric-definitions";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -174,25 +174,53 @@ export async function POST(
     let insertedCount = 0;
     let updatedCount = 0;
 
-    for (const metric of body.metrics) {
+    // Resolve all metric names in parallel for efficiency
+    const resolutions = await Promise.all(
+      body.metrics.map(async (metric) => {
+        if (!isValidMetricValue(metric.value)) return null;
+        return resolveMetricName(metric.name);
+      }),
+    );
+
+    for (let i = 0; i < body.metrics.length; i++) {
+      const metric = body.metrics[i];
       if (!isValidMetricValue(metric.value)) {
         console.log(`[API] Skipping metric with invalid value: ${metric.name}`);
         continue;
       }
 
-      const flag = determineFlag(metric.value, metric.ref_low, metric.ref_high);
+      const resolution = resolutions[i];
+      let finalValue = metric.value;
+      let finalUnit = metric.unit || null;
+
+      // Auto-convert units if we have a definition
+      if (resolution && metric.unit) {
+        const conversion = await convertUnit(
+          resolution.definitionId,
+          metric.value,
+          metric.unit,
+        );
+        if (conversion.converted) {
+          finalValue = conversion.value;
+          finalUnit = conversion.unit;
+        }
+      }
+
+      const flag = determineFlag(finalValue, metric.ref_low, metric.ref_high);
 
       // Insert or update metric
       const result = await sql`
-        INSERT INTO metrics (report_id, name, value, unit, ref_low, ref_high, flag)
+        INSERT INTO metrics (report_id, name, value, unit, ref_low, ref_high, flag, metric_definition_id, sort_order)
         VALUES (
           ${reportId},
           ${metric.name},
-          ${metric.value},
-          ${metric.unit || null},
+          ${finalValue},
+          ${finalUnit},
           ${metric.ref_low ?? null},
           ${metric.ref_high ?? null},
-          ${flag}
+          ${flag},
+          ${resolution?.definitionId ?? null},
+          ${i}
         )
         ON CONFLICT (report_id, name) DO UPDATE
         SET
@@ -200,7 +228,9 @@ export async function POST(
           unit = COALESCE(EXCLUDED.unit, metrics.unit),
           ref_low = COALESCE(EXCLUDED.ref_low, metrics.ref_low),
           ref_high = COALESCE(EXCLUDED.ref_high, metrics.ref_high),
-          flag = EXCLUDED.flag
+          flag = EXCLUDED.flag,
+          metric_definition_id = COALESCE(EXCLUDED.metric_definition_id, metrics.metric_definition_id),
+          sort_order = EXCLUDED.sort_order
         RETURNING (xmax = 0) as is_insert
       `;
 
@@ -233,23 +263,18 @@ export async function POST(
 
     // Detect unmapped metrics (fire-and-forget — don't block confirm flow)
     try {
-      // Get all known aliases in one query
-      const aliasRows = await sql`SELECT alias FROM metric_aliases`;
-      const knownAliases = new Set(aliasRows.map((r) => r.alias));
-
-      for (const metric of body.metrics) {
+      for (let i = 0; i < body.metrics.length; i++) {
+        const metric = body.metrics[i];
         if (!isValidMetricValue(metric.value)) continue;
 
-        const isCanonical = CANONICAL_METRIC_NAMES.has(metric.name);
-        const isAlias = knownAliases.has(metric.name);
+        // Already resolved = not unmapped
+        if (resolutions[i]) continue;
 
-        if (!isCanonical && !isAlias) {
-          await sql`
-            INSERT INTO unmapped_metrics (metric_name, unit, ref_low, ref_high, report_id, profile_id, upload_id, status)
-            VALUES (${metric.name}, ${metric.unit || null}, ${metric.ref_low ?? null}, ${metric.ref_high ?? null}, ${reportId}, ${profileId}, ${uploadId}, 'pending')
-            ON CONFLICT (report_id, metric_name) DO NOTHING
-          `;
-        }
+        await sql`
+          INSERT INTO unmapped_metrics (metric_name, unit, ref_low, ref_high, report_id, profile_id, upload_id, status)
+          VALUES (${metric.name}, ${metric.unit || null}, ${metric.ref_low ?? null}, ${metric.ref_high ?? null}, ${reportId}, ${profileId}, ${uploadId}, 'pending')
+          ON CONFLICT (report_id, metric_name) DO NOTHING
+        `;
       }
     } catch (e) {
       reportError(e, { op: "upload.confirm.unmappedMetrics", uploadId });

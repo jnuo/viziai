@@ -62,31 +62,43 @@ export async function GET(
       );
     }
 
-    // Get metrics for this file through reports
-    const metrics = await sql`
-      SELECT
-        m.id,
-        m.name,
-        m.value,
-        m.unit,
-        m.ref_low,
-        m.ref_high,
-        m.flag,
-        r.sample_date,
-        r.id as report_id
-      FROM metrics m
-      JOIN reports r ON r.id = m.report_id
-      WHERE r.profile_id = ${file.profile_id}
-      AND r.file_name = ${file.file_name}
-      ORDER BY m.name ASC
+    // Get the report (with blob_url) and metrics for this file
+    const reports = await sql`
+      SELECT id, sample_date, blob_url
+      FROM reports
+      WHERE profile_id = ${file.profile_id}
+      AND file_name = ${file.file_name}
+      LIMIT 1
     `;
+
+    const report = reports[0] ?? null;
+
+    const metrics = report
+      ? await sql`
+          SELECT
+            m.id,
+            m.name,
+            m.value,
+            m.unit,
+            m.ref_low,
+            m.ref_high,
+            m.flag,
+            r.sample_date,
+            r.id as report_id
+          FROM metrics m
+          JOIN reports r ON r.id = m.report_id
+          WHERE m.report_id = ${report.id}
+          ORDER BY m.sort_order ASC NULLS LAST, m.name ASC
+        `
+      : [];
 
     return NextResponse.json({
       file: {
         id: file.id,
         file_name: file.file_name,
         created_at: file.created_at,
-        sample_date: metrics[0]?.sample_date ?? null,
+        sample_date: report?.sample_date ?? null,
+        blob_url: report?.blob_url ?? null,
         profile_id: file.profile_id,
       },
       metrics,

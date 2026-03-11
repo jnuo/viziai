@@ -68,7 +68,7 @@ export async function GET(
         flag
       FROM metrics
       WHERE report_id = ${id}
-      ORDER BY name ASC
+      ORDER BY sort_order ASC NULLS LAST, name ASC
     `;
 
     return NextResponse.json({

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { verifySignatureAppRouter } from "@upstash/qstash/nextjs";
 import { sql } from "@/lib/db";
-import { CANONICAL_METRIC_NAMES } from "@/lib/canonical-metrics";
+import { resolveMetricName } from "@/lib/metric-definitions";
 import { reportError } from "@/lib/error-reporting";
 
 export const runtime = "nodejs";
@@ -67,17 +67,10 @@ async function handler() {
       WHERE r.created_at >= NOW() - INTERVAL '90 days'
     `;
 
-    const aliases = await sql`SELECT alias FROM metric_aliases`;
-    const aliasSet = new Set(aliases.map((a) => a.alias.toLowerCase()));
-
     let covered = 0;
     for (const row of distinctNames) {
-      if (
-        CANONICAL_METRIC_NAMES.has(row.name) ||
-        aliasSet.has(row.name.toLowerCase())
-      ) {
-        covered++;
-      }
+      const resolved = await resolveMetricName(row.name);
+      if (resolved) covered++;
     }
 
     results.aliasCoverage = {

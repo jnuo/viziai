@@ -497,17 +497,19 @@ async function handler(
   }
 }
 
-// verifySignatureAppRouter wraps the handler and checks QStash signatures at request time.
-// In local dev (no signing keys), skip verification and call handler directly.
-const verified = verifySignatureAppRouter(handler);
+// Lazy-initialize QStash signature verification to avoid crashing at module load time in dev.
+let verified: ReturnType<typeof verifySignatureAppRouter> | null = null;
 
 export const POST = async (...args: Parameters<typeof handler>) => {
-  if (process.env.QSTASH_CURRENT_SIGNING_KEY) {
-    return verified(...args);
-  }
-  // Local dev without QStash keys — skip signature check
+  // Local dev — skip QStash signature verification even if keys are in .env.local
   if (process.env.NODE_ENV === "development") {
     return handler(...args);
+  }
+  if (process.env.QSTASH_CURRENT_SIGNING_KEY) {
+    if (!verified) {
+      verified = verifySignatureAppRouter(handler);
+    }
+    return verified(...args);
   }
   console.error(
     "[Worker] Production deploy missing QSTASH_CURRENT_SIGNING_KEY",

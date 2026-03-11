@@ -48,6 +48,7 @@ export async function GET(
         pu.status,
         pu.sample_date,
         pu.extracted_data,
+        pu.file_url,
         pu.error_message,
         pu.created_at,
         pu.updated_at,

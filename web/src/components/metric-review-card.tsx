@@ -24,8 +24,8 @@ export interface MetricCardLabels {
   deleteMetric: string;
   willBeAddedAs: string;
   willStayAs: string;
-  willConvertTo: string;
-  willKeepOriginal: string;
+  willConvertTo?: string;
+  willKeepOriginal?: string;
   yesDelete: string;
   cancel: string;
 }
@@ -35,7 +35,7 @@ interface MetricReviewCardProps {
   index: number;
   labels: MetricCardLabels;
   renameInfo: RenameInfo | null;
-  conversionInfo: ConversionInfo | null;
+  conversionInfo?: ConversionInfo | null;
   onMetricChange: (
     index: number,
     field: MetricField,
@@ -43,7 +43,7 @@ interface MetricReviewCardProps {
   ) => void;
   onRemove: (index: number) => void;
   onAliasToggle: (index: number, checked: boolean, info: RenameInfo) => void;
-  onConversionToggle: (
+  onConversionToggle?: (
     index: number,
     checked: boolean,
     info: ConversionInfo,
@@ -169,7 +169,7 @@ export const MetricReviewCard = React.memo(function MetricReviewCard({
       )}
 
       {/* Conversion suggestion — always visible when present */}
-      {conversionInfo && (
+      {conversionInfo && onConversionToggle && (
         <div className={cn("px-3 pb-3", expanded && "pb-0")}>
           <div className="flex items-center gap-2 text-xs bg-muted/50 rounded-md px-2.5 py-2">
             <span className="text-muted-foreground flex-1 min-w-0">

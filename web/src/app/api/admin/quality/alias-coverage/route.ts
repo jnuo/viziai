@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth";
 import { sql } from "@/lib/db";
-import { CANONICAL_METRIC_NAMES } from "@/lib/canonical-metrics";
+import { resolveMetricName } from "@/lib/metric-definitions";
 import { reportError } from "@/lib/error-reporting";
 
 export const dynamic = "force-dynamic";
@@ -27,12 +27,6 @@ export async function GET() {
       ORDER BY occurrence_count DESC
     `;
 
-    // Get all known aliases
-    const aliases = await sql`
-      SELECT alias, canonical_name FROM metric_aliases
-    `;
-    const aliasMap = new Set(aliases.map((a) => a.alias.toLowerCase()));
-
     // Classify each metric name
     const covered: { name: string; count: number; source: string }[] = [];
     const unmapped: { name: string; count: number }[] = [];
@@ -40,11 +34,10 @@ export async function GET() {
     for (const row of distinctMetrics) {
       const name = row.name;
       const count = Number(row.occurrence_count);
+      const resolved = await resolveMetricName(name);
 
-      if (CANONICAL_METRIC_NAMES.has(name)) {
-        covered.push({ name, count, source: "canonical" });
-      } else if (aliasMap.has(name.toLowerCase())) {
-        covered.push({ name, count, source: "alias" });
+      if (resolved) {
+        covered.push({ name, count, source: "definition" });
       } else {
         unmapped.push({ name, count });
       }
@@ -69,9 +62,7 @@ export async function GET() {
 
     return NextResponse.json({
       totalMetricNames: totalNames,
-      coveredByCanonical: covered.filter((c) => c.source === "canonical")
-        .length,
-      coveredByAlias: covered.filter((c) => c.source === "alias").length,
+      coveredByDefinition: coveredCount,
       unmapped: unmappedCount,
       coveragePercent: Math.round(coveragePercent * 10) / 10,
       occurrenceCoverage: Math.round(occurrenceCoverage * 10) / 10,

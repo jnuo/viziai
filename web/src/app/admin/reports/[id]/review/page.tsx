@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { ArrowLeft, Check, FileText, Pencil, Save, X } from "lucide-react";
+import { ReportReviewLayout } from "@/components/report-review-layout";
 
 /* ---------- Types ---------- */
 
@@ -26,6 +27,7 @@ interface Metric {
   refLow: number | null;
   refHigh: number | null;
   flag: string | null;
+  metricDefinitionId: string | null;
 }
 
 interface ReportData {
@@ -157,9 +159,8 @@ export default function ReviewWorkbenchPage() {
       if (newRefLow !== m.refLow) c.refLow = newRefLow;
       if (newRefHigh !== m.refHigh) c.refHigh = newRefHigh;
 
-      // Only include if there are actual changes
-      const { metricId: _, ...fields } = c;
-      if (Object.keys(fields).length > 0) corrections.push(c);
+      // Only include if there are actual changes beyond metricId
+      if (Object.keys(c).length > 1) corrections.push(c);
     }
 
     return corrections;
@@ -238,7 +239,12 @@ export default function ReviewWorkbenchPage() {
   const { report, metrics, review } = data;
 
   return (
-    <main className="max-w-7xl mx-auto px-6 py-8 space-y-6">
+    <main
+      className={cn(
+        "mx-auto px-6 py-8 space-y-6",
+        !report.blobUrl && "max-w-4xl",
+      )}
+    >
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -273,35 +279,8 @@ export default function ReviewWorkbenchPage() {
         )}
       </div>
 
-      {/* Two-column layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Left: PDF viewer */}
-        <Card className="overflow-hidden">
-          <CardHeader>
-            <CardTitle className="text-lg">Original PDF</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {report.blobUrl ? (
-              <iframe
-                src={report.blobUrl}
-                className="w-full h-[600px] rounded-lg border"
-                title="Original PDF document"
-              />
-            ) : (
-              <div className="flex flex-col items-center gap-3 py-16">
-                <FileText
-                  className="size-12 text-muted-foreground"
-                  aria-hidden="true"
-                />
-                <p className="text-sm text-muted-foreground">
-                  No PDF available for this report.
-                </p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Right: Editable metrics table */}
+      {/* PDF + metrics layout */}
+      <ReportReviewLayout pdfUrl={report.blobUrl}>
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">Extracted Metrics</CardTitle>
@@ -321,93 +300,311 @@ export default function ReviewWorkbenchPage() {
                 </p>
               </div>
             ) : (
-              <div className="overflow-x-auto max-h-[540px] overflow-y-auto">
-                <table
-                  className="w-full text-sm"
-                  aria-label="Extracted metrics"
+              <>
+                {/* Desktop table view — hidden when PDF sidebar narrows the column */}
+                <div
+                  className={cn(
+                    "overflow-x-auto max-h-[540px] overflow-y-auto",
+                    report.blobUrl ? "hidden" : "hidden sm:block",
+                  )}
                 >
-                  <thead className="sticky top-0 bg-card">
-                    <tr className="border-b text-left text-muted-foreground">
-                      <th scope="col" className="pb-3 font-medium">
-                        Metric
-                      </th>
-                      <th scope="col" className="pb-3 font-medium text-right">
-                        Value
-                      </th>
-                      <th scope="col" className="pb-3 font-medium">
-                        Unit
-                      </th>
-                      <th scope="col" className="pb-3 font-medium text-right">
-                        Ref Range
-                      </th>
-                      <th
-                        scope="col"
-                        className="pb-3 font-medium text-center w-16"
-                      >
-                        Edit
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {metrics.map((m) => {
-                      const isEditing = editingId === m.id;
-                      const hasEdit = !!edits[m.id];
-                      const edit = edits[m.id];
+                  <table
+                    className="w-full text-sm"
+                    aria-label="Extracted metrics"
+                  >
+                    <thead className="sticky top-0 bg-card">
+                      <tr className="border-b text-left text-muted-foreground">
+                        <th scope="col" className="pb-3 font-medium">
+                          Metric
+                        </th>
+                        <th scope="col" className="pb-3 font-medium text-right">
+                          Value
+                        </th>
+                        <th scope="col" className="pb-3 font-medium">
+                          Unit
+                        </th>
+                        <th scope="col" className="pb-3 font-medium text-right">
+                          Ref Range
+                        </th>
+                        <th
+                          scope="col"
+                          className="pb-3 font-medium text-center w-16"
+                        >
+                          Edit
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {metrics.map((m) => {
+                        const isEditing = editingId === m.id;
+                        const hasEdit = !!edits[m.id];
+                        const edit = edits[m.id];
 
-                      if (isEditing && edit) {
+                        if (isEditing && edit) {
+                          return (
+                            <tr key={m.id} className="border-b bg-muted/30">
+                              <td className="py-2">
+                                <Input
+                                  value={edit.name}
+                                  onChange={(e) =>
+                                    setEdits((prev) => ({
+                                      ...prev,
+                                      [m.id]: {
+                                        ...prev[m.id],
+                                        name: e.target.value,
+                                      },
+                                    }))
+                                  }
+                                  className="h-8 text-sm"
+                                  aria-label="Metric name"
+                                />
+                              </td>
+                              <td className="py-2">
+                                <Input
+                                  type="number"
+                                  value={edit.value}
+                                  onChange={(e) =>
+                                    setEdits((prev) => ({
+                                      ...prev,
+                                      [m.id]: {
+                                        ...prev[m.id],
+                                        value: e.target.value,
+                                      },
+                                    }))
+                                  }
+                                  className="h-8 text-sm text-right w-24"
+                                  aria-label="Value"
+                                />
+                              </td>
+                              <td className="py-2">
+                                <Input
+                                  value={edit.unit}
+                                  onChange={(e) =>
+                                    setEdits((prev) => ({
+                                      ...prev,
+                                      [m.id]: {
+                                        ...prev[m.id],
+                                        unit: e.target.value,
+                                      },
+                                    }))
+                                  }
+                                  className="h-8 text-sm w-20"
+                                  aria-label="Unit"
+                                />
+                              </td>
+                              <td className="py-2">
+                                <div className="flex items-center gap-1">
+                                  <Input
+                                    type="number"
+                                    value={edit.refLow}
+                                    onChange={(e) =>
+                                      setEdits((prev) => ({
+                                        ...prev,
+                                        [m.id]: {
+                                          ...prev[m.id],
+                                          refLow: e.target.value,
+                                        },
+                                      }))
+                                    }
+                                    className="h-8 text-sm w-16 text-right"
+                                    placeholder="Low"
+                                    aria-label="Ref low"
+                                  />
+                                  <span className="text-muted-foreground">
+                                    –
+                                  </span>
+                                  <Input
+                                    type="number"
+                                    value={edit.refHigh}
+                                    onChange={(e) =>
+                                      setEdits((prev) => ({
+                                        ...prev,
+                                        [m.id]: {
+                                          ...prev[m.id],
+                                          refHigh: e.target.value,
+                                        },
+                                      }))
+                                    }
+                                    className="h-8 text-sm w-16 text-right"
+                                    placeholder="High"
+                                    aria-label="Ref high"
+                                  />
+                                </div>
+                              </td>
+                              <td className="py-2 text-center">
+                                <div className="flex items-center justify-center gap-1">
+                                  <Button
+                                    size="icon"
+                                    variant="ghost"
+                                    className="size-7"
+                                    onClick={saveEdit}
+                                    aria-label="Save edit"
+                                  >
+                                    <Check className="size-3.5" />
+                                  </Button>
+                                  <Button
+                                    size="icon"
+                                    variant="ghost"
+                                    className="size-7"
+                                    onClick={cancelEdit}
+                                    aria-label="Cancel edit"
+                                  >
+                                    <X className="size-3.5" />
+                                  </Button>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        }
+
                         return (
-                          <tr key={m.id} className="border-b bg-muted/30">
-                            <td className="py-2">
-                              <Input
-                                value={edit.name}
-                                onChange={(e) =>
-                                  setEdits((prev) => ({
-                                    ...prev,
-                                    [m.id]: {
-                                      ...prev[m.id],
-                                      name: e.target.value,
-                                    },
-                                  }))
-                                }
-                                className="h-8 text-sm"
-                                aria-label="Metric name"
-                              />
+                          <tr
+                            key={m.id}
+                            className={cn(
+                              "border-b last:border-0 hover:bg-muted/50 transition-colors",
+                              hasEdit && "bg-status-warning/5",
+                            )}
+                          >
+                            <td className="py-3 font-medium">
+                              {hasEdit ? edit!.name : m.name}
+                              {hasEdit && (
+                                <Badge
+                                  variant="outline"
+                                  className="ml-2 text-xs border-status-warning text-status-warning"
+                                >
+                                  Edited
+                                </Badge>
+                              )}
+                              {m.metricDefinitionId ? (
+                                <Badge
+                                  variant="outline"
+                                  className="ml-1.5 text-[10px] border-status-normal text-status-normal px-1 py-0"
+                                >
+                                  Linked
+                                </Badge>
+                              ) : (
+                                <span className="ml-1.5 text-[10px] text-muted-foreground/50">
+                                  unmapped
+                                </span>
+                              )}
                             </td>
-                            <td className="py-2">
-                              <Input
-                                type="number"
-                                value={edit.value}
-                                onChange={(e) =>
-                                  setEdits((prev) => ({
-                                    ...prev,
-                                    [m.id]: {
-                                      ...prev[m.id],
-                                      value: e.target.value,
-                                    },
-                                  }))
-                                }
-                                className="h-8 text-sm text-right w-24"
-                                aria-label="Value"
-                              />
+                            <td className="py-3 text-right tabular-nums font-semibold">
+                              {hasEdit ? edit!.value : m.value}
                             </td>
-                            <td className="py-2">
-                              <Input
-                                value={edit.unit}
-                                onChange={(e) =>
-                                  setEdits((prev) => ({
-                                    ...prev,
-                                    [m.id]: {
-                                      ...prev[m.id],
-                                      unit: e.target.value,
-                                    },
-                                  }))
-                                }
-                                className="h-8 text-sm w-20"
-                                aria-label="Unit"
-                              />
+                            <td className="py-3 text-muted-foreground">
+                              {(hasEdit ? edit!.unit : m.unit) || "—"}
                             </td>
-                            <td className="py-2">
-                              <div className="flex items-center gap-1">
+                            <td className="py-3 text-right text-muted-foreground tabular-nums">
+                              {(() => {
+                                const low = hasEdit
+                                  ? edit!.refLow || null
+                                  : m.refLow;
+                                const high = hasEdit
+                                  ? edit!.refHigh || null
+                                  : m.refHigh;
+                                return low != null || high != null
+                                  ? `${low ?? "—"} – ${high ?? "—"}`
+                                  : "—";
+                              })()}
+                            </td>
+                            <td className="py-3 text-center">
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                className="size-7"
+                                onClick={() => startEdit(m)}
+                                disabled={editingId !== null}
+                                aria-label={`Edit ${m.name}`}
+                              >
+                                <Pencil className="size-3.5" />
+                              </Button>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Card view — always visible when PDF sidebar is present, otherwise mobile only */}
+                <div
+                  className={cn("space-y-2", !report.blobUrl && "sm:hidden")}
+                >
+                  {metrics.map((m) => {
+                    const isEditing = editingId === m.id;
+                    const hasEdit = !!edits[m.id];
+                    const edit = edits[m.id];
+
+                    return (
+                      <div
+                        key={m.id}
+                        className={cn(
+                          "border rounded-lg p-3",
+                          hasEdit &&
+                            "bg-status-warning/5 border-status-warning/20",
+                        )}
+                      >
+                        {isEditing && edit ? (
+                          <div className="space-y-3">
+                            <Input
+                              value={edit.name}
+                              onChange={(e) =>
+                                setEdits((prev) => ({
+                                  ...prev,
+                                  [m.id]: {
+                                    ...prev[m.id],
+                                    name: e.target.value,
+                                  },
+                                }))
+                              }
+                              className="h-8 text-sm font-medium"
+                              aria-label="Metric name"
+                            />
+                            <div className="grid grid-cols-2 gap-2">
+                              <div>
+                                <label className="text-xs text-muted-foreground mb-1 block">
+                                  Value
+                                </label>
+                                <Input
+                                  type="number"
+                                  value={edit.value}
+                                  onChange={(e) =>
+                                    setEdits((prev) => ({
+                                      ...prev,
+                                      [m.id]: {
+                                        ...prev[m.id],
+                                        value: e.target.value,
+                                      },
+                                    }))
+                                  }
+                                  className="h-8 text-sm"
+                                  aria-label="Value"
+                                />
+                              </div>
+                              <div>
+                                <label className="text-xs text-muted-foreground mb-1 block">
+                                  Unit
+                                </label>
+                                <Input
+                                  value={edit.unit}
+                                  onChange={(e) =>
+                                    setEdits((prev) => ({
+                                      ...prev,
+                                      [m.id]: {
+                                        ...prev[m.id],
+                                        unit: e.target.value,
+                                      },
+                                    }))
+                                  }
+                                  className="h-8 text-sm"
+                                  placeholder="—"
+                                  aria-label="Unit"
+                                />
+                              </div>
+                              <div>
+                                <label className="text-xs text-muted-foreground mb-1 block">
+                                  Ref Low
+                                </label>
                                 <Input
                                   type="number"
                                   value={edit.refLow}
@@ -420,11 +617,15 @@ export default function ReviewWorkbenchPage() {
                                       },
                                     }))
                                   }
-                                  className="h-8 text-sm w-16 text-right"
-                                  placeholder="Low"
+                                  className="h-8 text-sm"
+                                  placeholder="—"
                                   aria-label="Ref low"
                                 />
-                                <span className="text-muted-foreground">–</span>
+                              </div>
+                              <div>
+                                <label className="text-xs text-muted-foreground mb-1 block">
+                                  Ref High
+                                </label>
                                 <Input
                                   type="number"
                                   value={edit.refHigh}
@@ -437,98 +638,103 @@ export default function ReviewWorkbenchPage() {
                                       },
                                     }))
                                   }
-                                  className="h-8 text-sm w-16 text-right"
-                                  placeholder="High"
+                                  className="h-8 text-sm"
+                                  placeholder="—"
                                   aria-label="Ref high"
                                 />
                               </div>
-                            </td>
-                            <td className="py-2 text-center">
-                              <div className="flex items-center justify-center gap-1">
-                                <Button
-                                  size="icon"
-                                  variant="ghost"
-                                  className="size-7"
-                                  onClick={saveEdit}
-                                  aria-label="Save edit"
-                                >
-                                  <Check className="size-3.5" />
-                                </Button>
-                                <Button
-                                  size="icon"
-                                  variant="ghost"
-                                  className="size-7"
-                                  onClick={cancelEdit}
-                                  aria-label="Cancel edit"
-                                >
-                                  <X className="size-3.5" />
-                                </Button>
-                              </div>
-                            </td>
-                          </tr>
-                        );
-                      }
-
-                      return (
-                        <tr
-                          key={m.id}
-                          className={cn(
-                            "border-b last:border-0 hover:bg-muted/50 transition-colors",
-                            hasEdit && "bg-status-warning/5",
-                          )}
-                        >
-                          <td className="py-3 font-medium">
-                            {hasEdit ? edit!.name : m.name}
-                            {hasEdit && (
-                              <Badge
-                                variant="outline"
-                                className="ml-2 text-xs border-status-warning text-status-warning"
+                            </div>
+                            <div className="flex gap-2">
+                              <Button
+                                size="sm"
+                                onClick={saveEdit}
+                                className="flex-1"
                               >
-                                Edited
-                              </Badge>
-                            )}
-                          </td>
-                          <td className="py-3 text-right tabular-nums font-semibold">
-                            {hasEdit ? edit!.value : m.value}
-                          </td>
-                          <td className="py-3 text-muted-foreground">
-                            {(hasEdit ? edit!.unit : m.unit) || "—"}
-                          </td>
-                          <td className="py-3 text-right text-muted-foreground tabular-nums">
-                            {(() => {
-                              const low = hasEdit
-                                ? edit!.refLow || null
-                                : m.refLow;
-                              const high = hasEdit
-                                ? edit!.refHigh || null
-                                : m.refHigh;
-                              return low != null || high != null
-                                ? `${low ?? "—"} – ${high ?? "—"}`
-                                : "—";
-                            })()}
-                          </td>
-                          <td className="py-3 text-center">
-                            <Button
-                              size="icon"
-                              variant="ghost"
-                              className="size-7"
-                              onClick={() => startEdit(m)}
-                              disabled={editingId !== null}
-                              aria-label={`Edit ${m.name}`}
-                            >
-                              <Pencil className="size-3.5" />
-                            </Button>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
+                                <Check
+                                  className="size-3.5"
+                                  aria-hidden="true"
+                                />
+                                Save
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={cancelEdit}
+                              >
+                                Cancel
+                              </Button>
+                            </div>
+                          </div>
+                        ) : (
+                          <button
+                            type="button"
+                            className="w-full text-left"
+                            onClick={() => startEdit(m)}
+                            disabled={editingId !== null}
+                          >
+                            <div className="flex items-center justify-between gap-2">
+                              <div className="flex items-center gap-1.5 min-w-0">
+                                <span className="font-medium text-sm truncate">
+                                  {hasEdit ? edit!.name : m.name}
+                                </span>
+                                {hasEdit && (
+                                  <Badge
+                                    variant="outline"
+                                    className="text-[10px] border-status-warning text-status-warning shrink-0"
+                                  >
+                                    Edited
+                                  </Badge>
+                                )}
+                                {m.metricDefinitionId ? (
+                                  <Badge
+                                    variant="outline"
+                                    className="text-[10px] border-status-normal text-status-normal px-1 py-0 shrink-0"
+                                  >
+                                    Linked
+                                  </Badge>
+                                ) : (
+                                  <span className="text-[10px] text-muted-foreground/50 shrink-0">
+                                    unmapped
+                                  </span>
+                                )}
+                              </div>
+                              <Pencil
+                                className="size-3 text-muted-foreground shrink-0"
+                                aria-hidden="true"
+                              />
+                            </div>
+                            <div className="flex items-baseline gap-2 mt-1">
+                              <span className="text-lg font-semibold tabular-nums">
+                                {hasEdit ? edit!.value : m.value}
+                              </span>
+                              <span className="text-sm text-muted-foreground">
+                                {(hasEdit ? edit!.unit : m.unit) || ""}
+                              </span>
+                              {(() => {
+                                const low = hasEdit
+                                  ? edit!.refLow || null
+                                  : m.refLow;
+                                const high = hasEdit
+                                  ? edit!.refHigh || null
+                                  : m.refHigh;
+                                return low != null || high != null ? (
+                                  <span className="text-xs text-muted-foreground ml-auto">
+                                    Ref: {low ?? "—"} – {high ?? "—"}
+                                  </span>
+                                ) : null;
+                              })()}
+                            </div>
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
             )}
           </CardContent>
         </Card>
-      </div>
+      </ReportReviewLayout>
 
       {/* Review actions */}
       <Card>

@@ -34,13 +34,16 @@ export async function GET(request: Request) {
         er.status AS review_status,
         er.reviewed_at,
         (SELECT COUNT(*)::int FROM metrics WHERE report_id = r.id) AS metric_count,
-        (SELECT COUNT(*)::int FROM unmapped_metrics WHERE report_id = r.id AND status = 'pending') AS unmapped_count
+        (SELECT COUNT(*)::int FROM unmapped_metrics WHERE report_id = r.id AND status = 'pending') AS unmapped_count,
+        (SELECT COUNT(*)::int FROM metrics WHERE report_id = r.id AND metric_definition_id IS NOT NULL) AS mapped_count,
+        pu.created_at AS upload_date,
+        u.email AS user_email
       FROM reports r
       JOIN profiles p ON p.id = r.profile_id
       LEFT JOIN extraction_reviews er ON er.report_id = r.id
-      ORDER BY
-        CASE WHEN er.status IS NULL THEN 0 ELSE 1 END,
-        r.created_at DESC
+      LEFT JOIN pending_uploads pu ON pu.file_name = r.file_name AND pu.profile_id = r.profile_id
+      LEFT JOIN users u ON u.id = pu.user_id
+      ORDER BY r.created_at DESC
       LIMIT ${limit} OFFSET ${offset}
     `;
 

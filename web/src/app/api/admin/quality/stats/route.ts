@@ -15,18 +15,34 @@ export async function GET() {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   try {
-    const [unmapped, pendingReviews, reports, recent] = await Promise.all([
-      sql`SELECT COUNT(*)::int AS count FROM unmapped_metrics WHERE status = 'pending'`,
-      sql`SELECT COUNT(*)::int AS count FROM extraction_reviews WHERE status = 'pending'`,
-      sql`SELECT COUNT(*)::int AS count FROM reports`,
-      sql`SELECT COUNT(*)::int AS count FROM reports WHERE created_at > NOW() - INTERVAL '7 days'`,
+    const [unreviewed, approved, coverage] = await Promise.all([
+      sql`
+        SELECT COUNT(*)::int AS count FROM reports r
+        WHERE NOT EXISTS (
+          SELECT 1 FROM extraction_reviews er
+          WHERE er.report_id = r.id AND er.status = 'approved'
+        )
+      `,
+      sql`
+        SELECT COUNT(*)::int AS count FROM extraction_reviews
+        WHERE status = 'approved'
+      `,
+      sql`
+        SELECT
+          COUNT(*)::int AS total,
+          COUNT(metric_definition_id)::int AS linked
+        FROM metrics
+      `,
     ]);
 
+    const total = coverage[0].total as number;
+    const linked = coverage[0].linked as number;
+    const coveragePct = total > 0 ? Math.round((linked / total) * 100) : 0;
+
     return NextResponse.json({
-      unmappedCount: unmapped[0].count,
-      pendingReviewCount: pendingReviews[0].count,
-      totalReports: reports[0].count,
-      recentReports: recent[0].count,
+      unreviewedCount: unreviewed[0].count,
+      approvedCount: approved[0].count,
+      coveragePct,
     });
   } catch (error) {
     reportError(error, { op: "admin.quality.stats" });
