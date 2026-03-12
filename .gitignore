@@ -46,7 +46,8 @@ token_*.json
 test-results/
 
 # Claude Code
-.claude/
+.claude/*
+!.claude/skills/
 
 # Ralph temp files
 ralph/.iter_output.tmp
