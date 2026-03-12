@@ -51,10 +51,11 @@ let cachedUnitAliases: Map<string, string> | null = null;
 let cacheTimestamp = 0;
 
 function invalidateIfStale(): void {
-  if (Date.now() - cacheTimestamp > CACHE_TTL_MS) {
+  if (cacheTimestamp && Date.now() - cacheTimestamp > CACHE_TTL_MS) {
     cachedAliases = null;
     cachedTranslations = null;
     cachedUnitAliases = null;
+    cacheTimestamp = 0;
   }
 }
 

@@ -15,11 +15,20 @@ interface ReportReviewLayoutProps {
  * Consumers should remove their max-w constraint when pdfUrl is present
  * so this layout can use the full viewport width.
  */
+function isSafeUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === "https:" || parsed.protocol === "http:";
+  } catch {
+    return false;
+  }
+}
+
 export function ReportReviewLayout({
   pdfUrl,
   children,
 }: ReportReviewLayoutProps) {
-  if (!pdfUrl) {
+  if (!pdfUrl || !isSafeUrl(pdfUrl)) {
     return <>{children}</>;
   }
 
@@ -31,6 +40,7 @@ export function ReportReviewLayout({
             src={pdfUrl}
             className="w-full h-[calc(100vh-10rem)] min-h-[500px] rounded-lg border"
             title="Original PDF"
+            sandbox="allow-same-origin"
           />
         </CardContent>
       </Card>
