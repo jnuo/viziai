@@ -364,7 +364,7 @@ export default function AccessPage() {
   const sharedProfiles = accessData.filter((p) => p.accessLevel !== "owner");
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-4xl mx-auto space-y-6">
       <h1 className="text-2xl font-bold">{t("accessManagement")}</h1>
 
       {/* Shared profiles: read-only view with leave option */}

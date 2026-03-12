@@ -17,7 +17,7 @@ export default function SettingsLayout({
         profileName={activeProfile?.display_name}
         currentProfileId={activeProfileId || undefined}
       />
-      <main className="container max-w-4xl mx-auto p-4 flex-1">{children}</main>
+      <main className="container mx-auto p-4 flex-1">{children}</main>
       <Footer />
     </div>
   );

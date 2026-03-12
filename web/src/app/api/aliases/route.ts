@@ -1,17 +1,22 @@
 import { NextResponse } from "next/server";
-import { sql } from "@/lib/db";
+import { requireAuth } from "@/lib/auth";
+import { getAliasMap } from "@/lib/metric-definitions";
 import { reportError } from "@/lib/error-reporting";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
+  const userId = await requireAuth();
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   try {
-    const rows = await sql`
-      SELECT alias, canonical_name FROM metric_aliases
-    `;
-
+    const aliasMap = await getAliasMap();
     const aliases = Object.fromEntries(
-      rows.map((row) => [row.alias, row.canonical_name]),
+      Object.entries(aliasMap).map(([alias, info]) => [
+        alias,
+        info.canonicalName,
+      ]),
     );
     return NextResponse.json({ aliases });
   } catch (error) {

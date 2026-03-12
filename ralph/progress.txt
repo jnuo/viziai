@@ -1,0 +1,166 @@
+# Ralph Progress Log — Extraction Quality System (#105 + #106)
+# Started: 2026-03-10
+
+---
+## 2026-03-10 - QS-001: DB migration: quality system tables
+- Created migration with 4 DDL changes: users.is_admin, reports.blob_url, unmapped_metrics table, extraction_reviews table
+- Code review caught 3 issues: CASCADE on reviewer_user_id (changed to RESTRICT), missing UNIQUE on unmapped_metrics(report_id, metric_name), missing UNIQUE on extraction_reviews(report_id)
+- Files changed: db-schema/migrations/20260310_extraction_quality_tables.sql
+- Learnings: Always add UNIQUE constraints to prevent duplicates from retries (QStash pattern). Use ON DELETE RESTRICT for audit trail tables.
+
+---
+## 2026-03-10 - QS-006: Canonical metrics constant + unit normalization module
+- Created CANONICAL_METRICS with 40+ Turkish lab metrics, canonical units, conversion rules, and typical ref ranges
+- Created normalizeUnit() and needsConversion() functions for unit conversion
+- Covers conversions: g/L→g/dL, mmol/L→mg/dL, µmol/L→mg/dL, 10^9/L→10^3/µL, µkat/L→U/L, pmol/L→pg/mL, etc.
+- Files changed: web/src/lib/canonical-metrics.ts, web/src/lib/unit-normalization.ts
+- Learnings: Use normalizeUnitString() for case-insensitive, µ/u-agnostic unit comparison. Linter auto-formats trailing commas.
+
+---
+## 2026-03-10 - QS-002: Admin auth helper + middleware
+- requireAdmin() and isAdmin() already existed in auth.ts (added by QS-001 iteration)
+- Created admin layout at web/src/app/admin/layout.tsx with inline AccessDenied component
+- Fixed redirect loop: original layout redirected to /admin/denied which is under the same layout, causing infinite redirect. Fixed by rendering denied content inline instead of redirecting
+- Removed empty denied/ directory (not needed since layout handles denial inline)
+- Lint caught <a> tag — must use Next.js <Link> for internal navigation
+- Files changed: web/src/app/admin/layout.tsx
+- Learnings: In Next.js App Router, never redirect to a page under the same layout that does the auth check — it creates an infinite redirect loop. Render denied content inline instead.
+
+---
+## 2026-03-10 - QS-003: Stop deleting blobs, store blob_url on confirm
+- Removed `del()` call from @vercel/blob — PDFs preserved after confirm
+- Added `blob_url` to reports INSERT, saving `upload.file_url`
+- Kept `pending_uploads.file_url` intact (no longer nulled out)
+- Removed unused `del` import
+- Files changed: web/src/app/api/upload/[id]/confirm/route.ts
+- Learnings: Clean removal — net -22 lines. Simpler code when you stop deleting things.
+
+---
+## 2026-03-10 - QS-007: Unmapped metric detection in confirm flow
+- Added fire-and-forget detection after metric insertion in confirm route
+- Checks each metric name against CANONICAL_METRIC_NAMES (Set) and metric_aliases table
+- Unknown metrics → unmapped_metrics table with status='pending'
+- Fetches all aliases in one query (Set lookup) to minimize DB round-trips
+- Wrapped in try/catch so failures don't block the user's confirm flow
+- Files changed: web/src/app/api/upload/[id]/confirm/route.ts
+- Learnings: Use ON CONFLICT DO NOTHING for idempotent inserts (QStash retry safety). Fetch lookup data in bulk before the loop.
+
+---
+## 2026-03-10 - QS-009: AI-assisted alias suggester
+- Created web/src/lib/alias-suggester.ts with suggestCanonicalName() function
+- Uses direct fetch to OpenAI API (same pattern as extraction worker)
+- Single-shot prompt: sends canonical list + metric context, expects JSON response
+- Validates suggested name exists in CANONICAL_METRIC_NAMES Set before returning
+- Model: gpt-4.1-mini (cost-efficient, temperature=0 for deterministic output)
+- Files changed: web/src/lib/alias-suggester.ts
+- Learnings: Keep AI utility functions pure — no DB deps, return null on error. Linter auto-reformats long fetch calls.
+
+---
+## 2026-03-10 - QS-011: Admin quality dashboard APIs
+- Created 3 admin API routes under /api/admin/quality/
+- stats: 4 parallel COUNT queries for summary dashboard
+- unmapped: paginated list with JOINs to reports and profiles for context
+- reviews: reports list with LEFT JOIN to extraction_reviews, unreviewed first
+- All routes use requireAdmin() — non-admin users get 403
+- Files changed: web/src/app/api/admin/quality/{stats,unmapped,reviews}/route.ts
+- Learnings: Use Promise.all for independent count queries. Use LEFT JOIN for optional review data.
+
+---
+## 2026-03-10 - QS-004: User-facing report detail API + page
+- Created GET /api/reports/[id] with requireAuth() + hasProfileAccess() IDOR prevention
+- Added UUID format validation to prevent Postgres cast errors and Sentry noise
+- Created /dashboard/reports/[id] with desktop table + mobile card responsive layout
+- Status badges use brand terracotta/amber/green via FLAG_STYLES lookup (no variant="destructive")
+- Summary cards grid adapts (2/3 cols) based on blob_url presence
+- Full accessibility: <main> landmark, h1→h2 hierarchy, scope="col", aria-live, sr-only, <ul>/<li> for mobile
+- AbortController cleanup on useEffect fetch, empty metrics state handled
+- Design review loop: 4 attempts (fixed destructive badge, a11y gaps, CardTitle nesting, grid layout)
+- Code review: UUID validation (P2) and flag helper consolidation (P3) fixed
+- Browser test: local DB missing blob_url column (migration not applied) caused 500 — added columns to dev DB, page renders correctly
+- Files changed: web/src/app/api/reports/[id]/route.ts, web/src/app/dashboard/reports/[id]/page.tsx
+- Learnings: Local and prod DBs have different schemas when migrations haven't been applied. Always check both. Use FLAG_STYLES lookup instead of multiple switch functions for status styling.
+
+---
+## 2026-03-10 - QS-005: Phase 1 checkpoint: staging deploy + verify
+- npm run build ✅ passes
+- npm run typecheck ✅ passes
+- npm run lint ✅ (no new issues from QS stories — 4 pre-existing: verify-sitemap.js require imports, unused vars in upload/page.tsx and collision-banner.tsx)
+- Migration SQL reviewed ✅ (valid BEGIN/COMMIT, UNIQUE constraints, proper indexes, ON DELETE RESTRICT for audit trail)
+- All Phase 1 stories (QS-001 through QS-004) verified
+- Files changed: none (verification only)
+- Learnings: Pre-existing lint issues in other files don't block — focus on changes from the current work.
+
+---
+## 2026-03-10 - QS-014: Admin report detail API + review API
+- Created GET /api/admin/reports/[id] — returns full report with metrics, profile info, and existing review data
+- Created POST /api/admin/reports/[id]/review — submit review (approved/corrected) with optional metric corrections
+- Review uses UPSERT (ON CONFLICT report_id) — one review per report, can re-review
+- Metric corrections use CASE WHEN pattern for partial updates (only provided fields change)
+- Code review caught: redundant N+1 ownership SELECT (removed — WHERE clause already guards), missing input validation (added: type checks, length limits, isFinite, array cap)
+- Files changed: web/src/app/api/admin/reports/[id]/route.ts, web/src/app/api/admin/reports/[id]/review/route.ts
+- Learnings: CASE WHEN ${bool} THEN ${val} ELSE column END is the clean pattern for partial updates with Neon tagged templates. No need for separate ownership SELECT when the UPDATE WHERE clause already includes the guard.
+
+---
+## 2026-03-10 - QS-012: Admin quality dashboard page
+- Created /admin/quality page with stats cards, unmapped metrics table, and reports-needing-review table
+- Stats cards: 4 summary cards (unmapped, pending review, total reports, this week) using Promise.all parallel fetch
+- Unmapped table: "Map to..." opens dialog with AI suggestion pre-fill, "Accept" marks as new
+- Created PATCH /api/admin/quality/unmapped/[id] for map/accept actions
+- Map action creates global alias in metric_aliases (ON CONFLICT upsert), updates status to 'mapped'
+- Reports table: review status badges (Approved/Corrected/Unreviewed), links to review workbench
+- Dialog uses controlled Radix pattern: open={!!mapTarget} with onOpenChange cleanup
+- Design review: all 3 agents PASS on first attempt (brand, a11y, quality)
+- Files changed: web/src/app/admin/quality/page.tsx, web/src/app/api/admin/quality/unmapped/[id]/route.ts
+- Learnings: Controlled Dialog pattern with nullable state (mapTarget) is cleaner than separate open boolean. Pre-populate dialog inputs from existing data (suggested_canonical).
+
+---
+## 2026-03-10 - QS-015: Review workbench page (side-by-side PDF + metrics)
+- Created /admin/reports/[id]/review with two-column layout: PDF left (iframe), editable metrics right
+- Inline editing: editingId tracks active row, edits Record accumulates all changes until submit
+- buildCorrections() only diffs changed fields — sends minimal payload to review API
+- Approve button (no edits) vs Submit Corrections button (with edits) — mutually exclusive based on hasEdits
+- PDF iframe with title attribute for a11y, sticky table header for scrollable metrics
+- Review notes textarea, pre-populated from existing review if re-reviewing
+- Design review: 2/3 PASS on first attempt, 1 FAIL on unused saveEdit param (fixed)
+- Files changed: web/src/app/admin/reports/[id]/review/page.tsx
+- Learnings: Remove unused function params before commit. saveEdit() doesn't need metric param since it only clears editingId. Use hasEdits boolean to drive conditional button rendering.
+
+---
+## 2026-03-10 - QS-008: Unit conversion suggestions in upload review UI
+- Conversion detection logic and desktop table UI were already implemented in upload/page.tsx (from QS-006)
+- Gap was MetricReviewCard (mobile) missing conversionInfo/onConversionToggle props — TypeScript error was silently present
+- Added conversion suggestion UI to MetricReviewCard mirroring the existing alias suggestion pattern
+- Fixed enabiz import page: added missing props (conversionInfo={null}, stable useCallback no-op)
+- A11y improvements: aria-hidden on decorative icons (ArrowRight, ChevronDown, Trash2), 44px min touch targets on Switch, aria-hidden on mid-dot separator
+- Design review: 3 iterations (fixed a11y issues found by agents)
+- Code review: P2 finding — inline `() => {}` breaks React.memo, fixed with useCallback
+- Files changed: web/src/components/metric-review-card.tsx, web/src/app/import/enabiz/[id]/page.tsx
+- Learnings: When adding props to a shared component, always check ALL consumers (not just the primary one). Inline arrow functions as props defeat React.memo — always use useCallback for stable references. Design review agents keep finding pre-existing issues — focus fixes on new code scope.
+
+---
+## 2026-03-10 - QS-017: Re-extract API + add-to-evals API + local script
+- Created POST /api/admin/reports/[id]/re-extract with in-flight guard (checks pending_uploads for same blob_url)
+- Uses randomUUID for content hash to avoid leaking report ID + timestamp
+- Created POST /api/admin/reports/[id]/add-to-evals — upserts extraction_evals with current metrics as ground truth
+- Created scripts/run-evals.ts — polls extraction worker, compares output vs expected, reports accuracy %
+- Created db-schema/migrations/20260310_extraction_evals.sql — extraction_evals table with JSONB expected_metrics
+- Security review: caught resource exhaustion (fixed with in-flight guard) and content hash info leak (fixed with randomUUID)
+- Pattern review: consistent with existing admin API patterns, QStash integration
+- Files changed: 4 new files (2 API routes, 1 migration, 1 script)
+- Learnings: Always guard async job endpoints against spam/re-triggering. Use randomUUID instead of predictable patterns for content hashes. Align polling timeouts with the actual job timeout (5 min for QStash extraction).
+
+---
+## 2026-03-10 - QS-019: Anomaly detection + alias coverage APIs
+- Created GET /api/admin/quality/anomalies with two detection methods: out-of-range and statistical (>3 std dev)
+- Created GET /api/admin/quality/alias-coverage — classifies metric names as canonical/alias/unmapped, reports coverage %
+- Both scoped to 90-day window, gated by requireAdmin()
+- Files changed: 2 new API routes
+- Learnings: Use HAVING COUNT(*) >= 3 for statistical analysis. Report both name-level and occurrence-level coverage.
+
+---
+## 2026-03-10 - QS-020: Daily quality loop cron setup
+- Created POST /api/cron/quality-check with QStash signature verification
+- Runs 4 checks: pending unmapped count, new unmapped (24h), out-of-range anomalies (7d), alias coverage (90d)
+- Uses same verifySignatureAppRouter pattern as extraction worker
+- Files changed: 1 new API route
+- Learnings: Follow exact same QStash verification pattern (hasSigningKey conditional export). Keep cron lightweight — count queries only.

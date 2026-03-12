@@ -221,7 +221,7 @@ function SettingsContent() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-4xl mx-auto space-y-6">
       {/* Tab bar */}
       <div className="flex gap-2">
         {TABS.map((tab) => (

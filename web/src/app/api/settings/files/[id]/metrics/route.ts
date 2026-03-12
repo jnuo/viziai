@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions, getDbUserId, hasProfileAccess } from "@/lib/auth";
+import { requireAuth, getProfileAccessLevel } from "@/lib/auth";
 import { sql } from "@/lib/db";
+import { reportError } from "@/lib/error-reporting";
+import { isValidUUID } from "@/lib/utils";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -23,9 +24,7 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const session = await getServerSession(authOptions);
-    const userId = getDbUserId(session);
-
+    const userId = await requireAuth();
     if (!userId) {
       return NextResponse.json(
         { error: "Unauthorized", message: "Please sign in" },
@@ -34,10 +33,18 @@ export async function PUT(
     }
 
     const { id: fileId } = await params;
+
+    if (!isValidUUID(fileId)) {
+      return NextResponse.json(
+        { error: "Bad Request", message: "Invalid file ID" },
+        { status: 400 },
+      );
+    }
+
     const body = (await request.json()) as UpdateMetricRequest;
 
     // Validate request
-    if (!body.metricId) {
+    if (!body.metricId || !isValidUUID(body.metricId)) {
       return NextResponse.json(
         { error: "Bad Request", message: "metricId is required" },
         { status: 400 },
@@ -67,13 +74,13 @@ export async function PUT(
 
     const file = files[0];
 
-    // Verify user has access to this profile
-    const hasAccess = await hasProfileAccess(userId, file.profile_id);
-    if (!hasAccess) {
+    // Verify user has editor or owner access to this profile
+    const accessLevel = await getProfileAccessLevel(userId, file.profile_id);
+    if (!accessLevel || accessLevel === "viewer") {
       return NextResponse.json(
         {
           error: "Forbidden",
-          message: "You don't have access to this file",
+          message: "You don't have write access to this file",
         },
         { status: 403 },
       );
@@ -128,7 +135,7 @@ export async function PUT(
       metricId: body.metricId,
     });
   } catch (error) {
-    console.error("[API] PUT /api/settings/files/[id]/metrics error:", error);
+    reportError(error, { op: "settings.files.metrics.put" });
     return NextResponse.json(
       { error: "Failed to update metric" },
       { status: 500 },

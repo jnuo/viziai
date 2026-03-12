@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions, getDbUserId } from "@/lib/auth";
+import { requireAuth } from "@/lib/auth";
 import { sql } from "@/lib/db";
-import { del } from "@vercel/blob";
 import { reportError } from "@/lib/error-reporting";
+import { resolveMetricName, convertUnit } from "@/lib/metric-definitions";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -45,25 +44,10 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session?.user?.email) {
+    const userId = await requireAuth();
+    if (!userId) {
       return NextResponse.json(
         { error: "Unauthorized", message: "Please sign in" },
-        { status: 401 },
-      );
-    }
-
-    let userId = getDbUserId(session);
-    if (!userId) {
-      const users =
-        await sql`SELECT id FROM users WHERE LOWER(email) = LOWER(${session.user.email})`;
-      if (users.length > 0) userId = users[0].id;
-    }
-
-    if (!userId) {
-      return NextResponse.json(
-        { error: "Unauthorized", message: "Could not identify user" },
         { status: 401 },
       );
     }
@@ -158,8 +142,8 @@ export async function POST(
 
     // Create report. Multiple reports on the same date are allowed (e.g. blood test + urine test).
     const reportResult = await sql`
-      INSERT INTO reports (profile_id, sample_date, file_name, source, content_hash)
-      VALUES (${profileId}, ${body.sampleDate}, ${upload.file_name}, 'pdf', ${upload.content_hash})
+      INSERT INTO reports (profile_id, sample_date, file_name, source, content_hash, blob_url)
+      VALUES (${profileId}, ${body.sampleDate}, ${upload.file_name}, 'pdf', ${upload.content_hash}, ${upload.file_url || null})
       RETURNING id
     `;
     const reportId = reportResult[0]?.id;
@@ -174,25 +158,54 @@ export async function POST(
     let insertedCount = 0;
     let updatedCount = 0;
 
-    for (const metric of body.metrics) {
+    // Resolve all metric names + unit conversions in parallel
+    const resolutions = await Promise.all(
+      body.metrics.map(async (metric) => {
+        if (!isValidMetricValue(metric.value)) return null;
+        const resolution = await resolveMetricName(metric.name);
+        let conversion = null;
+        if (resolution && metric.unit) {
+          conversion = await convertUnit(
+            resolution.definitionId,
+            metric.value,
+            metric.unit,
+          );
+        }
+        return { resolution, conversion };
+      }),
+    );
+
+    for (let i = 0; i < body.metrics.length; i++) {
+      const metric = body.metrics[i];
       if (!isValidMetricValue(metric.value)) {
         console.log(`[API] Skipping metric with invalid value: ${metric.name}`);
         continue;
       }
 
-      const flag = determineFlag(metric.value, metric.ref_low, metric.ref_high);
+      const { resolution, conversion } = resolutions[i] ?? {};
+      let finalValue = metric.value;
+      let finalUnit = metric.unit || null;
+
+      if (conversion?.converted) {
+        finalValue = conversion.value;
+        finalUnit = conversion.unit;
+      }
+
+      const flag = determineFlag(finalValue, metric.ref_low, metric.ref_high);
 
       // Insert or update metric
       const result = await sql`
-        INSERT INTO metrics (report_id, name, value, unit, ref_low, ref_high, flag)
+        INSERT INTO metrics (report_id, name, value, unit, ref_low, ref_high, flag, metric_definition_id, sort_order)
         VALUES (
           ${reportId},
           ${metric.name},
-          ${metric.value},
-          ${metric.unit || null},
+          ${finalValue},
+          ${finalUnit},
           ${metric.ref_low ?? null},
           ${metric.ref_high ?? null},
-          ${flag}
+          ${flag},
+          ${resolution?.definitionId ?? null},
+          ${i}
         )
         ON CONFLICT (report_id, name) DO UPDATE
         SET
@@ -200,7 +213,9 @@ export async function POST(
           unit = COALESCE(EXCLUDED.unit, metrics.unit),
           ref_low = COALESCE(EXCLUDED.ref_low, metrics.ref_low),
           ref_high = COALESCE(EXCLUDED.ref_high, metrics.ref_high),
-          flag = EXCLUDED.flag
+          flag = EXCLUDED.flag,
+          metric_definition_id = COALESCE(EXCLUDED.metric_definition_id, metrics.metric_definition_id),
+          sort_order = EXCLUDED.sort_order
         RETURNING (xmax = 0) as is_insert
       `;
 
@@ -209,11 +224,16 @@ export async function POST(
       } else {
         updatedCount++;
       }
+    }
 
-      // Ensure metric_preferences row exists for display_order tracking
+    // Batch-insert metric_preferences for all confirmed metrics
+    const validNames = body.metrics
+      .filter((m) => isValidMetricValue(m.value))
+      .map((m) => m.name);
+    if (validNames.length > 0) {
       await sql`
         INSERT INTO metric_preferences (profile_id, name)
-        VALUES (${profileId}, ${metric.name})
+        SELECT ${profileId}, unnest(${validNames}::text[])
         ON CONFLICT (profile_id, name) DO NOTHING
       `;
     }
@@ -231,28 +251,29 @@ export async function POST(
       reportError(e, { op: "upload.confirm.processedFiles", uploadId });
     }
 
-    // Delete PDF from Vercel Blob storage BEFORE clearing file_url
-    // This ensures we don't lose the reference if deletion fails
-    let blobDeleted = false;
-    if (upload.file_url && upload.file_url.startsWith("https://")) {
-      try {
-        await del(upload.file_url);
-        console.log(`[API] Deleted blob: ${upload.file_url}`);
-        blobDeleted = true;
-      } catch (blobError) {
-        reportError(blobError, {
-          op: "upload.confirm.deleteBlob",
-          uploadId,
-          fileUrl: upload.file_url,
-        });
+    // Detect unmapped metrics (fire-and-forget — don't block confirm flow)
+    try {
+      for (let i = 0; i < body.metrics.length; i++) {
+        const metric = body.metrics[i];
+        if (!isValidMetricValue(metric.value)) continue;
+
+        // Already resolved = not unmapped
+        if (resolutions[i]?.resolution) continue;
+
+        await sql`
+          INSERT INTO unmapped_metrics (metric_name, unit, ref_low, ref_high, report_id, profile_id, upload_id, status)
+          VALUES (${metric.name}, ${metric.unit || null}, ${metric.ref_low ?? null}, ${metric.ref_high ?? null}, ${reportId}, ${profileId}, ${uploadId}, 'pending')
+          ON CONFLICT (report_id, metric_name) DO NOTHING
+        `;
       }
+    } catch (e) {
+      reportError(e, { op: "upload.confirm.unmappedMetrics", uploadId });
     }
 
-    // Update pending upload status, only clear file_url if blob was deleted
+    // Update pending upload status — blob is preserved for admin review and re-extraction
     await sql`
       UPDATE pending_uploads
       SET status = 'confirmed',
-          file_url = ${blobDeleted ? null : upload.file_url},
           updated_at = NOW()
       WHERE id = ${uploadId}
     `;

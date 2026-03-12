@@ -31,6 +31,7 @@ import {
   Check,
   Settings,
   Key,
+  ShieldCheck,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { locales, localeLabels } from "@/i18n/config";
@@ -75,6 +76,7 @@ export function Header({
   const isLoggedIn = status === "authenticated";
   const isDark = theme === "dark";
   const userName = session?.user?.name;
+  const isAdmin = (session?.user as { isAdmin?: boolean })?.isAdmin ?? false;
 
   useEffect(() => {
     setMounted(true);
@@ -136,6 +138,18 @@ export function Header({
               >
                 <FileText className="h-4 w-4" />
                 {t("testReports")}
+              </Button>
+            )}
+
+            {isLoggedIn && isAdmin && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => router.push("/admin/quality")}
+                className="hidden sm:flex gap-1.5 text-muted-foreground hover:text-foreground"
+              >
+                <ShieldCheck className="h-4 w-4" />
+                Admin
               </Button>
             )}
 
@@ -223,6 +237,18 @@ export function Header({
                     <Key className="h-4 w-4" />
                     {t("apiKeys")}
                   </DropdownMenuItem>
+                  {isAdmin && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        onClick={() => router.push("/admin/quality")}
+                        className="cursor-pointer"
+                      >
+                        <ShieldCheck className="h-4 w-4" />
+                        Admin
+                      </DropdownMenuItem>
+                    </>
+                  )}
                   <DropdownMenuSeparator />
                   {mounted && (
                     <DropdownMenuSub>
