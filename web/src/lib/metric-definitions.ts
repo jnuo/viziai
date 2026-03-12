@@ -24,7 +24,32 @@ export interface UnitConversionResult {
   value: number;
   unit: string;
   converted: boolean;
+  factor?: number;
   description?: string;
+}
+
+// ---------------------------------------------------------------------------
+// Unified Metric Processing Types
+// ---------------------------------------------------------------------------
+
+export interface RawMetric {
+  name: string;
+  value: number;
+  unit?: string | null;
+  ref_low?: number | null;
+  ref_high?: number | null;
+}
+
+export interface ProcessedMetric {
+  name: string; // Canonical or original
+  value: number; // Converted
+  unit: string | null; // Canonical or original
+  refLow: number | null; // Converted
+  refHigh: number | null; // Converted
+  flag: "H" | "L" | "N" | null;
+  definitionId: string | null;
+  resolved: boolean;
+  converted: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -394,6 +419,7 @@ export async function convertUnit(
     value: convertedValue,
     unit: targetUnit,
     converted: true,
+    factor,
     description: `${fromUnit} \u2192 ${targetUnit} (\u00D7 ${factor})`,
   };
 }
@@ -416,4 +442,126 @@ export async function getAliasMap(): Promise<
   }
 
   return map;
+}
+
+// ---------------------------------------------------------------------------
+// Unified Metric Processing
+// ---------------------------------------------------------------------------
+
+/**
+ * Determine flag based on value and reference range.
+ * Returns 'H' if high, 'L' if low, 'N' if normal, null if no ref range.
+ */
+export function determineFlag(
+  value: number,
+  refLow: number | null | undefined,
+  refHigh: number | null | undefined,
+): "H" | "L" | "N" | null {
+  if (refLow != null && value < refLow) return "L";
+  if (refHigh != null && value > refHigh) return "H";
+  if (refLow != null || refHigh != null) return "N";
+  return null;
+}
+
+/**
+ * Process a single metric through the full pipeline:
+ * 1. Resolve name to canonical form + definition ID
+ * 2. Convert unit (and apply conversion factor to ref ranges)
+ * 3. Calculate flag based on converted values
+ */
+export async function processMetric(raw: RawMetric): Promise<ProcessedMetric> {
+  // Step 1: Resolve metric name
+  const resolution = await resolveMetricName(raw.name);
+  const definitionId = resolution?.definitionId ?? null;
+  const resolved = !!resolution;
+
+  // Step 2: Convert unit if we have a definition and unit
+  let finalValue = raw.value;
+  let finalUnit = raw.unit ?? null;
+  let finalRefLow = raw.ref_low ?? null;
+  let finalRefHigh = raw.ref_high ?? null;
+  let converted = false;
+
+  if (definitionId && raw.unit) {
+    const conversion = await convertUnit(definitionId, raw.value, raw.unit);
+    if (conversion.converted && conversion.factor) {
+      finalValue = conversion.value;
+      finalUnit = conversion.unit;
+      converted = true;
+      // Apply same conversion factor to reference range
+      if (finalRefLow != null) {
+        finalRefLow = Number((finalRefLow * conversion.factor).toFixed(2));
+      }
+      if (finalRefHigh != null) {
+        finalRefHigh = Number((finalRefHigh * conversion.factor).toFixed(2));
+      }
+    } else {
+      // No conversion needed, but normalize unit
+      finalUnit = conversion.unit;
+    }
+  }
+
+  // Step 3: Calculate flag
+  const flag = determineFlag(finalValue, finalRefLow, finalRefHigh);
+
+  return {
+    name: raw.name, // Keep original name (alias resolution is for definition lookup only)
+    value: finalValue,
+    unit: finalUnit,
+    refLow: finalRefLow,
+    refHigh: finalRefHigh,
+    flag,
+    definitionId,
+    resolved,
+    converted,
+  };
+}
+
+/**
+ * Process a batch of metrics in parallel.
+ * Warms up caches first to avoid repeated DB queries.
+ */
+export async function processMetricsBatch(
+  metrics: RawMetric[],
+): Promise<ProcessedMetric[]> {
+  // Warm up caches before parallel processing
+  await Promise.all([loadAliases(), loadTranslations(), loadUnitAliases()]);
+
+  // Process all metrics in parallel
+  return Promise.all(metrics.map(processMetric));
+}
+
+/**
+ * Track unmapped metrics (fire-and-forget).
+ * Does not throw on failure - logs errors internally.
+ */
+export async function trackUnmappedMetrics(
+  metrics: Array<{
+    name: string;
+    unit?: string | null;
+    refLow?: number | null;
+    refHigh?: number | null;
+    resolved: boolean;
+  }>,
+  context: {
+    reportId: string;
+    profileId: string;
+    uploadId?: string | null;
+  },
+): Promise<void> {
+  try {
+    const unmapped = metrics.filter((m) => !m.resolved);
+    if (unmapped.length === 0) return;
+
+    for (const m of unmapped) {
+      await sql`
+        INSERT INTO unmapped_metrics (metric_name, unit, ref_low, ref_high, report_id, profile_id, upload_id, status)
+        VALUES (${m.name}, ${m.unit || null}, ${m.refLow ?? null}, ${m.refHigh ?? null}, ${context.reportId}, ${context.profileId}, ${context.uploadId || null}, 'pending')
+        ON CONFLICT (report_id, metric_name) DO NOTHING
+      `;
+    }
+  } catch (e) {
+    // Fire-and-forget - don't block the main flow
+    console.error("[trackUnmappedMetrics] Error:", e);
+  }
 }

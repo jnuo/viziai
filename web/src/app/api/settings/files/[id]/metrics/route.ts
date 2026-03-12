@@ -3,6 +3,7 @@ import { requireAuth, getProfileAccessLevel } from "@/lib/auth";
 import { sql } from "@/lib/db";
 import { reportError } from "@/lib/error-reporting";
 import { isValidUUID } from "@/lib/utils";
+import { processMetric } from "@/lib/metric-definitions";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -86,9 +87,9 @@ export async function PUT(
       );
     }
 
-    // Verify the metric belongs to a report associated with this file
+    // Verify the metric belongs to a report associated with this file and get its name
     const metricCheck = await sql`
-      SELECT m.id
+      SELECT m.id, m.name
       FROM metrics m
       JOIN reports r ON r.id = m.report_id
       WHERE m.id = ${body.metricId}
@@ -106,25 +107,27 @@ export async function PUT(
       );
     }
 
-    // Calculate flag based on reference values
-    let flag: string | null = null;
-    if (body.ref_low != null && body.value < body.ref_low) {
-      flag = "L";
-    } else if (body.ref_high != null && body.value > body.ref_high) {
-      flag = "H";
-    } else if (body.ref_low != null || body.ref_high != null) {
-      flag = "N";
-    }
+    const existingMetric = metricCheck[0];
 
-    // Update the metric
+    // Re-process through the unified pipeline to handle unit conversion and flag calculation
+    const processed = await processMetric({
+      name: existingMetric.name as string,
+      value: body.value,
+      unit: body.unit,
+      ref_low: body.ref_low,
+      ref_high: body.ref_high,
+    });
+
+    // Update the metric with processed values
     await sql`
       UPDATE metrics
       SET
-        value = ${body.value},
-        unit = ${body.unit},
-        ref_low = ${body.ref_low},
-        ref_high = ${body.ref_high},
-        flag = ${flag}
+        value = ${processed.value},
+        unit = ${processed.unit},
+        ref_low = ${processed.refLow},
+        ref_high = ${processed.refHigh},
+        flag = ${processed.flag},
+        metric_definition_id = COALESCE(${processed.definitionId}, metric_definition_id)
       WHERE id = ${body.metricId}
     `;
 

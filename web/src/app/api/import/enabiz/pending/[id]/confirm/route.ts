@@ -2,6 +2,11 @@ import { NextResponse } from "next/server";
 import { requireAuth, getProfileAccessLevel } from "@/lib/auth";
 import { sql } from "@/lib/db";
 import { reportError } from "@/lib/error-reporting";
+import {
+  processMetricsBatch,
+  trackUnmappedMetrics,
+  type RawMetric,
+} from "@/lib/metric-definitions";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -17,17 +22,6 @@ interface ConfirmRequest {
   }>;
   collisionAction?: "overwrite" | "skip" | "create_separate";
   collisionReportId?: string;
-}
-
-function determineFlag(
-  value: number,
-  refLow: number | null | undefined,
-  refHigh: number | null | undefined,
-): string | null {
-  if (refLow != null && value < refLow) return "L";
-  if (refHigh != null && value > refHigh) return "H";
-  if (refLow != null || refHigh != null) return "N";
-  return null;
 }
 
 /**
@@ -158,37 +152,58 @@ export async function POST(
       console.log(`[API] Created new report: ${reportId} from e-Nabız import`);
     }
 
+    // Filter valid metrics and process through unified pipeline
+    const validMetrics = body.metrics.filter(
+      (m) => typeof m.value === "number" && !isNaN(m.value),
+    );
+
+    // Process all metrics through the unified pipeline (resolve + convert + flag)
+    const rawMetrics: RawMetric[] = validMetrics.map((m) => ({
+      name: m.name,
+      value: m.value,
+      unit: m.unit,
+      ref_low: m.ref_low,
+      ref_high: m.ref_high,
+    }));
+    const processedMetrics = await processMetricsBatch(rawMetrics);
+
     // Insert metrics
     let insertedCount = 0;
-    for (const metric of body.metrics) {
-      if (typeof metric.value !== "number" || isNaN(metric.value)) continue;
-
-      const flag = determineFlag(metric.value, metric.ref_low, metric.ref_high);
+    for (let i = 0; i < processedMetrics.length; i++) {
+      const metric = validMetrics[i];
+      const processed = processedMetrics[i];
 
       await sql`
-        INSERT INTO metrics (report_id, name, value, unit, ref_low, ref_high, flag)
+        INSERT INTO metrics (report_id, name, value, unit, ref_low, ref_high, flag, metric_definition_id, sort_order)
         VALUES (
           ${reportId},
           ${metric.name},
-          ${metric.value},
-          ${metric.unit || null},
-          ${metric.ref_low ?? null},
-          ${metric.ref_high ?? null},
-          ${flag}
+          ${processed.value},
+          ${processed.unit},
+          ${processed.refLow},
+          ${processed.refHigh},
+          ${processed.flag},
+          ${processed.definitionId},
+          ${i}
         )
         ON CONFLICT (report_id, name) DO UPDATE
         SET value = EXCLUDED.value,
             unit = COALESCE(EXCLUDED.unit, metrics.unit),
             ref_low = COALESCE(EXCLUDED.ref_low, metrics.ref_low),
             ref_high = COALESCE(EXCLUDED.ref_high, metrics.ref_high),
-            flag = EXCLUDED.flag
+            flag = EXCLUDED.flag,
+            metric_definition_id = COALESCE(EXCLUDED.metric_definition_id, metrics.metric_definition_id),
+            sort_order = EXCLUDED.sort_order
       `;
       insertedCount++;
+    }
 
-      // Ensure metric_preferences row exists
+    // Batch-insert metric_preferences for all confirmed metrics
+    const validNames = validMetrics.map((m) => m.name);
+    if (validNames.length > 0) {
       await sql`
         INSERT INTO metric_preferences (profile_id, name)
-        VALUES (${profileId}, ${metric.name})
+        SELECT ${profileId}, unnest(${validNames}::text[])
         ON CONFLICT (profile_id, name) DO NOTHING
       `;
     }
@@ -207,6 +222,20 @@ export async function POST(
         importId: id,
       });
     }
+
+    // Track unmapped metrics (fire-and-forget)
+    const unmappedData = processedMetrics.map((p, i) => ({
+      name: validMetrics[i].name,
+      unit: validMetrics[i].unit,
+      refLow: validMetrics[i].ref_low,
+      refHigh: validMetrics[i].ref_high,
+      resolved: p.resolved,
+    }));
+    trackUnmappedMetrics(unmappedData, {
+      reportId,
+      profileId,
+      uploadId: null,
+    });
 
     // Mark pending import as confirmed
     await sql`

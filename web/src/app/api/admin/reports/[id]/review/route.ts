@@ -3,6 +3,7 @@ import { requireAdmin } from "@/lib/auth";
 import { sql } from "@/lib/db";
 import { reportError } from "@/lib/error-reporting";
 import { isValidUUID } from "@/lib/utils";
+import { processMetric } from "@/lib/metric-definitions";
 
 export const dynamic = "force-dynamic";
 
@@ -72,7 +73,6 @@ export async function POST(
     }
 
     // Apply metric corrections if provided
-    // The WHERE clause guards ownership — no separate SELECT needed
     if (body.corrections && body.corrections.length > 0) {
       for (const c of body.corrections) {
         if (!c.metricId || !isValidUUID(c.metricId)) continue;
@@ -117,13 +117,48 @@ export async function POST(
         if (!hasName && !hasValue && !hasUnit && !hasRefLow && !hasRefHigh)
           continue;
 
+        // Read existing metric to merge with corrections
+        const existingRows = await sql`
+          SELECT name, value, unit, ref_low, ref_high
+          FROM metrics
+          WHERE id = ${c.metricId} AND report_id = ${id}
+        `;
+        if (existingRows.length === 0) continue;
+
+        const existing = existingRows[0];
+
+        // Merge corrections with existing values
+        const mergedName = hasName ? c.name! : (existing.name as string);
+        const mergedValue = hasValue
+          ? c.value!
+          : (existing.value as number);
+        const mergedUnit = hasUnit ? c.unit : (existing.unit as string | null);
+        const mergedRefLow = hasRefLow
+          ? c.refLow
+          : (existing.ref_low as number | null);
+        const mergedRefHigh = hasRefHigh
+          ? c.refHigh
+          : (existing.ref_high as number | null);
+
+        // Re-process through the unified pipeline (handles name resolution, unit conversion, flag calculation)
+        const processed = await processMetric({
+          name: mergedName,
+          value: mergedValue,
+          unit: mergedUnit,
+          ref_low: mergedRefLow,
+          ref_high: mergedRefHigh,
+        });
+
+        // Update with processed values
         await sql`
           UPDATE metrics SET
-            name = CASE WHEN ${hasName} THEN ${c.name ?? null} ELSE name END,
-            value = CASE WHEN ${hasValue} THEN ${c.value ?? null} ELSE value END,
-            unit = CASE WHEN ${hasUnit} THEN ${c.unit ?? null} ELSE unit END,
-            ref_low = CASE WHEN ${hasRefLow} THEN ${c.refLow ?? null} ELSE ref_low END,
-            ref_high = CASE WHEN ${hasRefHigh} THEN ${c.refHigh ?? null} ELSE ref_high END
+            name = ${mergedName},
+            value = ${processed.value},
+            unit = ${processed.unit},
+            ref_low = ${processed.refLow},
+            ref_high = ${processed.refHigh},
+            flag = ${processed.flag},
+            metric_definition_id = ${processed.definitionId}
           WHERE id = ${c.metricId} AND report_id = ${id}
         `;
       }
