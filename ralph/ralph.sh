@@ -4,61 +4,56 @@ set -e
 MAX_ITERATIONS=${1:-15}
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+LOG="$SCRIPT_DIR/ralph.log"
 
 cd "$PROJECT_ROOT"
 
-echo "Starting Ralph - Phase 1: Ship the Free Product"
-echo "Max iterations: $MAX_ITERATIONS"
-echo "Branch: $(git branch --show-current)"
-echo "Ralph dir: $SCRIPT_DIR"
-echo ""
+log() { echo "[$(date '+%H:%M:%S')] $1" | tee -a "$LOG"; }
+
+log "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+log "🚀 RALPH — $MAX_ITERATIONS iterations"
+log "   Branch: $(git branch --show-current)"
+log "   Last commit: $(git log --oneline -1)"
 
 for i in $(seq 1 $MAX_ITERATIONS); do
-  echo "======================================="
-  echo "=== Iteration $i of $MAX_ITERATIONS ==="
-  echo "======================================="
+  log "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  log "🔄 ITERATION $i/$MAX_ITERATIONS"
 
+  START=$(date +%s)
+
+  # This is the pattern that works — same as the original ralph.sh
   OUTPUT=$(cat "$SCRIPT_DIR/prompt.md" \
     | claude --dangerously-skip-permissions 2>&1 \
     | tee /dev/stderr) || true
 
-  # Check for checkpoint (needs user approval)
-  if echo "$OUTPUT" | grep -q "CHECKPOINT:"; then
-    echo ""
-    echo "Checkpoint reached!"
-    echo "Ralph is waiting for your approval."
-    echo "Review the changes, test them, then run ralph.sh again to continue."
-    exit 0
-  fi
+  DURATION=$(( $(date +%s) - START ))
+  log "⏱️  Done in $((DURATION/60))m $((DURATION%60))s"
 
-  # Check for blocked (needs user input)
-  if echo "$OUTPUT" | grep -q "BLOCKED:"; then
-    echo ""
-    echo "Ralph is blocked and needs your help!"
-    echo "Check the output above for details."
-    exit 1
-  fi
+  # Parse markers from output
+  echo "$OUTPUT" | grep '\[RALPH:' | while IFS= read -r line; do
+    marker=$(echo "$line" | grep -o '\[RALPH:[A-Z]*\].*')
+    [ -n "$marker" ] && log "   $marker"
+  done
 
-  # Check for all tasks complete
+  # Git state
+  log "   Commit: $(git log --oneline -1)"
+
+  # Stop conditions
   if echo "$OUTPUT" | grep -q "ALL_TASKS_COMPLETE"; then
-    echo ""
-    echo "All tasks complete!"
-    exit 0
+    log "🎉 ALL TASKS COMPLETE"; exit 0
   fi
-
-  # Check for error
+  if echo "$OUTPUT" | grep -q "BLOCKED:"; then
+    log "🛑 BLOCKED"; exit 1
+  fi
   if echo "$OUTPUT" | grep -q "ERROR:"; then
-    echo ""
-    echo "Ralph encountered an error!"
-    echo "Check the output above for details."
-    exit 1
+    log "💥 ERROR"; exit 1
+  fi
+  if ! echo "$OUTPUT" | grep -q '\[RALPH:DONE\]'; then
+    log "⚠️  No DONE marker — may have failed"
   fi
 
-  echo ""
-  echo "Sleeping 2s before next iteration..."
   sleep 2
 done
 
-echo ""
-echo "Max iterations ($MAX_ITERATIONS) reached"
+log "⏰ Max iterations reached"
 exit 1

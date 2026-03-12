@@ -8,7 +8,6 @@ import React, {
   useRef,
   Suspense,
 } from "react";
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useDropzone } from "react-dropzone";
 import {
@@ -56,6 +55,7 @@ import {
   MetricReviewCard,
   type MetricCardLabels,
 } from "@/components/metric-review-card";
+import { ReportReviewLayout } from "@/components/report-review-layout";
 
 interface Profile {
   id: string;
@@ -77,6 +77,8 @@ type UploadStatus =
   | "success"
   | "error";
 
+const POLL_TIMEOUT_MS = 300000; // 5 minutes max polling
+
 function UploadPageContent(): React.ReactElement {
   const t = useTranslations("pages.upload");
   const tc = useTranslations("common");
@@ -96,12 +98,12 @@ function UploadPageContent(): React.ReactElement {
   const [sampleDate, setSampleDate] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [uploadCreatedAt, setUploadCreatedAt] = useState<string | null>(null);
+  const [fileUrl, setFileUrl] = useState<string | null>(null);
   const [appliedRenames, setAppliedRenames] = useState<
     Record<string, RenameInfo>
   >({});
   const pollIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const pollStartTimeRef = useRef<number | null>(null);
-  const POLL_TIMEOUT_MS = 300000; // 5 minutes max polling
 
   function stopPolling(): void {
     if (pollIntervalRef.current) {
@@ -137,8 +139,13 @@ function UploadPageContent(): React.ReactElement {
           } else if (pendingUpload.status === "review") {
             await loadExtractedData(pendingUpload.id);
           } else if (pendingUpload.status === "pending") {
-            setStatus("extracting");
-            startExtraction(pendingUpload.id);
+            if (pendingUpload.error_message) {
+              setStatus("error");
+              setError(pendingUpload.error_message);
+            } else {
+              setStatus("extracting");
+              startExtraction(pendingUpload.id);
+            }
           }
         }
       } catch (error) {
@@ -240,13 +247,19 @@ function UploadPageContent(): React.ReactElement {
         const extracted = upload.extracted_data;
         setExtractedData(extracted);
         setSampleDate(extracted.sample_date || upload.sample_date || "");
+        if (upload.file_url) setFileUrl(upload.file_url);
 
         const { metrics, renames } = await applyAliases(
           extracted.metrics || [],
         );
+
+        // Unit conversion is handled server-side at confirm time
         const ts = Date.now();
         setEditedMetrics(
-          metrics.map((m, i) => ({ ...m, _key: `metric-${i}-${ts}` })),
+          metrics.map((m, i) => ({
+            ...m,
+            _key: `metric-${i}-${ts}`,
+          })),
         );
         setAppliedRenames(renames);
         setStatus("review");
@@ -485,16 +498,13 @@ function UploadPageContent(): React.ReactElement {
     setStatus("idle");
     setUploadId(null);
     setFileName("");
+    setFileUrl(null);
     setUploadCreatedAt(null);
     setExtractedData(null);
     setEditedMetrics([]);
     setAppliedRenames({});
     setSampleDate("");
     setError(null);
-  }
-
-  function handleGoToDashboard(): void {
-    router.push("/dashboard");
   }
 
   const cardLabels = useMemo<MetricCardLabels>(
@@ -521,7 +531,12 @@ function UploadPageContent(): React.ReactElement {
         currentProfileId={selectedProfileId || undefined}
       />
 
-      <main className="container max-w-3xl mx-auto p-4 space-y-6">
+      <main
+        className={cn(
+          "container mx-auto p-4 space-y-6",
+          status === "review" && fileUrl ? "px-6" : "max-w-3xl",
+        )}
+      >
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="sm" onClick={() => router.back()}>
             <ChevronLeft className="h-4 w-4 mr-1" />
@@ -667,276 +682,302 @@ function UploadPageContent(): React.ReactElement {
 
             {/* Review State */}
             {status === "review" && extractedData && (
-              <div className="space-y-6">
-                <div className="flex items-start gap-2 text-status-normal">
-                  <FileText className="h-5 w-5 shrink-0 mt-0.5" />
-                  <div className="min-w-0">
-                    <p className="font-medium text-sm truncate">{fileName}</p>
-                    {uploadCreatedAt && (
-                      <p className="text-muted-foreground text-xs mt-0.5">
-                        {formatDateTimeTR(uploadCreatedAt, locale, timezone)}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                {/* Sample Date */}
-                <div className="space-y-2">
-                  <Label htmlFor="sampleDate">{t("testDate")}</Label>
-                  <Input
-                    id="sampleDate"
-                    type="date"
-                    value={sampleDate}
-                    onChange={(e) => setSampleDate(e.target.value)}
-                    className="max-w-xs"
-                  />
-                </div>
-
-                {/* Metrics */}
-                <div className="space-y-2">
-                  <Label>{t("metrics", { count: editedMetrics.length })}</Label>
-
-                  {/* Desktop table view */}
-                  <div className="hidden md:block border rounded-lg overflow-hidden">
-                    <div className="max-h-96 overflow-y-auto">
-                      <table className="w-full text-sm">
-                        <thead className="bg-muted sticky top-0">
-                          <tr>
-                            <th className="text-left p-2 font-medium">
-                              {t("metric")}
-                            </th>
-                            <th className="text-right p-2 font-medium">
-                              {t("value")}
-                            </th>
-                            <th className="text-right p-2 font-medium">
-                              {t("unit")}
-                            </th>
-                            <th className="text-right p-2 font-medium">
-                              {t("refMin")}
-                            </th>
-                            <th className="text-right p-2 font-medium">
-                              {t("refMax")}
-                            </th>
-                            <th className="w-10"></th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {editedMetrics.map((metric, index) => {
-                            const isOutOfRange = checkOutOfRange(
-                              metric.value,
-                              metric.ref_low ?? null,
-                              metric.ref_high ?? null,
-                            );
-                            const renameInfo =
-                              renameInfoMap.get(metric.name) ?? null;
-                            return (
-                              <React.Fragment key={metric._key}>
-                                <tr
-                                  className={cn(
-                                    "border-t",
-                                    isOutOfRange && "bg-status-critical/10",
-                                  )}
-                                >
-                                  <td className="p-2">
-                                    <Input
-                                      value={metric.name ?? ""}
-                                      onChange={(e) =>
-                                        handleMetricChange(
-                                          index,
-                                          "name",
-                                          e.target.value,
-                                        )
-                                      }
-                                      className="h-8 text-sm"
-                                      aria-label={t("metricName")}
-                                    />
-                                  </td>
-                                  <td className="p-2">
-                                    <Input
-                                      type="number"
-                                      value={metric.value ?? ""}
-                                      onChange={(e) =>
-                                        handleMetricChange(
-                                          index,
-                                          "value",
-                                          e.target.value
-                                            ? parseFloat(e.target.value)
-                                            : null,
-                                        )
-                                      }
-                                      className={cn(
-                                        "h-8 text-sm text-right w-24",
-                                        isOutOfRange &&
-                                          "text-status-critical font-medium",
-                                      )}
-                                      aria-label={t("value")}
-                                    />
-                                  </td>
-                                  <td className="p-2">
-                                    <Input
-                                      value={metric.unit ?? ""}
-                                      onChange={(e) =>
-                                        handleMetricChange(
-                                          index,
-                                          "unit",
-                                          e.target.value,
-                                        )
-                                      }
-                                      className="h-8 text-sm text-right w-20"
-                                      aria-label={t("unit")}
-                                    />
-                                  </td>
-                                  <td className="p-2">
-                                    <Input
-                                      type="number"
-                                      value={metric.ref_low ?? ""}
-                                      onChange={(e) =>
-                                        handleMetricChange(
-                                          index,
-                                          "ref_low",
-                                          e.target.value
-                                            ? parseFloat(e.target.value)
-                                            : null,
-                                        )
-                                      }
-                                      className="h-8 text-sm text-right w-20"
-                                      placeholder="-"
-                                      aria-label={t("refMinAria")}
-                                    />
-                                  </td>
-                                  <td className="p-2">
-                                    <Input
-                                      type="number"
-                                      value={metric.ref_high ?? ""}
-                                      onChange={(e) =>
-                                        handleMetricChange(
-                                          index,
-                                          "ref_high",
-                                          e.target.value
-                                            ? parseFloat(e.target.value)
-                                            : null,
-                                        )
-                                      }
-                                      className="h-8 text-sm text-right w-20"
-                                      placeholder="-"
-                                      aria-label={t("refMaxAria")}
-                                    />
-                                  </td>
-                                  <td className="p-2">
-                                    <Button
-                                      variant="ghost"
-                                      size="icon"
-                                      className="h-8 w-8"
-                                      onClick={() => handleRemoveMetric(index)}
-                                      aria-label={t("deleteMetric")}
-                                    >
-                                      <X className="h-4 w-4" />
-                                    </Button>
-                                  </td>
-                                </tr>
-                                {renameInfo && (
-                                  <tr>
-                                    <td colSpan={6} className="px-2 pb-2 pt-0">
-                                      <div className="flex items-center gap-2.5 text-xs">
-                                        <span className="text-muted-foreground shrink-0">
-                                          <span className="font-medium line-through">
-                                            {renameInfo.original}
-                                          </span>
-                                          <ArrowRight className="inline h-3 w-3 mx-1" />
-                                          <span className="font-medium text-primary">
-                                            {renameInfo.canonical}
-                                          </span>
-                                        </span>
-                                        <Switch
-                                          checked={renameInfo.applied}
-                                          onCheckedChange={(checked) =>
-                                            handleAliasToggle(
-                                              index,
-                                              checked,
-                                              renameInfo,
-                                            )
-                                          }
-                                          aria-label={`${renameInfo.original} → ${renameInfo.canonical}`}
-                                        />
-                                        <span className="text-muted-foreground/70">
-                                          {renameInfo.applied ? (
-                                            <>
-                                              <span className="font-medium text-primary">
-                                                {renameInfo.canonical}
-                                              </span>{" "}
-                                              {t("willBeAddedAs")}
-                                            </>
-                                          ) : (
-                                            <>
-                                              <span className="font-medium">
-                                                {renameInfo.original}
-                                              </span>{" "}
-                                              {t("willStayAs")}
-                                            </>
-                                          )}
-                                        </span>
-                                      </div>
-                                    </td>
-                                  </tr>
-                                )}
-                              </React.Fragment>
-                            );
-                          })}
-                        </tbody>
-                      </table>
+              <ReportReviewLayout pdfUrl={fileUrl}>
+                <div className="space-y-6">
+                  <div className="flex items-start gap-2 text-status-normal">
+                    <FileText className="h-5 w-5 shrink-0 mt-0.5" />
+                    <div className="min-w-0">
+                      <p className="font-medium text-sm truncate">{fileName}</p>
+                      {uploadCreatedAt && (
+                        <p className="text-muted-foreground text-xs mt-0.5">
+                          {formatDateTimeTR(uploadCreatedAt, locale, timezone)}
+                        </p>
+                      )}
                     </div>
                   </div>
 
-                  {/* Mobile card view */}
-                  <div className="md:hidden space-y-2 pb-20">
-                    {editedMetrics.map((metric, index) => (
-                      <MetricReviewCard
-                        key={metric._key}
-                        metric={metric}
-                        index={index}
-                        labels={cardLabels}
-                        renameInfo={renameInfoMap.get(metric.name) ?? null}
-                        onMetricChange={handleMetricChange}
-                        onRemove={handleRemoveMetric}
-                        onAliasToggle={handleAliasToggle}
-                      />
-                    ))}
+                  {/* Sample Date */}
+                  <div className="space-y-2">
+                    <Label htmlFor="sampleDate">{t("testDate")}</Label>
+                    <Input
+                      id="sampleDate"
+                      type="date"
+                      value={sampleDate}
+                      onChange={(e) => setSampleDate(e.target.value)}
+                      className="max-w-xs"
+                    />
                   </div>
-                </div>
 
-                {/* Mobile: sticky actions */}
-                <div className="md:hidden sticky bottom-0 bg-background border-t p-3 pb-safe">
-                  <div className="flex flex-col-reverse gap-2">
-                    <Button
-                      variant="outline"
-                      onClick={handleCancel}
-                      className="w-full"
+                  {/* Metrics */}
+                  <div className="space-y-2">
+                    <Label>
+                      {t("metrics", { count: editedMetrics.length })}
+                    </Label>
+
+                    {/* Desktop table view — hidden when PDF sidebar narrows the column */}
+                    <div
+                      className={cn(
+                        "border rounded-lg overflow-hidden",
+                        fileUrl ? "hidden" : "hidden md:block",
+                      )}
                     >
+                      <div className="max-h-96 overflow-y-auto">
+                        <table className="w-full text-sm">
+                          <thead className="bg-muted sticky top-0">
+                            <tr>
+                              <th className="text-left p-2 font-medium">
+                                {t("metric")}
+                              </th>
+                              <th className="text-right p-2 font-medium">
+                                {t("value")}
+                              </th>
+                              <th className="text-right p-2 font-medium">
+                                {t("unit")}
+                              </th>
+                              <th className="text-right p-2 font-medium">
+                                {t("refMin")}
+                              </th>
+                              <th className="text-right p-2 font-medium">
+                                {t("refMax")}
+                              </th>
+                              <th className="w-10"></th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {editedMetrics.map((metric, index) => {
+                              const isOutOfRange = checkOutOfRange(
+                                metric.value,
+                                metric.ref_low ?? null,
+                                metric.ref_high ?? null,
+                              );
+                              const renameInfo =
+                                renameInfoMap.get(metric.name) ?? null;
+                              return (
+                                <React.Fragment key={metric._key}>
+                                  <tr
+                                    className={cn(
+                                      "border-t",
+                                      isOutOfRange && "bg-status-critical/10",
+                                    )}
+                                  >
+                                    <td className="p-2">
+                                      <Input
+                                        value={metric.name ?? ""}
+                                        onChange={(e) =>
+                                          handleMetricChange(
+                                            index,
+                                            "name",
+                                            e.target.value,
+                                          )
+                                        }
+                                        className="h-8 text-sm"
+                                        aria-label={t("metricName")}
+                                      />
+                                    </td>
+                                    <td className="p-2">
+                                      <Input
+                                        type="number"
+                                        value={metric.value ?? ""}
+                                        onChange={(e) =>
+                                          handleMetricChange(
+                                            index,
+                                            "value",
+                                            e.target.value
+                                              ? parseFloat(e.target.value)
+                                              : null,
+                                          )
+                                        }
+                                        className={cn(
+                                          "h-8 text-sm text-right w-24",
+                                          isOutOfRange &&
+                                            "text-status-critical font-medium",
+                                        )}
+                                        aria-label={t("value")}
+                                      />
+                                    </td>
+                                    <td className="p-2">
+                                      <Input
+                                        value={metric.unit ?? ""}
+                                        onChange={(e) =>
+                                          handleMetricChange(
+                                            index,
+                                            "unit",
+                                            e.target.value,
+                                          )
+                                        }
+                                        className="h-8 text-sm text-right w-20"
+                                        aria-label={t("unit")}
+                                      />
+                                    </td>
+                                    <td className="p-2">
+                                      <Input
+                                        type="number"
+                                        value={metric.ref_low ?? ""}
+                                        onChange={(e) =>
+                                          handleMetricChange(
+                                            index,
+                                            "ref_low",
+                                            e.target.value
+                                              ? parseFloat(e.target.value)
+                                              : null,
+                                          )
+                                        }
+                                        className="h-8 text-sm text-right w-20"
+                                        placeholder="-"
+                                        aria-label={t("refMinAria")}
+                                      />
+                                    </td>
+                                    <td className="p-2">
+                                      <Input
+                                        type="number"
+                                        value={metric.ref_high ?? ""}
+                                        onChange={(e) =>
+                                          handleMetricChange(
+                                            index,
+                                            "ref_high",
+                                            e.target.value
+                                              ? parseFloat(e.target.value)
+                                              : null,
+                                          )
+                                        }
+                                        className="h-8 text-sm text-right w-20"
+                                        placeholder="-"
+                                        aria-label={t("refMaxAria")}
+                                      />
+                                    </td>
+                                    <td className="p-2">
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-8 w-8"
+                                        onClick={() =>
+                                          handleRemoveMetric(index)
+                                        }
+                                        aria-label={t("deleteMetric")}
+                                      >
+                                        <X className="h-4 w-4" />
+                                      </Button>
+                                    </td>
+                                  </tr>
+                                  {renameInfo && (
+                                    <tr>
+                                      <td
+                                        colSpan={6}
+                                        className="px-2 pb-2 pt-0"
+                                      >
+                                        <div className="flex items-center gap-2.5 text-xs">
+                                          <span className="text-muted-foreground shrink-0">
+                                            <span className="font-medium line-through">
+                                              {renameInfo.original}
+                                            </span>
+                                            <ArrowRight className="inline h-3 w-3 mx-1" />
+                                            <span className="font-medium text-primary">
+                                              {renameInfo.canonical}
+                                            </span>
+                                          </span>
+                                          <Switch
+                                            checked={renameInfo.applied}
+                                            onCheckedChange={(checked) =>
+                                              handleAliasToggle(
+                                                index,
+                                                checked,
+                                                renameInfo,
+                                              )
+                                            }
+                                            aria-label={`${renameInfo.original} → ${renameInfo.canonical}`}
+                                          />
+                                          <span className="text-muted-foreground/70">
+                                            {renameInfo.applied ? (
+                                              <>
+                                                <span className="font-medium text-primary">
+                                                  {renameInfo.canonical}
+                                                </span>{" "}
+                                                {t("willBeAddedAs")}
+                                              </>
+                                            ) : (
+                                              <>
+                                                <span className="font-medium">
+                                                  {renameInfo.original}
+                                                </span>{" "}
+                                                {t("willStayAs")}
+                                              </>
+                                            )}
+                                          </span>
+                                        </div>
+                                      </td>
+                                    </tr>
+                                  )}
+                                </React.Fragment>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    {/* Card view — always visible when PDF sidebar is present, otherwise mobile only */}
+                    <div
+                      className={cn("space-y-2 pb-20", !fileUrl && "md:hidden")}
+                    >
+                      {editedMetrics.map((metric, index) => (
+                        <MetricReviewCard
+                          key={metric._key}
+                          metric={metric}
+                          index={index}
+                          labels={cardLabels}
+                          renameInfo={renameInfoMap.get(metric.name) ?? null}
+                          onMetricChange={handleMetricChange}
+                          onRemove={handleRemoveMetric}
+                          onAliasToggle={handleAliasToggle}
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Sticky actions — visible when using card view (mobile or PDF sidebar) */}
+                  <div
+                    className={cn(
+                      "sticky bottom-0 bg-background border-t p-3 pb-safe",
+                      !fileUrl && "md:hidden",
+                    )}
+                  >
+                    <div className="flex flex-col-reverse gap-2">
+                      <Button
+                        variant="outline"
+                        onClick={handleCancel}
+                        className="w-full"
+                      >
+                        {tc("cancel")}
+                      </Button>
+                      <Button
+                        onClick={handleConfirm}
+                        disabled={!sampleDate || editedMetrics.length === 0}
+                        className="w-full"
+                      >
+                        {t("confirmSave")}
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Desktop inline actions — hidden when PDF sidebar forces card view */}
+                  <div
+                    className={cn(
+                      "gap-3 justify-end",
+                      fileUrl ? "hidden" : "hidden md:flex",
+                    )}
+                  >
+                    <Button variant="outline" onClick={handleCancel}>
                       {tc("cancel")}
                     </Button>
                     <Button
                       onClick={handleConfirm}
                       disabled={!sampleDate || editedMetrics.length === 0}
-                      className="w-full"
                     >
                       {t("confirmSave")}
                     </Button>
                   </div>
                 </div>
-
-                {/* Desktop: inline actions */}
-                <div className="hidden md:flex gap-3 justify-end">
-                  <Button variant="outline" onClick={handleCancel}>
-                    {tc("cancel")}
-                  </Button>
-                  <Button
-                    onClick={handleConfirm}
-                    disabled={!sampleDate || editedMetrics.length === 0}
-                  >
-                    {t("confirmSave")}
-                  </Button>
-                </div>
-              </div>
+              </ReportReviewLayout>
             )}
 
             {/* Confirming State */}
@@ -961,7 +1002,7 @@ function UploadPageContent(): React.ReactElement {
                   <Button variant="outline" onClick={handleCancel}>
                     {t("uploadAnother")}
                   </Button>
-                  <Button onClick={handleGoToDashboard}>
+                  <Button onClick={() => router.push("/dashboard")}>
                     {t("goToDashboard")}
                   </Button>
                 </div>

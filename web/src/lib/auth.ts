@@ -114,6 +114,9 @@ export const authOptions: NextAuthOptions = {
         if (token.dbId) {
           session.user.dbId = token.dbId as string;
         }
+        if (token.isAdmin) {
+          (session.user as { isAdmin?: boolean }).isAdmin = true;
+        }
       }
       return session;
     },
@@ -125,10 +128,11 @@ export const authOptions: NextAuthOptions = {
         } else if (user.email) {
           try {
             const result = await sql`
-              SELECT id FROM users WHERE LOWER(email) = LOWER(${user.email})
+              SELECT id, is_admin FROM users WHERE LOWER(email) = LOWER(${user.email})
             `;
             if (result[0]?.id) {
               token.dbId = result[0].id;
+              token.isAdmin = result[0].is_admin === true;
             }
           } catch (error) {
             reportError(error, {
@@ -136,6 +140,17 @@ export const authOptions: NextAuthOptions = {
               email: user.email,
             });
           }
+        }
+      }
+      // Refresh isAdmin from DB on every token refresh (not just initial sign-in)
+      if (token.dbId && !user) {
+        try {
+          const result = await sql`
+            SELECT is_admin FROM users WHERE id = ${token.dbId}
+          `;
+          token.isAdmin = result[0]?.is_admin === true;
+        } catch {
+          // Keep existing value on DB error
         }
       }
       return token;
@@ -212,7 +227,17 @@ export async function getUserProfiles(userId: string): Promise<
 export async function requireAuth(): Promise<string | null> {
   const session = await getServerSession(authOptions);
   if (!session?.user?.email) return null;
-  const userId = getDbUserId(session);
+
+  let userId = getDbUserId(session);
+
+  // Fallback: JWT may lack dbId on first sign-in before token refresh
+  if (!userId) {
+    const result = await sql`
+      SELECT id FROM users WHERE LOWER(email) = LOWER(${session.user.email})
+    `;
+    if (result[0]?.id) userId = result[0].id;
+  }
+
   if (userId) {
     Sentry.setUser({ id: userId, email: session.user.email });
   }
@@ -242,6 +267,28 @@ export async function requireApiKey(request: Request): Promise<string | null> {
     reportError(error, { op: "auth.requireApiKey" });
     return null;
   }
+}
+
+export async function isAdmin(userId: string): Promise<boolean> {
+  try {
+    const result = await sql`
+      SELECT is_admin FROM users WHERE id = ${userId}
+    `;
+    return result[0]?.is_admin === true;
+  } catch (error) {
+    reportError(error, { op: "auth.isAdmin", userId });
+    return false;
+  }
+}
+
+export async function requireAdmin(): Promise<string | null> {
+  const userId = await requireAuth();
+  if (!userId) return null;
+
+  const admin = await isAdmin(userId);
+  if (!admin) return null;
+
+  return userId;
 }
 
 export async function requireProfileOwner(

@@ -162,7 +162,7 @@ export default function PreferencesPage(): React.ReactElement | null {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-4xl mx-auto space-y-6">
       <h1 className="text-2xl font-bold flex items-center gap-2">
         <Settings aria-hidden="true" className="h-6 w-6" />
         {t("title")}

@@ -113,7 +113,6 @@ export function CollisionBanner({
   onActionChange,
   labels,
 }: CollisionBannerProps) {
-  const isHighSimilarity = collision.similarity > 0.8;
   const formattedDate = sampleDate
     ? new Date(sampleDate + "T00:00:00").toLocaleDateString("tr-TR", {
         day: "2-digit",

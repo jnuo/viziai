@@ -426,10 +426,7 @@ async function handler(
           );
         }
 
-        if (
-          !mergedResult.sample_date &&
-          isValidISODate(pageData.sample_date)
-        ) {
+        if (!mergedResult.sample_date && isValidISODate(pageData.sample_date)) {
           mergedResult.sample_date = pageData.sample_date;
         }
       }
@@ -473,13 +470,18 @@ async function handler(
         metricCount: metrics.length,
       });
     } catch (extractionError) {
+      const errMsg =
+        extractionError instanceof Error
+          ? extractionError.message
+          : String(extractionError);
+      console.error(`[Worker] Extraction failed for ${uploadId}:`, errMsg);
       reportError(extractionError, { op: "worker.extraction", uploadId });
 
       await sql`
         UPDATE pending_uploads
         SET
           status = 'pending',
-          error_message = 'Veri çıkarma başarısız',
+          error_message = ${`Veri çıkarma başarısız: ${errMsg.slice(0, 200)}`},
           updated_at = NOW()
         WHERE id = ${uploadId}
       `;
@@ -492,22 +494,22 @@ async function handler(
   }
 }
 
-const isLocalDev = process.env.NODE_ENV === "development";
-const hasSigningKey = !!process.env.QSTASH_CURRENT_SIGNING_KEY;
+// Lazy-initialize QStash signature verification to avoid crashing at module load time in dev.
+let verified: ReturnType<typeof verifySignatureAppRouter> | null = null;
 
-// verifySignatureAppRouter reads keys at import time, so only call it when keys exist.
-// In local dev, skip verification. In production without keys, fail closed.
-export const POST = hasSigningKey
-  ? verifySignatureAppRouter(handler)
-  : async (...args: Parameters<typeof handler>) => {
-      if (!isLocalDev) {
-        console.error(
-          "[Worker] Production deploy missing QSTASH_CURRENT_SIGNING_KEY",
-        );
-        return NextResponse.json(
-          { error: "Server misconfigured" },
-          { status: 500 },
-        );
-      }
-      return handler(...args);
-    };
+export const POST = async (...args: Parameters<typeof handler>) => {
+  // Local dev — skip QStash signature verification even if keys are in .env.local
+  if (process.env.NODE_ENV === "development") {
+    return handler(...args);
+  }
+  if (process.env.QSTASH_CURRENT_SIGNING_KEY) {
+    if (!verified) {
+      verified = verifySignatureAppRouter(handler);
+    }
+    return verified(...args);
+  }
+  console.error(
+    "[Worker] Production deploy missing QSTASH_CURRENT_SIGNING_KEY",
+  );
+  return NextResponse.json({ error: "Server misconfigured" }, { status: 500 });
+};

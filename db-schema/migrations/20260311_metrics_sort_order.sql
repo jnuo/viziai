@@ -1,0 +1,3 @@
+-- Add sort_order to metrics table to preserve PDF extraction order.
+-- Nullable: existing metrics stay NULL; new uploads get 0, 1, 2...
+ALTER TABLE metrics ADD COLUMN sort_order INTEGER;
