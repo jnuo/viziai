@@ -37,7 +37,8 @@ export async function GET() {
 
     const total = coverage[0].total as number;
     const linked = coverage[0].linked as number;
-    const coveragePct = total > 0 ? Math.round((linked / total) * 100) : 0;
+    const coveragePct =
+      total > 0 ? Math.round((linked / total) * 1000) / 10 : 0;
 
     return NextResponse.json({
       unreviewedCount: unreviewed[0].count,
