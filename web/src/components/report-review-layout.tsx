@@ -16,6 +16,7 @@ interface ReportReviewLayoutProps {
  * so this layout can use the full viewport width.
  */
 function isSafeUrl(url: string): boolean {
+  if (url.startsWith("data:application/pdf;")) return true;
   try {
     const parsed = new URL(url);
     return parsed.protocol === "https:" || parsed.protocol === "http:";
