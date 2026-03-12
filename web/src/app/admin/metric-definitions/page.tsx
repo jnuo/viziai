@@ -558,6 +558,7 @@ export default function MetricDefinitionsPage() {
                         variant="ghost"
                         size="icon"
                         onClick={() => openEditModal(def)}
+                        aria-label="Edit definition"
                       >
                         <Pencil className="size-4" />
                       </Button>
@@ -565,6 +566,7 @@ export default function MetricDefinitionsPage() {
                         variant="ghost"
                         size="icon"
                         onClick={() => handleDelete(def.id)}
+                        aria-label="Delete definition"
                       >
                         <Trash2 className="size-4 text-destructive" />
                       </Button>
@@ -642,13 +644,14 @@ export default function MetricDefinitionsPage() {
                                       placeholder="Display name"
                                       className="flex-1"
                                     />
-                                    <Button size="icon" variant="ghost" onClick={updateTranslation}>
+                                    <Button size="icon" variant="ghost" onClick={updateTranslation} aria-label="Save">
                                       <Check className="size-4" />
                                     </Button>
                                     <Button
                                       size="icon"
                                       variant="ghost"
                                       onClick={() => setEditingTranslation(null)}
+                                      aria-label="Cancel"
                                     >
                                       <X className="size-4" />
                                     </Button>
@@ -666,6 +669,7 @@ export default function MetricDefinitionsPage() {
                                       size="icon"
                                       variant="ghost"
                                       onClick={() => startEditTranslation(t)}
+                                      aria-label="Edit"
                                     >
                                       <Pencil className="size-3" />
                                     </Button>
@@ -673,6 +677,7 @@ export default function MetricDefinitionsPage() {
                                       size="icon"
                                       variant="ghost"
                                       onClick={() => deleteTranslation(t.id)}
+                                      aria-label="Delete"
                                     >
                                       <Trash2 className="size-3 text-destructive" />
                                     </Button>
@@ -703,13 +708,14 @@ export default function MetricDefinitionsPage() {
                                     placeholder="Display name"
                                     className="flex-1"
                                   />
-                                  <Button size="icon" variant="ghost" onClick={addTranslation}>
+                                  <Button size="icon" variant="ghost" onClick={addTranslation} aria-label="Add">
                                     <Check className="size-4" />
                                   </Button>
                                   <Button
                                     size="icon"
                                     variant="ghost"
                                     onClick={() => setAddingTranslation(false)}
+                                    aria-label="Cancel"
                                   >
                                     <X className="size-4" />
                                   </Button>
@@ -745,6 +751,7 @@ export default function MetricDefinitionsPage() {
                                     size="icon"
                                     variant="ghost"
                                     onClick={() => deleteAlias(a.id)}
+                                    aria-label="Delete"
                                   >
                                     <Trash2 className="size-3 text-destructive" />
                                   </Button>
@@ -758,13 +765,14 @@ export default function MetricDefinitionsPage() {
                                     placeholder="Alias name"
                                     className="flex-1"
                                   />
-                                  <Button size="icon" variant="ghost" onClick={addAlias}>
+                                  <Button size="icon" variant="ghost" onClick={addAlias} aria-label="Add">
                                     <Check className="size-4" />
                                   </Button>
                                   <Button
                                     size="icon"
                                     variant="ghost"
                                     onClick={() => setAddingAlias(false)}
+                                    aria-label="Cancel"
                                   >
                                     <X className="size-4" />
                                   </Button>
@@ -873,6 +881,7 @@ export default function MetricDefinitionsPage() {
                                         size="icon"
                                         variant="ghost"
                                         onClick={updateRefRange}
+                                        aria-label="Save"
                                       >
                                         <Check className="size-4" />
                                       </Button>
@@ -880,6 +889,7 @@ export default function MetricDefinitionsPage() {
                                         size="icon"
                                         variant="ghost"
                                         onClick={() => setEditingRefRange(null)}
+                                        aria-label="Cancel"
                                       >
                                         <X className="size-4" />
                                       </Button>
@@ -900,6 +910,7 @@ export default function MetricDefinitionsPage() {
                                         size="icon"
                                         variant="ghost"
                                         onClick={() => startEditRefRange(r)}
+                                        aria-label="Edit"
                                       >
                                         <Pencil className="size-3" />
                                       </Button>
@@ -907,6 +918,7 @@ export default function MetricDefinitionsPage() {
                                         size="icon"
                                         variant="ghost"
                                         onClick={() => deleteRefRange(r.id)}
+                                        aria-label="Delete"
                                       >
                                         <Trash2 className="size-3 text-destructive" />
                                       </Button>
@@ -966,13 +978,14 @@ export default function MetricDefinitionsPage() {
                                     className="h-8"
                                   />
                                   <div className="flex gap-1">
-                                    <Button size="icon" variant="ghost" onClick={addRefRange}>
+                                    <Button size="icon" variant="ghost" onClick={addRefRange} aria-label="Add">
                                       <Check className="size-4" />
                                     </Button>
                                     <Button
                                       size="icon"
                                       variant="ghost"
                                       onClick={() => setAddingRefRange(false)}
+                                      aria-label="Cancel"
                                     >
                                       <X className="size-4" />
                                     </Button>
