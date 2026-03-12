@@ -2,7 +2,11 @@ import { NextResponse } from "next/server";
 import { requireAuth } from "@/lib/auth";
 import { sql } from "@/lib/db";
 import { reportError } from "@/lib/error-reporting";
-import { resolveMetricName, convertUnit } from "@/lib/metric-definitions";
+import {
+  processMetricsBatch,
+  trackUnmappedMetrics,
+  type RawMetric,
+} from "@/lib/metric-definitions";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -22,17 +26,6 @@ interface ConfirmRequest {
 
 function isValidMetricValue(value: unknown): value is number {
   return typeof value === "number" && !isNaN(value);
-}
-
-function determineFlag(
-  value: number,
-  refLow: number | null | undefined,
-  refHigh: number | null | undefined,
-): string | null {
-  if (refLow != null && value < refLow) return "L";
-  if (refHigh != null && value > refHigh) return "H";
-  if (refLow != null || refHigh != null) return "N";
-  return null;
 }
 
 /**
@@ -154,57 +147,44 @@ export async function POST(
       `[API] Created new report: ${reportId} for date ${body.sampleDate}`,
     );
 
+    // Filter valid metrics and process through unified pipeline
+    const validMetrics = body.metrics.filter((m) => {
+      if (!isValidMetricValue(m.value)) {
+        console.log(`[API] Skipping metric with invalid value: ${m.name}`);
+        return false;
+      }
+      return true;
+    });
+
+    // Process all metrics through the unified pipeline (resolve + convert + flag)
+    const rawMetrics: RawMetric[] = validMetrics.map((m) => ({
+      name: m.name,
+      value: m.value,
+      unit: m.unit,
+      ref_low: m.ref_low,
+      ref_high: m.ref_high,
+    }));
+    const processedMetrics = await processMetricsBatch(rawMetrics);
+
     // Insert metrics
     let insertedCount = 0;
     let updatedCount = 0;
 
-    // Resolve all metric names + unit conversions in parallel
-    const resolutions = await Promise.all(
-      body.metrics.map(async (metric) => {
-        if (!isValidMetricValue(metric.value)) return null;
-        const resolution = await resolveMetricName(metric.name);
-        let conversion = null;
-        if (resolution && metric.unit) {
-          conversion = await convertUnit(
-            resolution.definitionId,
-            metric.value,
-            metric.unit,
-          );
-        }
-        return { resolution, conversion };
-      }),
-    );
+    for (let i = 0; i < processedMetrics.length; i++) {
+      const metric = validMetrics[i];
+      const processed = processedMetrics[i];
 
-    for (let i = 0; i < body.metrics.length; i++) {
-      const metric = body.metrics[i];
-      if (!isValidMetricValue(metric.value)) {
-        console.log(`[API] Skipping metric with invalid value: ${metric.name}`);
-        continue;
-      }
-
-      const { resolution, conversion } = resolutions[i] ?? {};
-      let finalValue = metric.value;
-      let finalUnit = metric.unit || null;
-
-      if (conversion?.converted) {
-        finalValue = conversion.value;
-        finalUnit = conversion.unit;
-      }
-
-      const flag = determineFlag(finalValue, metric.ref_low, metric.ref_high);
-
-      // Insert or update metric
       const result = await sql`
         INSERT INTO metrics (report_id, name, value, unit, ref_low, ref_high, flag, metric_definition_id, sort_order)
         VALUES (
           ${reportId},
           ${metric.name},
-          ${finalValue},
-          ${finalUnit},
-          ${metric.ref_low ?? null},
-          ${metric.ref_high ?? null},
-          ${flag},
-          ${resolution?.definitionId ?? null},
+          ${processed.value},
+          ${processed.unit},
+          ${processed.refLow},
+          ${processed.refHigh},
+          ${processed.flag},
+          ${processed.definitionId},
           ${i}
         )
         ON CONFLICT (report_id, name) DO UPDATE
@@ -227,9 +207,7 @@ export async function POST(
     }
 
     // Batch-insert metric_preferences for all confirmed metrics
-    const validNames = body.metrics
-      .filter((m) => isValidMetricValue(m.value))
-      .map((m) => m.name);
+    const validNames = validMetrics.map((m) => m.name);
     if (validNames.length > 0) {
       await sql`
         INSERT INTO metric_preferences (profile_id, name)
@@ -251,24 +229,19 @@ export async function POST(
       reportError(e, { op: "upload.confirm.processedFiles", uploadId });
     }
 
-    // Detect unmapped metrics (fire-and-forget — don't block confirm flow)
-    try {
-      for (let i = 0; i < body.metrics.length; i++) {
-        const metric = body.metrics[i];
-        if (!isValidMetricValue(metric.value)) continue;
-
-        // Already resolved = not unmapped
-        if (resolutions[i]?.resolution) continue;
-
-        await sql`
-          INSERT INTO unmapped_metrics (metric_name, unit, ref_low, ref_high, report_id, profile_id, upload_id, status)
-          VALUES (${metric.name}, ${metric.unit || null}, ${metric.ref_low ?? null}, ${metric.ref_high ?? null}, ${reportId}, ${profileId}, ${uploadId}, 'pending')
-          ON CONFLICT (report_id, metric_name) DO NOTHING
-        `;
-      }
-    } catch (e) {
-      reportError(e, { op: "upload.confirm.unmappedMetrics", uploadId });
-    }
+    // Track unmapped metrics (fire-and-forget — don't block confirm flow)
+    const unmappedData = processedMetrics.map((p, i) => ({
+      name: validMetrics[i].name,
+      unit: validMetrics[i].unit,
+      refLow: validMetrics[i].ref_low,
+      refHigh: validMetrics[i].ref_high,
+      resolved: p.resolved,
+    }));
+    trackUnmappedMetrics(unmappedData, {
+      reportId,
+      profileId,
+      uploadId,
+    });
 
     // Update pending upload status — blob is preserved for admin review and re-extraction
     await sql`
