@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions, getDbUserId, getProfileAccessLevel } from "@/lib/auth";
+import { requireAuth, getProfileAccessLevel } from "@/lib/auth";
 import { sql } from "@/lib/db";
+import { reportError } from "@/lib/error-reporting";
 import { isValidUUID } from "@/lib/utils";
 
 export const runtime = "nodejs";
@@ -24,9 +24,7 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const session = await getServerSession(authOptions);
-    const userId = getDbUserId(session);
-
+    const userId = await requireAuth();
     if (!userId) {
       return NextResponse.json(
         { error: "Unauthorized", message: "Please sign in" },
@@ -137,7 +135,7 @@ export async function PUT(
       metricId: body.metricId,
     });
   } catch (error) {
-    console.error("[API] PUT /api/settings/files/[id]/metrics error:", error);
+    reportError(error, { op: "settings.files.metrics.put" });
     return NextResponse.json(
       { error: "Failed to update metric" },
       { status: 500 },

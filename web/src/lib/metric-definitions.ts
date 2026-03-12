@@ -205,89 +205,55 @@ export async function resolveMetricName(
   const aliases = await loadAliases();
   const translations = await loadTranslations();
 
+  function makeResult(
+    definitionId: string,
+    fallbackName: string,
+  ): { definitionId: string; canonicalName: string } {
+    return {
+      definitionId,
+      canonicalName: getTurkishName(definitionId, translations) ?? fallbackName,
+    };
+  }
+
+  /** Try to match against aliases and translations using compareFn. */
+  function tryMatch(
+    compareFn: (candidate: string) => boolean,
+  ): { definitionId: string; canonicalName: string } | null {
+    const aliasHit = aliases.find((a) => a.definitionId && compareFn(a.alias));
+    if (aliasHit?.definitionId) {
+      return makeResult(aliasHit.definitionId, aliasHit.canonicalName);
+    }
+
+    const translationHit = translations.find((t) => compareFn(t.displayName));
+    if (translationHit) {
+      return makeResult(
+        translationHit.definitionId,
+        translationHit.displayName,
+      );
+    }
+
+    return null;
+  }
+
   const lowerName = name.toLowerCase().trim();
 
-  // Pass 1: exact match against aliases (case-insensitive)
-  const aliasMatch = aliases.find(
-    (a) => a.alias.toLowerCase().trim() === lowerName,
-  );
-  if (aliasMatch?.definitionId) {
-    return {
-      definitionId: aliasMatch.definitionId,
-      canonicalName:
-        getTurkishName(aliasMatch.definitionId, translations) ??
-        aliasMatch.canonicalName,
-    };
-  }
+  // Pass 1: exact match (case-insensitive)
+  const exactMatch = tryMatch((s) => s.toLowerCase().trim() === lowerName);
+  if (exactMatch) return exactMatch;
 
-  // Pass 2: exact match against translations (case-insensitive)
-  const translationMatch = translations.find(
-    (t) => t.displayName.toLowerCase().trim() === lowerName,
-  );
-  if (translationMatch) {
-    return {
-      definitionId: translationMatch.definitionId,
-      canonicalName:
-        getTurkishName(translationMatch.definitionId, translations) ??
-        translationMatch.displayName,
-    };
-  }
-
-  // Pass 3: normalized match
+  // Pass 2: normalized match (Turkish chars, parentheticals stripped)
   const normalizedName = normalizeForMatching(name);
-
-  const normalizedAliasMatch = aliases.find(
-    (a) => normalizeForMatching(a.alias) === normalizedName,
+  const normalizedMatch = tryMatch(
+    (s) => normalizeForMatching(s) === normalizedName,
   );
-  if (normalizedAliasMatch?.definitionId) {
-    return {
-      definitionId: normalizedAliasMatch.definitionId,
-      canonicalName:
-        getTurkishName(normalizedAliasMatch.definitionId, translations) ??
-        normalizedAliasMatch.canonicalName,
-    };
-  }
+  if (normalizedMatch) return normalizedMatch;
 
-  const normalizedTranslationMatch = translations.find(
-    (t) => normalizeForMatching(t.displayName) === normalizedName,
-  );
-  if (normalizedTranslationMatch) {
-    return {
-      definitionId: normalizedTranslationMatch.definitionId,
-      canonicalName:
-        getTurkishName(normalizedTranslationMatch.definitionId, translations) ??
-        normalizedTranslationMatch.displayName,
-    };
-  }
-
-  // Pass 4: abbreviation extraction — e.g. "Alanin aminotransferaz (ALT)" → "ALT"
+  // Pass 3: abbreviation extraction — e.g. "Alanin aminotransferaz (ALT)" → "ALT"
   const abbr = extractAbbreviation(name);
   if (abbr) {
     const abbrLower = abbr.toLowerCase();
-
-    const abbrAliasMatch = aliases.find(
-      (a) => a.alias.toLowerCase().trim() === abbrLower,
-    );
-    if (abbrAliasMatch?.definitionId) {
-      return {
-        definitionId: abbrAliasMatch.definitionId,
-        canonicalName:
-          getTurkishName(abbrAliasMatch.definitionId, translations) ??
-          abbrAliasMatch.canonicalName,
-      };
-    }
-
-    const abbrTranslationMatch = translations.find(
-      (t) => t.displayName.toLowerCase().trim() === abbrLower,
-    );
-    if (abbrTranslationMatch) {
-      return {
-        definitionId: abbrTranslationMatch.definitionId,
-        canonicalName:
-          getTurkishName(abbrTranslationMatch.definitionId, translations) ??
-          abbrTranslationMatch.displayName,
-      };
-    }
+    const abbrMatch = tryMatch((s) => s.toLowerCase().trim() === abbrLower);
+    if (abbrMatch) return abbrMatch;
   }
 
   return null;

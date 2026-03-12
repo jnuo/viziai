@@ -1,10 +1,7 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
 import {
-  authOptions,
-  getDbUserId,
-  hasProfileAccess,
   requireAuth,
+  hasProfileAccess,
   getProfileAccessLevel,
 } from "@/lib/auth";
 import { sql } from "@/lib/db";
@@ -23,9 +20,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const session = await getServerSession(authOptions);
-    const userId = getDbUserId(session);
-
+    const userId = await requireAuth();
     if (!userId) {
       return NextResponse.json(
         { error: "Unauthorized", message: "Please sign in" },
@@ -112,7 +107,7 @@ export async function GET(
       metrics,
     });
   } catch (error) {
-    console.error("[API] GET /api/settings/files/[id] error:", error);
+    reportError(error, { op: "settings.files.get" });
     return NextResponse.json(
       { error: "Failed to fetch file details" },
       { status: 500 },

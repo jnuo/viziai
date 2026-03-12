@@ -55,12 +55,7 @@ export default function FileDetailPage(): React.ReactElement {
 
   // Editing state
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [editForm, setEditForm] = useState({
-    value: "",
-    unit: "",
-    ref_low: "",
-    ref_high: "",
-  });
+  const [editForm, setEditForm] = useState(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {

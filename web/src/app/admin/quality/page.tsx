@@ -120,9 +120,11 @@ export default function AdminQualityPage() {
   }
 
   function cycleSortDir() {
-    setSortDir((prev) =>
-      prev === null ? "desc" : prev === "desc" ? "asc" : null,
-    );
+    setSortDir((prev) => {
+      if (prev === null) return "desc";
+      if (prev === "desc") return "asc";
+      return null;
+    });
   }
 
   if (loading) {
@@ -213,7 +215,7 @@ export default function AdminQualityPage() {
                   className="text-xs h-7 px-2.5"
                   onClick={() => setPdfFilter(v)}
                 >
-                  {v === "all" ? "All" : v === "with" ? "Has PDF" : "No PDF"}
+                  {{ all: "All", with: "Has PDF", without: "No PDF" }[v]}
                 </Button>
               ))}
             </div>
@@ -252,12 +254,12 @@ export default function AdminQualityPage() {
                         onClick={cycleSortDir}
                       >
                         Uploaded
-                        {sortDir === "asc" ? (
-                          <ArrowUp className="size-3.5" />
-                        ) : sortDir === "desc" ? (
-                          <ArrowDown className="size-3.5" />
-                        ) : (
+                        {sortDir === null && (
                           <ArrowUpDown className="size-3.5 opacity-40" />
+                        )}
+                        {sortDir === "asc" && <ArrowUp className="size-3.5" />}
+                        {sortDir === "desc" && (
+                          <ArrowDown className="size-3.5" />
                         )}
                       </button>
                     </th>

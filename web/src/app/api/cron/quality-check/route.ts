@@ -22,7 +22,6 @@ export const dynamic = "force-dynamic";
  *   URL: https://www.viziai.app/api/cron/quality-check
  *   Schedule: 0 8 * * * (daily at 08:00 UTC)
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function handler(_request: Request) {
   try {
     const results = {

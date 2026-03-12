@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
-import { sql } from "@/lib/db";
 import { requireAuth, hasProfileAccess } from "@/lib/auth";
+import { sql } from "@/lib/db";
 import { reportError } from "@/lib/error-reporting";
+import { isValidUUID } from "@/lib/utils";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -23,10 +24,7 @@ export async function GET(
 
     const { id } = await params;
 
-    // Validate UUID format to avoid Postgres cast errors and Sentry noise
-    const UUID_RE =
-      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-    if (!UUID_RE.test(id)) {
+    if (!isValidUUID(id)) {
       return NextResponse.json({ error: "Report not found" }, { status: 404 });
     }
 

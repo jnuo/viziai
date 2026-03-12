@@ -112,6 +112,17 @@ export default function ReviewWorkbenchPage() {
     return () => controller.abort();
   }, [params.id]);
 
+  function updateEditField(
+    metricId: string,
+    field: keyof MetricEdit,
+    value: string,
+  ) {
+    setEdits((prev) => ({
+      ...prev,
+      [metricId]: { ...prev[metricId], [field]: value },
+    }));
+  }
+
   function startEdit(m: Metric) {
     setEditingId(m.id);
     setEdits((prev) => ({
@@ -189,6 +200,14 @@ export default function ReviewWorkbenchPage() {
     } finally {
       setSubmitting(false);
     }
+  }
+
+  function getDisplayedRefRange(m: Metric): string {
+    const edit = edits[m.id];
+    const low = edit ? edit.refLow || null : m.refLow;
+    const high = edit ? edit.refHigh || null : m.refHigh;
+    if (low == null && high == null) return "—";
+    return `${low ?? "—"} – ${high ?? "—"}`;
   }
 
   const hasEdits = Object.keys(edits).length > 0;
@@ -347,13 +366,11 @@ export default function ReviewWorkbenchPage() {
                                 <Input
                                   value={edit.name}
                                   onChange={(e) =>
-                                    setEdits((prev) => ({
-                                      ...prev,
-                                      [m.id]: {
-                                        ...prev[m.id],
-                                        name: e.target.value,
-                                      },
-                                    }))
+                                    updateEditField(
+                                      m.id,
+                                      "name",
+                                      e.target.value,
+                                    )
                                   }
                                   className="h-8 text-sm"
                                   aria-label="Metric name"
@@ -364,13 +381,11 @@ export default function ReviewWorkbenchPage() {
                                   type="number"
                                   value={edit.value}
                                   onChange={(e) =>
-                                    setEdits((prev) => ({
-                                      ...prev,
-                                      [m.id]: {
-                                        ...prev[m.id],
-                                        value: e.target.value,
-                                      },
-                                    }))
+                                    updateEditField(
+                                      m.id,
+                                      "value",
+                                      e.target.value,
+                                    )
                                   }
                                   className="h-8 text-sm text-right w-24"
                                   aria-label="Value"
@@ -380,13 +395,11 @@ export default function ReviewWorkbenchPage() {
                                 <Input
                                   value={edit.unit}
                                   onChange={(e) =>
-                                    setEdits((prev) => ({
-                                      ...prev,
-                                      [m.id]: {
-                                        ...prev[m.id],
-                                        unit: e.target.value,
-                                      },
-                                    }))
+                                    updateEditField(
+                                      m.id,
+                                      "unit",
+                                      e.target.value,
+                                    )
                                   }
                                   className="h-8 text-sm w-20"
                                   aria-label="Unit"
@@ -398,13 +411,11 @@ export default function ReviewWorkbenchPage() {
                                     type="number"
                                     value={edit.refLow}
                                     onChange={(e) =>
-                                      setEdits((prev) => ({
-                                        ...prev,
-                                        [m.id]: {
-                                          ...prev[m.id],
-                                          refLow: e.target.value,
-                                        },
-                                      }))
+                                      updateEditField(
+                                        m.id,
+                                        "refLow",
+                                        e.target.value,
+                                      )
                                     }
                                     className="h-8 text-sm w-16 text-right"
                                     placeholder="Low"
@@ -417,13 +428,11 @@ export default function ReviewWorkbenchPage() {
                                     type="number"
                                     value={edit.refHigh}
                                     onChange={(e) =>
-                                      setEdits((prev) => ({
-                                        ...prev,
-                                        [m.id]: {
-                                          ...prev[m.id],
-                                          refHigh: e.target.value,
-                                        },
-                                      }))
+                                      updateEditField(
+                                        m.id,
+                                        "refHigh",
+                                        e.target.value,
+                                      )
                                     }
                                     className="h-8 text-sm w-16 text-right"
                                     placeholder="High"
@@ -495,17 +504,7 @@ export default function ReviewWorkbenchPage() {
                               {(hasEdit ? edit?.unit : m.unit) || "—"}
                             </td>
                             <td className="py-3 text-right text-muted-foreground tabular-nums">
-                              {(() => {
-                                const low = hasEdit
-                                  ? edit?.refLow || null
-                                  : m.refLow;
-                                const high = hasEdit
-                                  ? edit?.refHigh || null
-                                  : m.refHigh;
-                                return low != null || high != null
-                                  ? `${low ?? "—"} – ${high ?? "—"}`
-                                  : "—";
-                              })()}
+                              {getDisplayedRefRange(m)}
                             </td>
                             <td className="py-3 text-center">
                               <Button
@@ -549,13 +548,7 @@ export default function ReviewWorkbenchPage() {
                             <Input
                               value={edit.name}
                               onChange={(e) =>
-                                setEdits((prev) => ({
-                                  ...prev,
-                                  [m.id]: {
-                                    ...prev[m.id],
-                                    name: e.target.value,
-                                  },
-                                }))
+                                updateEditField(m.id, "name", e.target.value)
                               }
                               className="h-8 text-sm font-medium"
                               aria-label="Metric name"
@@ -569,13 +562,11 @@ export default function ReviewWorkbenchPage() {
                                   type="number"
                                   value={edit.value}
                                   onChange={(e) =>
-                                    setEdits((prev) => ({
-                                      ...prev,
-                                      [m.id]: {
-                                        ...prev[m.id],
-                                        value: e.target.value,
-                                      },
-                                    }))
+                                    updateEditField(
+                                      m.id,
+                                      "value",
+                                      e.target.value,
+                                    )
                                   }
                                   className="h-8 text-sm"
                                   aria-label="Value"
@@ -588,13 +579,11 @@ export default function ReviewWorkbenchPage() {
                                 <Input
                                   value={edit.unit}
                                   onChange={(e) =>
-                                    setEdits((prev) => ({
-                                      ...prev,
-                                      [m.id]: {
-                                        ...prev[m.id],
-                                        unit: e.target.value,
-                                      },
-                                    }))
+                                    updateEditField(
+                                      m.id,
+                                      "unit",
+                                      e.target.value,
+                                    )
                                   }
                                   className="h-8 text-sm"
                                   placeholder="—"
@@ -609,13 +598,11 @@ export default function ReviewWorkbenchPage() {
                                   type="number"
                                   value={edit.refLow}
                                   onChange={(e) =>
-                                    setEdits((prev) => ({
-                                      ...prev,
-                                      [m.id]: {
-                                        ...prev[m.id],
-                                        refLow: e.target.value,
-                                      },
-                                    }))
+                                    updateEditField(
+                                      m.id,
+                                      "refLow",
+                                      e.target.value,
+                                    )
                                   }
                                   className="h-8 text-sm"
                                   placeholder="—"
@@ -630,13 +617,11 @@ export default function ReviewWorkbenchPage() {
                                   type="number"
                                   value={edit.refHigh}
                                   onChange={(e) =>
-                                    setEdits((prev) => ({
-                                      ...prev,
-                                      [m.id]: {
-                                        ...prev[m.id],
-                                        refHigh: e.target.value,
-                                      },
-                                    }))
+                                    updateEditField(
+                                      m.id,
+                                      "refHigh",
+                                      e.target.value,
+                                    )
                                   }
                                   className="h-8 text-sm"
                                   placeholder="—"
@@ -710,19 +695,11 @@ export default function ReviewWorkbenchPage() {
                               <span className="text-sm text-muted-foreground">
                                 {(hasEdit ? edit?.unit : m.unit) || ""}
                               </span>
-                              {(() => {
-                                const low = hasEdit
-                                  ? edit?.refLow || null
-                                  : m.refLow;
-                                const high = hasEdit
-                                  ? edit?.refHigh || null
-                                  : m.refHigh;
-                                return low != null || high != null ? (
-                                  <span className="text-xs text-muted-foreground ml-auto">
-                                    Ref: {low ?? "—"} – {high ?? "—"}
-                                  </span>
-                                ) : null;
-                              })()}
+                              {getDisplayedRefRange(m) !== "—" && (
+                                <span className="text-xs text-muted-foreground ml-auto">
+                                  Ref: {getDisplayedRefRange(m)}
+                                </span>
+                              )}
                             </div>
                           </button>
                         )}

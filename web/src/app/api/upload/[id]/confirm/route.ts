@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions, getDbUserId } from "@/lib/auth";
+import { requireAuth } from "@/lib/auth";
 import { sql } from "@/lib/db";
 import { reportError } from "@/lib/error-reporting";
 import { resolveMetricName, convertUnit } from "@/lib/metric-definitions";
@@ -45,25 +44,10 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session?.user?.email) {
+    const userId = await requireAuth();
+    if (!userId) {
       return NextResponse.json(
         { error: "Unauthorized", message: "Please sign in" },
-        { status: 401 },
-      );
-    }
-
-    let userId = getDbUserId(session);
-    if (!userId) {
-      const users =
-        await sql`SELECT id FROM users WHERE LOWER(email) = LOWER(${session.user.email})`;
-      if (users.length > 0) userId = users[0].id;
-    }
-
-    if (!userId) {
-      return NextResponse.json(
-        { error: "Unauthorized", message: "Could not identify user" },
         { status: 401 },
       );
     }
@@ -274,7 +258,7 @@ export async function POST(
         if (!isValidMetricValue(metric.value)) continue;
 
         // Already resolved = not unmapped
-        if (resolutions[i]) continue;
+        if (resolutions[i]?.resolution) continue;
 
         await sql`
           INSERT INTO unmapped_metrics (metric_name, unit, ref_low, ref_high, report_id, profile_id, upload_id, status)

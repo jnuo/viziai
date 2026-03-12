@@ -77,6 +77,8 @@ type UploadStatus =
   | "success"
   | "error";
 
+const POLL_TIMEOUT_MS = 300000; // 5 minutes max polling
+
 function UploadPageContent(): React.ReactElement {
   const t = useTranslations("pages.upload");
   const tc = useTranslations("common");
@@ -102,7 +104,6 @@ function UploadPageContent(): React.ReactElement {
   >({});
   const pollIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const pollStartTimeRef = useRef<number | null>(null);
-  const POLL_TIMEOUT_MS = 300000; // 5 minutes max polling
 
   function stopPolling(): void {
     if (pollIntervalRef.current) {
@@ -504,10 +505,6 @@ function UploadPageContent(): React.ReactElement {
     setAppliedRenames({});
     setSampleDate("");
     setError(null);
-  }
-
-  function handleGoToDashboard(): void {
-    router.push("/dashboard");
   }
 
   const cardLabels = useMemo<MetricCardLabels>(
@@ -1005,7 +1002,7 @@ function UploadPageContent(): React.ReactElement {
                   <Button variant="outline" onClick={handleCancel}>
                     {t("uploadAnother")}
                   </Button>
-                  <Button onClick={handleGoToDashboard}>
+                  <Button onClick={() => router.push("/dashboard")}>
                     {t("goToDashboard")}
                   </Button>
                 </div>

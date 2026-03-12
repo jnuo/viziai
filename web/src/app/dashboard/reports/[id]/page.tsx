@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn, friendlyMetricName } from "@/lib/utils";
+import { formatRefRange } from "@/lib/metrics";
 import { ArrowLeft, FileText, Calendar, FlaskConical } from "lucide-react";
 import { ReportReviewLayout } from "@/components/report-review-layout";
 
@@ -288,9 +289,7 @@ export default function ReportDetailPage() {
                             {m.unit || "—"}
                           </td>
                           <td className="py-3 text-right text-muted-foreground tabular-nums">
-                            {m.refLow != null || m.refHigh != null
-                              ? `${m.refLow ?? "—"} – ${m.refHigh ?? "—"}`
-                              : "—"}
+                            {formatRefRange(m.refLow, m.refHigh)}
                           </td>
                           <td className="py-3 text-center">
                             {m.flag ? (
@@ -356,7 +355,7 @@ export default function ReportDetailPage() {
                       </div>
                       {(m.refLow != null || m.refHigh != null) && (
                         <p className="text-xs text-muted-foreground">
-                          Ref: {m.refLow ?? "—"} – {m.refHigh ?? "—"}
+                          Ref: {formatRefRange(m.refLow, m.refHigh)}
                         </p>
                       )}
                     </li>

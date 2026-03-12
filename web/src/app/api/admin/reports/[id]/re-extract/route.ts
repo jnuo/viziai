@@ -2,14 +2,12 @@ import { NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { requireAdmin } from "@/lib/auth";
 import { sql } from "@/lib/db";
-import { Client } from "@upstash/qstash";
 import { reportError } from "@/lib/error-reporting";
+import { isValidUUID } from "@/lib/utils";
+import { Client } from "@upstash/qstash";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-
-const UUID_RE =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /**
  * POST /api/admin/reports/[id]/re-extract
@@ -28,7 +26,7 @@ export async function POST(
   try {
     const { id } = await params;
 
-    if (!UUID_RE.test(id)) {
+    if (!isValidUUID(id)) {
       return NextResponse.json({ error: "Report not found" }, { status: 404 });
     }
 

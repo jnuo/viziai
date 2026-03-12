@@ -76,6 +76,7 @@ export function Header({
   const isLoggedIn = status === "authenticated";
   const isDark = theme === "dark";
   const userName = session?.user?.name;
+  const isAdmin = (session?.user as { isAdmin?: boolean })?.isAdmin ?? false;
 
   useEffect(() => {
     setMounted(true);
@@ -140,18 +141,17 @@ export function Header({
               </Button>
             )}
 
-            {isLoggedIn &&
-              (session?.user as { isAdmin?: boolean })?.isAdmin && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => router.push("/admin/quality")}
-                  className="hidden sm:flex gap-1.5 text-muted-foreground hover:text-foreground"
-                >
-                  <ShieldCheck className="h-4 w-4" />
-                  Admin
-                </Button>
-              )}
+            {isLoggedIn && isAdmin && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => router.push("/admin/quality")}
+                className="hidden sm:flex gap-1.5 text-muted-foreground hover:text-foreground"
+              >
+                <ShieldCheck className="h-4 w-4" />
+                Admin
+              </Button>
+            )}
 
             {isLoggedIn && (
               <DropdownMenu>
@@ -237,7 +237,7 @@ export function Header({
                     <Key className="h-4 w-4" />
                     {t("apiKeys")}
                   </DropdownMenuItem>
-                  {(session?.user as { isAdmin?: boolean })?.isAdmin && (
+                  {isAdmin && (
                     <>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem

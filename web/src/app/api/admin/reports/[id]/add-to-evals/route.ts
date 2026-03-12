@@ -2,11 +2,9 @@ import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth";
 import { sql } from "@/lib/db";
 import { reportError } from "@/lib/error-reporting";
+import { isValidUUID } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
-
-const UUID_RE =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /**
  * POST /api/admin/reports/[id]/add-to-evals
@@ -25,7 +23,7 @@ export async function POST(
   try {
     const { id } = await params;
 
-    if (!UUID_RE.test(id)) {
+    if (!isValidUUID(id)) {
       return NextResponse.json({ error: "Report not found" }, { status: 404 });
     }
 

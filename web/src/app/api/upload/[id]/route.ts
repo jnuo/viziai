@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions, getDbUserId } from "@/lib/auth";
+import { requireAuth } from "@/lib/auth";
 import { sql } from "@/lib/db";
+import { reportError } from "@/lib/error-reporting";
 import { del } from "@vercel/blob";
 
 export const runtime = "nodejs";
@@ -16,25 +16,10 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session?.user?.email) {
+    const userId = await requireAuth();
+    if (!userId) {
       return NextResponse.json(
         { error: "Unauthorized", message: "Please sign in" },
-        { status: 401 },
-      );
-    }
-
-    let userId = getDbUserId(session);
-    if (!userId) {
-      const users =
-        await sql`SELECT id FROM users WHERE LOWER(email) = LOWER(${session.user.email})`;
-      if (users.length > 0) userId = users[0].id;
-    }
-
-    if (!userId) {
-      return NextResponse.json(
-        { error: "Unauthorized", message: "Could not identify user" },
         { status: 401 },
       );
     }
@@ -69,7 +54,7 @@ export async function GET(
 
     return NextResponse.json({ upload: uploads[0] });
   } catch (error) {
-    console.error("[API] GET /api/upload/[id] error:", error);
+    reportError(error, { op: "upload.get" });
     return NextResponse.json(
       { error: "Failed to fetch upload" },
       { status: 500 },
@@ -86,32 +71,16 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session?.user?.email) {
+    const userId = await requireAuth();
+    if (!userId) {
       return NextResponse.json(
         { error: "Unauthorized", message: "Please sign in" },
         { status: 401 },
       );
     }
 
-    let userId = getDbUserId(session);
-    if (!userId) {
-      const users =
-        await sql`SELECT id FROM users WHERE LOWER(email) = LOWER(${session.user.email})`;
-      if (users.length > 0) userId = users[0].id;
-    }
-
-    if (!userId) {
-      return NextResponse.json(
-        { error: "Unauthorized", message: "Could not identify user" },
-        { status: 401 },
-      );
-    }
-
     const { id: uploadId } = await params;
 
-    // Get the upload
     const uploads = await sql`
       SELECT id, file_url, status
       FROM pending_uploads
@@ -135,17 +104,15 @@ export async function DELETE(
       );
     }
 
-    // Delete from Vercel Blob if URL exists
+    // Delete from Vercel Blob if URL exists (best-effort)
     if (upload.file_url) {
       try {
         await del(upload.file_url);
       } catch (blobError) {
         console.error("[API] Failed to delete blob:", blobError);
-        // Continue anyway - blob deletion is not critical
       }
     }
 
-    // Update status to rejected (or delete the record entirely)
     await sql`
       UPDATE pending_uploads
       SET status = 'rejected', updated_at = NOW()
@@ -156,7 +123,7 @@ export async function DELETE(
 
     return NextResponse.json({ success: true, uploadId });
   } catch (error) {
-    console.error("[API] DELETE /api/upload/[id] error:", error);
+    reportError(error, { op: "upload.delete" });
     return NextResponse.json(
       { error: "Failed to delete upload" },
       { status: 500 },

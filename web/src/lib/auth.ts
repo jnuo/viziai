@@ -142,6 +142,17 @@ export const authOptions: NextAuthOptions = {
           }
         }
       }
+      // Refresh isAdmin from DB on every token refresh (not just initial sign-in)
+      if (token.dbId && !user) {
+        try {
+          const result = await sql`
+            SELECT is_admin FROM users WHERE id = ${token.dbId}
+          `;
+          token.isAdmin = result[0]?.is_admin === true;
+        } catch {
+          // Keep existing value on DB error
+        }
+      }
       return token;
     },
   },
@@ -216,7 +227,17 @@ export async function getUserProfiles(userId: string): Promise<
 export async function requireAuth(): Promise<string | null> {
   const session = await getServerSession(authOptions);
   if (!session?.user?.email) return null;
-  const userId = getDbUserId(session);
+
+  let userId = getDbUserId(session);
+
+  // Fallback: JWT may lack dbId on first sign-in before token refresh
+  if (!userId) {
+    const result = await sql`
+      SELECT id FROM users WHERE LOWER(email) = LOWER(${session.user.email})
+    `;
+    if (result[0]?.id) userId = result[0].id;
+  }
+
   if (userId) {
     Sentry.setUser({ id: userId, email: session.user.email });
   }
