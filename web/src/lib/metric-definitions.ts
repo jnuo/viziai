@@ -43,14 +43,30 @@ interface TranslationEntry {
   displayName: string;
 }
 
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+
 let cachedAliases: AliasEntry[] | null = null;
 let cachedTranslations: TranslationEntry[] | null = null;
 let cachedUnitAliases: Map<string, string> | null = null;
+let cacheTimestamp = 0;
+
+function invalidateIfStale(): void {
+  if (Date.now() - cacheTimestamp > CACHE_TTL_MS) {
+    cachedAliases = null;
+    cachedTranslations = null;
+    cachedUnitAliases = null;
+  }
+}
+
+function touchCache(): void {
+  if (!cacheTimestamp) cacheTimestamp = Date.now();
+}
 
 export function clearCache(): void {
   cachedAliases = null;
   cachedTranslations = null;
   cachedUnitAliases = null;
+  cacheTimestamp = 0;
 }
 
 // ---------------------------------------------------------------------------
@@ -116,6 +132,7 @@ function roundToSignificantDecimals(
 // ---------------------------------------------------------------------------
 
 async function loadAliases(): Promise<AliasEntry[]> {
+  invalidateIfStale();
   if (cachedAliases) return cachedAliases;
 
   const rows = await sql`
@@ -128,11 +145,13 @@ async function loadAliases(): Promise<AliasEntry[]> {
     canonicalName: r.canonical_name as string,
     definitionId: (r.metric_definition_id as string) ?? null,
   }));
+  touchCache();
 
   return cachedAliases;
 }
 
 async function loadTranslations(): Promise<TranslationEntry[]> {
+  invalidateIfStale();
   if (cachedTranslations) return cachedTranslations;
 
   const rows = await sql`
@@ -145,11 +164,13 @@ async function loadTranslations(): Promise<TranslationEntry[]> {
     locale: r.locale as string,
     displayName: r.display_name as string,
   }));
+  touchCache();
 
   return cachedTranslations;
 }
 
 async function loadUnitAliases(): Promise<Map<string, string>> {
+  invalidateIfStale();
   if (cachedUnitAliases) return cachedUnitAliases;
 
   const rows = await sql`
@@ -163,6 +184,7 @@ async function loadUnitAliases(): Promise<Map<string, string>> {
       r.canonical_unit as string,
     );
   }
+  touchCache();
 
   return cachedUnitAliases;
 }
@@ -176,29 +198,6 @@ async function resolveUnitAlias(unit: string): Promise<string> {
 // ---------------------------------------------------------------------------
 // Exported functions
 // ---------------------------------------------------------------------------
-
-export async function getDefinitionByKey(
-  key: string,
-): Promise<MetricDefinition | null> {
-  const rows = await sql`
-    SELECT id, key, category, canonical_unit, value_type
-    FROM metric_definitions
-    WHERE key = ${key}
-    LIMIT 1
-  `;
-
-  if (rows.length === 0) return null;
-
-  const r = rows[0];
-  return {
-    id: r.id as string,
-    key: r.key as string,
-    category: (r.category as string) ?? null,
-    canonicalUnit: (r.canonical_unit as string) ?? null,
-    valueType:
-      (r.value_type as "quantitative" | "qualitative") ?? "quantitative",
-  };
-}
 
 export async function resolveMetricName(
   name: string,
@@ -450,23 +449,4 @@ export async function getAliasMap(): Promise<
   }
 
   return map;
-}
-
-export async function isKnownMetric(name: string): Promise<boolean> {
-  const result = await resolveMetricName(name);
-  return result !== null;
-}
-
-export async function normalizeUnit(
-  metricKey: string,
-  value: number,
-  unit: string,
-): Promise<UnitConversionResult> {
-  const definition = await getDefinitionByKey(metricKey);
-
-  if (!definition) {
-    return { value, unit, converted: false };
-  }
-
-  return convertUnit(definition.id, value, unit);
 }

@@ -174,11 +174,20 @@ export async function POST(
     let insertedCount = 0;
     let updatedCount = 0;
 
-    // Resolve all metric names in parallel for efficiency
+    // Resolve all metric names + unit conversions in parallel
     const resolutions = await Promise.all(
       body.metrics.map(async (metric) => {
         if (!isValidMetricValue(metric.value)) return null;
-        return resolveMetricName(metric.name);
+        const resolution = await resolveMetricName(metric.name);
+        let conversion = null;
+        if (resolution && metric.unit) {
+          conversion = await convertUnit(
+            resolution.definitionId,
+            metric.value,
+            metric.unit,
+          );
+        }
+        return { resolution, conversion };
       }),
     );
 
@@ -189,21 +198,13 @@ export async function POST(
         continue;
       }
 
-      const resolution = resolutions[i];
+      const { resolution, conversion } = resolutions[i] ?? {};
       let finalValue = metric.value;
       let finalUnit = metric.unit || null;
 
-      // Auto-convert units if we have a definition
-      if (resolution && metric.unit) {
-        const conversion = await convertUnit(
-          resolution.definitionId,
-          metric.value,
-          metric.unit,
-        );
-        if (conversion.converted) {
-          finalValue = conversion.value;
-          finalUnit = conversion.unit;
-        }
+      if (conversion?.converted) {
+        finalValue = conversion.value;
+        finalUnit = conversion.unit;
       }
 
       const flag = determineFlag(finalValue, metric.ref_low, metric.ref_high);
@@ -239,11 +240,16 @@ export async function POST(
       } else {
         updatedCount++;
       }
+    }
 
-      // Ensure metric_preferences row exists for display_order tracking
+    // Batch-insert metric_preferences for all confirmed metrics
+    const validNames = body.metrics
+      .filter((m) => isValidMetricValue(m.value))
+      .map((m) => m.name);
+    if (validNames.length > 0) {
       await sql`
         INSERT INTO metric_preferences (profile_id, name)
-        VALUES (${profileId}, ${metric.name})
+        SELECT ${profileId}, unnest(${validNames}::text[])
         ON CONFLICT (profile_id, name) DO NOTHING
       `;
     }

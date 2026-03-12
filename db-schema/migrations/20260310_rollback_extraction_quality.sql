@@ -15,8 +15,8 @@ DROP TABLE IF EXISTS extraction_evals CASCADE;
 DROP TABLE IF EXISTS extraction_reviews CASCADE;
 DROP TABLE IF EXISTS unmapped_metrics CASCADE;
 
--- Drop added columns
-ALTER TABLE reports DROP COLUMN IF EXISTS blob_url;
-ALTER TABLE users DROP COLUMN IF EXISTS is_admin;
+-- NOTE: blob_url (reports) and is_admin (users) are NOT dropped here.
+-- They were added in 20260310_extraction_quality_tables.sql but are now
+-- load-bearing for the application (admin auth, PDF display).
 
 COMMIT;

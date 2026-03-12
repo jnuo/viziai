@@ -9,6 +9,7 @@ import {
 } from "@/lib/auth";
 import { sql } from "@/lib/db";
 import { reportError } from "@/lib/error-reporting";
+import { isValidUUID } from "@/lib/utils";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -33,6 +34,13 @@ export async function GET(
     }
 
     const { id: fileId } = await params;
+
+    if (!isValidUUID(fileId)) {
+      return NextResponse.json(
+        { error: "Bad Request", message: "Invalid file ID" },
+        { status: 400 },
+      );
+    }
 
     // Get the processed file
     const files = await sql`
@@ -121,6 +129,13 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
+
+  if (!isValidUUID(id)) {
+    return NextResponse.json(
+      { error: "Bad Request", message: "Invalid file ID" },
+      { status: 400 },
+    );
+  }
 
   try {
     const userId = await requireAuth();

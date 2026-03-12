@@ -466,7 +466,7 @@ export default function ReviewWorkbenchPage() {
                             )}
                           >
                             <td className="py-3 font-medium">
-                              {hasEdit ? edit!.name : m.name}
+                              {hasEdit ? edit?.name : m.name}
                               {hasEdit && (
                                 <Badge
                                   variant="outline"
@@ -489,18 +489,18 @@ export default function ReviewWorkbenchPage() {
                               )}
                             </td>
                             <td className="py-3 text-right tabular-nums font-semibold">
-                              {hasEdit ? edit!.value : m.value}
+                              {hasEdit ? edit?.value : m.value}
                             </td>
                             <td className="py-3 text-muted-foreground">
-                              {(hasEdit ? edit!.unit : m.unit) || "—"}
+                              {(hasEdit ? edit?.unit : m.unit) || "—"}
                             </td>
                             <td className="py-3 text-right text-muted-foreground tabular-nums">
                               {(() => {
                                 const low = hasEdit
-                                  ? edit!.refLow || null
+                                  ? edit?.refLow || null
                                   : m.refLow;
                                 const high = hasEdit
-                                  ? edit!.refHigh || null
+                                  ? edit?.refHigh || null
                                   : m.refHigh;
                                 return low != null || high != null
                                   ? `${low ?? "—"} – ${high ?? "—"}`
@@ -675,7 +675,7 @@ export default function ReviewWorkbenchPage() {
                             <div className="flex items-center justify-between gap-2">
                               <div className="flex items-center gap-1.5 min-w-0">
                                 <span className="font-medium text-sm truncate">
-                                  {hasEdit ? edit!.name : m.name}
+                                  {hasEdit ? edit?.name : m.name}
                                 </span>
                                 {hasEdit && (
                                   <Badge
@@ -705,17 +705,17 @@ export default function ReviewWorkbenchPage() {
                             </div>
                             <div className="flex items-baseline gap-2 mt-1">
                               <span className="text-lg font-semibold tabular-nums">
-                                {hasEdit ? edit!.value : m.value}
+                                {hasEdit ? edit?.value : m.value}
                               </span>
                               <span className="text-sm text-muted-foreground">
-                                {(hasEdit ? edit!.unit : m.unit) || ""}
+                                {(hasEdit ? edit?.unit : m.unit) || ""}
                               </span>
                               {(() => {
                                 const low = hasEdit
-                                  ? edit!.refLow || null
+                                  ? edit?.refLow || null
                                   : m.refLow;
                                 const high = hasEdit
-                                  ? edit!.refHigh || null
+                                  ? edit?.refHigh || null
                                   : m.refHigh;
                                 return low != null || high != null ? (
                                   <span className="text-xs text-muted-foreground ml-auto">

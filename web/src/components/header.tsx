@@ -140,6 +140,19 @@ export function Header({
               </Button>
             )}
 
+            {isLoggedIn &&
+              (session?.user as { isAdmin?: boolean })?.isAdmin && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => router.push("/admin/quality")}
+                  className="hidden sm:flex gap-1.5 text-muted-foreground hover:text-foreground"
+                >
+                  <ShieldCheck className="h-4 w-4" />
+                  Admin
+                </Button>
+              )}
+
             {isLoggedIn && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>

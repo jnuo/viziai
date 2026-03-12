@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { verifySignatureAppRouter } from "@upstash/qstash/nextjs";
 import { sql } from "@/lib/db";
-import { resolveMetricName } from "@/lib/metric-definitions";
 import { reportError } from "@/lib/error-reporting";
 
 export const runtime = "nodejs";
@@ -23,7 +22,8 @@ export const dynamic = "force-dynamic";
  *   URL: https://www.viziai.app/api/cron/quality-check
  *   Schedule: 0 8 * * * (daily at 08:00 UTC)
  */
-async function handler() {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+async function handler(_request: Request) {
   try {
     const results = {
       timestamp: new Date().toISOString(),
@@ -59,27 +59,23 @@ async function handler() {
     `;
     results.outOfRangeCount = Number(anomalyRows[0].count);
 
-    // 4. Alias coverage: % of distinct metric names that are known
-    const distinctNames = await sql`
-      SELECT DISTINCT m.name
+    // 4. Alias coverage: % of distinct metric names that have a metric_definition_id
+    const coverageRows = await sql`
+      SELECT
+        COUNT(DISTINCT m.name)::int AS total,
+        COUNT(DISTINCT CASE WHEN m.metric_definition_id IS NOT NULL THEN m.name END)::int AS covered
       FROM metrics m
       JOIN reports r ON r.id = m.report_id
       WHERE r.created_at >= NOW() - INTERVAL '90 days'
     `;
 
-    let covered = 0;
-    for (const row of distinctNames) {
-      const resolved = await resolveMetricName(row.name);
-      if (resolved) covered++;
-    }
+    const total = Number(coverageRows[0].total);
+    const covered = Number(coverageRows[0].covered);
 
     results.aliasCoverage = {
-      total: distinctNames.length,
+      total,
       covered,
-      percent:
-        distinctNames.length > 0
-          ? Math.round((covered / distinctNames.length) * 1000) / 10
-          : 100,
+      percent: total > 0 ? Math.round((covered / total) * 1000) / 10 : 100,
     };
 
     console.log("[QualityCheck] Daily results:", JSON.stringify(results));
@@ -95,21 +91,21 @@ async function handler() {
   }
 }
 
-// QStash signature verification (same pattern as extraction worker)
-const isLocalDev = process.env.NODE_ENV === "development";
-const hasSigningKey = !!process.env.QSTASH_CURRENT_SIGNING_KEY;
+// Lazy-initialize QStash signature verification (same pattern as extraction worker)
+let verified: ReturnType<typeof verifySignatureAppRouter> | null = null;
 
-export const POST = hasSigningKey
-  ? verifySignatureAppRouter(handler)
-  : async (...args: Parameters<typeof handler>) => {
-      if (!isLocalDev) {
-        console.error(
-          "[QualityCheck] Production deploy missing QSTASH_CURRENT_SIGNING_KEY",
-        );
-        return NextResponse.json(
-          { error: "Server misconfigured" },
-          { status: 500 },
-        );
-      }
-      return handler(...args);
-    };
+export const POST = async (...args: Parameters<typeof handler>) => {
+  if (process.env.NODE_ENV === "development") {
+    return handler(...args);
+  }
+  if (process.env.QSTASH_CURRENT_SIGNING_KEY) {
+    if (!verified) {
+      verified = verifySignatureAppRouter(handler);
+    }
+    return verified(...args);
+  }
+  console.error(
+    "[QualityCheck] Production deploy missing QSTASH_CURRENT_SIGNING_KEY",
+  );
+  return NextResponse.json({ error: "Server misconfigured" }, { status: 500 });
+};

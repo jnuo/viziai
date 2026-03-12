@@ -27,6 +27,18 @@ export interface ConversionInfo {
 
 export type MetricField = "name" | "value" | "unit" | "ref_low" | "ref_high";
 
+export function formatRefRange(
+  low: number | null | undefined,
+  high: number | null | undefined,
+): string {
+  const hasLow = low != null && !isNaN(Number(low));
+  const hasHigh = high != null && !isNaN(Number(high));
+  if (hasLow && hasHigh) return `${low}\u2013${high}`;
+  if (hasLow) return `\u2265${low}`;
+  if (hasHigh) return `\u2264${high}`;
+  return "\u2014";
+}
+
 export function checkOutOfRange(
   value: number | string | null,
   refLow: number | string | null,

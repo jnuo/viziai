@@ -18,10 +18,10 @@ export async function GET(request: Request) {
   try {
     const url = new URL(request.url);
     const limit = Math.min(
-      parseInt(url.searchParams.get("limit") || "50"),
+      parseInt(url.searchParams.get("limit") || "50", 10) || 50,
       100,
     );
-    const offset = parseInt(url.searchParams.get("offset") || "0");
+    const offset = parseInt(url.searchParams.get("offset") || "0", 10) || 0;
 
     const rows = await sql`
       SELECT

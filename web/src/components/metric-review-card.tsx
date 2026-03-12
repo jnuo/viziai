@@ -8,10 +8,10 @@ import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import {
   checkOutOfRange,
+  formatRefRange,
   type ExtractedMetric,
   type MetricField,
   type RenameInfo,
-  type ConversionInfo,
 } from "@/lib/metrics";
 
 export interface MetricCardLabels {
@@ -24,8 +24,6 @@ export interface MetricCardLabels {
   deleteMetric: string;
   willBeAddedAs: string;
   willStayAs: string;
-  willConvertTo?: string;
-  willKeepOriginal?: string;
   yesDelete: string;
   cancel: string;
 }
@@ -35,7 +33,6 @@ interface MetricReviewCardProps {
   index: number;
   labels: MetricCardLabels;
   renameInfo: RenameInfo | null;
-  conversionInfo?: ConversionInfo | null;
   onMetricChange: (
     index: number,
     field: MetricField,
@@ -43,23 +40,6 @@ interface MetricReviewCardProps {
   ) => void;
   onRemove: (index: number) => void;
   onAliasToggle: (index: number, checked: boolean, info: RenameInfo) => void;
-  onConversionToggle?: (
-    index: number,
-    checked: boolean,
-    info: ConversionInfo,
-  ) => void;
-}
-
-function formatRefRange(
-  low: number | null | undefined,
-  high: number | null | undefined,
-): string | null {
-  const hasLow = low != null && !isNaN(Number(low));
-  const hasHigh = high != null && !isNaN(Number(high));
-  if (hasLow && hasHigh) return `${low}\u2013${high}`;
-  if (hasLow) return `\u2265${low}`;
-  if (hasHigh) return `\u2264${high}`;
-  return null;
 }
 
 export const MetricReviewCard = React.memo(function MetricReviewCard({
@@ -67,11 +47,9 @@ export const MetricReviewCard = React.memo(function MetricReviewCard({
   index,
   labels,
   renameInfo,
-  conversionInfo,
   onMetricChange,
   onRemove,
   onAliasToggle,
-  onConversionToggle,
 }: MetricReviewCardProps) {
   const [expanded, setExpanded] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
@@ -82,7 +60,10 @@ export const MetricReviewCard = React.memo(function MetricReviewCard({
     metric.ref_high ?? null,
   );
 
-  const refRange = formatRefRange(metric.ref_low, metric.ref_high);
+  const hasRefRange = metric.ref_low != null || metric.ref_high != null;
+  const refRange = hasRefRange
+    ? formatRefRange(metric.ref_low, metric.ref_high)
+    : null;
   const expandedId = `metric-edit-${index}`;
 
   return (
@@ -162,37 +143,6 @@ export const MetricReviewCard = React.memo(function MetricReviewCard({
                   onAliasToggle(index, checked, renameInfo)
                 }
                 aria-label={`${renameInfo.original} \u2192 ${renameInfo.canonical}`}
-              />
-            </span>
-          </div>
-        </div>
-      )}
-
-      {/* Conversion suggestion — always visible when present */}
-      {conversionInfo && onConversionToggle && (
-        <div className={cn("px-3 pb-3", expanded && "pb-0")}>
-          <div className="flex items-center gap-2 text-xs bg-muted/50 rounded-md px-2.5 py-2">
-            <span className="text-muted-foreground flex-1 min-w-0">
-              <span className="font-medium line-through">
-                {conversionInfo.originalValue} {conversionInfo.originalUnit}
-              </span>
-              <ArrowRight className="inline h-3 w-3 mx-1" aria-hidden="true" />
-              <span className="font-medium text-primary">
-                {conversionInfo.convertedValue} {conversionInfo.convertedUnit}
-              </span>
-              <span className="ml-1">
-                {conversionInfo.applied
-                  ? labels.willConvertTo
-                  : labels.willKeepOriginal}
-              </span>
-            </span>
-            <span className="inline-flex min-w-[44px] min-h-[44px] items-center justify-center shrink-0">
-              <Switch
-                checked={conversionInfo.applied}
-                onCheckedChange={(checked) =>
-                  onConversionToggle(index, checked, conversionInfo)
-                }
-                aria-label={`${conversionInfo.originalValue} ${conversionInfo.originalUnit} \u2192 ${conversionInfo.convertedValue} ${conversionInfo.convertedUnit}`}
               />
             </span>
           </div>

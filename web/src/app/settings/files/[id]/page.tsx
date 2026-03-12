@@ -11,7 +11,7 @@ import { useToast } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
 import { formatDateTR } from "@/lib/date";
 import { useTimezone } from "@/components/preference-sync";
-import { checkOutOfRange } from "@/lib/metrics";
+import { checkOutOfRange, formatRefRange } from "@/lib/metrics";
 import { ReportReviewLayout } from "@/components/report-review-layout";
 
 const EMPTY_FORM = { value: "", unit: "", ref_low: "", ref_high: "" };
@@ -92,14 +92,6 @@ export default function FileDetailPage(): React.ReactElement {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fileId]);
-
-  // Format reference range: "100 - 200", "≥ 100", "≤ 200", or "-"
-  function formatRefRange(low: number | null, high: number | null): string {
-    if (low != null && high != null) return `${low} - ${high}`;
-    if (low != null) return `≥ ${low}`;
-    if (high != null) return `≤ ${high}`;
-    return "-";
-  }
 
   function startEditing(metric: Metric): void {
     setEditingId(metric.id);

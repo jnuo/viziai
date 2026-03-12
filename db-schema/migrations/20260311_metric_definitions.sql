@@ -1187,7 +1187,7 @@ WHERE ma.canonical_name = mt.display_name
 -- ============================================================================
 -- 6. INDEXES
 -- ============================================================================
-CREATE INDEX idx_metric_definitions_key ON metric_definitions(key);
+-- idx_metric_definitions_key omitted: UNIQUE(key) already creates a B-tree index
 CREATE INDEX idx_metric_ref_ranges_def ON metric_ref_ranges(metric_definition_id);
 CREATE INDEX idx_metric_translations_def ON metric_translations(metric_definition_id);
 CREATE INDEX idx_metric_unit_conversions_def ON metric_unit_conversions(metric_definition_id);
