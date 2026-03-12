@@ -33,6 +33,8 @@ export function ReportReviewLayout({
     return <>{children}</>;
   }
 
+  const isDataUrl = pdfUrl.startsWith("data:");
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-6">
       <Card className="overflow-hidden lg:sticky lg:top-6 lg:self-start">
@@ -41,7 +43,7 @@ export function ReportReviewLayout({
             src={pdfUrl}
             className="w-full h-[calc(100vh-10rem)] min-h-[500px] rounded-lg border"
             title="Original PDF"
-            sandbox="allow-same-origin"
+            sandbox={isDataUrl ? undefined : "allow-same-origin allow-scripts"}
           />
         </CardContent>
       </Card>
