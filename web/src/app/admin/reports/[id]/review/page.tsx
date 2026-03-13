@@ -14,7 +14,8 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import { ArrowLeft, Check, FileText, Pencil, Save, X } from "lucide-react";
+import { Check, ChevronRight, FileText, Pencil, Save, X } from "lucide-react";
+import Link from "next/link";
 import { ReportReviewLayout } from "@/components/report-review-layout";
 
 /* ---------- Types ---------- */
@@ -245,9 +246,8 @@ export default function ReviewWorkbenchPage() {
             >
               {error || "Report not found"}
             </p>
-            <Button variant="outline" onClick={() => router.back()}>
-              <ArrowLeft className="size-4" aria-hidden="true" />
-              Go back
+            <Button variant="outline" asChild>
+              <Link href="/admin/quality">Back to Quality</Link>
             </Button>
           </CardContent>
         </Card>
@@ -264,38 +264,51 @@ export default function ReviewWorkbenchPage() {
         !report.blobUrl && "max-w-4xl",
       )}
     >
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="size-11"
-            onClick={() => router.push("/admin/quality")}
-            aria-label="Back to quality dashboard"
+      {/* Breadcrumb + Header */}
+      <div className="space-y-3">
+        <nav
+          aria-label="Breadcrumb"
+          className="flex items-center gap-1 text-sm text-muted-foreground"
+        >
+          <Link
+            href="/admin"
+            className="hover:text-foreground transition-colors"
           >
-            <ArrowLeft className="size-5" />
-          </Button>
+            Admin
+          </Link>
+          <ChevronRight className="size-3.5" />
+          <Link
+            href="/admin/quality"
+            className="hover:text-foreground transition-colors"
+          >
+            Quality
+          </Link>
+          <ChevronRight className="size-3.5" />
+          <span className="text-foreground font-medium truncate max-w-[300px]">
+            {report.fileName}
+          </span>
+        </nav>
+        <div className="flex items-center justify-between">
           <div>
             <h1 className="text-xl font-semibold">Review Report</h1>
             <p className="text-sm text-muted-foreground">
-              {report.fileName} · {report.profileName} · {report.sampleDate}
+              {report.profileName} · {report.sampleDate}
             </p>
           </div>
+          {review && (
+            <Badge
+              variant="outline"
+              className={cn(
+                review.status === "approved" &&
+                  "border-status-normal text-status-normal bg-status-normal/10",
+                review.status === "corrected" &&
+                  "border-status-warning text-status-warning bg-status-warning/10",
+              )}
+            >
+              {review.status === "approved" ? "Approved" : "Corrected"}
+            </Badge>
+          )}
         </div>
-        {review && (
-          <Badge
-            variant="outline"
-            className={cn(
-              review.status === "approved" &&
-                "border-status-normal text-status-normal bg-status-normal/10",
-              review.status === "corrected" &&
-                "border-status-warning text-status-warning bg-status-warning/10",
-            )}
-          >
-            {review.status === "approved" ? "Approved" : "Corrected"}
-          </Badge>
-        )}
       </div>
 
       {/* PDF + metrics layout */}
