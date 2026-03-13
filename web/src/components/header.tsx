@@ -141,55 +141,73 @@ export function Header({
               </Button>
             )}
 
-            {isLoggedIn && isAdmin && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => router.push("/admin/quality")}
-                className="hidden sm:flex gap-1.5 text-muted-foreground hover:text-foreground"
-              >
-                <ShieldCheck className="h-4 w-4" />
-                Admin
-              </Button>
-            )}
-
             {isLoggedIn && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="gap-1 border-primary/30 hover:border-primary hover:bg-primary/5"
-                  >
-                    <Plus className="h-4 w-4" />
-                    <span className="hidden sm:inline">{t("add")}</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuItem
-                    onClick={() => setBpDialogOpen(true)}
-                    className="cursor-pointer"
-                  >
-                    <Heart className="h-4 w-4 text-status-critical" />
-                    {t("addBP")}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => setWeightDialogOpen(true)}
-                    className="cursor-pointer"
-                  >
-                    <Scale className="h-4 w-4 text-primary" />
-                    {t("addWeight")}
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    onClick={() => router.push("/upload")}
-                    className="cursor-pointer"
-                  >
-                    <Upload className="h-4 w-4" />
-                    {t("uploadReport")}
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <>
+                {/* Desktop: inline add buttons */}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => router.push("/upload")}
+                  className="hidden sm:flex gap-1.5 text-muted-foreground hover:text-foreground"
+                >
+                  <Upload className="h-4 w-4" />
+                  {t("uploadReport")}
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setBpDialogOpen(true)}
+                  className="hidden sm:flex gap-1.5 text-muted-foreground hover:text-foreground"
+                >
+                  <Heart className="h-4 w-4" />
+                  {t("addBP")}
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setWeightDialogOpen(true)}
+                  className="hidden sm:flex gap-1.5 text-muted-foreground hover:text-foreground"
+                >
+                  <Scale className="h-4 w-4" />
+                  {t("addWeight")}
+                </Button>
+
+                {/* Mobile: dropdown for add actions */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="sm:hidden gap-1 border-primary/30 hover:border-primary hover:bg-primary/5"
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48">
+                    <DropdownMenuItem
+                      onClick={() => router.push("/upload")}
+                      className="cursor-pointer"
+                    >
+                      <Upload className="h-4 w-4" />
+                      {t("uploadReport")}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setBpDialogOpen(true)}
+                      className="cursor-pointer"
+                    >
+                      <Heart className="h-4 w-4 text-status-critical" />
+                      {t("addBP")}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setWeightDialogOpen(true)}
+                      className="cursor-pointer"
+                    >
+                      <Scale className="h-4 w-4 text-primary" />
+                      {t("addWeight")}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
             )}
 
             {isLoggedIn ? (
@@ -241,7 +259,7 @@ export function Header({
                     <>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
-                        onClick={() => router.push("/admin/quality")}
+                        onClick={() => router.push("/admin")}
                         className="cursor-pointer"
                       >
                         <ShieldCheck className="h-4 w-4" />
