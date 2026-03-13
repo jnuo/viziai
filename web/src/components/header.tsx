@@ -159,7 +159,7 @@ export function Header({
                   onClick={() => setBpDialogOpen(true)}
                   className="hidden sm:flex gap-1.5 text-muted-foreground hover:text-foreground"
                 >
-                  <Heart className="h-4 w-4" />
+                  <Heart className="h-4 w-4 text-status-critical" />
                   {t("addBP")}
                 </Button>
                 <Button
@@ -168,7 +168,7 @@ export function Header({
                   onClick={() => setWeightDialogOpen(true)}
                   className="hidden sm:flex gap-1.5 text-muted-foreground hover:text-foreground"
                 >
-                  <Scale className="h-4 w-4" />
+                  <Scale className="h-4 w-4 text-primary" />
                   {t("addWeight")}
                 </Button>
 
