@@ -17,6 +17,7 @@ import {
   ArrowUp,
   ArrowUpDown,
   CheckCircle2,
+  ChevronRight,
   FileText,
   FlaskConical,
   X,
@@ -156,7 +157,22 @@ export default function AdminQualityPage() {
   if (loading) {
     return (
       <main className="max-w-6xl mx-auto px-6 py-8 space-y-8">
-        <h1 className="text-2xl font-semibold">Report Reviews</h1>
+        <div className="space-y-3">
+          <nav
+            aria-label="Breadcrumb"
+            className="flex items-center gap-1 text-sm text-muted-foreground"
+          >
+            <Link
+              href="/admin"
+              className="hover:text-foreground transition-colors"
+            >
+              Admin
+            </Link>
+            <ChevronRight className="size-3.5" />
+            <span className="text-foreground font-medium">Report Reviews</span>
+          </nav>
+          <h1 className="text-2xl font-semibold">Report Reviews</h1>
+        </div>
         <StatsSkeleton />
         <Skeleton className="h-64 rounded-xl" />
         <Skeleton className="h-64 rounded-xl" />
@@ -166,7 +182,22 @@ export default function AdminQualityPage() {
 
   return (
     <main className="max-w-6xl mx-auto px-6 py-8 space-y-8">
-      <h1 className="text-2xl font-semibold">Report Reviews</h1>
+      <div className="space-y-3">
+        <nav
+          aria-label="Breadcrumb"
+          className="flex items-center gap-1 text-sm text-muted-foreground"
+        >
+          <Link
+            href="/admin"
+            className="hover:text-foreground transition-colors"
+          >
+            Admin
+          </Link>
+          <ChevronRight className="size-3.5" />
+          <span className="text-foreground font-medium">Report Reviews</span>
+        </nav>
+        <h1 className="text-2xl font-semibold">Report Reviews</h1>
+      </div>
 
       {/* Stats cards */}
       {stats && (
