@@ -17,6 +17,7 @@ import {
   ArrowUp,
   ArrowUpDown,
   CheckCircle2,
+  ChevronRight,
   FileText,
   FlaskConical,
   X,
@@ -68,8 +69,12 @@ export default function AdminQualityPage() {
   // Reports table state
   type SortDir = "asc" | "desc" | null;
   type PdfFilter = "all" | "with" | "without";
+  type StatusFilter = "all" | "approved" | "corrected" | "unreviewed";
   const [sortDir, setSortDir] = useState<SortDir>(null);
   const [pdfFilter, setPdfFilter] = useState<PdfFilter>("all");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const [fileSearch, setFileSearch] = useState("");
+  const [profileSearch, setProfileSearch] = useState("");
 
   const fetchData = useCallback(async () => {
     const [statsRes, reviewsRes] = await Promise.all([
@@ -93,6 +98,28 @@ export default function AdminQualityPage() {
     let list = reviews;
     if (pdfFilter === "with") list = list.filter((r) => !!r.blob_url);
     if (pdfFilter === "without") list = list.filter((r) => !r.blob_url);
+    if (statusFilter !== "all") {
+      list = list.filter((r) => {
+        if (statusFilter === "unreviewed") return !r.review_status;
+        return r.review_status === statusFilter;
+      });
+    }
+    if (fileSearch) {
+      const q = fileSearch.toLowerCase();
+      list = list.filter(
+        (r) =>
+          r.file_name.toLowerCase().includes(q) ||
+          (r.sample_date && r.sample_date.includes(q)),
+      );
+    }
+    if (profileSearch) {
+      const q = profileSearch.toLowerCase();
+      list = list.filter(
+        (r) =>
+          r.profile_name.toLowerCase().includes(q) ||
+          (r.user_email && r.user_email.toLowerCase().includes(q)),
+      );
+    }
     if (sortDir) {
       list = [...list].sort((a, b) => {
         const da = a.upload_date ? new Date(a.upload_date).getTime() : 0;
@@ -101,7 +128,7 @@ export default function AdminQualityPage() {
       });
     }
     return list;
-  }, [reviews, pdfFilter, sortDir]);
+  }, [reviews, pdfFilter, statusFilter, fileSearch, profileSearch, sortDir]);
 
   function formatDate(iso: string | null) {
     if (!iso) return "—";
@@ -130,7 +157,22 @@ export default function AdminQualityPage() {
   if (loading) {
     return (
       <main className="max-w-6xl mx-auto px-6 py-8 space-y-8">
-        <h1 className="text-2xl font-semibold">Report Reviews</h1>
+        <div className="space-y-3">
+          <nav
+            aria-label="Breadcrumb"
+            className="flex items-center gap-1 text-sm text-muted-foreground"
+          >
+            <Link
+              href="/admin"
+              className="hover:text-foreground transition-colors"
+            >
+              Admin
+            </Link>
+            <ChevronRight className="size-3.5" />
+            <span className="text-foreground font-medium">Report Reviews</span>
+          </nav>
+          <h1 className="text-2xl font-semibold">Report Reviews</h1>
+        </div>
         <StatsSkeleton />
         <Skeleton className="h-64 rounded-xl" />
         <Skeleton className="h-64 rounded-xl" />
@@ -140,7 +182,22 @@ export default function AdminQualityPage() {
 
   return (
     <main className="max-w-6xl mx-auto px-6 py-8 space-y-8">
-      <h1 className="text-2xl font-semibold">Report Reviews</h1>
+      <div className="space-y-3">
+        <nav
+          aria-label="Breadcrumb"
+          className="flex items-center gap-1 text-sm text-muted-foreground"
+        >
+          <Link
+            href="/admin"
+            className="hover:text-foreground transition-colors"
+          >
+            Admin
+          </Link>
+          <ChevronRight className="size-3.5" />
+          <span className="text-foreground font-medium">Report Reviews</span>
+        </nav>
+        <h1 className="text-2xl font-semibold">Report Reviews</h1>
+      </div>
 
       {/* Stats cards */}
       {stats && (
@@ -204,7 +261,11 @@ export default function AdminQualityPage() {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-lg">Reports</CardTitle>
-              <CardDescription>All reports, sorted by date</CardDescription>
+              <CardDescription>
+                {filteredReviews.length === reviews.length
+                  ? `${reviews.length} reports`
+                  : `${filteredReviews.length} of ${reviews.length} reports`}
+              </CardDescription>
             </div>
             <div className="flex items-center gap-1">
               {(["all", "with", "without"] as const).map((v) => (
@@ -287,6 +348,44 @@ export default function AdminQualityPage() {
                     >
                       Actions
                     </th>
+                  </tr>
+                  <tr className="border-b">
+                    <th scope="col" className="pb-2 pt-1">
+                      <input
+                        type="text"
+                        placeholder="Filter..."
+                        value={fileSearch}
+                        onChange={(e) => setFileSearch(e.target.value)}
+                        className="w-full text-xs font-normal px-2 py-1 rounded border border-border bg-background placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary"
+                      />
+                    </th>
+                    <th scope="col" className="pb-2 pt-1">
+                      <input
+                        type="text"
+                        placeholder="Filter..."
+                        value={profileSearch}
+                        onChange={(e) => setProfileSearch(e.target.value)}
+                        className="w-full text-xs font-normal px-2 py-1 rounded border border-border bg-background placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary"
+                      />
+                    </th>
+                    <th scope="col" className="pb-2 pt-1" />
+                    <th scope="col" className="pb-2 pt-1" />
+                    <th scope="col" className="pb-2 pt-1" />
+                    <th scope="col" className="pb-2 pt-1">
+                      <select
+                        value={statusFilter}
+                        onChange={(e) =>
+                          setStatusFilter(e.target.value as StatusFilter)
+                        }
+                        className="w-full text-xs font-normal px-1 py-1 rounded border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                      >
+                        <option value="all">All</option>
+                        <option value="approved">Approved</option>
+                        <option value="corrected">Corrected</option>
+                        <option value="unreviewed">Unreviewed</option>
+                      </select>
+                    </th>
+                    <th scope="col" className="pb-2 pt-1" />
                   </tr>
                 </thead>
                 <tbody>
