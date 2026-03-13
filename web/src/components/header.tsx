@@ -259,7 +259,7 @@ export function Header({
                     <>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
-                        onClick={() => router.push("/admin")}
+                        onClick={() => router.push("/admin/quality")}
                         className="cursor-pointer"
                       >
                         <ShieldCheck className="h-4 w-4" />
