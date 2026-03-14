@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn, friendlyMetricName } from "@/lib/utils";
+import { trackEvent } from "@/lib/analytics";
 import { formatRefRange } from "@/lib/metrics";
 import { ArrowLeft, FileText, Calendar, FlaskConical } from "lucide-react";
 import { ReportReviewLayout } from "@/components/report-review-layout";
@@ -100,6 +101,7 @@ export default function ReportDetailPage() {
         }
         const json = await res.json();
         setData(json);
+        trackEvent({ action: "report_viewed", category: "engagement" });
       } catch (e) {
         if (e instanceof DOMException && e.name === "AbortError") return;
         setError("Failed to load report");

@@ -451,6 +451,7 @@ function UploadPageContent(): React.ReactElement {
       }
 
       setStatus("success");
+      trackEvent({ action: "upload_confirmed", category: "conversion" });
     } catch (err) {
       reportError(err, { op: "upload.confirm", uploadId });
       setError(tc("errorRetry"));

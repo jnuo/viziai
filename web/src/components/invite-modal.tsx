@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { BookUser, Check, Copy, Loader2, UserCheck } from "lucide-react";
+import { trackEvent } from "@/lib/analytics";
 import {
   Dialog,
   DialogContent,
@@ -62,7 +63,7 @@ export function InviteModal({
     setHasContactPicker("contacts" in navigator && "ContactsManager" in window);
   }, []);
 
-  const handlePickContact = async () => {
+  async function handlePickContact() {
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const contacts = await (navigator as any).contacts.select(["email"], {
@@ -72,11 +73,11 @@ export function InviteModal({
         setEmail(contacts[0].email[0]);
       }
     } catch {
-      // User cancelled or API not available — ignore
+      // User cancelled or API not available
     }
-  };
+  }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     setLoading(true);
@@ -103,39 +104,45 @@ export function InviteModal({
         setInvitedEmail(email.trim());
         setStep("success");
       }
+      trackEvent({ action: "profile_shared", category: "engagement" });
     } catch {
       setError(tc("errorOccurred"));
     } finally {
       setLoading(false);
     }
-  };
+  }
 
-  const handleCopy = async () => {
+  async function handleCopy() {
     await navigator.clipboard.writeText(inviteUrl);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
-  };
+  }
 
-  const handleWhatsApp = () => {
+  function handleWhatsApp() {
     const text = t("whatsAppMessage", { profileName, url: inviteUrl });
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
-  };
+  }
 
-  const handleWhatsAppDirect = () => {
+  function handleWhatsAppDirect() {
     const text = t("whatsAppMessageDirect", {
       profileName,
       url: "https://www.viziai.app",
     });
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
-  };
-
-  function dialogTitle(): string {
-    if (step === "form") return t("inviteTitle", { profileName });
-    if (step === "direct") return ti("accessGranted");
-    return t("inviteSentTitle");
   }
 
-  const handleClose = (open: boolean) => {
+  function dialogTitle(): string {
+    switch (step) {
+      case "form":
+        return t("inviteTitle", { profileName });
+      case "direct":
+        return ti("accessGranted");
+      case "success":
+        return t("inviteSentTitle");
+    }
+  }
+
+  function handleClose(open: boolean) {
     if (!open) {
       setStep("form");
       setEmail("");
@@ -147,7 +154,7 @@ export function InviteModal({
       setInvitedEmail("");
     }
     onOpenChange(open);
-  };
+  }
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
