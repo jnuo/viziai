@@ -257,7 +257,6 @@ export default function Dashboard(): React.ReactElement | null {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedMetrics, setSelectedMetrics] = useState<string[]>([]);
-  const [, setHoveredDate] = useState<string | null>(null);
   const [dateRange, setDateRange] = useState<DateRange>("all");
   const [showAverage, setShowAverage] = useState(false);
 
@@ -1184,7 +1183,6 @@ export default function Dashboard(): React.ReactElement | null {
                     key={metric.id}
                     metric={metric}
                     values={filteredData.values}
-                    onHover={setHoveredDate}
                     onRemove={() => removeMetric(metric.id)}
                   />
                 ))}
