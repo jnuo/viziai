@@ -17,13 +17,10 @@ import {
   ArrowUp,
   ArrowUpDown,
   CheckCircle2,
-  ChevronRight,
   FileText,
   FlaskConical,
   X,
 } from "lucide-react";
-
-/* ---------- Types ---------- */
 
 interface Stats {
   unreviewedCount: number;
@@ -47,8 +44,6 @@ interface ReviewReport {
   mapped_count: number;
 }
 
-/* ---------- Stats skeleton ---------- */
-
 function StatsSkeleton() {
   return (
     <div className="grid grid-cols-3 gap-4">
@@ -58,8 +53,6 @@ function StatsSkeleton() {
     </div>
   );
 }
-
-/* ---------- Component ---------- */
 
 export default function AdminQualityPage() {
   const [stats, setStats] = useState<Stats | null>(null);
@@ -157,22 +150,7 @@ export default function AdminQualityPage() {
   if (loading) {
     return (
       <main className="max-w-6xl mx-auto px-6 py-8 space-y-8">
-        <div className="space-y-3">
-          <nav
-            aria-label="Breadcrumb"
-            className="flex items-center gap-1 text-sm text-muted-foreground"
-          >
-            <Link
-              href="/admin"
-              className="hover:text-foreground transition-colors"
-            >
-              Admin
-            </Link>
-            <ChevronRight className="size-3.5" />
-            <span className="text-foreground font-medium">Report Reviews</span>
-          </nav>
-          <h1 className="text-2xl font-semibold">Report Reviews</h1>
-        </div>
+        <h1 className="text-2xl font-semibold">Report Reviews</h1>
         <StatsSkeleton />
         <Skeleton className="h-64 rounded-xl" />
         <Skeleton className="h-64 rounded-xl" />
@@ -182,22 +160,7 @@ export default function AdminQualityPage() {
 
   return (
     <main className="max-w-6xl mx-auto px-6 py-8 space-y-8">
-      <div className="space-y-3">
-        <nav
-          aria-label="Breadcrumb"
-          className="flex items-center gap-1 text-sm text-muted-foreground"
-        >
-          <Link
-            href="/admin"
-            className="hover:text-foreground transition-colors"
-          >
-            Admin
-          </Link>
-          <ChevronRight className="size-3.5" />
-          <span className="text-foreground font-medium">Report Reviews</span>
-        </nav>
-        <h1 className="text-2xl font-semibold">Report Reviews</h1>
-      </div>
+      <h1 className="text-2xl font-semibold">Report Reviews</h1>
 
       {/* Stats cards */}
       {stats && (

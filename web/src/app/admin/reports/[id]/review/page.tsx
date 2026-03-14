@@ -14,11 +14,9 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import { Check, ChevronRight, FileText, Pencil, Save, X } from "lucide-react";
+import { ArrowLeft, Check, FileText, Pencil, Save, X } from "lucide-react";
 import Link from "next/link";
 import { ReportReviewLayout } from "@/components/report-review-layout";
-
-/* ---------- Types ---------- */
 
 interface Metric {
   id: string;
@@ -70,8 +68,6 @@ interface MetricCorrection {
   refHigh?: number | null;
 }
 
-/* ---------- Component ---------- */
-
 export default function ReviewWorkbenchPage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
@@ -81,7 +77,6 @@ export default function ReviewWorkbenchPage() {
   const [submitting, setSubmitting] = useState(false);
   const [notes, setNotes] = useState("");
 
-  // Editing state: metricId -> edited values
   const [edits, setEdits] = useState<Record<string, MetricEdit>>({});
   const [editingId, setEditingId] = useState<string | null>(null);
 
@@ -264,30 +259,15 @@ export default function ReviewWorkbenchPage() {
         !report.blobUrl && "max-w-4xl",
       )}
     >
-      {/* Breadcrumb + Header */}
+      {/* Header */}
       <div className="space-y-3">
-        <nav
-          aria-label="Breadcrumb"
-          className="flex items-center gap-1 text-sm text-muted-foreground"
+        <Link
+          href="/admin/quality"
+          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
-          <Link
-            href="/admin"
-            className="hover:text-foreground transition-colors"
-          >
-            Admin
-          </Link>
-          <ChevronRight className="size-3.5" />
-          <Link
-            href="/admin/quality"
-            className="hover:text-foreground transition-colors"
-          >
-            Quality
-          </Link>
-          <ChevronRight className="size-3.5" />
-          <span className="text-foreground font-medium truncate max-w-[300px]">
-            {report.fileName}
-          </span>
-        </nav>
+          <ArrowLeft className="size-3.5" />
+          Back to Report Reviews
+        </Link>
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-xl font-semibold">Review Report</h1>
