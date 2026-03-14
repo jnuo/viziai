@@ -66,14 +66,15 @@ function useChartColors(): ChartColors {
 
     // Listen for theme changes
     const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
+      for (const mutation of mutations) {
         if (
           mutation.attributeName === "class" &&
           mutation.target === document.documentElement
         ) {
           updateColors();
+          break;
         }
-      });
+      }
     });
 
     observer.observe(document.documentElement, { attributes: true });
@@ -91,7 +92,7 @@ type ChartData = {
 type MetricChartProps = {
   metric: Metric;
   values: MetricValue[];
-  onHover: (date: string | null) => void;
+  onHover?: (date: string | null) => void;
   onRemove: () => void;
   className?: string;
 };
@@ -197,15 +198,15 @@ export function MetricChart({
       </CardHeader>
       <CardContent className="!px-3 pt-0 pb-2">
         <div className="h-52 w-full">
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height="100%" debounce={100}>
             <LineChart
               data={chartData}
               syncId="labs-sync"
               syncMethod="value"
               onMouseMove={(state: { activeLabel?: string }) =>
-                onHover(state?.activeLabel ?? null)
+                onHover?.(state?.activeLabel ?? null)
               }
-              onMouseLeave={() => onHover(null)}
+              onMouseLeave={() => onHover?.(null)}
             >
               <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
 
