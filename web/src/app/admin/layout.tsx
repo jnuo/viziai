@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { requireAuth, isAdmin } from "@/lib/auth";
 import { ShieldX } from "lucide-react";
+import { AdminNav } from "@/components/admin/admin-nav";
 
 function AccessDenied() {
   return (
@@ -34,5 +35,10 @@ export default async function AdminLayout({
   const admin = await isAdmin(userId);
   if (!admin) return <AccessDenied />;
 
-  return <>{children}</>;
+  return (
+    <div className="min-h-screen bg-background">
+      <AdminNav />
+      {children}
+    </div>
+  );
 }
