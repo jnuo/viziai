@@ -71,7 +71,7 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    const [dimRes, dailyRes] = await Promise.all([
+    const [dimRes, dailyRes, totalsRes] = await Promise.all([
       client.runReport({
         property: `properties/${GA4_PROPERTY_ID}`,
         dateRanges: [{ startDate, endDate: "yesterday" }],
@@ -83,7 +83,6 @@ export async function GET(request: NextRequest) {
           { name: "engagedSessions" },
           { name: "averageSessionDuration" },
         ],
-
         orderBys: [{ metric: { metricName: "sessions" }, desc: true }],
         limit: 20,
       }),
@@ -101,6 +100,15 @@ export async function GET(request: NextRequest) {
             },
             desc: false,
           },
+        ],
+      }),
+      client.runReport({
+        property: `properties/${GA4_PROPERTY_ID}`,
+        dateRanges: [{ startDate, endDate: "yesterday" }],
+        metrics: [
+          { name: "sessions" },
+          { name: "totalUsers" },
+          { name: "screenPageViews" },
         ],
       }),
     ]);
@@ -133,9 +141,10 @@ export async function GET(request: NextRequest) {
       };
     });
 
-    const totalSessions = rows.reduce((s, c) => s + c.sessions, 0);
-    const totalUsers = rows.reduce((s, c) => s + c.users, 0);
-    const totalPageViews = rows.reduce((s, c) => s + c.pageViews, 0);
+    const totalsRow = totalsRes[0].rows?.[0];
+    const totalSessions = parseInt(totalsRow?.metricValues?.[0]?.value || "0");
+    const totalUsers = parseInt(totalsRow?.metricValues?.[1]?.value || "0");
+    const totalPageViews = parseInt(totalsRow?.metricValues?.[2]?.value || "0");
 
     return NextResponse.json({
       configured: true,
