@@ -2,3 +2,26 @@
 # Started: 2026-03-15
 # Neon test branch: metric-translations-test (ep-dry-firefly-ag9z6ef3)
 
+## MT-001: Migration — add description column + normalize categories [DONE]
+- Added `description TEXT` column to metric_translations (nullable)
+- Normalized 22 mixed EN/TR categories → 16 consistent Turkish slugs
+- Category mapping: CBC→hemogram, Chemistry→biyokimya, Liver→karaciger, Lipid→lipid, Coagulation→koagulasyon, Iron→demir, Vitamins→vitamin, Thyroid→tiroid, Inflammation→enflamasyon, Other→diger, tumor_marker→tumor_belirtecleri, kardiyoloji→kardiyak
+- Verified: 155 metrics across 16 categories, zero English names remaining
+- Commit: 520f1ba
+
+## MT-002: Turkish descriptions — hemogram (36 metrics) [DONE]
+- Generated 36 patient-facing Turkish descriptions for hemogram category
+- All descriptions: function-first, max 30 words, no disease names, calm tone
+- Banned words check: 0 matches
+- Commit: 739c2f0
+
+## MT-003: Turkish descriptions — biyokimya (24 metrics) [DONE]
+- Generated 24 patient-facing Turkish descriptions for biyokimya category
+- Banned words check: 0 matches
+- Commit: 8ec4909
+
+## MT-004: Turkish descriptions — idrar (28 metrics) [DONE]
+- Generated 28 patient-facing Turkish descriptions for idrar category
+- Banned words check: 0 matches
+- Commit: 595b207
+

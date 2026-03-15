@@ -94,7 +94,7 @@
         "db-schema/data/metric-translations/MT-005-tr-immuno-kangazi.sql"
       ],
       "dependencies": ["MT-001"],
-      "status": "todo"
+      "status": "done"
     },
     {
       "id": "MT-006",
