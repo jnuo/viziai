@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth";
 import { sql } from "@/lib/db";
 import { reportError } from "@/lib/error-reporting";
-import { EXCLUDED_EMAIL, periodToInterval } from "../shared";
+import { EXCLUDED_EMAIL, parseDateFilter } from "../shared";
 
 export const dynamic = "force-dynamic";
 
@@ -11,13 +11,12 @@ export async function GET(request: NextRequest) {
   if (!userId)
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-  const period = request.nextUrl.searchParams.get("period") || "30d";
-  const interval = periodToInterval(period);
+  const { interval, from, to } = parseDateFilter(request.nextUrl.searchParams);
+  const hasRange = from && to;
 
   try {
     const [users, reports, profiles, activated, active, invites] =
       await Promise.all([
-        // Total users + new in period (exclude admin)
         interval
           ? sql`
             SELECT
@@ -25,12 +24,18 @@ export async function GET(request: NextRequest) {
               COUNT(*) FILTER (WHERE created_at >= NOW() - ${interval}::interval)::int AS new_in_period
             FROM users WHERE email != ${EXCLUDED_EMAIL}
           `
-          : sql`
+          : hasRange
+            ? sql`
+            SELECT
+              COUNT(*)::int AS total,
+              COUNT(*) FILTER (WHERE created_at >= ${from}::date AND created_at < ${to}::date + INTERVAL '1 day')::int AS new_in_period
+            FROM users WHERE email != ${EXCLUDED_EMAIL}
+          `
+            : sql`
             SELECT COUNT(*)::int AS total, COUNT(*)::int AS new_in_period
             FROM users WHERE email != ${EXCLUDED_EMAIL}
           `,
 
-        // Total reports + new in period
         interval
           ? sql`
             SELECT
@@ -38,14 +43,19 @@ export async function GET(request: NextRequest) {
               COUNT(*) FILTER (WHERE created_at >= NOW() - ${interval}::interval)::int AS new_in_period
             FROM reports
           `
-          : sql`
+          : hasRange
+            ? sql`
+            SELECT
+              COUNT(*)::int AS total,
+              COUNT(*) FILTER (WHERE created_at >= ${from}::date AND created_at < ${to}::date + INTERVAL '1 day')::int AS new_in_period
+            FROM reports
+          `
+            : sql`
             SELECT COUNT(*)::int AS total, COUNT(*)::int AS new_in_period FROM reports
           `,
 
-        // Total profiles
         sql`SELECT COUNT(*)::int AS total FROM profiles`,
 
-        // Activated users (exclude admin)
         sql`
           SELECT COUNT(DISTINCT pu.user_id)::int AS count
           FROM pending_uploads pu
@@ -53,7 +63,6 @@ export async function GET(request: NextRequest) {
           WHERE pu.status = 'confirmed' AND u.email != ${EXCLUDED_EMAIL}
         `,
 
-        // Active users in period (exclude admin)
         interval
           ? sql`
             SELECT COUNT(DISTINCT uid)::int AS count FROM (
@@ -69,7 +78,22 @@ export async function GET(request: NextRequest) {
                 AND u.email != ${EXCLUDED_EMAIL}
             ) active
           `
-          : sql`
+          : hasRange
+            ? sql`
+            SELECT COUNT(DISTINCT uid)::int AS count FROM (
+              SELECT pu.user_id AS uid FROM pending_uploads pu
+              JOIN users u ON u.id = pu.user_id
+              WHERE pu.created_at >= ${from}::date AND pu.created_at < ${to}::date + INTERVAL '1 day'
+                AND u.email != ${EXCLUDED_EMAIL}
+              UNION
+              SELECT ua.user_id_new AS uid FROM tracking_measurements tm
+              JOIN user_access ua ON ua.profile_id = tm.profile_id
+              JOIN users u ON u.id = ua.user_id_new
+              WHERE tm.created_at >= ${from}::date AND tm.created_at < ${to}::date + INTERVAL '1 day'
+                AND u.email != ${EXCLUDED_EMAIL}
+            ) active
+          `
+            : sql`
             SELECT COUNT(DISTINCT uid)::int AS count FROM (
               SELECT pu.user_id AS uid FROM pending_uploads pu
               JOIN users u ON u.id = pu.user_id
@@ -82,7 +106,6 @@ export async function GET(request: NextRequest) {
             ) active
           `,
 
-        // Invite claim rate (exclude admin-sent invites)
         sql`
           SELECT
             COUNT(*)::int AS total,

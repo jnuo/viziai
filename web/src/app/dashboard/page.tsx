@@ -58,6 +58,7 @@ import { useTimezone } from "@/components/preference-sync";
 import { MetricChart } from "@/components/metric-chart";
 import { OnboardingChecklist } from "@/components/onboarding-checklist";
 import { GhostedChart } from "@/components/ghosted-chart";
+import { track } from "@/lib/track";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { useActiveProfile } from "@/hooks/use-active-profile";
@@ -535,7 +536,6 @@ export default function Dashboard(): React.ReactElement | null {
     return metrics;
   }, [filteredData.metrics, searchQuery, metricOrder]);
 
-  // Clamp grid height when content shrinks (e.g. after filtering)
   useEffect(() => {
     const id = requestAnimationFrame(() => {
       const contentH = gridInnerRef.current?.scrollHeight;
@@ -612,9 +612,12 @@ export default function Dashboard(): React.ReactElement | null {
   }, [filteredData, locale, timezone]);
 
   function toggleMetric(metricId: string): void {
-    if (selectedMetrics.includes(metricId)) {
+    const isSelected = selectedMetrics.includes(metricId);
+    if (isSelected) {
       setSelectedMetrics(selectedMetrics.filter((id) => id !== metricId));
     } else {
+      const metric = filteredData?.metrics.find((m) => m.id === metricId);
+      if (metric) track("metric_selected", metric.name);
       setSelectedMetrics([...selectedMetrics, metricId]);
     }
   }
@@ -628,10 +631,7 @@ export default function Dashboard(): React.ReactElement | null {
     setSearchQuery("");
   }
 
-  // --- Grid resize handlers ---
   function getMaxGridHeight(isMobile: boolean): number {
-    // Use inner grid's height (actual content), not the scrollable container
-    // scrollHeight on the outer container grows with its set height, not content
     const contentH = gridInnerRef.current?.scrollHeight ?? DEFAULT_GRID_HEIGHT;
     if (isMobile) return Math.min(contentH, MAX_GRID_HEIGHT_MOBILE);
     return Math.min(contentH, window.innerHeight * 0.6);
@@ -825,21 +825,18 @@ export default function Dashboard(): React.ReactElement | null {
   return (
     <TooltipProvider>
       <div className="min-h-screen bg-background">
-        {/* Header - Product + User Info */}
         <Header
           profileName={activeProfile?.display_name}
           currentProfileId={activeProfileId || undefined}
         />
 
         <main className="p-2 sm:p-3 md:p-4 space-y-3">
-          {/* Empty State - shown when no metrics/reports */}
           {data.metrics.length === 0 && (
             <Card className="rounded-xl">
               <EmptyState profileName={activeProfile?.display_name} />
             </Card>
           )}
 
-          {/* Onboarding Checklist - shown for 1-2 reports */}
           {reportCount >= 1 && reportCount <= 2 && (
             <OnboardingChecklist
               reportCount={reportCount}
@@ -850,13 +847,10 @@ export default function Dashboard(): React.ReactElement | null {
             />
           )}
 
-          {/* Metric Grid Widget - shown when there are lab metrics or tracking data */}
           {filteredData.metrics.length > 0 && (
             <Card className="rounded-xl gap-2 py-3 sm:gap-4 sm:py-4 md:gap-6 md:py-6">
               <CardHeader className="pb-1.5 space-y-1.5 px-4 sm:px-6">
-                {/* Row 1: Title + Average + Date */}
                 <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                  {/* Title + switch stay together */}
                   <div className="flex items-center gap-2">
                     <CardTitle className="text-xs font-medium text-muted-foreground whitespace-nowrap">
                       {t("values")}
@@ -887,7 +881,6 @@ export default function Dashboard(): React.ReactElement | null {
                     </div>
                   </div>
 
-                  {/* Date filter */}
                   <Select
                     value={dateRange}
                     onValueChange={(value: DateRange) => setDateRange(value)}
@@ -907,9 +900,7 @@ export default function Dashboard(): React.ReactElement | null {
                   </Select>
                 </div>
 
-                {/* Row 2: Search + Sort + Date Range Display */}
                 <div className="flex items-center gap-1.5 md:gap-2">
-                  {/* Desktop: Search input + Sort button */}
                   <div className="hidden md:flex items-center gap-2">
                     <div className="relative">
                       <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
@@ -944,7 +935,6 @@ export default function Dashboard(): React.ReactElement | null {
                     </Button>
                   </div>
 
-                  {/* Mobile: Search button + Sort button */}
                   {!showSearchInput ? (
                     <div className="flex md:hidden items-center gap-1.5">
                       <Button
@@ -993,7 +983,6 @@ export default function Dashboard(): React.ReactElement | null {
                     </div>
                   )}
 
-                  {/* Date range display - truncates on very narrow screens */}
                   <div
                     className={`text-xs text-muted-foreground ml-auto truncate min-w-0 ${showSearchInput ? "hidden md:block" : ""}`}
                     title={dateRangeDisplay}
@@ -1147,7 +1136,6 @@ export default function Dashboard(): React.ReactElement | null {
             </Card>
           )}
 
-          {/* Resize divider — between metric grid and charts (only for 2+ reports) */}
           {filteredData.metrics.length > 0 && reportCount >= 2 && (
             <div
               role="separator"
@@ -1168,12 +1156,10 @@ export default function Dashboard(): React.ReactElement | null {
             </div>
           )}
 
-          {/* Ghosted Chart — shown for 1 report (line charts don't make sense with a single data point) */}
           {reportCount === 1 && filteredData.metrics.length > 0 && (
             <GhostedChart />
           )}
 
-          {/* Charts — shown for 2+ reports */}
           {reportCount >= 2 &&
             filteredData.metrics.length > 0 &&
             selectedMetrics.length > 0 && (
@@ -1190,7 +1176,6 @@ export default function Dashboard(): React.ReactElement | null {
             )}
         </main>
 
-        {/* Sort Sheet */}
         <Sheet open={sortSheetOpen} onOpenChange={setSortSheetOpen}>
           <SheetContent className="w-full sm:max-w-sm !p-0 !gap-0 overflow-hidden">
             <div className="flex flex-col h-full">

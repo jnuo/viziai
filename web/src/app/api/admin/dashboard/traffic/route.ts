@@ -46,9 +46,12 @@ export async function GET(request: NextRequest) {
   if (!userId)
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-  const period = request.nextUrl.searchParams.get("period") || "30d";
   const dimension = request.nextUrl.searchParams.get("dimension") || "channel";
-  const startDate = START_DATES[period] ?? "30daysAgo";
+  const fromParam = request.nextUrl.searchParams.get("from");
+  const toParam = request.nextUrl.searchParams.get("to");
+  const period = request.nextUrl.searchParams.get("period") || "30d";
+  const startDate = fromParam || START_DATES[period] || "30daysAgo";
+  const endDate = toParam || "today";
 
   const config = DIMENSION_CONFIG[dimension];
   if (!config) {
@@ -74,7 +77,7 @@ export async function GET(request: NextRequest) {
     const [dimRes, dailyRes, totalsRes] = await Promise.all([
       client.runReport({
         property: `properties/${GA4_PROPERTY_ID}`,
-        dateRanges: [{ startDate, endDate: "yesterday" }],
+        dateRanges: [{ startDate, endDate }],
         dimensions: config.dimensions,
         metrics: [
           { name: "sessions" },
@@ -88,7 +91,7 @@ export async function GET(request: NextRequest) {
       }),
       client.runReport({
         property: `properties/${GA4_PROPERTY_ID}`,
-        dateRanges: [{ startDate, endDate: "yesterday" }],
+        dateRanges: [{ startDate, endDate }],
         dimensions: [{ name: "date" }],
         metrics: [{ name: "sessions" }, { name: "totalUsers" }],
 
@@ -104,7 +107,7 @@ export async function GET(request: NextRequest) {
       }),
       client.runReport({
         property: `properties/${GA4_PROPERTY_ID}`,
-        dateRanges: [{ startDate, endDate: "yesterday" }],
+        dateRanges: [{ startDate, endDate }],
         metrics: [
           { name: "sessions" },
           { name: "totalUsers" },
@@ -122,7 +125,7 @@ export async function GET(request: NextRequest) {
       const { label, sublabel } = config.labelFn(dimValues);
       return {
         label,
-        ...(sublabel ? { sublabel } : {}),
+        sublabel,
         sessions: parseInt(row.metricValues?.[0]?.value || "0"),
         users: parseInt(row.metricValues?.[1]?.value || "0"),
         pageViews: parseInt(row.metricValues?.[2]?.value || "0"),
