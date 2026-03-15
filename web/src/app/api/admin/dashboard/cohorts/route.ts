@@ -34,15 +34,21 @@ export async function GET() {
         JOIN reports r ON r.profile_id = ua.profile_id
         GROUP BY ua.user_id_new
       ),
+      report_counts AS (
+        SELECT ua.user_id_new AS user_id, COUNT(r.id)::int AS report_count
+        FROM user_access ua
+        JOIN reports r ON r.profile_id = ua.profile_id
+        GROUP BY ua.user_id_new
+      ),
       aha AS (
         SELECT DISTINCT ue.user_id, c.cohort_month
         FROM user_events ue
         JOIN cohorts c ON c.user_id = ue.user_id
         JOIN first_report fr ON fr.user_id = ue.user_id
-        JOIN user_access ua ON ua.user_id_new = ue.user_id
+        JOIN report_counts rc ON rc.user_id = ue.user_id
         WHERE ue.event = 'metric_selected'
           AND ue.created_at <= fr.first_report_at + INTERVAL '3 days'
-          AND (SELECT COUNT(*) FROM reports r2 WHERE r2.profile_id = ua.profile_id) >= 2
+          AND rc.report_count >= 2
         GROUP BY ue.user_id, c.cohort_month
         HAVING COUNT(DISTINCT ue.metric_key) >= 2
       )
