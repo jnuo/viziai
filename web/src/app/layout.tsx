@@ -54,7 +54,7 @@ export default async function RootLayout({
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         {/* Google Analytics */}
         <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-TWM75R9VKP"
+          src="https://www.googletagmanager.com/gtag/js?id=GT-TB7TTJP2"
           strategy="afterInteractive"
         />
         <Script id="google-analytics" strategy="afterInteractive">
@@ -62,7 +62,7 @@ export default async function RootLayout({
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', 'G-TWM75R9VKP');
+            gtag('config', 'GT-TB7TTJP2');
           `}
         </Script>
       </head>
