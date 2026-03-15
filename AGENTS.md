@@ -15,7 +15,7 @@ Stories: `ralph/prd.json` (MT-001 through MT-012)
 
 ```bash
 PSQL="/opt/homebrew/opt/libpq/bin/psql"
-TEST_DB="postgresql://neondb_owner:***REDACTED***@ep-dry-firefly-ag9z6ef3.c-2.eu-central-1.aws.neon.tech/neondb?sslmode=require"
+TEST_DB="postgresql://neondb_owner:npg_iO7Ip6GYlnaT@ep-dry-firefly-ag9z6ef3.c-2.eu-central-1.aws.neon.tech/neondb?sslmode=require"
 
 # Query:
 $PSQL "$TEST_DB" -c "SELECT ..."

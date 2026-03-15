@@ -3,8 +3,8 @@
   "branch": "feature/metric-translations",
   "neon_test_branch": {
     "name": "metric-translations-test",
-    "endpoint": "ep-dry-firefly-ag9z6ef3",
-    "url": "postgresql://neondb_owner:***REDACTED***@ep-dry-firefly-ag9z6ef3.c-2.eu-central-1.aws.neon.tech/neondb?sslmode=require"
+    "endpoint": "ep-raspy-bar-agiah0ev",
+    "url": "postgresql://neondb_owner:npg_iO7Ip6GYlnaT@ep-raspy-bar-agiah0ev.c-2.eu-central-1.aws.neon.tech/neondb?sslmode=require"
   },
   "stories": [
     {
@@ -35,7 +35,7 @@
       ],
       "files": ["db-schema/data/metric-translations/MT-001-migration.sql"],
       "dependencies": [],
-      "status": "todo"
+      "status": "done"
     },
     {
       "id": "MT-002",
@@ -50,7 +50,7 @@
       ],
       "files": ["db-schema/data/metric-translations/MT-002-tr-hemogram.sql"],
       "dependencies": ["MT-001"],
-      "status": "todo"
+      "status": "done"
     },
     {
       "id": "MT-003",
@@ -64,7 +64,7 @@
       ],
       "files": ["db-schema/data/metric-translations/MT-003-tr-biyokimya.sql"],
       "dependencies": ["MT-001"],
-      "status": "todo"
+      "status": "done"
     },
     {
       "id": "MT-004",
@@ -78,7 +78,7 @@
       ],
       "files": ["db-schema/data/metric-translations/MT-004-tr-idrar.sql"],
       "dependencies": ["MT-001"],
-      "status": "todo"
+      "status": "done"
     },
     {
       "id": "MT-005",
