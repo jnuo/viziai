@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth";
 import { sql } from "@/lib/db";
 import { reportError } from "@/lib/error-reporting";
-import { EXCLUDED_EMAIL, periodToInterval } from "../shared";
+import { EXCLUDED_EMAIL, parseDateFilter } from "../shared";
 
 export const dynamic = "force-dynamic";
 
@@ -11,12 +11,11 @@ export async function GET(request: NextRequest) {
   if (!userId)
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-  const period = request.nextUrl.searchParams.get("period") || "30d";
-  const interval = periodToInterval(period);
+  const { interval, from, to } = parseDateFilter(request.nextUrl.searchParams);
+  const hasRange = from && to;
 
   try {
     const [funnel, signupsByDay, journeys] = await Promise.all([
-      // Activation funnel counts (exclude admin)
       sql`
         SELECT
           (SELECT COUNT(*)::int FROM users WHERE email != ${EXCLUDED_EMAIL}) AS signed_up,
@@ -24,7 +23,6 @@ export async function GET(request: NextRequest) {
           (SELECT COUNT(DISTINCT pu.user_id)::int FROM pending_uploads pu JOIN users u ON u.id = pu.user_id WHERE pu.status = 'confirmed' AND u.email != ${EXCLUDED_EMAIL}) AS confirmed
       `,
 
-      // Signups by day (exclude admin)
       interval
         ? sql`
           SELECT DATE(created_at) AS day, COUNT(*)::int AS count
@@ -34,7 +32,16 @@ export async function GET(request: NextRequest) {
           GROUP BY DATE(created_at)
           ORDER BY day
         `
-        : sql`
+        : hasRange
+          ? sql`
+          SELECT DATE(created_at) AS day, COUNT(*)::int AS count
+          FROM users
+          WHERE email != ${EXCLUDED_EMAIL}
+            AND created_at >= ${from}::date AND created_at < ${to}::date + INTERVAL '1 day'
+          GROUP BY DATE(created_at)
+          ORDER BY day
+        `
+          : sql`
           SELECT DATE(created_at) AS day, COUNT(*)::int AS count
           FROM users
           WHERE email != ${EXCLUDED_EMAIL}
@@ -42,7 +49,6 @@ export async function GET(request: NextRequest) {
           ORDER BY day
         `,
 
-      // Per-user journey table (exclude admin)
       sql`
         SELECT
           u.id,
@@ -61,18 +67,11 @@ export async function GET(request: NextRequest) {
       `,
     ]);
 
-    // Average hours to first upload (excluding nulls)
-    const withUpload = journeys.filter(
-      (j: Record<string, unknown>) => j.hours_to_upload !== null,
-    );
+    const withUpload = journeys.filter((j) => j.hours_to_upload !== null);
     const avgHoursToUpload =
       withUpload.length > 0
         ? Math.round(
-            (withUpload.reduce(
-              (sum: number, j: Record<string, unknown>) =>
-                sum + Number(j.hours_to_upload),
-              0,
-            ) /
+            (withUpload.reduce((sum, j) => sum + Number(j.hours_to_upload), 0) /
               withUpload.length) *
               10,
           ) / 10

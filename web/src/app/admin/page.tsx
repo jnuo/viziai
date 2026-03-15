@@ -77,6 +77,14 @@ interface Traffic {
   daily?: { date: string; sessions: number; users: number }[];
 }
 
+interface CohortRow {
+  cohort: string;
+  users: number;
+  setupPct: number;
+  ahaPct: number;
+  habitPct: number | null;
+}
+
 interface Retention {
   totalUploaders: number;
   multiUploaders: number;
@@ -101,6 +109,12 @@ const TRAFFIC_TABS: {
 
 const TEAL = "#0D9488";
 const CORAL = "#F97066";
+
+function statusColor(pct: number): string {
+  if (pct >= 70) return "text-status-normal";
+  if (pct >= 30) return "text-status-warning";
+  return "text-status-critical";
+}
 
 function formatShortDate(iso: string) {
   const d = new Date(iso);
@@ -138,6 +152,7 @@ export default function AdminDashboardPage() {
   const [activation, setActivation] = useState<Activation | null>(null);
   const [adoption, setAdoption] = useState<Adoption | null>(null);
   const [retention, setRetention] = useState<Retention | null>(null);
+  const [cohorts, setCohorts] = useState<CohortRow[] | null>(null);
 
   const [trafficDim, setTrafficDim] = useState<TrafficDimension>("channel");
   const [trafficLoading, setTrafficLoading] = useState(false);
@@ -167,17 +182,22 @@ export default function AdminDashboardPage() {
       setLoading(true);
       trafficCache.current = {};
       const qs = `?period=${p}`;
-      const [ovRes, actRes, adpRes, retRes] = await Promise.all([
+      const [ovRes, actRes, adpRes, retRes, cohRes] = await Promise.all([
         fetch(`/api/admin/dashboard/overview${qs}`),
         fetch(`/api/admin/dashboard/activation${qs}`),
         fetch(`/api/admin/dashboard/adoption`),
         fetch(`/api/admin/dashboard/retention`),
+        fetch(`/api/admin/dashboard/cohorts`),
       ]);
 
       if (ovRes.ok) setOverview(await ovRes.json());
       if (actRes.ok) setActivation(await actRes.json());
       if (adpRes.ok) setAdoption(await adpRes.json());
       if (retRes.ok) setRetention(await retRes.json());
+      if (cohRes.ok) {
+        const data = await cohRes.json();
+        setCohorts(data.cohorts);
+      }
       setLoading(false);
       await fetchTraffic(p, trafficDim);
     },
@@ -221,6 +241,76 @@ export default function AdminDashboardPage() {
         <h1 className="text-2xl font-semibold">Analytics Dashboard</h1>
         <PeriodSelector value={period} onChange={setPeriod} />
       </div>
+
+      {cohorts && cohorts.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Activation Cohorts</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm" aria-label="Activation cohorts">
+                <thead>
+                  <tr className="border-b text-left text-muted-foreground">
+                    <th scope="col" className="pb-2 font-medium">
+                      Cohort
+                    </th>
+                    <th scope="col" className="pb-2 font-medium text-right">
+                      Signups
+                    </th>
+                    <th scope="col" className="pb-2 font-medium text-right">
+                      Setup
+                    </th>
+                    <th scope="col" className="pb-2 font-medium text-right">
+                      Aha
+                    </th>
+                    <th scope="col" className="pb-2 font-medium text-right">
+                      Habit
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {cohorts.map((c) => (
+                    <tr key={c.cohort} className="border-b last:border-0">
+                      <td className="py-2 font-medium">{c.cohort}</td>
+                      <td className="py-2 text-right tabular-nums">
+                        {c.users}
+                      </td>
+                      <td
+                        className={`py-2 text-right tabular-nums font-medium ${statusColor(c.setupPct)}`}
+                      >
+                        {c.setupPct}%
+                      </td>
+                      <td
+                        className={`py-2 text-right tabular-nums font-medium ${statusColor(c.ahaPct)}`}
+                      >
+                        {c.ahaPct}%
+                      </td>
+                      <td className="py-2 text-right tabular-nums text-muted-foreground">
+                        {c.habitPct !== null ? `${c.habitPct}%` : "\u2014"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="text-xs text-muted-foreground space-y-1 pt-2 border-t">
+              <p>
+                <span className="font-medium">Setup:</span> First report
+                uploaded within 24h of signup
+              </p>
+              <p>
+                <span className="font-medium">Aha:</span> Within 3 days of first
+                report: has 2+ reports and clicked 2+ distinct metrics
+              </p>
+              <p>
+                <span className="font-medium">Habit:</span> Dashboard visit with
+                chart interaction in 2 consecutive months (not yet instrumented)
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {traffic && traffic.configured && (
         <Card>
@@ -350,7 +440,6 @@ export default function AdminDashboardPage() {
         </Card>
       )}
 
-      {/* KPI Cards */}
       {overview && (
         <section
           aria-label="Key metrics"
@@ -378,7 +467,6 @@ export default function AdminDashboardPage() {
         </section>
       )}
 
-      {/* Feature Usage — unified table */}
       {adoption && (
         <Card>
           <CardHeader>
@@ -428,7 +516,6 @@ export default function AdminDashboardPage() {
         </Card>
       )}
 
-      {/* Users Table */}
       {activation && (
         <Card>
           <CardHeader>
@@ -513,7 +600,6 @@ export default function AdminDashboardPage() {
         </Card>
       )}
 
-      {/* Retention */}
       {retention && (
         <Card>
           <CardHeader>
