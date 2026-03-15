@@ -109,7 +109,7 @@
       ],
       "files": ["db-schema/data/metric-translations/MT-006-tr-remaining.sql"],
       "dependencies": ["MT-001"],
-      "status": "todo"
+      "status": "done"
     },
     {
       "id": "MT-007",
@@ -124,7 +124,7 @@
       ],
       "files": ["db-schema/data/metric-translations/MT-007-en.sql"],
       "dependencies": ["MT-006"],
-      "status": "todo"
+      "status": "done"
     },
     {
       "id": "MT-008",
@@ -138,7 +138,7 @@
       ],
       "files": ["db-schema/data/metric-translations/MT-008-es.sql"],
       "dependencies": ["MT-006"],
-      "status": "todo"
+      "status": "done"
     },
     {
       "id": "MT-009",
@@ -152,7 +152,7 @@
       ],
       "files": ["db-schema/data/metric-translations/MT-009-de.sql"],
       "dependencies": ["MT-006"],
-      "status": "todo"
+      "status": "done"
     },
     {
       "id": "MT-010",
@@ -166,7 +166,7 @@
       ],
       "files": ["db-schema/data/metric-translations/MT-010-fr.sql"],
       "dependencies": ["MT-006"],
-      "status": "todo"
+      "status": "done"
     },
     {
       "id": "MT-011",
@@ -180,7 +180,7 @@
       ],
       "files": ["db-schema/data/metric-translations/MT-011-nl.sql"],
       "dependencies": ["MT-006"],
-      "status": "todo"
+      "status": "done"
     },
     {
       "id": "MT-012",
@@ -196,7 +196,7 @@
       ],
       "files": [],
       "dependencies": ["MT-007", "MT-008", "MT-009", "MT-010", "MT-011"],
-      "status": "todo"
+      "status": "done"
     }
   ]
 }

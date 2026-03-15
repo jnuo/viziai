@@ -32,3 +32,39 @@
 - Banned words check: 0 matches
 - Commit: e6143ef, merge: b199e0e
 
+## MT-006: Turkish descriptions — remaining 11 categories (43 metrics) [DONE]
+- Generated descriptions for demir(5), diger(2), enflamasyon(3), hormon(2), karaciger(8), kardiyak(1), koagulasyon(6), lipid(6), tiroid(3), tumor_belirtecleri(4), vitamin(3)
+- MILESTONE: All 155 metrics now have Turkish descriptions
+- Verified: 155/155 present, 0 banned words, 0 missing
+- Commit: 91ad8a1
+
+## MT-007: English translations — all 155 metrics [DONE]
+- Generated display_name + description for all 155 metrics in English
+- Standard English medical terminology, function-first descriptions
+- Verified: 155/155 rows with both display_name and description
+- Commit: 217c781
+
+## MT-008: Spanish translations — all 155 metrics [DONE]
+- Standard Spanish medical terminology (TFGe, VCM, HCM, ADE, INL, TTPa, FA, PCR, VSG)
+- Commit: db56e6a (batched with MT-009..011)
+
+## MT-009: German translations — all 155 metrics [DONE]
+- Standard German Laborwerte terminology (Hämoglobin, Erythrozyten, Thrombozyten, Leukozyten)
+- Commit: db56e6a
+
+## MT-010: French translations — all 155 metrics [DONE]
+- Standard French medical abbreviations (ALAT/ASAT, PAL, VGM, TCMH/CCMH, IDR, TCA, VS, DFGe)
+- Commit: db56e6a
+
+## MT-011: Dutch translations — all 155 metrics [DONE]
+- Standard Dutch medical terms (Hemoglobine, Rode Bloedcellen, Bloedplaatjes, etc.)
+- Commit: db56e6a
+
+## MT-012: Final verification + PR [DONE]
+- All 6 locales × 155 metrics = 930 translation rows ✓
+- NULL descriptions: 0, NULL display_names: 0 ✓
+- Banned words check (all locales, all languages): 0 matches ✓
+- Categories: 16 consistent Turkish slugs ✓
+- Typecheck: passes ✓
+- Build: requires env vars (data-only project, no code changes)
+
