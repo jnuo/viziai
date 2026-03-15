@@ -25,3 +25,10 @@
 - Banned words check: 0 matches
 - Commit: 595b207
 
+## MT-005: Turkish descriptions — immunoloji (12) + kan_gazi (12) [DONE]
+- Generated 12 immunoloji + 12 kan_gazi patient-facing Turkish descriptions
+- Old Neon test branch endpoint expired; recreated as ep-raspy-bar-agiah0ev
+- Re-applied MT-001 through MT-004 on new branch before applying MT-005
+- Banned words check: 0 matches
+- Commit: e6143ef, merge: b199e0e
+
