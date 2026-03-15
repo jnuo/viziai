@@ -160,7 +160,7 @@ Any Google account can sign in. Profile access is granted via the `profile_allow
 | Staging     | `staging.viziai.app`            | Preview deploys from feature branches, OAuth enabled |
 | Local       | `localhost:3000`                | Local dev                                            |
 
-**Google Analytics**: `G-TWM75R9VKP` (viziai.app property, Stream ID: 13682442084)
+**Google Analytics**: `GT-TB7TTJP2` (viziai.app property, Stream ID: 13682442084)
 
 ## Deployment
 
