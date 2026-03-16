@@ -41,6 +41,7 @@ interface Translation {
   id: string;
   locale: string;
   display_name: string;
+  description: string | null;
 }
 
 interface Alias {
@@ -693,9 +694,14 @@ export default function MetricDefinitionsPage() {
                                     >
                                       {t.locale}
                                     </Badge>
-                                    <span className="flex-1">
-                                      {t.display_name}
-                                    </span>
+                                    <div className="flex-1">
+                                      <span>{t.display_name}</span>
+                                      {t.description && (
+                                        <p className="text-xs text-muted-foreground mt-0.5">
+                                          {t.description}
+                                        </p>
+                                      )}
+                                    </div>
                                     <Button
                                       size="icon"
                                       variant="ghost"
