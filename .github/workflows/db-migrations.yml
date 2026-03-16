@@ -10,14 +10,13 @@ on:
     paths:
       - "db-schema/**"
 
-concurrency:
-  group: db-migrations-${{ github.event_name }}
-  cancel-in-progress: true
-
 jobs:
   # On PR: apply pending migrations to the staging Neon branch
   migrate-staging:
     if: github.event_name == 'pull_request'
+    concurrency:
+      group: db-migrations-staging-${{ github.head_ref }}
+      cancel-in-progress: true
     runs-on: ubuntu-latest
     timeout-minutes: 5
 
@@ -77,6 +76,9 @@ jobs:
   # On merge to main: apply pending migrations to production
   migrate-prod:
     if: github.event_name == 'push'
+    concurrency:
+      group: db-migrations-prod
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     timeout-minutes: 5
 
