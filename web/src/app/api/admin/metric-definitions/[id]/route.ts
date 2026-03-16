@@ -39,7 +39,7 @@ export async function GET(
     // Fetch related data in parallel
     const [translations, aliases, refRanges] = await Promise.all([
       sql`
-        SELECT id, locale, display_name
+        SELECT id, locale, display_name, description
         FROM metric_translations
         WHERE metric_definition_id = ${id}
         ORDER BY locale ASC
