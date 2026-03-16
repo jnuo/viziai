@@ -1,0 +1,134 @@
+name: DB Migrations
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "db-schema/**"
+  push:
+    branches: [main]
+    paths:
+      - "db-schema/**"
+
+concurrency:
+  group: db-migrations-${{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  # On PR: apply pending migrations to the staging Neon branch
+  migrate-staging:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    env:
+      NEON_DATABASE_URL: ${{ secrets.NEON_DATABASE_URL_STAGING }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install psql
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      - name: Create schema_migrations table
+        run: |
+          psql "$NEON_DATABASE_URL" -q -c "
+            CREATE TABLE IF NOT EXISTS schema_migrations (
+              id SERIAL PRIMARY KEY,
+              filename TEXT NOT NULL UNIQUE,
+              applied_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            );
+          "
+
+      - name: Apply pending migrations to staging
+        run: |
+          APPLIED=$(psql "$NEON_DATABASE_URL" -t -A -c "SELECT filename FROM schema_migrations ORDER BY filename;")
+
+          PENDING=0
+          APPLIED_COUNT=0
+
+          for file in $(find db-schema/migrations db-schema/data -name "*.sql" 2>/dev/null | sort); do
+            if echo "$APPLIED" | grep -qxF "$file"; then
+              continue
+            fi
+
+            PENDING=$((PENDING + 1))
+            echo "→ Applying: $file"
+            if psql "$NEON_DATABASE_URL" -q -f "$file"; then
+              psql "$NEON_DATABASE_URL" -q -c "INSERT INTO schema_migrations (filename) VALUES ('$file') ON CONFLICT (filename) DO NOTHING;"
+              APPLIED_COUNT=$((APPLIED_COUNT + 1))
+              echo "  ✓ Done"
+            else
+              echo "  ✗ FAILED"
+              exit 1
+            fi
+          done
+
+          if [ $PENDING -eq 0 ]; then
+            echo "✓ All migrations already applied."
+          else
+            echo "✓ Applied $APPLIED_COUNT migration(s)."
+          fi
+
+      - name: Show recent migrations
+        run: |
+          psql "$NEON_DATABASE_URL" -c "SELECT filename, applied_at FROM schema_migrations ORDER BY applied_at DESC LIMIT 10;"
+
+  # On merge to main: apply pending migrations to production
+  migrate-prod:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    env:
+      NEON_DATABASE_URL: ${{ secrets.NEON_DATABASE_URL_PROD }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install psql
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      - name: Create schema_migrations table
+        run: |
+          psql "$NEON_DATABASE_URL" -q -c "
+            CREATE TABLE IF NOT EXISTS schema_migrations (
+              id SERIAL PRIMARY KEY,
+              filename TEXT NOT NULL UNIQUE,
+              applied_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            );
+          "
+
+      - name: Apply pending migrations to production
+        run: |
+          APPLIED=$(psql "$NEON_DATABASE_URL" -t -A -c "SELECT filename FROM schema_migrations ORDER BY filename;")
+
+          PENDING=0
+          APPLIED_COUNT=0
+
+          for file in $(find db-schema/migrations db-schema/data -name "*.sql" 2>/dev/null | sort); do
+            if echo "$APPLIED" | grep -qxF "$file"; then
+              continue
+            fi
+
+            PENDING=$((PENDING + 1))
+            echo "→ Applying: $file"
+            if psql "$NEON_DATABASE_URL" -q -f "$file"; then
+              psql "$NEON_DATABASE_URL" -q -c "INSERT INTO schema_migrations (filename) VALUES ('$file') ON CONFLICT (filename) DO NOTHING;"
+              APPLIED_COUNT=$((APPLIED_COUNT + 1))
+              echo "  ✓ Done"
+            else
+              echo "  ✗ FAILED — stopping to prevent partial migration"
+              exit 1
+            fi
+          done
+
+          if [ $PENDING -eq 0 ]; then
+            echo "✓ All migrations already applied."
+          else
+            echo "✓ Applied $APPLIED_COUNT migration(s)."
+          fi
+
+      - name: Show recent migrations
+        run: |
+          psql "$NEON_DATABASE_URL" -c "SELECT filename, applied_at FROM schema_migrations ORDER BY applied_at DESC LIMIT 10;"
