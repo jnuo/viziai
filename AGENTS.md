@@ -2,10 +2,45 @@
 
 Each Ralph iteration spawns a fresh Claude instance. This file ensures every instance understands the codebase without re-discovering patterns.
 
-## Current Phase: Extraction Quality System (#105 + #106)
+## Current Phase: Metric Translations & Descriptions
 
-Branch: `feature/extraction-quality-system`
-Stories: `ralph/prd.json` (QS-001 through QS-020)
+Branch: `feature/metric-translations`
+Stories: `ralph/prd.json` (MT-001 through MT-012)
+
+**This is a DATA project, not a CODE project.** All stories produce SQL files that populate the `metric_translations` table with descriptions and multi-locale translations.
+
+### Database: Neon TEST Branch
+
+**ALL database operations use the test branch, NOT production.**
+
+```bash
+PSQL="/opt/homebrew/opt/libpq/bin/psql"
+TEST_DB="postgresql://neondb_owner:npg_iO7Ip6GYlnaT@ep-dry-firefly-ag9z6ef3.c-2.eu-central-1.aws.neon.tech/neondb?sslmode=require"
+
+# Query:
+$PSQL "$TEST_DB" -c "SELECT ..."
+
+# Apply SQL file:
+$PSQL "$TEST_DB" -f db-schema/data/metric-translations/MT-XXX-file.sql
+```
+
+### Key Tables
+
+- `metric_definitions` — 155 metrics with key, category, canonical_unit, value_type
+- `metric_translations` — locale-specific display_name and description (new column)
+- `metric_aliases` — maps variant names to canonical names
+
+### What This Project Does
+
+1. Adds `description` column to `metric_translations`
+2. Normalizes categories (22 mixed English/Turkish → 16 consistent Turkish slugs)
+3. Generates Turkish patient-facing descriptions for all 155 metrics
+4. Adds full translations (display_name + description) for EN, ES, DE, FR, NL
+5. Target: 155 × 6 locales = 930 translation rows
+
+### SQL Output Directory
+
+All SQL files go to: `db-schema/data/metric-translations/`
 
 ## Tech Stack
 
@@ -15,8 +50,6 @@ Stories: `ralph/prd.json` (QS-001 through QS-020)
 - **Auth**: NextAuth.js v4 with Google OAuth
 - **i18n**: next-intl v4 (server-first, locale stored in cookie)
 - **Styling**: Tailwind CSS v4 + shadcn/ui components
-- **AI**: OpenAI gpt-5-mini (PDF extraction)
-- **Async Jobs**: Upstash QStash
 - **Hosting**: Vercel (auto-deploys from GitHub on merge to main)
 
 ## Project Structure
@@ -27,258 +60,124 @@ viziai/
 │   ├── src/app/              # Pages and API routes (App Router)
 │   ├── src/components/       # React components (shadcn/ui pattern)
 │   ├── src/lib/              # Utilities (auth.ts, db.ts)
-│   ├── messages/             # i18n locale files (tr.json, en.json, es.json)
+│   ├── messages/             # i18n locale files (tr, en, es, de, fr, nl)
 │   └── src/i18n/config.ts    # Locale definitions
-├── db-schema/migrations/     # SQL migration files for Neon
-├── scripts/                  # Operational scripts
-├── product/                  # Brand guidelines, roadmap
+├── db-schema/
+│   ├── migrations/           # DDL migration files
+│   └── data/                 # DML data files (NEW)
+│       └── metric-translations/  # SQL files from this project
 ├── ralph/                    # Ralph autonomous agent files
-│   ├── ralph.sh              # Loop script (spawns Claude iterations)
-│   ├── prompt.md             # Per-iteration instructions
+│   ├── ralph.sh              # Loop script
+│   ├── prompt.md             # Per-iteration instructions (has DESCRIPTION_PROMPT)
 │   ├── prd.json              # Story list with status tracking
 │   └── progress.txt          # Append-only learnings log
-└── AGENTS.md                 # Project patterns for Ralph iterations
+└── AGENTS.md                 # This file
 ```
 
-## i18n Pattern (next-intl)
+## Description Rules (CRITICAL)
 
-### Adding a new locale
+All metric descriptions MUST follow these rules:
 
-1. Add locale code to `web/src/i18n/config.ts`:
-   ```ts
-   export const locales = ["tr", "en", "es", "de", "fr"] as const;
-   ```
-2. Add label and BCP47 tag in the same file
-3. Create `web/messages/{locale}.json` with ALL keys matching `en.json` structure
-4. The locale switcher in the header auto-reads from config — no UI changes needed
+1. **Function-first**: What the substance IS and DOES in the body
+2. **No disease names**: Never mention diyabet, kanser, anemi, lösemi, siroz, etc.
+3. **No diagnoses**: Never say "if high, you might have..."
+4. **No scary words**: Never use tehlikeli, ciddi, endişe verici
+5. **Max 30 words**, max 2 sentences
+6. **Reading level**: Middle school (ortaokul)
+7. **Tone**: Calm, informative, reassuring
 
-### Using translations in components
+See `ralph/prompt.md` → DESCRIPTION_PROMPT section for full template and examples.
 
-```tsx
-// Server component
-import { useTranslations } from "next-intl";
-const t = useTranslations("pages.dashboard");
-return <h1>{t("loadingData")}</h1>;
+## Category Normalization
 
-// With interpolation
-t("hoursAgo", { count: 3 }); // "3h ago"
+These English categories must be renamed to Turkish slugs:
 
-// With rich text
-t.rich("heroTitle", {
-  highlight: (chunks) => <span className="text-primary">{chunks}</span>,
-});
+| Old          | New                |
+| ------------ | ------------------ |
+| CBC          | hemogram           |
+| Chemistry    | biyokimya          |
+| Liver        | karaciger          |
+| Lipid        | lipid              |
+| Coagulation  | koagulasyon        |
+| Iron         | demir              |
+| Vitamins     | vitamin            |
+| Thyroid      | tiroid             |
+| Inflammation | enflamasyon        |
+| Other        | diger              |
+| tumor_marker | tumor_belirtecleri |
+| kardiyoloji  | kardiyak           |
+
+Categories already correct (no change): hemogram, biyokimya, karaciger, idrar, immunoloji, kan_gazi, hormon, koagulasyon, enflamasyon, demir
+
+## Story Execution Pipeline (Simplified)
+
+No UI work in this project. Simplified 3-phase pipeline:
+
+```
+Phase 1: BUILD    — Query DB, generate SQL, apply to test branch
+Phase 2: VERIFY   — Run verification queries, spot-check quality
+Phase 3: SHIP     — Commit SQL file + push
 ```
 
-### Message file structure
+## SQL Patterns
 
-Messages are nested JSON. Top-level sections: `common`, `pages`, `components`, `tracking`, `api`. Always add new keys to ALL locale files.
-
-## Database Patterns
-
-### Neon HTTP driver
-
-```ts
-import { sql } from "@/lib/db";
-const rows = await sql`SELECT * FROM reports WHERE profile_id = ${profileId}`;
-```
-
-**Important**: Neon HTTP driver does NOT support `sql.begin()`. Use sequential queries or `sql.transaction()` for non-interactive batches.
-
-### Migration files
-
-- Location: `db-schema/migrations/YYYYMMDD_description.sql`
-- Use `BEGIN; ... COMMIT;` for transactional migrations
-- See `20260212_metric_aliases_global.sql` for alias table pattern
-
-### Metric aliases
-
-The `metric_aliases` table maps variant names to canonical names:
+### Turkish descriptions (UPDATE existing rows):
 
 ```sql
-INSERT INTO metric_aliases (alias, canonical_name) VALUES ('Kalium', 'Potasyum');
+UPDATE metric_translations SET description = 'Description here...'
+WHERE metric_definition_id = (SELECT id FROM metric_definitions WHERE key = 'metric_key')
+  AND locale = 'tr';
 ```
 
-Canonical names are Turkish (the original lab report language).
+### New locale translations (INSERT with upsert):
 
-## Auth Pattern
-
-Every API route must authenticate:
-
-```ts
-import { getServerSession } from "next-auth";
-import {
-  authOptions,
-  getDbUserId,
-  hasProfileAccess,
-  getProfileAccessLevel,
-} from "@/lib/auth";
-
-const session = await getServerSession(authOptions);
-const userId = getDbUserId(session);
-if (!userId)
-  return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-// For write operations, check access level
-const level = await getProfileAccessLevel(userId, profileId);
-if (!level || level === "viewer")
-  return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+```sql
+INSERT INTO metric_translations (metric_definition_id, locale, display_name, description)
+SELECT id, 'en', 'English Name', 'English description...'
+FROM metric_definitions WHERE key = 'metric_key'
+ON CONFLICT (metric_definition_id, locale) DO UPDATE SET
+  display_name = EXCLUDED.display_name,
+  description = EXCLUDED.description;
 ```
 
-### Admin Auth Pattern
+## Supported Locales
 
-For admin-only routes (under `/api/admin/*`), use `requireAdmin()`:
-
-```ts
-import { requireAdmin } from "@/lib/auth";
-
-const userId = await requireAdmin();
-if (!userId) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-```
-
-`requireAdmin()` checks `users.is_admin` flag in the database. Regular users get 403.
-
-## Brand Guidelines
-
-**Always read `product/brand-guidelines/BRAND.md` before any UI/design work.** Key rules:
-
-- Primary: Teal (#0D9488 light / #2DD4BF dark)
-- Secondary/Accent: Coral (#F97066 light / #FDA4AF dark)
-- Status: Green (normal), Amber (warning), Terracotta (critical — NOT bright red)
-- Logo: Always use `<ViziAILogo>` component — "Vizi" in primary + "AI" in secondary
-- Font: Inter with Turkish character support
-- Tone: Clear, calm, reassuring — never alarming
-- Accessibility: WCAG 2.1 AA minimum
-
-## Component Patterns
-
-### shadcn/ui
-
-Components live in `web/src/components/ui/`. Import as:
-
-```tsx
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-```
-
-### Brand colors (Tailwind)
-
-- Primary: `text-primary`, `bg-primary` (Teal)
-- Secondary: `text-secondary`, `bg-secondary` (Coral)
-- Status: `text-status-normal` (Green), `text-status-warning` (Amber), `text-status-critical` (Terracotta — NOT bright red)
-- Never use alarming colors for health data
+| Code | Language | Status                              |
+| ---- | -------- | ----------------------------------- |
+| tr   | Turkish  | Has display_name, needs description |
+| en   | English  | Needs display_name + description    |
+| es   | Spanish  | Needs display_name + description    |
+| de   | German   | Needs display_name + description    |
+| fr   | French   | Needs display_name + description    |
+| nl   | Dutch    | Needs display_name + description    |
 
 ## Quality Checks
 
-Run these before marking any story as done:
-
 ```bash
-cd web && npm run typecheck   # tsc --noEmit (after STORY-001)
-cd web && npm run lint         # eslint
-cd web && npm run test         # jest unit tests
-cd web && npm run build        # next build --turbopack
+cd web && npm run typecheck && npm run lint && npm run build
 ```
-
-All four must pass with zero errors. Do NOT skip failing tests.
 
 ## Deployment
 
-- **Staging**: `staging.viziai.app` → points to Ralph branch preview deploys (with OAuth)
-- **Production**: `viziai.app` → only via PR merge to main. Never `npx vercel --prod`
-- After each story: `git push` → Vercel preview deploy → testable at `staging.viziai.app`
-- Preview uses prod database (NEON_DATABASE_URL) — same data, safe for this phase
+- **Never deploy via CLI** — Vercel auto-deploys from GitHub
+- After each story: `git push` → Vercel preview deploy
+- This branch only has SQL data files — no code changes expected
 
 ## Commit Convention
 
 ```
-feat(STORY-XXX): Brief description
+data(MT-XXX): Brief description
 
-- What was implemented
-- How it was verified
+- What was generated
+- Metric count and verification
 
 Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
-## Story Execution Pipeline
-
-Each story goes through a multi-phase pipeline based on the `/lfg` workflow:
-
-```
-Phase 1: BUILD         /workflows:work (+ /frontend-design for UI stories)
-Phase 2: DESIGN REVIEW 3 parallel agents loop until PASS (UI stories only)
-Phase 3: CODE REVIEW   /workflows:review (parallel review agents)
-Phase 4: FIX FINDINGS  /resolve_todo_parallel (auto-fix in parallel)
-Phase 5: TESTS         typecheck + lint + unit tests + build
-Phase 6: BROWSER TEST  /test-browser (UI stories only)
-Phase 7: SHIP          single atomic commit + git push → Vercel preview deploy
-```
-
-Non-UI stories (SQL migrations, config, i18n-only) skip Phases 2 and 5.
-
-### Skills Used
-
-| Skill                    | Phase  | When to use                                                      |
-| ------------------------ | ------ | ---------------------------------------------------------------- |
-| `/workflows:work`        | Build  | Every story — structured execution with task tracking            |
-| `/frontend-design`       | Build  | UI stories — MUST read `product/brand-guidelines/BRAND.md` first |
-| `/workflows:review`      | Review | Every story — parallel code review agents                        |
-| `/resolve_todo_parallel` | Fix    | If review created TODOs — auto-fix in parallel                   |
-| `/test-browser`          | Test   | UI stories — verify pages in real browser                        |
-| `/react-best-practices`  | Build  | React/Next.js component work                                     |
-| `/writer-onur`           | Build  | SEO article content (STORY-013)                                  |
-
-### Design Review Loop (UI stories, Phase 2)
-
-3 parallel review agents, each responds with PASS or FAIL. Loop until all 3 pass:
-
-```
-Review (3 parallel) → All PASS? → YES → Phase 3
-                        ↓ NO
-                  Fix issues → Review (3 parallel) → All PASS? → ...
-```
-
-1. **Brand Compliance** — colors, logo, tone against `product/brand-guidelines/BRAND.md`
-2. **Web Best Practices** — semantic HTML, WCAG AA, responsive, performance, readability
-3. **Design Quality** — polish, hierarchy, elegance, not generic AI output
-
-No iteration cap. See `ralph/prompt.md` for full agent prompts.
-
-## Extraction Quality System
-
-### Canonical Metrics
-
-`web/src/lib/canonical-metrics.ts` is the source of truth for known metric names and their canonical units. Canonical names are Turkish (the original lab report language). Foreign metric names (Spanish, German, French, English) are mapped to Turkish canonical names via `metric_aliases` table.
-
-### Unit Normalization
-
-`web/src/lib/unit-normalization.ts` converts metric values between known unit pairs:
-
-- `g/L → g/dL` (÷ 10) for Hemoglobin
-- `mmol/L → mg/dL` (× 18.018) for Glukoz
-- `µmol/L → mg/dL` (metric-specific factor) for Kreatinin, Urik Asit
-- `10^9/L → 10^3/µL` (same value, rename) for Lokosit
-
-### Unmapped Metrics
-
-The `unmapped_metrics` table tracks metric names from uploads that don't match any alias or canonical name. Status workflow: `pending` → `mapped` (alias created) or `accepted` (genuinely new metric).
-
-### Blob Preservation
-
-PDFs are **no longer deleted** from Vercel Blob after confirm. The `reports.blob_url` column stores the URL for:
-
-- Admin side-by-side review (PDF + extracted metrics)
-- Re-extraction with improved prompts
-- Eval dataset building
-
-### Admin Routes
-
-All admin routes live under `/api/admin/*` and `/admin/*`. They use `requireAdmin()` for auth. Admin pages have a shared layout at `web/src/app/admin/layout.tsx` that blocks non-admin users.
-
 ## Common Gotchas
 
-1. **Never deploy via CLI** — `npx vercel --prod` produces broken builds. Vercel auto-deploys from GitHub.
+1. **Never write to production DB** — ALL writes go to test branch
 2. **Neon HTTP driver** — No `sql.begin()`. Use sequential queries.
-3. **Refs don't trigger re-renders** — Never use `disabled={ref.current}`, use state.
-4. **next-intl** — All message keys must exist in ALL locale files or the build fails.
-5. **Canonical metric names are Turkish** — foreign names map TO Turkish canonical names via aliases.
-6. **viziai.app** — Domain is live on Vercel. Production NEXTAUTH_URL should be `https://www.viziai.app`.
-7. **Blobs are preserved** — PDFs are NOT deleted after confirm. `reports.blob_url` stores the URL.
+3. **next-intl** — All message keys must exist in ALL locale files or the build fails.
+4. **Single quotes in SQL** — Turkish descriptions may contain apostrophes. Use $$ quoting or escape with ''.
+5. **Turkish characters** — İ, ı, ğ, ü, ş, ö, ç must be preserved correctly in SQL files (UTF-8).
