@@ -6,16 +6,16 @@ on:
     paths:
       - "db-schema/**"
   push:
-    branches: [main]
+    branches: [main, staging]
     paths:
       - "db-schema/**"
 
 jobs:
-  # On PR: apply pending migrations to the staging Neon branch
+  # On PR to main, or push to staging: apply pending migrations to staging DB
   migrate-staging:
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref == 'refs/heads/staging')
     concurrency:
-      group: db-migrations-staging-${{ github.head_ref }}
+      group: db-migrations-staging
       cancel-in-progress: true
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -74,8 +74,9 @@ jobs:
           psql "$NEON_DATABASE_URL" -c "SELECT filename, applied_at FROM schema_migrations ORDER BY applied_at DESC LIMIT 10;"
 
   # On merge to main: apply pending migrations to production
+  # On push to main only: apply pending migrations to production
   migrate-prod:
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     concurrency:
       group: db-migrations-prod
       cancel-in-progress: false
