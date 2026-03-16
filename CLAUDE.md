@@ -107,6 +107,12 @@ viziai/
 - **Database**: `web/src/lib/db.ts`
 - **PDF extraction**: `web/src/app/api/upload/[id]/extract/worker/route.ts`
 
+## PDF Extraction Language
+
+The GPT extraction prompt (`worker/route.ts`) translates all metric names to Turkish regardless of the PDF's original language. This is intentional — the user base is predominantly Turkish. The alias table and metric definitions are also Turkish-first.
+
+**Revisit when:** Non-Turkish users become a significant portion of usage. At that point, consider extracting metric names as-is (original language) and handling normalization entirely through the alias table.
+
 ## Metric Name Normalization
 
 Same blood test can appear under different names across lab PDFs (e.g., "Potasiyum", "POTASYUM (SERUM/PLAZMA)", "Potaszyum" are all Potasyum). We handle this with a curated alias table + inline suggestions in the upload review step.
