@@ -9,6 +9,7 @@ import React, {
   Suspense,
 } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { useDropzone } from "react-dropzone";
 import {
   Upload,
@@ -86,6 +87,9 @@ function UploadPageContent(): React.ReactElement {
   const timezone = useTimezone();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { data: session } = useSession();
+  const userIsAdmin =
+    (session?.user as { isAdmin?: boolean })?.isAdmin ?? false;
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [selectedProfileId, setSelectedProfileId] = useState<string>("");
   const [status, setStatus] = useState<UploadStatus>("idle");
@@ -403,6 +407,7 @@ function UploadPageContent(): React.ReactElement {
 
   const selectedProfile = profiles.find((p) => p.id === selectedProfileId);
   const isAtCap =
+    !userIsAdmin &&
     selectedProfile?.report_count !== undefined &&
     selectedProfile.report_count >= FREE_REPORT_CAP;
 

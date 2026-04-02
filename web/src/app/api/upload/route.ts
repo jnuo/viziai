@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions, getDbUserId, hasProfileAccess } from "@/lib/auth";
+import {
+  authOptions,
+  getDbUserId,
+  hasProfileAccess,
+  isAdmin,
+} from "@/lib/auth";
 import { sql } from "@/lib/db";
 import { FREE_REPORT_CAP } from "@/lib/constants";
 import { put } from "@vercel/blob";
@@ -70,20 +75,23 @@ export async function POST(request: Request): Promise<Response> {
       );
     }
 
-    const reportCountResult = await sql`
-      SELECT COUNT(*)::int AS count FROM reports WHERE profile_id = ${profileId}
-    `;
-    const reportCount = reportCountResult[0].count;
-    if (reportCount >= FREE_REPORT_CAP) {
-      return NextResponse.json(
-        {
-          error: "Report Cap Reached",
-          message: "Report limit reached for this profile",
-          reportCount,
-          reportCap: FREE_REPORT_CAP,
-        },
-        { status: 403 },
-      );
+    const adminUser = await isAdmin(userId);
+    if (!adminUser) {
+      const reportCountResult = await sql`
+        SELECT COUNT(*)::int AS count FROM reports WHERE profile_id = ${profileId}
+      `;
+      const reportCount = reportCountResult[0].count;
+      if (reportCount >= FREE_REPORT_CAP) {
+        return NextResponse.json(
+          {
+            error: "Report Cap Reached",
+            message: "Report limit reached for this profile",
+            reportCount,
+            reportCap: FREE_REPORT_CAP,
+          },
+          { status: 403 },
+        );
+      }
     }
 
     const arrayBuffer = await file.arrayBuffer();
