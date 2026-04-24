@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import {
   Check,
@@ -43,6 +44,9 @@ export function ProfileSwitcher({
   className,
 }: ProfileSwitcherProps) {
   const router = useRouter();
+  const { data: session } = useSession();
+  const userIsAdmin =
+    (session?.user as { isAdmin?: boolean })?.isAdmin ?? false;
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
   const [switching, setSwitching] = useState(false);
@@ -140,15 +144,20 @@ export function ProfileSwitcher({
                     <span
                       className={cn(
                         "text-xs",
-                        profile.report_count >= FREE_REPORT_CAP
+                        !userIsAdmin && profile.report_count >= FREE_REPORT_CAP
                           ? "text-status-warning"
                           : "text-muted-foreground",
                       )}
                     >
-                      {t("reportCount", {
-                        count: profile.report_count,
-                        max: FREE_REPORT_CAP,
-                      })}
+                      {userIsAdmin
+                        ? t("reportCount", {
+                            count: profile.report_count,
+                            max: "∞",
+                          })
+                        : t("reportCount", {
+                            count: profile.report_count,
+                            max: FREE_REPORT_CAP,
+                          })}
                     </span>
                   )}
                 </div>

@@ -6,4 +6,4 @@ export const CHROME_EXTENSION_URL =
   "https://chromewebstore.google.com/detail/mpclbejnnfjjecfnijgogegggbibebka";
 
 /** Maximum number of reports per profile on the free plan. */
-export const FREE_REPORT_CAP = 100;
+export const FREE_REPORT_CAP = 5;
