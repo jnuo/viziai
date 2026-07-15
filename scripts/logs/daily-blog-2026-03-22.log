@@ -1,0 +1,37 @@
+All done. Here's the summary:
+
+---
+
+## B12 Blog Post — Complete
+
+**PR:** https://github.com/jnuo/viziai/pull/147
+**Branch:** `feature/blog-metric-b12` (merged to `staging` for preview)
+
+### Files Created
+- `web/content/blog/tr/b12-eksikligi-belirtileri-nedenleri.mdx`
+- `web/content/blog/en/vitamin-b12-deficiency-symptoms-causes.mdx`
+
+---
+
+```
+=== SEO AUDIT RESULTS ===
+TR Post: b12-eksikligi-belirtileri-nedenleri
+  On-page: PASS — title (with keyword), meta description (under 155 chars), single H1, OG tags present
+  Canonical: PASS — points to www.viziai.app (production)
+  JSON-LD: PASS — BlogPosting, BreadcrumbList, FAQPage
+  Hreflang: PASS — TR↔EN cross-linked in sitemap with alternates
+  Sitemap: PASS — present in /sitemap/tr.xml
+  Citability: 34.9/100 (low — scorer penalizes non-English text heavily)
+
+EN Post: vitamin-b12-deficiency-symptoms-causes
+  On-page: PASS — title (with keyword), meta description (under 155 chars), single H1, OG tags present
+  Canonical: PASS — points to www.viziai.app (production)
+  JSON-LD: PASS — BlogPosting, BreadcrumbList, FAQPage
+  Hreflang: PASS — EN↔TR cross-linked in sitemap with alternates
+  Sitemap: PASS — present in /sitemap/en.xml
+  Citability: 49.3/100 (moderate — 1 B grade, 12 C grades)
+
+Issues to fix: None — all checks pass
+```
+
+The TR citability score is low because the scorer doesn't handle Turkish text well (statistical_density and uniqueness_signals score 0 across all blocks). The EN version scores meaningfully better with the same content structure. Both posts are live on staging for your review — do NOT merge to main until you've checked them.

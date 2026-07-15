@@ -1,0 +1,15 @@
+=== Daily Blog Post: Sat Mar 21 00:47:02 CET 2026 ===
+Done. Here's the summary:
+
+**Metric:** Ferritin (first in the series)
+
+**Files created:**
+- `web/content/blog/tr/ferritin-dusuk-yuksek-ne-anlama-gelir.mdx` — Turkish
+- `web/content/blog/en/ferritin-levels-what-your-blood-test-means.mdx` — English
+
+**PR:** https://github.com/jnuo/viziai/pull/146
+
+**Staging:** Merged into `staging` branch — will auto-deploy to staging.viziai.app
+
+Both posts cover: definition, normal ranges (Mayo Clinic/WHO data), causes and symptoms of low/high ferritin, when to test, tracking over time with ViziAI CTA, and 5 FAQ questions with real statistics. Linked via `hreflangGroup: "metric-ferritin"`.
+=== Done: Sat Mar 21 00:51:08 CET 2026 ===
