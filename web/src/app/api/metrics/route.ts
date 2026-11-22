@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { sql } from "@/lib/db";
 import { requireAuth, hasProfileAccess } from "@/lib/auth";
 import { reportError } from "@/lib/error-reporting";
+import { lowerKey } from "@/lib/chart/model";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -61,14 +62,18 @@ async function resolveMetricMeta(
   const names = [...new Set(rows.map((r) => r.name as string))];
   const missing = names.filter((n) => !defByName.has(n));
   if (missing.length > 0) {
-    const lowered = missing.map((n) => n.toLocaleLowerCase("tr"));
+    // same key on both sides: İ / I / ı -> i (see lowerKey)
+    const lowered = missing.map(lowerKey);
     const viaAlias = await sql`
-      SELECT LOWER(alias) AS alias, LOWER(canonical_name) AS canonical,
-             metric_definition_id::TEXT AS definition_id
-      FROM metric_aliases
-      WHERE metric_definition_id IS NOT NULL
-        AND (LOWER(alias) = ANY(${lowered})
-             OR LOWER(canonical_name) = ANY(${lowered}))
+      WITH a AS (
+        SELECT translate(lower(translate(alias, 'İI', 'ii')), 'ı', 'i') AS alias,
+               translate(lower(translate(canonical_name, 'İI', 'ii')), 'ı', 'i') AS canonical,
+               metric_definition_id::TEXT AS definition_id
+        FROM metric_aliases
+        WHERE metric_definition_id IS NOT NULL
+      )
+      SELECT alias, canonical, definition_id FROM a
+      WHERE alias = ANY(${lowered}) OR canonical = ANY(${lowered})
     `;
     const byLower = new Map<string, string>();
     for (const a of viaAlias || []) {
@@ -76,7 +81,7 @@ async function resolveMetricMeta(
       if (!byLower.has(a.canonical)) byLower.set(a.canonical, a.definition_id);
     }
     for (const n of missing) {
-      const def = byLower.get(n.toLocaleLowerCase("tr"));
+      const def = byLower.get(lowerKey(n));
       if (def) defByName.set(n, def);
     }
   }

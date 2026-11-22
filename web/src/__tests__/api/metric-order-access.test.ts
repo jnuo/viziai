@@ -14,6 +14,7 @@ jest.mock("@/lib/auth", () => ({
 import { PUT } from "@/app/api/metric-order/route";
 import { sql } from "@/lib/db";
 import { getProfileAccessLevel, requireAuth } from "@/lib/auth";
+import { parseNameList } from "@/lib/chart/name-list";
 
 const sqlMock = sql as unknown as jest.Mock;
 const levelMock = getProfileAccessLevel as jest.Mock;
@@ -92,4 +93,14 @@ it.each([
   const res = await put(body);
   expect(res.status).toBe(400);
   expect(sql).not.toHaveBeenCalled();
+});
+
+describe("parseNameList", () => {
+  it("keeps stored names exactly (no trim), so the upsert hits the existing row", () => {
+    expect(parseNameList(["Ferritin ", "Hemoglobin"])).toEqual(["Ferritin ", "Hemoglobin"]);
+  });
+  it("rejects blank names and de-duplicates", () => {
+    expect(parseNameList(["  "])).toBeNull();
+    expect(parseNameList(["A", "A"])).toEqual(["A"]);
+  });
 });

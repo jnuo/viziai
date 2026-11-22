@@ -25,11 +25,13 @@ import type { TrackingMeasurement } from "@/lib/tracking";
 import {
   DAY,
   buildMetrics,
-  fold,
+  keepHidden,
   mergeVariants,
   orderCharts,
   pickDefaultHome,
+  resolveHome,
   todayUtc,
+  undoHomeToggle,
   SORT_KINDS,
   type DashMetric,
   type Pt,
@@ -58,12 +60,12 @@ import {
 } from "@/components/dashboard/shared";
 import "@/components/dashboard/dashboard.css";
 
-type ApiMetric = RawMetric;
 type ApiData = {
-  metrics: ApiMetric[];
+  metrics: RawMetric[];
   values: RawValue[];
   reportCount: number;
 };
+type Data = ApiData & { idMap: Map<string, string> };
 
 const DATE_RANGES = ["all", "90", "30", "15"] as const;
 type DateRange = (typeof DATE_RANGES)[number];
@@ -99,10 +101,12 @@ export default function Dashboard(): React.ReactElement | null {
   } = useActiveProfile();
   const canEdit = !!activeProfile && activeProfile.access_level !== "viewer";
 
-  const [data, setData] = useState<ApiData | null>(null);
+  const [data, setData] = useState<Data | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [trackingData, setTrackingData] = useState<TrackingMeasurement[]>([]);
+  /** saved Ana ekran may hold Kilo/Tansiyon ids: map names only after this */
+  const [trackingLoaded, setTrackingLoaded] = useState(false);
   /** Ana ekran (metric ids, ordered); null until loaded */
   const [home, setHome] = useState<string[] | null>(null);
   const [selected, setSelectedState] = useState<string[] | null>(null);
@@ -206,6 +210,9 @@ export default function Dashboard(): React.ReactElement | null {
   useEffect(() => {
     if (profileLoading || !activeProfileId) return;
     let ignore = false;
+    // a new profile: its saved Ana ekran waits for its own tracking data
+    setTrackingData([]);
+    setTrackingLoaded(false);
     async function loadTracking() {
       try {
         const res = await fetch(
@@ -220,6 +227,8 @@ export default function Dashboard(): React.ReactElement | null {
           op: "dashboard.loadTracking",
           profileId: activeProfileId,
         });
+      } finally {
+        if (!ignore) setTrackingLoaded(true);
       }
     }
     loadTracking();
@@ -240,7 +249,8 @@ export default function Dashboard(): React.ReactElement | null {
     const trackingIds = new Set<string>();
     const weight = trackingData.filter((m) => m.type === "weight");
     const bp = trackingData.filter((m) => m.type === "blood_pressure");
-    const day = (iso: string) => new Date(iso).toISOString().split("T")[0];
+    // local calendar day (a reading at 01:30 in Istanbul is that day, not the UTC one)
+    const day = (iso: string) => new Date(iso).toLocaleDateString("en-CA");
     if (weight.length) {
       trackingIds.add("__tracking_weight");
       raw.push({
@@ -250,7 +260,8 @@ export default function Dashboard(): React.ReactElement | null {
         ref_min: null,
         ref_max: null,
       });
-      for (const e of weight) {
+      // newest first from the API; oldest first so the latest of a day wins
+      for (const e of [...weight].reverse()) {
         vals.push({
           metric_id: "__tracking_weight",
           date: day(e.measured_at),
@@ -276,7 +287,6 @@ export default function Dashboard(): React.ReactElement | null {
         ref_min: null,
         ref_max: 85,
       });
-      // measurements come newest first; oldest first so the latest of a day wins
       for (const e of [...bp].reverse()) {
         const d = day(e.measured_at);
         vals.push({
@@ -304,25 +314,16 @@ export default function Dashboard(): React.ReactElement | null {
   const byId = useMemo(() => new Map(metrics.map((m) => [m.id, m])), [metrics]);
   const today = useMemo(() => todayUtc(), []);
 
-  // server names -> metric ids (variants of a name map to the shown metric)
+  // server names -> metric ids. Waits for the tracking data so a saved
+  // Kilo / Tansiyon card is there on first paint; unresolved names are kept
+  // (see resolveHome), so a late or failed tracking load never drops them.
   useEffect(() => {
-    if (homeNames == null || !data || home != null) return;
-    // merged spellings are aliases of the shown metric
-    const byFold = new Map<string, string>();
-    for (const m of metrics) {
-      for (const n of [m.id, m.full, ...m.aliases]) {
-        if (!byFold.has(fold(n))) byFold.set(fold(n), m.id);
-      }
-    }
-    const ids: string[] = [];
-    for (const n of homeNames) {
-      const id = byId.has(n) ? n : byFold.get(fold(n));
-      if (id && !ids.includes(id)) ids.push(id);
-    }
+    if (homeNames == null || !data || !trackingLoaded || home != null) return;
+    const ids = resolveHome(homeNames, metrics, data.idMap);
     setHome(ids);
     confirmedHome.current = ids;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [homeNames, data, metrics]);
+  }, [homeNames, data, metrics, trackingLoaded]);
 
   const defaultHome = useMemo(() => pickDefaultHome(metrics), [metrics]);
   const savedHome = useMemo(
@@ -374,6 +375,15 @@ export default function Dashboard(): React.ReactElement | null {
   const pendingHome = useRef<string[] | null>(null);
   const inflight = useRef(false);
   const saveTimer = useRef<number | undefined>(undefined);
+  /** latest full home (incl. ids not shown yet), for undo and reorders */
+  const homeRef = useRef<string[]>([]);
+  useEffect(() => {
+    homeRef.current = home ?? [];
+  }, [home]);
+  const profileRef = useRef(activeProfileId);
+  useEffect(() => {
+    profileRef.current = activeProfileId;
+  }, [activeProfileId]);
 
   const flushHome = useCallback(async () => {
     if (inflight.current || !pendingHome.current || !activeProfileId) return;
@@ -403,20 +413,37 @@ export default function Dashboard(): React.ReactElement | null {
     (next: string[], debounce = 0) => {
       if (!canEdit) return;
       setHome(next);
+      homeRef.current = next;
       pendingHome.current = next;
       window.clearTimeout(saveTimer.current);
       saveTimer.current = window.setTimeout(() => void flushHome(), debounce);
     },
     [canEdit, flushHome],
   );
-  useEffect(() => () => window.clearTimeout(saveTimer.current), []);
+  // leaving within the reorder debounce must not lose the reorder
+  useEffect(
+    () => () => {
+      window.clearTimeout(saveTimer.current);
+      const next = pendingHome.current;
+      const profileId = profileRef.current;
+      if (!next || !profileId) return;
+      pendingHome.current = null;
+      void fetch("/api/metric-order", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ profileId, home: next }),
+        keepalive: true,
+      }).catch((err) => reportError(err, { op: "dashboard.saveHome.unload" }));
+    },
+    [],
+  );
 
   const setHomeFor = useCallback(
     (id: string, on: boolean) => {
-      const before = savedHome;
-      if (on === before.includes(id)) return;
-      const next = on ? [...before, id] : before.filter((x) => x !== id);
-      commitHome(next);
+      const cur = homeRef.current;
+      if (on === cur.includes(id)) return;
+      const oldIndex = cur.indexOf(id);
+      commitHome(on ? [...cur, id] : cur.filter((x) => x !== id));
       const m = byId.get(id);
       track(on ? "ana_ekran_add" : "ana_ekran_remove", m?.full);
       addToast({
@@ -425,18 +452,23 @@ export default function Dashboard(): React.ReactElement | null {
           ? t("toastAdded", { name: m?.name ?? id })
           : t("toastRemoved", { name: m?.name ?? id }),
         duration: 5000,
-        action: { label: t("undo"), onClick: () => commitHome(before) },
+        // reverse only this change; later adds / removes / reorders stay
+        action: {
+          label: t("undo"),
+          onClick: () =>
+            commitHome(undoHomeToggle(homeRef.current, id, on, oldIndex)),
+        },
       });
     },
-    [savedHome, commitHome, byId, addToast, t],
+    [commitHome, byId, addToast, t],
   );
   const toggleHome = useCallback(
-    (id: string) => setHomeFor(id, !savedHome.includes(id)),
-    [setHomeFor, savedHome],
+    (id: string) => setHomeFor(id, !homeRef.current.includes(id)),
+    [setHomeFor],
   );
   const reorderHome = useCallback(
     (next: string[], source: "dashboard" | "picker") => {
-      commitHome(next, HOME_SAVE_DEBOUNCE);
+      commitHome(keepHidden(next, homeRef.current), HOME_SAVE_DEBOUNCE);
       track("ana_ekran_reorder", source);
     },
     [commitHome],

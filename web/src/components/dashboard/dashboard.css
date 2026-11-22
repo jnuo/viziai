@@ -33,7 +33,7 @@
   --vz-band-edge: rgba(74, 222, 128, 0.45);
   --vz-personal: rgba(148, 163, 184, 0.09);
   --vz-personal-edge: rgba(148, 163, 184, 0.4);
-  --vz-critical: #f87171;
+  --vz-critical: #e8896a; /* terracotta, not bright red (brand) */
   --vz-neutral: #9ca3af;
   --vz-grid: #2a2b31;
   --vz-line: #2dd4bf;
@@ -337,7 +337,6 @@
   vertical-align: bottom;
   font-weight: 400;
   color: var(--vz-muted-fg);
-  margin-left: 4px;
 }
 .vzd .mc-sub {
   display: block;

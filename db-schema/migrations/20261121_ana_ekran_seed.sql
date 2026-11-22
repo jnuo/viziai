@@ -7,6 +7,9 @@
 -- Ana ekran. Profiles that never reordered get none; the dashboard's
 -- empty-state rule (biggest changes in the latest report) applies to them.
 --
+-- Only names that still have results in the profile count (metric_preferences
+-- keeps rows for names that were later renamed / merged).
+--
 -- Idempotent: profiles that already have any Ana ekran metric are skipped,
 -- so a second run changes nothing.
 -- Apply to a Neon test branch first (see CLAUDE.md "Database Migrations").
@@ -24,6 +27,12 @@ WITH customised AS (
          ) AS rn
   FROM metric_preferences mp
   JOIN customised c USING (profile_id)
+  WHERE EXISTS (
+    SELECT 1
+    FROM metrics m
+    JOIN reports r ON r.id = m.report_id
+    WHERE r.profile_id = mp.profile_id AND m.name = mp.name
+  )
 )
 UPDATE metric_preferences mp
 SET is_favorite = true

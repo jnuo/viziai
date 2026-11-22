@@ -1,6 +1,23 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import {
+  ArrowDown,
+  ArrowLeft,
+  ArrowRight,
+  ArrowUp,
+  ChartLine,
+  Check,
+  ChevronDown,
+  Ellipsis,
+  GripVertical,
+  List,
+  Plus,
+  Search,
+  SlidersHorizontal,
+  X,
+  type LucideIcon,
+} from "lucide-react";
 import { bcp47, toLocale } from "@/i18n/config";
 import type { DashMetric, Status } from "@/lib/chart/model";
 import { fmtV } from "@/lib/chart/scale";
@@ -141,88 +158,25 @@ export function useMedia(query: string): boolean {
 /* ---------------------------------------------------------------- icons */
 
 type IconProps = { size?: number };
-const svg = (
-  size: number,
-  children: React.ReactNode,
-  extra: React.SVGProps<SVGSVGElement> = {},
-) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={2}
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden="true"
-    {...extra}
-  >
-    {children}
-  </svg>
-);
-export const IconX = ({ size = 12 }: IconProps) =>
-  svg(size, <path d="M18 6 6 18M6 6l12 12" />);
-export const IconSearch = ({ size = 14 }: IconProps) =>
-  svg(
-    size,
-    <>
-      <circle cx="11" cy="11" r="7" />
-      <path d="m20 20-3.5-3.5" />
-    </>,
-  );
-export const IconList = ({ size = 14 }: IconProps) =>
-  svg(size, <path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01" />);
-export const IconPlus = ({ size = 14 }: IconProps) =>
-  svg(size, <path d="M12 5v14M5 12h14" />);
-export const IconCheck = ({ size = 14 }: IconProps) =>
-  svg(size, <path d="m5 12 5 5L20 7" />);
-export const IconChev = ({ size = 14 }: IconProps) =>
-  svg(size, <path d="m6 9 6 6 6-6" />, { className: "chev" });
-export const IconGrip = ({ size = 14 }: IconProps) =>
-  svg(
-    size,
-    <>
-      <circle cx="9" cy="6" r="1" />
-      <circle cx="15" cy="6" r="1" />
-      <circle cx="9" cy="12" r="1" />
-      <circle cx="15" cy="12" r="1" />
-      <circle cx="9" cy="18" r="1" />
-      <circle cx="15" cy="18" r="1" />
-    </>,
-  );
-export const IconUp = ({ size = 14 }: IconProps) =>
-  svg(size, <path d="M12 19V5M6 11l6-6 6 6" />);
-export const IconDown = ({ size = 14 }: IconProps) =>
-  svg(size, <path d="M12 5v14M18 13l-6 6-6-6" />);
-export const IconLeft = ({ size = 14 }: IconProps) =>
-  svg(size, <path d="M19 12H5M11 6l-6 6 6 6" />);
-export const IconRight = ({ size = 14 }: IconProps) =>
-  svg(size, <path d="M5 12h14M13 6l6 6-6 6" />);
-export const IconChart = ({ size = 14 }: IconProps) =>
-  svg(
-    size,
-    <>
-      <path d="M3 3v18h18" />
-      <path d="m7 15 4-4 3 3 5-6" />
-    </>,
-  );
-export const IconMore = ({ size = 16 }: IconProps) =>
-  svg(
-    size,
-    <>
-      <circle cx="5" cy="12" r="1.2" fill="currentColor" />
-      <circle cx="12" cy="12" r="1.2" fill="currentColor" />
-      <circle cx="19" cy="12" r="1.2" fill="currentColor" />
-    </>,
-  );
-export const IconSliders = ({ size = 14 }: IconProps) =>
-  svg(
-    size,
-    <>
-      <path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12" />
-      <circle cx="16" cy="6" r="2" />
-      <circle cx="10" cy="12" r="2" />
-      <circle cx="18" cy="18" r="2" />
-    </>,
-  );
+/** lucide icons with the dashboard's default sizes; decorative (aria-hidden) */
+const icon =
+  (I: LucideIcon, def: number, className?: string) =>
+  function DashIcon({ size = def }: IconProps) {
+    return (
+      <I size={size} strokeWidth={2} aria-hidden="true" className={className} />
+    );
+  };
+export const IconX = icon(X, 12);
+export const IconSearch = icon(Search, 14);
+export const IconList = icon(List, 14);
+export const IconPlus = icon(Plus, 14);
+export const IconCheck = icon(Check, 14);
+export const IconChev = icon(ChevronDown, 14, "chev");
+export const IconGrip = icon(GripVertical, 14);
+export const IconUp = icon(ArrowUp, 14);
+export const IconDown = icon(ArrowDown, 14);
+export const IconLeft = icon(ArrowLeft, 14);
+export const IconRight = icon(ArrowRight, 14);
+export const IconChart = icon(ChartLine, 14);
+export const IconMore = icon(Ellipsis, 16);
+export const IconSliders = icon(SlidersHorizontal, 14);

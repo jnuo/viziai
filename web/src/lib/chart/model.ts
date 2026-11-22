@@ -185,10 +185,28 @@ const STRIP = [
   /\s*\(OTOMATİK SİSTEM\)/g,
   /\s*\(Otomatik sistem \)/g,
 ];
+/**
+ * Case-insensitive key for matching stored names against the alias table.
+ * Turkish casing turns ASCII "I" into "ı" while Postgres LOWER() gives "i",
+ * so İ / I / ı all become "i" here and in the SQL side
+ * (translate(lower(translate(x, 'İI', 'ii')), 'ı', 'i')).
+ */
+export function lowerKey(s: string): string {
+  return s.replace(/[İI]/g, "i").toLowerCase().replace(/ı/g, "i");
+}
+
 const KEEP_SHORT = new Set(["ÜRE", "ANTİ", "TAYİNİ", "ÜRİK", "ASİT"]);
-const trLower = (s: string) => s.toLocaleLowerCase("tr");
-const trCap = (w: string) =>
-  w ? w[0].toLocaleUpperCase("tr") + trLower(w.slice(1)) : w;
+/**
+ * Title-case one all-caps word. A name written with a dotted "İ" uses
+ * Turkish capitals, so its plain "I" is a dotless "ı" ("KIRMIZI" -> "Kırmızı").
+ * Without any "İ" the lab wrote ASCII capitals: "I" is "i"
+ * ("HEMOGLOBIN" -> "Hemoglobin", not "Hemoglobın").
+ */
+const trCap = (w: string, turkishCaps: boolean) => {
+  if (!w) return w;
+  const rest = turkishCaps ? w.slice(1) : w.slice(1).replace(/I/g, "i");
+  return w[0].toLocaleUpperCase("tr") + rest.toLocaleLowerCase("tr");
+};
 
 /**
  * Lab PDFs often shout ("C REAKTİF PROTEİN (CRP)"). Title-case long all-caps
@@ -203,11 +221,12 @@ export function prettifyName(name: string): string {
     (c) => c === c.toLocaleUpperCase("tr") && c !== c.toLocaleLowerCase("tr"),
   ).length;
   if (name.length > 5 && letters.length && upper / letters.length > 0.7) {
+    const turkishCaps = name.includes("İ");
     s = s
       .split(/(\s+|[(),+\-])/)
       .map((tok) =>
         /^[A-ZÇĞİÖŞÜ]+$/.test(tok) && (tok.length > 4 || KEEP_SHORT.has(tok))
-          ? trCap(tok)
+          ? trCap(tok, turkishCaps)
           : tok,
       )
       .join("");
@@ -331,7 +350,8 @@ export function unitKey(u: string): string {
     .replace(/³/g, "^3")
     .replace(/⁶/g, "^6")
     .replace(/\*/g, "x")
-    .replace(/^x(?=10)/, "");
+    .replace(/^x(?=10)/, "")
+    .replace(/^gr(?=\/)/, "g");
 }
 
 export function buildMetrics(
@@ -374,20 +394,24 @@ export function buildMetrics(
   return base.map(({ m, order, pts, tracking: isTracking }) => {
     const name = isTracking ? m.name : prettifyName(m.name);
     const aliases = m.aliases ?? [];
+    // "the" range of a metric = the most recent result's own range
+    const withRef = pts.findLast((p) => p.refMin != null || p.refMax != null);
+    const ref_min = withRef ? withRef.refMin : m.ref_min;
+    const ref_max = withRef ? withRef.refMax : m.ref_max;
     const dm: DashMetric = {
       id: m.id,
       name,
       full: m.name,
-      unit: cleanUnit(m.unit),
-      ref_min: m.ref_min,
-      ref_max: m.ref_max,
+      unit: pts.findLast((p) => p.unit)?.unit ?? cleanUnit(m.unit),
+      ref_min,
+      ref_max,
       category: isTracking ? "takip" : normalizeCategory(m.category, m.name),
       aliases,
       order,
       tracking: isTracking,
       pts,
       idx: new Map(pts.map((p, i) => [p.t, i])),
-      stat: computeStat(m, pts, latestT, isTracking),
+      stat: computeStat({ ...m, ref_min, ref_max }, pts, latestT, isTracking),
       hay: "",
       fname: fold(name),
       words: [],
@@ -403,6 +427,20 @@ export function changeBetween(prev: Pt | null, cur: Pt): number | null {
   if (!prev) return null;
   if (prev.unit && cur.unit && unitKey(prev.unit) !== unitKey(cur.unit)) return null;
   return cur.v - prev.v;
+}
+
+/**
+ * What a card / picker row shows next to point `p`: the change since the
+ * previous value, "first" when the series has exactly one value ("İlk
+ * ölçüm"), or null when there is no comparable previous value (a unit
+ * switch, or the earliest point of a longer series): show nothing then.
+ */
+export function changeAt(
+  m: Pick<DashMetric, "idx" | "pts">,
+  p: Pt,
+): number | "first" | null {
+  if (m.pts.length === 1) return "first";
+  return changeBetween(prevOf(m, p.t), p);
 }
 
 export function prevOf(
@@ -483,7 +521,7 @@ function computeStat(
 export function mergeVariants(
   metrics: RawMetric[],
   values: RawValue[],
-): { metrics: RawMetric[]; values: RawValue[] } {
+): { metrics: RawMetric[]; values: RawValue[]; idMap: Map<string, string> } {
   const out: RawMetric[] = [];
   const byKey = new Map<string, RawMetric>();
   const idMap = new Map<string, string>();
@@ -512,7 +550,11 @@ export function mergeVariants(
   }
   return {
     metrics: out,
-    values: values.map((v) => ({ ...v, metric_id: idMap.get(v.metric_id) ?? v.metric_id })),
+    values: values.map((v) => ({
+      ...v,
+      metric_id: idMap.get(v.metric_id) ?? v.metric_id,
+    })),
+    idMap,
   };
 }
 
@@ -574,6 +616,64 @@ export function moveItem<T>(list: T[], from: number, to: number): T[] {
   const next = list.slice();
   const [it] = next.splice(from, 1);
   next.splice(to, 0, it);
+  return next;
+}
+
+/* --------------------------------------------------------- Ana ekran */
+
+/**
+ * Saved Ana ekran names -> metric ids. Variant spellings map to the merged
+ * metric (`idMap`, then Turkish-folded names; a name shared by several
+ * metrics goes to the one with the most results). Names that match nothing
+ * yet are KEPT as they are: Kilo / Tansiyon ids appear only once the
+ * tracking data has loaded, and dropping them here would delete them from
+ * the server on the next edit.
+ */
+export function resolveHome(
+  names: string[],
+  metrics: Pick<DashMetric, "id" | "full" | "aliases" | "pts">[],
+  idMap: Map<string, string> = new Map(),
+): string[] {
+  const ids = new Set(metrics.map((m) => m.id));
+  const byFold = new Map<string, string>();
+  const byData = [...metrics].sort((x, y) => y.pts.length - x.pts.length);
+  for (const m of byData) {
+    for (const n of [m.id, m.full, ...m.aliases]) {
+      if (!byFold.has(fold(n))) byFold.set(fold(n), m.id);
+    }
+  }
+  const out: string[] = [];
+  for (const n of names) {
+    const id = ids.has(n) ? n : (idMap.get(n) ?? byFold.get(fold(n)) ?? n);
+    if (!out.includes(id)) out.push(id);
+  }
+  return out;
+}
+
+/**
+ * A reorder only covers the cards on screen; ids not shown (not resolved
+ * yet) keep their place at the end instead of being dropped.
+ */
+export function keepHidden(next: string[], full: string[]): string[] {
+  const seen = new Set(next);
+  return [...next, ...full.filter((id) => !seen.has(id))];
+}
+
+/**
+ * "Geri al" for one add / remove: reverse only that toggle against the
+ * current list, so changes made after it survive. A removed id goes back
+ * to its old position (clamped).
+ */
+export function undoHomeToggle(
+  current: string[],
+  id: string,
+  added: boolean,
+  oldIndex: number,
+): string[] {
+  if (added) return current.filter((x) => x !== id);
+  if (current.includes(id)) return current;
+  const next = current.slice();
+  next.splice(Math.max(0, Math.min(oldIndex, next.length)), 0, id);
   return next;
 }
 

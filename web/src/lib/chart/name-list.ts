@@ -11,8 +11,10 @@ export function parseNameList(input: unknown): string[] | null {
   const out: string[] = [];
   for (const n of input) {
     if (typeof n !== "string") return null;
-    const name = n.trim();
-    if (!name || name.length > MAX_NAME_LENGTH) return null;
+    // not trimmed: names are matched exactly against stored rows, and a
+    // stored name may carry stray spaces from extraction
+    const name = n;
+    if (!name.trim() || name.length > MAX_NAME_LENGTH) return null;
     if (seen.has(name)) continue;
     seen.add(name);
     out.push(name);

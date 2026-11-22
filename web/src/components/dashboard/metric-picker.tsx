@@ -27,6 +27,7 @@ import {
 import {
   CATEGORY_ORDER,
   SORT_KINDS,
+  changeAt,
   highlightRange,
   searchMetrics,
   sorter,
@@ -535,7 +536,10 @@ function PickerRow({
     m.name
   );
   const last = s.last!;
-  const meta = `${s.delta != null ? fmtDelta(s.delta) : tp("firstMeasurement")} · ${fmt.when(last.t)}`;
+  const ch = changeAt(m, last);
+  const change =
+    ch == null ? null : ch === "first" ? tp("firstMeasurement") : fmtDelta(ch);
+  const meta = [change, fmt.when(last.t)].filter(Boolean).join(" · ");
   const rt = metricRangeText(m);
   const sub = [
     m.full !== m.name ? m.full : null,

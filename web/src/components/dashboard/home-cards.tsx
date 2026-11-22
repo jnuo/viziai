@@ -24,9 +24,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-  changeBetween,
+  changeAt,
   moveItem,
-  prevOf,
   statusOf,
   pointStatus,
   type DashMetric,
@@ -105,7 +104,6 @@ export function HomeCards(props: Props) {
               key={id}
               id={id}
               index={i}
-             
               {...props}
             />
           ))}
@@ -161,14 +159,18 @@ function Card({
     const l = v[v.length - 1];
     value = l.v;
     st = pointStatus(m, l);
-    const dl = changeBetween(prevOf(m, l.t), l);
+    const ch = changeAt(m, l);
     sub = (
       <>
         {fmt.short(l.t)}
-        {" · "}
-        <span className="dl">
-          {dl != null ? fmtDelta(dl) : t("firstMeasurement")}
-        </span>
+        {ch != null && (
+          <>
+            {" · "}
+            <span className="dl">
+              {ch === "first" ? t("firstMeasurement") : fmtDelta(ch)}
+            </span>
+          </>
+        )}
       </>
     );
   }
@@ -194,7 +196,7 @@ function Card({
       >
         <span className="mc-name">{m.name}</span>
         <span className={`mc-val ${cls}`}>
-          {value != null ? fmtV(value) : "—"}
+          {value != null ? fmtV(value) : "—"}{" "}
           <span className="mc-unit">{m.stat.last?.unit || m.unit}</span>
         </span>
         <span className="mc-sub">{sub}</span>

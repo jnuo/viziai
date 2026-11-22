@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports -- plain Node script run after build */
 /**
  * Post-build verification: ensures sitemap route handlers were generated.
  * Runs automatically after `npm run build`.

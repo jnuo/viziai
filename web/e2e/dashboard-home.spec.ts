@@ -85,6 +85,7 @@ async function open(
   uid: string,
   email: string,
   viewport = { width: 1280, height: 900 },
+  beforeGoto?: (page: Page) => Promise<void>,
 ) {
   const token = await createSessionCookie(uid, email, TEST_NAME);
   const context = await browser.newContext({ viewport, locale: "tr-TR" });
@@ -105,7 +106,7 @@ async function open(
       sameSite: "Lax",
     },
     {
-      name: "NEXT_LOCALE",
+      name: "locale",
       value: "tr",
       domain: "localhost",
       path: "/",
@@ -116,6 +117,7 @@ async function open(
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(String(e)));
   page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
+  if (beforeGoto) await beforeGoto(page);
   await page.goto("/dashboard");
   await expect(page.getByTestId("home-cards")).toBeVisible({ timeout: 60_000 });
   return { context, page, errors };
@@ -152,6 +154,12 @@ test.describe("Dashboard: Ana ekran, picker, charts", () => {
           VALUES (${r.id}, ${name}, ${vals[i]}, ${unit}, ${lo}, ${hi})`;
       }
     }
+    // the latest Hemoglobin result comes from a lab that writes "gr/dL"
+    await sql`
+      UPDATE metrics SET unit = 'gr/dL'
+      WHERE name = 'Hemoglobin' AND report_id = (
+        SELECT id FROM reports WHERE profile_id = ${profileId}
+        ORDER BY sample_date DESC LIMIT 1)`;
     await sql`
       INSERT INTO metric_preferences (profile_id, name, display_order)
       SELECT ${profileId}, n, (o - 1)::int FROM unnest(${SERIES.map((s) => s[0])}::text[]) WITH ORDINALITY AS t(n, o)`;
@@ -191,6 +199,10 @@ test.describe("Dashboard: Ana ekran, picker, charts", () => {
     await expect(
       page.locator('[data-metric="Trombosit"] .vz-edge-lbl'),
     ).toHaveText("Normal aralık ↑ 117–354");
+    // 6 values, last one "gr/dL": a change, never "İlk ölçüm"
+    const hb = page.locator('[data-id="Hemoglobin"] .mc-sub');
+    await expect(hb).toContainText("↑0.3");
+    await expect(hb).not.toContainText("İlk ölçüm");
     expect(errors).toEqual([]);
     await context.close();
   });
@@ -298,6 +310,105 @@ test.describe("Dashboard: Ana ekran, picker, charts", () => {
     await context.close();
   });
 
+  test("Geri al reverses only its own change; a later add survives", async ({
+    browser,
+  }) => {
+    const { context, page } = await open(browser, userId, TEST_EMAIL);
+    await page.getByRole("button", { name: /Tüm değerler/ }).click();
+    const box = page.getByRole("dialog").getByRole("searchbox");
+    await box.fill("ferr");
+    await page.getByRole("button", { name: "Ana ekranda göster: Ferritin" }).click();
+    await box.fill("sodyum");
+    await page.getByRole("button", { name: "Ana ekranda göster: Sodyum" }).click();
+    await page.keyboard.press("Escape");
+    await expect(page.getByRole("dialog")).toBeHidden();
+    expect(await cardNames(page)).toEqual([...HOME, "Ferritin", "Sodyum"]);
+    // undo the FIRST toast (Ferritin): Sodyum, added after it, stays
+    await page
+      .locator("[role=status] > div")
+      .filter({ hasText: "Ferritin" })
+      .getByRole("button", { name: "Geri al" })
+      .click();
+    await expect.poll(() => cardNames(page)).toEqual([...HOME, "Sodyum"]);
+    await expect.poll(homeInDb).toEqual([...HOME, "Sodyum"]);
+    await context.close();
+  });
+
+  test("a saved Kilo card survives tracking data that loads late", async ({
+    browser,
+  }) => {
+    await sql`
+      INSERT INTO tracking_measurements (profile_id, type, weight_kg, measured_at)
+      VALUES (${profileId}, 'weight', 72.5, '2026-04-18T09:00:00Z')`;
+    await sql`
+      INSERT INTO metric_preferences (profile_id, name, display_order)
+      VALUES (${profileId}, '__tracking_weight', 99)
+      ON CONFLICT (profile_id, name) DO NOTHING`;
+    const withKilo = [HOME[0], "__tracking_weight", ...HOME.slice(1)];
+    await setHome(withKilo);
+    try {
+      const { context, page } = await open(
+        browser,
+        userId,
+        TEST_EMAIL,
+        undefined,
+        // /api/tracking answers well after /api/metrics and /api/metric-order
+        (p) =>
+          p.route("**/api/tracking?*", async (route) => {
+            await new Promise((r) => setTimeout(r, 2500));
+            await route.continue();
+          }),
+      );
+      const expected = [HOME[0], "Kilo", ...HOME.slice(1)];
+      await expect.poll(() => cardNames(page), { timeout: 15_000 }).toEqual(expected);
+      // an edit after the late load keeps it on the server too
+      await page.getByRole("button", { name: /Tüm değerler/ }).click();
+      await page.getByRole("dialog").getByRole("searchbox").fill("ferr");
+      await page.getByRole("button", { name: "Ana ekranda göster: Ferritin" }).click();
+      await expect.poll(homeInDb).toEqual([...withKilo, "Ferritin"]);
+      await context.close();
+    } finally {
+      await sql`DELETE FROM tracking_measurements WHERE profile_id = ${profileId}`;
+      await sql`DELETE FROM metric_preferences WHERE profile_id = ${profileId} AND name = '__tracking_weight'`;
+    }
+  });
+
+  test("names with an ASCII 'I' find their definition (alias match)", async ({
+    browser,
+  }) => {
+    const [r] = await sql`
+      SELECT id FROM reports WHERE profile_id = ${profileId}
+      ORDER BY sample_date DESC LIMIT 1`;
+    await sql`
+      INSERT INTO metrics (report_id, name, value, unit, ref_low, ref_high)
+      VALUES (${r.id}, 'INR', 1.1, '', 0.8, 1.2)`;
+    try {
+      const { context, page } = await open(browser, userId, TEST_EMAIL);
+      const res = await page.request.get(`/api/metrics?profileId=${profileId}`);
+      const json = await res.json();
+      const inr = json.metrics.find((m: { name: string }) => m.name === "INR");
+      expect(inr?.metric_definition_id).toBeTruthy();
+      await context.close();
+    } finally {
+      await sql`DELETE FROM metrics WHERE report_id = ${r.id} AND name = 'INR'`;
+    }
+  });
+
+  test("a reorder made right before leaving the page is still saved", async ({
+    browser,
+  }) => {
+    const { context, page } = await open(browser, userId, TEST_EMAIL);
+    await page.getByRole("button", { name: "Hemoglobin seçenekleri" }).click();
+    await page.getByRole("menuitem", { name: "Sağa taşı" }).click();
+    // client-side navigation inside the 400 ms save debounce
+    await page.getByRole("button", { name: "Tahlil Yükle" }).first().click();
+    await page.waitForURL(/\/upload/);
+    await expect
+      .poll(homeInDb, { timeout: 5000 })
+      .toEqual([HOME[1], HOME[0], ...HOME.slice(2)]);
+    await context.close();
+  });
+
   test("search ranks abbreviations and Turkish case first", async ({
     browser,
   }) => {
@@ -309,6 +420,8 @@ test.describe("Dashboard: Ana ekran, picker, charts", () => {
       ["Hb", "Hemoglobin"],
       ["wbc", "Lökosit"],
       ["LÖKOSİT", "Lökosit"],
+      ["HEMOGLOBIN", "Hemoglobin"],
+      ["KREATININ", "Kreatinin"],
     ]) {
       await box.fill(q);
       await expect(page.locator(".pk-row .pk-name .nm").first()).toHaveText(

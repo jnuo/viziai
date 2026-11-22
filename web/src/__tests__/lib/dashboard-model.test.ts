@@ -14,6 +14,11 @@ import {
   cleanUnit,
   unitKey,
   mergeVariants,
+  changeAt,
+  resolveHome,
+  keepHidden,
+  undoHomeToggle,
+  lowerKey,
   toMs,
   DAY,
   type RawMetric,
@@ -284,6 +289,7 @@ describe("units", () => {
     expect(unitKey("x10^3/uL")).toBe(unitKey("10³/μL"));
     expect(unitKey("10^3/µL")).toBe(unitKey("10^3/uL"));
     expect(unitKey("mg/dL")).not.toBe(unitKey("mg/L"));
+    expect(unitKey("gr/dL")).toBe(unitKey("g/dL"));
   });
 
   it("does not report a change for a flag-only 'unit'", () => {
@@ -321,5 +327,126 @@ describe("mergeVariants", () => {
       [],
     );
     expect(metrics).toHaveLength(2);
+  });
+});
+
+describe("change label (changeAt): 'İlk ölçüm' only for a single value", () => {
+  // synthetic series: 40 draws, the latest one written "gr/dL" by another lab
+  const dates = Array.from({ length: 40 }, (_, i) =>
+    new Date(Date.UTC(2025, 0, 1 + i * 7)).toISOString().slice(0, 10),
+  );
+  const series = (lastUnit: string) =>
+    buildMetrics(
+      [{ id: "Hb", name: "Hb", unit: "g/dL", ref_min: 12, ref_max: 16 }],
+      dates.map((date, i) => ({
+        metric_id: "Hb",
+        date,
+        value: 9 + (i % 5) * 0.1,
+        unit: i === dates.length - 1 ? lastUnit : "g/dL",
+      })),
+    )[0];
+
+  it("shows a change across 'g/dL' -> 'gr/dL' (same unit)", () => {
+    const m = series("gr/dL");
+    expect(m.pts).toHaveLength(40);
+    expect(changeAt(m, m.stat.last!)).toBeCloseTo(0.1);
+  });
+
+  it("shows nothing, not 'İlk ölçüm', across a real unit switch", () => {
+    const m = series("mmol/L");
+    expect(changeAt(m, m.stat.last!)).toBeNull();
+  });
+
+  it("shows 'first' only when the series has exactly one value", () => {
+    const [one] = buildMetrics(
+      [{ id: "X", name: "X", unit: "u", ref_min: 1, ref_max: 2 }],
+      [{ metric_id: "X", date: D2, value: 1.5, unit: "u" }],
+    );
+    expect(changeAt(one, one.stat.last!)).toBe("first");
+    // the earliest point of a longer series is not a "first measurement" label
+    const m = series("g/dL");
+    expect(changeAt(m, m.pts[0])).toBeNull();
+  });
+});
+
+describe("Ana ekran: saved names survive, undo reverses one change", () => {
+  const ms = build([
+    metric("Hemoglobin", 12, 16, [[D1, 9], [D2, 9.4]]),
+    metric("Trombosit", 117, 354, [[D1, 60], [D2, 50]]),
+  ]);
+
+  it("keeps a Kilo / Tansiyon id that is not loaded yet instead of dropping it", () => {
+    expect(
+      resolveHome(["__tracking_weight", "Trombosit", "Hemoglobin"], ms),
+    ).toEqual(["__tracking_weight", "Trombosit", "Hemoglobin"]);
+  });
+
+  it("maps merged spellings to the shown metric", () => {
+    const idMap = new Map([["HEMOGLOBIN (KAN)", "Hemoglobin"]]);
+    expect(resolveHome(["HEMOGLOBIN (KAN)", "trombosit"], ms, idMap)).toEqual([
+      "Hemoglobin",
+      "Trombosit",
+    ]);
+  });
+
+  it("a reorder of the shown cards keeps the hidden ids", () => {
+    expect(
+      keepHidden(["B", "A"], ["A", "__tracking_weight", "B"]),
+    ).toEqual(["B", "A", "__tracking_weight"]);
+  });
+
+  it("undo of an add removes only that id, later adds survive", () => {
+    // add A (home was []), then add B -> [A, B]; undo A's toast
+    expect(undoHomeToggle(["A", "B"], "A", true, -1)).toEqual(["B"]);
+  });
+
+  it("undo of a remove puts the id back at its old place, later changes survive", () => {
+    // [A, B, C]: remove B (old index 1), then add D -> [A, C, D]; undo B
+    expect(undoHomeToggle(["A", "C", "D"], "B", false, 1)).toEqual([
+      "A",
+      "B",
+      "C",
+      "D",
+    ]);
+    // C removed meanwhile too: B still goes back, C stays removed
+    expect(undoHomeToggle(["A", "D"], "B", false, 1)).toEqual(["A", "B", "D"]);
+  });
+});
+
+describe("Turkish case: ASCII 'I'", () => {
+  it("title-cases ASCII capitals with a dotted i", () => {
+    expect(prettifyName("HEMOGLOBIN")).toBe("Hemoglobin");
+    expect(prettifyName("VITAMIN B12")).toBe("Vitamin B12");
+  });
+
+  it("keeps a dotless ı when the name uses Turkish capitals", () => {
+    expect(prettifyName("KIRMIZI HÜCRE DAĞILIM GENİŞLİĞİ")).toBe(
+      "Kırmızı Hücre Dağılım Genişliği",
+    );
+    expect(prettifyName("C REAKTİF PROTEİN (CRP)")).toBe(
+      "C Reaktif Protein (CRP)",
+    );
+  });
+
+  it("alias key: İ / I / ı all match Postgres-side lower 'i'", () => {
+    expect(lowerKey("INR")).toBe("inr");
+    expect(lowerKey("VITAMIN B12")).toBe("vitamin b12");
+    expect(lowerKey("İdrar pH")).toBe("idrar ph");
+    expect(lowerKey("Prothrombin zamanı INR")).toBe("prothrombin zamani inr");
+  });
+
+  it("search folds ASCII 'I', dotted 'İ' and dotless 'ı' alike", () => {
+    const ms = build([
+      metric("Kırmızı Küre", 4, 6, [[D2, 5]]),
+      metric("Hemoglobin", 12, 16, [[D2, 13]]),
+      metric("İdrar Dansitesi", 1, 2, [[D2, 1.5]]),
+    ]);
+    const first = (q: string) => searchMetrics(ms, q)!.list[0]?.id;
+    expect(first("HEMOGLOBIN")).toBe("Hemoglobin");
+    expect(first("KIRMIZI")).toBe("Kırmızı Küre");
+    expect(first("kirmizi")).toBe("Kırmızı Küre");
+    expect(first("IDRAR")).toBe("İdrar Dansitesi");
+    expect(first("ıdrar")).toBe("İdrar Dansitesi");
+    expect(fold("HEMOGLOBIN")).toBe(fold("hemoglobın"));
   });
 });

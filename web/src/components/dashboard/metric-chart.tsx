@@ -139,12 +139,10 @@ function MetricChartImpl(props: Props) {
   const ts = useTranslations("pages.dashboard.status");
   const [plot, setPlot] = useState<Plot | null>(null);
 
-  const last = m.stat.last;
-  const latestOwn = last && (last.refMin != null || last.refMax != null);
-  const refMin = latestOwn ? last!.refMin : m.ref_min;
-  const refMax = latestOwn ? last!.refMax : m.ref_max;
+  const refMin = m.ref_min;
+  const refMax = m.ref_max;
   const rt = rangeText(refMin, refMax);
-  const unit = last?.unit || m.unit;
+  const unit = m.unit;
   const pers = useMemo(
     () => (view.pers && pts.length > 1 ? personalBand(m.pts, today) : null),
     [view.pers, pts.length, m.pts, today],
