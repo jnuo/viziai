@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { bcp47, toLocale } from "@/i18n/config";
 import type { DashMetric, Status } from "@/lib/chart/model";
+import { parseRangeChoice, type RangeChoice } from "@/lib/chart/range";
 import { fmtV } from "@/lib/chart/scale";
 
 /* ---------------------------------------------------------------- dates */
@@ -139,6 +140,18 @@ export function loadView(): ViewSettings {
 }
 export function saveView(v: ViewSettings): void {
   store.set(K_VIEW, v);
+}
+
+/** Date range, per profile: an explicit choice, or null = automatic. */
+const kRange = (profileId: string) => `viziai.dashboard.range.${profileId}`;
+export function loadRangeChoice(profileId: string): RangeChoice | null {
+  return parseRangeChoice(store.get<unknown>(kRange(profileId), null));
+}
+export function saveRangeChoice(
+  profileId: string,
+  choice: RangeChoice | null,
+): void {
+  store.set(kRange(profileId), choice);
 }
 
 /* ---------------------------------------------------------------- media */

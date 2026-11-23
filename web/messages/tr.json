@@ -232,11 +232,6 @@
       "average": "Ortalama",
       "averageShort": "Ort.",
       "showAverage": "Ortalama göster",
-      "dateRange": "Tarih aralığı",
-      "all": "Tümü",
-      "last90": "Son 90 gün",
-      "last30": "Son 30 gün",
-      "last15": "Son 15 gün",
       "noDataInRange": "Bu aralıkta veri yok",
       "weight": "Kilo",
       "bpSystolic": "Tansiyon (Sistolik)",
@@ -376,6 +371,27 @@
         "kardiyak": "Kalp",
         "hormon": "Hormon",
         "diger": "Diğer"
+      },
+      "range": {
+        "label": "Tarih aralığı",
+        "presets": {
+          "2w": "2 hafta",
+          "1m": "1 ay",
+          "3m": "3 ay",
+          "6m": "6 ay",
+          "1y": "1 yıl",
+          "all": "Tümü"
+        },
+        "custom": "Özel…",
+        "customTitle": "Tarih aralığını seçin",
+        "customPick": "İlk ve son günü seçin",
+        "editCustom": "Tarih aralığını değiştir",
+        "apply": "Uygula",
+        "cancel": "Vazgeç",
+        "autoHint": "otomatik",
+        "autoHelp": "En az 8 tahlili gösteren en kısa aralık seçilir",
+        "autoItem": "Otomatik: {range}",
+        "backToAuto": "Otomatik seçime dön"
       }
     },
     "settings": {

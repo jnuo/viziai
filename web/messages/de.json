@@ -232,11 +232,6 @@
       "average": "Durchschnitt",
       "averageShort": "Ø",
       "showAverage": "Durchschnitt anzeigen",
-      "dateRange": "Zeitraum",
-      "all": "Alle",
-      "last90": "Letzte 90 Tage",
-      "last30": "Letzte 30 Tage",
-      "last15": "Letzte 15 Tage",
       "noDataInRange": "Keine Daten in diesem Zeitraum",
       "weight": "Gewicht",
       "bpSystolic": "Blutdruck (systolisch)",
@@ -376,6 +371,27 @@
         "kardiyak": "Herz",
         "hormon": "Hormone",
         "diger": "Sonstiges"
+      },
+      "range": {
+        "label": "Zeitraum",
+        "presets": {
+          "2w": "2 Wo.",
+          "1m": "1 Mon.",
+          "3m": "3 Mon.",
+          "6m": "6 Mon.",
+          "1y": "1 Jahr",
+          "all": "Alle"
+        },
+        "custom": "Eigener…",
+        "customTitle": "Eigener Zeitraum",
+        "customPick": "Start- und Endtag wählen",
+        "editCustom": "Eigenen Zeitraum ändern",
+        "apply": "Anwenden",
+        "cancel": "Abbrechen",
+        "autoHint": "auto",
+        "autoHelp": "Der kürzeste Zeitraum mit mindestens 8 Testterminen",
+        "autoItem": "Automatisch: {range}",
+        "backToAuto": "Zurück zu automatisch"
       }
     },
     "settings": {

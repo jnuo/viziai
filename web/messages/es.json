@@ -232,11 +232,6 @@
       "average": "Promedio",
       "averageShort": "Prom.",
       "showAverage": "Mostrar promedio",
-      "dateRange": "Periodo",
-      "all": "Todo",
-      "last90": "Últimos 90 días",
-      "last30": "Últimos 30 días",
-      "last15": "Últimos 15 días",
       "noDataInRange": "No hay datos en este periodo",
       "weight": "Peso",
       "bpSystolic": "Tensión (sistólica)",
@@ -376,6 +371,27 @@
         "kardiyak": "Corazón",
         "hormon": "Hormonas",
         "diger": "Otros"
+      },
+      "range": {
+        "label": "Periodo",
+        "presets": {
+          "2w": "2 sem.",
+          "1m": "1 mes",
+          "3m": "3 meses",
+          "6m": "6 meses",
+          "1y": "1 año",
+          "all": "Todo"
+        },
+        "custom": "Otro…",
+        "customTitle": "Periodo personalizado",
+        "customPick": "Elija el día de inicio y de fin",
+        "editCustom": "Cambiar el periodo personalizado",
+        "apply": "Aplicar",
+        "cancel": "Cancelar",
+        "autoHint": "auto",
+        "autoHelp": "El periodo más corto con al menos 8 fechas de análisis",
+        "autoItem": "Automático: {range}",
+        "backToAuto": "Volver a automático"
       }
     },
     "settings": {

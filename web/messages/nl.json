@@ -232,11 +232,6 @@
       "average": "Gemiddelde",
       "averageShort": "Gem.",
       "showAverage": "Gemiddelde tonen",
-      "dateRange": "Periode",
-      "all": "Alles",
-      "last90": "Laatste 90 dagen",
-      "last30": "Laatste 30 dagen",
-      "last15": "Laatste 15 dagen",
       "noDataInRange": "Geen gegevens in deze periode",
       "weight": "Gewicht",
       "bpSystolic": "Bloeddruk (systolisch)",
@@ -376,6 +371,27 @@
         "kardiyak": "Hart",
         "hormon": "Hormonen",
         "diger": "Overig"
+      },
+      "range": {
+        "label": "Periode",
+        "presets": {
+          "2w": "2 wk",
+          "1m": "1 mnd",
+          "3m": "3 mnd",
+          "6m": "6 mnd",
+          "1y": "1 jaar",
+          "all": "Alles"
+        },
+        "custom": "Eigen…",
+        "customTitle": "Eigen periode",
+        "customPick": "Kies een begin- en einddag",
+        "editCustom": "Eigen periode wijzigen",
+        "apply": "Toepassen",
+        "cancel": "Annuleren",
+        "autoHint": "auto",
+        "autoHelp": "De kortste periode met minstens 8 testdatums",
+        "autoItem": "Automatisch: {range}",
+        "backToAuto": "Terug naar automatisch"
       }
     },
     "settings": {

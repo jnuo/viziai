@@ -5,13 +5,6 @@ import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/empty-state";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { OnboardingChecklist } from "@/components/onboarding-checklist";
 import { GhostedChart } from "@/components/ghosted-chart";
@@ -38,10 +31,17 @@ import {
   type RawMetric,
   type RawValue,
 } from "@/lib/chart/model";
+import {
+  autoPreset,
+  rangeAnchor,
+  rangeBounds,
+  type RangeChoice,
+} from "@/lib/chart/range";
 import { MetricChart } from "@/components/dashboard/metric-chart";
 import { DataTable } from "@/components/dashboard/data-table";
 import { ViewMenu } from "@/components/dashboard/view-menu";
 import { HomeCards } from "@/components/dashboard/home-cards";
+import { RangeControl } from "@/components/dashboard/range-control";
 import {
   MetricPicker,
   type PickerPrefs,
@@ -51,8 +51,10 @@ import {
   IconList,
   IconSearch,
   IconX,
+  loadRangeChoice,
   loadView,
   makeDateFormats,
+  saveRangeChoice,
   saveView,
   store,
   useMedia,
@@ -67,9 +69,6 @@ type ApiData = {
 };
 type Data = ApiData & { idMap: Map<string, string> };
 
-const DATE_RANGES = ["all", "90", "30", "15"] as const;
-type DateRange = (typeof DATE_RANGES)[number];
-const K_RANGE = "viziai.dashboard.range";
 type Mode = "chart" | "table";
 
 const K_PICKER = "viziai.dashboard.picker";
@@ -110,11 +109,10 @@ export default function Dashboard(): React.ReactElement | null {
   /** Ana ekran (metric ids, ordered); null until loaded */
   const [home, setHome] = useState<string[] | null>(null);
   const [selected, setSelectedState] = useState<string[] | null>(null);
-  const [dateRange, setDateRange] = useState<DateRange>(() => {
-    if (typeof window === "undefined") return "all";
-    const v = store.get<string>(K_RANGE, "all");
-    return (DATE_RANGES as readonly string[]).includes(v) ? (v as DateRange) : "all";
-  });
+  /** explicit date range for this profile; null = automatic */
+  const [rangeChoice, setRangeChoiceState] = useState<RangeChoice | null>(
+    null,
+  );
   const [showAvg, setShowAvg] = useState(false);
   const [mode, setMode] = useState<Mode>("chart");
   const [hover, setHover] = useState<number | null>(null);
@@ -133,6 +131,7 @@ export default function Dashboard(): React.ReactElement | null {
   );
   const isPhone = useMedia("(max-width: 639px)");
   const isWide = useMedia("(min-width: 1280px)");
+  const isDesk = useMedia("(min-width: 768px)");
   const openerRef = useRef<HTMLElement | null>(null);
   const allValuesBtnRef = useRef<HTMLButtonElement>(null);
 
@@ -155,6 +154,7 @@ export default function Dashboard(): React.ReactElement | null {
     setHomeNames(null);
     setSelectedState(null);
     setPinnedState(null);
+    setRangeChoiceState(loadRangeChoice(activeProfileId));
     async function load() {
       try {
         const [res, prefRes] = await Promise.all([
@@ -492,6 +492,17 @@ export default function Dashboard(): React.ReactElement | null {
       return n;
     });
   }, []);
+  const setRange = useCallback(
+    (next: RangeChoice | null) => {
+      setRangeChoiceState(next);
+      if (activeProfileId) saveRangeChoice(activeProfileId, next);
+      track(
+        "date_range_change",
+        next == null ? "auto" : next.kind === "custom" ? "custom" : next.preset,
+      );
+    },
+    [activeProfileId],
+  );
   const setPinned = useCallback(
     (fn: (cur: number | null) => number | null) => setPinnedState(fn),
     [],
@@ -535,17 +546,44 @@ export default function Dashboard(): React.ReactElement | null {
 
   /* ---------------------------------------------------- visible ranges */
 
-  const cutoff =
-    dateRange === "all" ? -Infinity : today - Number(dateRange) * DAY;
+  // ranges count back from the latest lab draw, not from today
+  const anchor = useMemo(
+    () =>
+      rangeAnchor(
+        metrics.filter((m) => !m.tracking).flatMap((m) => m.pts.map((p) => p.t)),
+        metrics.filter((m) => m.tracking).flatMap((m) => m.pts.map((p) => p.t)),
+        today,
+      ),
+    [metrics, today],
+  );
+  /** first and last day with any data: custom ranges are clamped to it */
+  const span = useMemo<[number, number] | null>(() => {
+    const ts = metrics.flatMap((m) => m.pts.map((p) => p.t));
+    return ts.length ? [Math.min(...ts), Math.max(...ts)] : null;
+  }, [metrics]);
+  // automatic: smallest preset with 8+ draw dates across the Ana ekran
+  // (or empty-state) values, never below "1 ay"
+  const auto = useMemo(
+    () =>
+      autoPreset(
+        dashIds.flatMap((id) => (byId.get(id)?.pts ?? []).map((p) => p.t)),
+        anchor,
+      ),
+    [dashIds, byId, anchor],
+  );
+  const [lo, hi] = rangeBounds(
+    rangeChoice ?? { kind: "preset", preset: auto },
+    anchor,
+  );
   const vis = useMemo(() => {
     const map = new Map<string, Pt[]>();
     for (const m of metrics)
       map.set(
         m.id,
-        m.pts.filter((p) => p.t >= cutoff),
+        m.pts.filter((p) => p.t >= lo && p.t <= hi),
       );
     return map;
-  }, [metrics, cutoff]);
+  }, [metrics, lo, hi]);
 
   const chartIds = useMemo(
     () =>
@@ -600,7 +638,7 @@ export default function Dashboard(): React.ReactElement | null {
     if (!ts.length) return t("noDataInRange");
     const a = Math.min(...ts);
     const b = Math.max(...ts);
-    return a === b ? fmt.short(a) : `${fmt.short(a)} - ${fmt.short(b)}`;
+    return a === b ? fmt.short(a) : `${fmt.short(a)} – ${fmt.short(b)}`;
   }, [dashIds, vis, fmt, t]);
 
   /* ------------------------------------------------------------- render */
@@ -683,27 +721,15 @@ export default function Dashboard(): React.ReactElement | null {
                   <span className="only-phone">{t("averageShort")}</span>
                 </label>
               </div>
-              <Select
-                value={dateRange}
-                onValueChange={(v: DateRange) => {
-                  setDateRange(v);
-                  store.set(K_RANGE, v);
-                }}
-              >
-                <SelectTrigger
-                  className="w-auto h-7 text-xs ml-auto"
-                  aria-label={t("dateRange")}
-                  style={{ touchAction: "manipulation" }}
-                >
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{t("all")}</SelectItem>
-                  <SelectItem value="90">{t("last90")}</SelectItem>
-                  <SelectItem value="30">{t("last30")}</SelectItem>
-                  <SelectItem value="15">{t("last15")}</SelectItem>
-                </SelectContent>
-              </Select>
+              <RangeControl
+                choice={rangeChoice}
+                auto={auto}
+                span={span}
+                bounds={[lo, hi]}
+                onChange={setRange}
+                isDesk={isDesk}
+                fmt={fmt}
+              />
             </div>
             <div className="vz-tools">
               <div className="vz-search vz-dash-search">

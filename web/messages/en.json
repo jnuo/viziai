@@ -232,11 +232,6 @@
       "average": "Average",
       "averageShort": "Avg.",
       "showAverage": "Show average",
-      "dateRange": "Date range",
-      "all": "All",
-      "last90": "Last 90 days",
-      "last30": "Last 30 days",
-      "last15": "Last 15 days",
       "noDataInRange": "No data in this range",
       "weight": "Weight",
       "bpSystolic": "Blood pressure (systolic)",
@@ -376,6 +371,27 @@
         "kardiyak": "Heart",
         "hormon": "Hormones",
         "diger": "Other"
+      },
+      "range": {
+        "label": "Date range",
+        "presets": {
+          "2w": "2 wks",
+          "1m": "1 mo",
+          "3m": "3 mo",
+          "6m": "6 mo",
+          "1y": "1 yr",
+          "all": "All"
+        },
+        "custom": "Custom…",
+        "customTitle": "Custom date range",
+        "customPick": "Pick a start and end day",
+        "editCustom": "Change custom range",
+        "apply": "Apply",
+        "cancel": "Cancel",
+        "autoHint": "auto",
+        "autoHelp": "The shortest range that shows at least 8 test dates",
+        "autoItem": "Automatic: {range}",
+        "backToAuto": "Back to automatic"
       }
     },
     "settings": {

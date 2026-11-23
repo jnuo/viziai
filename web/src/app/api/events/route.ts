@@ -16,6 +16,7 @@ const ALLOWED_EVENTS = new Set([
   "view_setting_change",
   "view_mode_toggle",
   "date_pin",
+  "date_range_change",
 ]);
 const MAX_KEY_LENGTH = 200;
 
