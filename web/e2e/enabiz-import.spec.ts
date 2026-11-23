@@ -200,6 +200,12 @@ test.describe("e-Nabız Import Flow", () => {
       profileId,
     );
 
+    // an existing preference row: new metrics must go after it, not to 0
+    await sql`
+      INSERT INTO metric_preferences (profile_id, name, display_order)
+      VALUES (${profileId}, 'E2E Existing', 7)
+      ON CONFLICT (profile_id, name) DO UPDATE SET display_order = 7`;
+
     const response = await page.request.post(
       `/api/import/enabiz/pending/${pendingId}/confirm`,
       {
@@ -214,6 +220,16 @@ test.describe("e-Nabız Import Flow", () => {
     const body = await response.json();
     expect(body.success).toBe(true);
     expect(body.reportId).toBeTruthy();
+
+    // PR #160 review: appended at max(display_order) + 1.., in their order
+    const prefs = await sql`
+      SELECT name, display_order FROM metric_preferences
+      WHERE profile_id = ${profileId} AND name = ANY(${SAMPLE_METRICS.map((m) => m.name)}::text[])
+      ORDER BY display_order`;
+    expect(prefs.map((r) => r.name)).toEqual(SAMPLE_METRICS.map((m) => m.name));
+    expect(prefs.map((r) => r.display_order)).toEqual(
+      SAMPLE_METRICS.map((_, i) => 8 + i),
+    );
 
     confirmedReportId = body.reportId;
 

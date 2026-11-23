@@ -3,7 +3,21 @@ import { requireAuth } from "@/lib/auth";
 import { sql } from "@/lib/db";
 import { reportError } from "@/lib/error-reporting";
 
-const ALLOWED_EVENTS = new Set(["metric_selected"]);
+const ALLOWED_EVENTS = new Set([
+  "metric_selected",
+  // dashboard redesign (#157–#159); metricKey carries the metric name, or the
+  // source / setting for the UI events
+  "ana_ekran_add",
+  "ana_ekran_remove",
+  "ana_ekran_reorder",
+  "picker_open",
+  "picker_search",
+  "chart_scale_toggle",
+  "view_setting_change",
+  "view_mode_toggle",
+  "date_pin",
+  "date_range_change",
+]);
 const MAX_KEY_LENGTH = 200;
 
 export async function POST(request: NextRequest) {

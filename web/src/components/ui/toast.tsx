@@ -6,7 +6,10 @@ import { X } from "lucide-react";
 
 export interface ToastAction {
   label: string;
-  href: string;
+  /** link action */
+  href?: string;
+  /** button action (e.g. "Geri al"); the toast closes after it runs */
+  onClick?: () => void;
 }
 
 export interface ToastProps {
@@ -48,7 +51,11 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   return (
     <ToastContext.Provider value={{ toasts, addToast, removeToast }}>
       {children}
-      <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-md">
+      <div
+        className="fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-md"
+        role="status"
+        aria-live="polite"
+      >
         {toasts.map((toast) => (
           <Toast
             key={toast.id}
@@ -89,14 +96,25 @@ function Toast({
     >
       <div className="flex-1 text-sm font-medium">
         {message}
-        {action && (
+        {action?.onClick ? (
+          <button
+            type="button"
+            onClick={() => {
+              action.onClick?.();
+              onClose();
+            }}
+            className="ml-2 font-semibold underline underline-offset-2 hover:text-foreground"
+          >
+            {action.label}
+          </button>
+        ) : action?.href ? (
           <a
             href={action.href}
             className="ml-2 underline underline-offset-2 hover:text-foreground"
           >
             {action.label}
           </a>
-        )}
+        ) : null}
       </div>
       <button
         onClick={onClose}

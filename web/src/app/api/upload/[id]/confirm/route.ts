@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { requireAuth } from "@/lib/auth";
 import { sql } from "@/lib/db";
 import { reportError } from "@/lib/error-reporting";
+import { appendMetricPreferences } from "@/lib/metric-preferences";
 import {
   processMetricsBatch,
   trackUnmappedMetrics,
@@ -206,15 +207,11 @@ export async function POST(
       }
     }
 
-    // Batch-insert metric_preferences for all confirmed metrics
-    const validNames = validMetrics.map((m) => m.name);
-    if (validNames.length > 0) {
-      await sql`
-        INSERT INTO metric_preferences (profile_id, name)
-        SELECT ${profileId}, unnest(${validNames}::text[])
-        ON CONFLICT (profile_id, name) DO NOTHING
-      `;
-    }
+    // Preference rows for new metrics, appended after the profile's order
+    await appendMetricPreferences(
+      profileId,
+      validMetrics.map((m) => m.name),
+    );
 
     // Record in processed_files (to prevent duplicate uploads)
     try {
