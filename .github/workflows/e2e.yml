@@ -10,11 +10,13 @@ concurrency:
 
 jobs:
   e2e:
-    runs-on: ubuntu-latest
+    # Pinned: ubuntu-latest moved to 26.04, which Playwright's browser install does not support yet.
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
 
     env:
-      NEON_DATABASE_URL: ${{ secrets.NEON_DATABASE_URL }}
+      # e2e seeds and deletes test users/profiles, so it must never point at production.
+      NEON_DATABASE_URL: ${{ secrets.NEON_DATABASE_URL_STAGING }}
       NEXTAUTH_SECRET: e2e-test-secret-not-for-production
       NEXTAUTH_URL: http://localhost:3000
       GOOGLE_CLIENT_ID: dummy-client-id
@@ -28,6 +30,19 @@ jobs:
           node-version: 22
           cache: npm
           cache-dependency-path: web/package-lock.json
+
+      - name: Guard e2e database (refuse production)
+        env:
+          PROD_URL: ${{ secrets.NEON_DATABASE_URL_PROD }}
+        run: |
+          e2e_host=$(node -e 'console.log(new URL(process.env.NEON_DATABASE_URL).host)')
+          prod_host=$(node -e 'console.log(new URL(process.env.PROD_URL).host)')
+          if [ -z "$e2e_host" ] || [ "$e2e_host" = "$prod_host" ]; then
+            echo "::error::e2e database is missing or is production; refusing to run"
+            exit 1
+          fi
+          echo "::add-mask::$e2e_host"
+          echo "E2E_DB_HOST_ALLOW=$e2e_host" >> "$GITHUB_ENV"
 
       - name: Install dependencies
         run: npm ci
