@@ -69,11 +69,15 @@ export async function GET(request: Request) {
 
 /**
  * PUT /api/metric-order
- * Body: { profileId: string, home?: string[], order?: string[] }
+ * Body: { profileId: string, home?: string[], clear?: true, order?: string[] }
  *
  * - home: the complete "Ana ekran" list, in order. Listed names become
  *   is_favorite with display_order 0..n-1; every other metric of the profile
- *   loses is_favorite and keeps its relative order after them.
+ *   loses is_favorite and keeps its relative order after them. An empty
+ *   list clears the whole Ana ekran, so it needs `clear: true` (the client
+ *   sends it only when the user removes the last item); without it the
+ *   request is refused with 409, so a client that never loaded the saved
+ *   list cannot wipe it.
  * - order: legacy full ordering (display_order only).
  *
  * Each write is a single batched upsert (Neon HTTP driver has no
@@ -117,6 +121,13 @@ export async function PUT(request: Request) {
     const level = await getProfileAccessLevel(userId, profileId);
     if (level !== "owner" && level !== "editor") {
       return NextResponse.json({ error: "Access denied" }, { status: 403 });
+    }
+
+    if (home && home.length === 0 && body.clear !== true) {
+      return NextResponse.json(
+        { error: "An empty Ana ekran needs clear: true" },
+        { status: 409 },
+      );
     }
 
     // Only names this profile has: its measured metrics, rows it already

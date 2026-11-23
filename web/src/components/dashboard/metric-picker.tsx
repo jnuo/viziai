@@ -65,6 +65,8 @@ type Props = {
   metrics: DashMetric[];
   home: string[];
   canEdit: boolean;
+  /** why Ana ekran edits are off for someone who may edit (still loading, load failed) */
+  lockReason?: string | null;
   onToggleHome: (id: string) => void;
   onReorderHome: (next: string[]) => void;
   selected: string[];
@@ -86,6 +88,7 @@ export function MetricPicker(props: Props) {
     metrics,
     home,
     canEdit,
+    lockReason,
     onToggleHome,
     onReorderHome,
     selected,
@@ -143,6 +146,7 @@ export function MetricPicker(props: Props) {
     q: res ? res.q : "",
     home,
     canEdit,
+    lockReason,
     onToggleHome,
     selected,
     toggleChart,
@@ -195,11 +199,11 @@ export function MetricPicker(props: Props) {
                 ? isPhone
                   ? t("homeHintPhone")
                   : t("homeHintDesk")
-                : t("readOnly")}
+                : (lockReason ?? t("readOnly"))}
             </div>
           ) : (
             <div className="pk-empty">
-              {canEdit ? t("homeEmpty") : t("readOnly")}
+              {canEdit ? t("homeEmpty") : (lockReason ?? t("readOnly"))}
             </div>
           )}
           <DndContext
@@ -373,6 +377,7 @@ type RowProps = {
   q: string;
   home: string[];
   canEdit: boolean;
+  lockReason?: string | null;
   onToggleHome: (id: string) => void;
   selected: string[];
   toggleChart: (id: string) => void;
@@ -462,11 +467,13 @@ function HomeButton({
   m,
   on,
   canEdit,
+  lockReason,
   onClick,
 }: {
   m: DashMetric;
   on: boolean;
   canEdit: boolean;
+  lockReason?: string | null;
   onClick: () => void;
 }) {
   const t = useTranslations("pages.dashboard");
@@ -479,7 +486,7 @@ function HomeButton({
       className={`home-btn${just ? " just" : ""}`}
       aria-pressed={on}
       disabled={!canEdit}
-      title={canEdit ? undefined : t("viewerReadOnly")}
+      title={canEdit ? undefined : (lockReason ?? t("viewerReadOnly"))}
       aria-label={t("addHomeAria", { name: m.name })}
       onClick={() => {
         setJust(true);
@@ -514,6 +521,7 @@ function PickerRow({
   q,
   home,
   canEdit,
+  lockReason,
   onToggleHome,
   selected,
   toggleChart,
@@ -570,6 +578,7 @@ function PickerRow({
           m={m}
           on={isHome}
           canEdit={canEdit}
+          lockReason={lockReason}
           onClick={() => onToggleHome(m.id)}
         />
         <button

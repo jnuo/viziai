@@ -29,6 +29,7 @@ import {
   moveItem,
   statusOf,
   pointStatus,
+  windowAverage,
   type DashMetric,
   type Pt,
   type Status,
@@ -56,6 +57,8 @@ type Props = {
   /** true: cards are the saved Ana ekran (reorderable); false: empty-state picks */
   isHome: boolean;
   canEdit: boolean;
+  /** why Ana ekran edits are off for someone who may edit (still loading, load failed) */
+  lockReason?: string | null;
   onReorder: (next: string[]) => void;
   onSetHome: (id: string, on: boolean) => void;
   fmt: DateFormats;
@@ -125,6 +128,7 @@ function Card({
   toggleChart,
   isHome,
   canEdit,
+  lockReason,
   onReorder,
   onSetHome,
   fmt,
@@ -153,9 +157,21 @@ function Card({
       ? t("lastMeasured", { date: fmt.short(m.stat.last.t) })
       : t("notInRange");
   } else if (showAvg) {
-    value = v.reduce((s, p) => s + p.v, 0) / v.length;
-    st = statusOf(value, m.ref_min, m.ref_max);
-    sub = t("nMeasurements", { count: v.length });
+    const avg = windowAverage(v);
+    if (avg == null) {
+      // the window mixes units: no average rather than a wrong one
+      sub = t("avgMixedUnits");
+    } else {
+      value = avg;
+      const l = v[v.length - 1];
+      const own = l.refMin != null || l.refMax != null;
+      st = statusOf(
+        avg,
+        own ? l.refMin : m.ref_min,
+        own ? l.refMax : m.ref_max,
+      );
+      sub = t("nMeasurements", { count: v.length });
+    }
   } else {
     const l = v[v.length - 1];
     value = l.v;
@@ -199,7 +215,7 @@ function Card({
         <span className={`mc-val ${cls}`}>
           {value != null ? fmtV(value) : "—"}{" "}
           <span className="mc-unit">
-            {displayUnit(m.stat.last?.unit || m.unit)}
+            {displayUnit(v[v.length - 1]?.unit || m.stat.last?.unit || m.unit)}
           </span>
         </span>
         <span className="mc-sub">{sub}</span>
@@ -264,7 +280,9 @@ function Card({
               </DropdownMenuItem>
             )
           ) : (
-            <div className="vz-menu-note">{t("viewerReadOnly")}</div>
+            <div className="vz-menu-note">
+              {lockReason ?? t("viewerReadOnly")}
+            </div>
           )}
         </DropdownMenuContent>
       </DropdownMenu>

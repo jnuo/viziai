@@ -75,6 +75,18 @@ const K_PICKER = "viziai.dashboard.picker";
 const kCharts = (profileId: string) => `viziai.dashboard.charts.${profileId}`;
 const HOME_SAVE_DEBOUNCE = 400;
 
+/** Save the complete Ana ekran of one profile; an empty list is an explicit clear. */
+function putHome(profileId: string, home: string[], keepalive = false) {
+  return fetch("/api/metric-order", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(
+      home.length ? { profileId, home } : { profileId, home, clear: true },
+    ),
+    keepalive,
+  });
+}
+
 function loadPickerPrefs(): PickerPrefs {
   const v = store.get<Partial<PickerPrefs>>(K_PICKER, {}) || {};
   return {
@@ -133,6 +145,23 @@ export default function Dashboard(): React.ReactElement | null {
   const isWide = useMedia("(min-width: 1280px)");
   const isDesk = useMedia("(min-width: 768px)");
   const openerRef = useRef<HTMLElement | null>(null);
+
+  /* ---------------------------------------- home persistence: state */
+  // Saves are queued PER PROFILE: a list always goes to the profile it was
+  // made for, even when the user switched profiles while a save was in flight.
+  /** per profile: the last list the server accepted (revert target) */
+  const confirmedHome = useRef(new Map<string, string[]>());
+  /** per profile: the newest list still to save (it supersedes older ones) */
+  const pendingHome = useRef(new Map<string, string[]>());
+  const inflight = useRef(false);
+  const saveTimer = useRef<number | undefined>(undefined);
+  const flushRef = useRef<() => Promise<void>>(async () => {});
+  /** latest full home of the active profile (incl. ids not shown yet) */
+  const homeRef = useRef<string[]>([]);
+  const profileRef = useRef(activeProfileId);
+  useEffect(() => {
+    profileRef.current = activeProfileId;
+  }, [activeProfileId]);
   const allValuesBtnRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -146,12 +175,23 @@ export default function Dashboard(): React.ReactElement | null {
 
   /* ------------------------------------------------------------ loading */
 
+  /** saved Ana ekran names; null until a SUCCESSFUL GET /api/metric-order */
   const [homeNames, setHomeNames] = useState<string[] | null>(null);
+  /** the saved Ana ekran could not be loaded: edits stay off until a retry works */
+  const [homeLoadFailed, setHomeLoadFailed] = useState(false);
   useEffect(() => {
     if (profileLoading || !activeProfileId) return;
     let ignore = false;
+    // an edit of the previous profile still in the debounce is saved now
+    // (each queued list carries its own profile id)
+    if (pendingHome.current.size) {
+      window.clearTimeout(saveTimer.current);
+      void flushRef.current();
+    }
+    homeRef.current = [];
     setHome(null);
     setHomeNames(null);
+    setHomeLoadFailed(false);
     setSelectedState(null);
     setPinnedState(null);
     setRangeChoiceState(loadRangeChoice(activeProfileId));
@@ -167,20 +207,21 @@ export default function Dashboard(): React.ReactElement | null {
         ]);
         if (!res.ok) throw new Error("Failed to load data");
         const json = (await res.json()) as ApiData;
-        let names: string[] = [];
+        // a failed load is NOT an empty Ana ekran: saving one would wipe it
+        let names: string[] | null = null;
         if (prefRes.ok) {
           const p = await prefRes.json();
           names = Array.isArray(p.home) ? p.home : [];
-        } else if (!ignore) {
-          addToast({
-            type: "error",
-            message: t("metricOrderFailed"),
-            duration: 5000,
+        } else {
+          reportError(new Error(`HTTP ${prefRes.status}`), {
+            op: "dashboard.loadHome",
+            profileId: activeProfileId,
           });
         }
         if (!ignore) {
           setData({ ...json, ...mergeVariants(json.metrics, json.values) });
-          setHomeNames(names);
+          if (names) setHomeNames(names);
+          else setHomeLoadFailed(true);
         }
       } catch (e: unknown) {
         const msg = (e as Error)?.message ?? t("dataLoadFailed");
@@ -318,12 +359,46 @@ export default function Dashboard(): React.ReactElement | null {
   // Kilo / Tansiyon card is there on first paint; unresolved names are kept
   // (see resolveHome), so a late or failed tracking load never drops them.
   useEffect(() => {
-    if (homeNames == null || !data || !trackingLoaded || home != null) return;
+    if (
+      homeNames == null ||
+      !data ||
+      !trackingLoaded ||
+      home != null ||
+      !activeProfileId
+    )
+      return;
     const ids = resolveHome(homeNames, metrics, data.idMap);
     setHome(ids);
-    confirmedHome.current = ids;
+    homeRef.current = ids;
+    confirmedHome.current.set(activeProfileId, ids);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [homeNames, data, metrics, trackingLoaded]);
+
+  const retryHomeLoad = useCallback(async () => {
+    const pid = activeProfileId;
+    if (!pid) return;
+    setHomeLoadFailed(false);
+    try {
+      const res = await fetch(`/api/metric-order?profileId=${pid}`, {
+        cache: "no-store",
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const p = await res.json();
+      if (profileRef.current === pid)
+        setHomeNames(Array.isArray(p.home) ? p.home : []);
+    } catch (e) {
+      reportError(e, { op: "dashboard.loadHome", profileId: pid });
+      if (profileRef.current === pid) setHomeLoadFailed(true);
+    }
+  }, [activeProfileId]);
+  /** edits only once the saved list is in (never build on a partial one) */
+  const homeEditable = canEdit && home != null;
+  const lockReason =
+    !canEdit || homeEditable
+      ? null
+      : homeLoadFailed
+        ? t("homeLoadFailed")
+        : t("homeLoading");
 
   const defaultHome = useMemo(() => pickDefaultHome(metrics), [metrics]);
   const savedHome = useMemo(
@@ -371,69 +446,62 @@ export default function Dashboard(): React.ReactElement | null {
 
   /* -------------------------------------------------- home persistence */
 
-  const confirmedHome = useRef<string[]>([]);
-  const pendingHome = useRef<string[] | null>(null);
-  const inflight = useRef(false);
-  const saveTimer = useRef<number | undefined>(undefined);
-  /** latest full home (incl. ids not shown yet), for undo and reorders */
-  const homeRef = useRef<string[]>([]);
-  useEffect(() => {
-    homeRef.current = home ?? [];
-  }, [home]);
-  const profileRef = useRef(activeProfileId);
-  useEffect(() => {
-    profileRef.current = activeProfileId;
-  }, [activeProfileId]);
-
   const flushHome = useCallback(async () => {
-    if (inflight.current || !pendingHome.current || !activeProfileId) return;
-    const next = pendingHome.current;
-    pendingHome.current = null;
+    if (inflight.current) return;
+    const first = pendingHome.current.entries().next();
+    if (first.done) return;
+    const [profileId, next] = first.value;
+    pendingHome.current.delete(profileId);
     inflight.current = true;
     try {
-      const res = await fetch("/api/metric-order", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ profileId: activeProfileId, home: next }),
-      });
+      const res = await putHome(profileId, next);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      confirmedHome.current = next;
+      confirmedHome.current.set(profileId, next);
     } catch (err) {
-      reportError(err, { op: "dashboard.saveHome" });
-      pendingHome.current = null;
-      setHome(confirmedHome.current);
+      reportError(err, { op: "dashboard.saveHome", profileId });
+      // later edits of this profile were built on the failed list
+      pendingHome.current.delete(profileId);
+      if (profileRef.current === profileId) {
+        const back = confirmedHome.current.get(profileId) ?? [];
+        setHome(back);
+        homeRef.current = back;
+      }
       addToast({ type: "error", message: t("saveFailed"), duration: 5000 });
     } finally {
       inflight.current = false;
-      if (pendingHome.current) void flushHome();
+      // the latest flush, never a closure from an earlier render
+      if (pendingHome.current.size) void flushRef.current();
     }
-  }, [activeProfileId, addToast, t]);
+  }, [addToast, t]);
+  useEffect(() => {
+    flushRef.current = flushHome;
+  }, [flushHome]);
 
   const commitHome = useCallback(
     (next: string[], debounce = 0) => {
-      if (!canEdit) return;
+      if (!homeEditable || !activeProfileId) return;
       setHome(next);
       homeRef.current = next;
-      pendingHome.current = next;
+      pendingHome.current.set(activeProfileId, next);
       window.clearTimeout(saveTimer.current);
-      saveTimer.current = window.setTimeout(() => void flushHome(), debounce);
+      saveTimer.current = window.setTimeout(
+        () => void flushRef.current(),
+        debounce,
+      );
     },
-    [canEdit, flushHome],
+    [homeEditable, activeProfileId],
   );
   // leaving within the reorder debounce must not lose the reorder
   useEffect(
     () => () => {
       window.clearTimeout(saveTimer.current);
-      const next = pendingHome.current;
-      const profileId = profileRef.current;
-      if (!next || !profileId) return;
-      pendingHome.current = null;
-      void fetch("/api/metric-order", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ profileId, home: next }),
-        keepalive: true,
-      }).catch((err) => reportError(err, { op: "dashboard.saveHome.unload" }));
+      const queued = [...pendingHome.current];
+      pendingHome.current.clear();
+      for (const [profileId, next] of queued) {
+        putHome(profileId, next, true).catch((err) =>
+          reportError(err, { op: "dashboard.saveHome.unload" }),
+        );
+      }
     },
     [],
   );
@@ -441,8 +509,9 @@ export default function Dashboard(): React.ReactElement | null {
   const setHomeFor = useCallback(
     (id: string, on: boolean) => {
       const cur = homeRef.current;
-      if (on === cur.includes(id)) return;
+      if (!homeEditable || on === cur.includes(id)) return;
       const oldIndex = cur.indexOf(id);
+      const pid = activeProfileId;
       commitHome(on ? [...cur, id] : cur.filter((x) => x !== id));
       const m = byId.get(id);
       track(on ? "ana_ekran_add" : "ana_ekran_remove", m?.full);
@@ -455,12 +524,14 @@ export default function Dashboard(): React.ReactElement | null {
         // reverse only this change; later adds / removes / reorders stay
         action: {
           label: t("undo"),
+          // a toast from another profile must not edit this one
           onClick: () =>
+            profileRef.current === pid &&
             commitHome(undoHomeToggle(homeRef.current, id, on, oldIndex)),
         },
       });
     },
-    [commitHome, byId, addToast, t],
+    [commitHome, byId, addToast, t, activeProfileId, homeEditable],
   );
   const toggleHome = useCallback(
     (id: string) => setHomeFor(id, !homeRef.current.includes(id)),
@@ -468,10 +539,11 @@ export default function Dashboard(): React.ReactElement | null {
   );
   const reorderHome = useCallback(
     (next: string[], source: "dashboard" | "picker") => {
+      if (!homeEditable) return;
       commitHome(keepHidden(next, homeRef.current), HOME_SAVE_DEBOUNCE);
       track("ana_ekran_reorder", source);
     },
-    [commitHome],
+    [commitHome, homeEditable],
   );
 
   /* ---------------------------------------------------------- settings */
@@ -563,14 +635,17 @@ export default function Dashboard(): React.ReactElement | null {
   }, [metrics]);
   // automatic: smallest preset with 8+ draw dates across the Ana ekran
   // (or empty-state) values, never below "1 ay"
-  const auto = useMemo(
-    () =>
-      autoPreset(
-        dashIds.flatMap((id) => (byId.get(id)?.pts ?? []).map((p) => p.t)),
-        anchor,
-      ),
-    [dashIds, byId, anchor],
-  );
+  // (lab draws only: a daily Kilo log must not force "1 ay"; tracking
+  // readings count only when the Ana ekran has no lab values at all)
+  const auto = useMemo(() => {
+    const ms = dashIds
+      .map((id) => byId.get(id))
+      .filter((m): m is DashMetric => !!m);
+    const times = (list: DashMetric[]) =>
+      list.flatMap((m) => m.pts.map((p) => p.t));
+    const lab = times(ms.filter((m) => !m.tracking));
+    return autoPreset(lab.length ? lab : times(ms), anchor);
+  }, [dashIds, byId, anchor]);
   const [lo, hi] = rangeBounds(
     rangeChoice ?? { kind: "preset", preset: auto },
     anchor,
@@ -759,7 +834,19 @@ export default function Dashboard(): React.ReactElement | null {
               </button>
               <span className="vz-date-label">{dateLabel}</span>
             </div>
-            {isEmpty && (
+            {homeLoadFailed && (
+              <p className="vz-empty-hint vz-readonly" role="alert">
+                {t("homeLoadFailed")}{" "}
+                <button
+                  type="button"
+                  className="vz-link"
+                  onClick={() => void retryHomeLoad()}
+                >
+                  {t("retry")}
+                </button>
+              </p>
+            )}
+            {isEmpty && home != null && (
               <p className="vz-empty-hint">
                 {t("emptyHint", { count: dashIds.length })}{" "}
                 {canEdit && (
@@ -784,7 +871,8 @@ export default function Dashboard(): React.ReactElement | null {
               selected={selected ?? []}
               toggleChart={toggleChart}
               isHome={!isEmpty}
-              canEdit={canEdit}
+              canEdit={homeEditable}
+              lockReason={lockReason}
               onReorder={(next) => reorderHome(next, "dashboard")}
               onSetHome={(id, on) => {
                 setHomeFor(id, on);
@@ -870,7 +958,7 @@ export default function Dashboard(): React.ReactElement | null {
                     setPinned={setPinned}
                     showAvg={showAvg}
                     view={view}
-                    today={today}
+                    anchor={anchor}
                     fmt={fmt}
                     onShowNormal={() => setView({ full: true })}
                     onRemove={() => toggleChart(m.id)}
@@ -898,7 +986,8 @@ export default function Dashboard(): React.ReactElement | null {
         isPhone={isPhone}
         metrics={metrics}
         home={savedHome}
-        canEdit={canEdit}
+        canEdit={homeEditable}
+        lockReason={lockReason}
         onToggleHome={toggleHome}
         onReorderHome={(next) => reorderHome(next, "picker")}
         selected={selected ?? []}

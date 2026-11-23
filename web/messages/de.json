@@ -223,7 +223,9 @@
     "dashboard": {
       "loadingData": "Daten werden geladen…",
       "dataLoadFailed": "Daten konnten nicht geladen werden",
-      "metricOrderFailed": "Startseiten-Einstellungen konnten nicht geladen werden.",
+      "homeLoading": "Startseite wird geladen…",
+      "homeLoadFailed": "Die Startseite konnte nicht geladen werden. Versuchen Sie es erneut, um Änderungen vorzunehmen.",
+      "retry": "Erneut versuchen",
       "saveFailed": "Startseite konnte nicht gespeichert werden. Bitte erneut versuchen.",
       "values": "Werte",
       "latestReport": "Letzter Befund · {date}",
@@ -231,6 +233,7 @@
       "lastValueShort": "Letzter",
       "average": "Durchschnitt",
       "averageShort": "Ø",
+      "avgMixedUnits": "Unterschiedliche Einheiten, kein Durchschnitt",
       "showAverage": "Durchschnitt anzeigen",
       "noDataInRange": "Keine Daten in diesem Zeitraum",
       "weight": "Gewicht",

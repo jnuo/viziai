@@ -23,6 +23,8 @@ import {
 import { useTranslations } from "next-intl";
 import {
   personalBand,
+  latestUnitPts,
+  windowAverage,
   pointStatus,
   changeBetween,
   displayUnit,
@@ -65,7 +67,8 @@ type Props = {
   setPinned: SetPinned;
   showAvg: boolean;
   view: ViewSettings;
-  today: number;
+  /** latest lab draw: "Kişisel aralık" counts its 90 days back from here */
+  anchor: number;
   fmt: DateFormats;
   onShowNormal: () => void;
   onRemove: () => void;
@@ -131,27 +134,32 @@ function MetricChartImpl(props: Props) {
     setPinned,
     showAvg,
     view,
-    today,
+    anchor,
     fmt,
     onShowNormal,
     onRemove,
   } = props;
   const t = useTranslations("pages.dashboard.chart");
   const ts = useTranslations("pages.dashboard.status");
+  const td = useTranslations("pages.dashboard");
   const [plot, setPlot] = useState<Plot | null>(null);
 
   const refMin = m.ref_min;
   const refMax = m.ref_max;
   const rt = rangeText(refMin, refMax);
   const unit = displayUnit(m.unit);
+  // Kilo / Tansiyon end at their own latest reading, lab metrics at the draw
+  const bandEnd = m.tracking ? (m.stat.last?.t ?? anchor) : anchor;
   const pers = useMemo(
-    () => (view.pers && pts.length > 1 ? personalBand(m.pts, today) : null),
-    [view.pers, pts.length, m.pts, today],
+    () => (view.pers && pts.length > 1 ? personalBand(latestUnitPts(m.pts).pts, bandEnd) : null),
+    [view.pers, pts.length, m.pts, bandEnd],
   );
-  const vals = pts.map((p) => p.v);
-  const avg = vals.length
-    ? vals.reduce((a, b) => a + b, 0) / vals.length
-    : null;
+  // average and y-scale only over the latest unit: a window that switched
+  // from mg/dL to mmol/L gets no average line rather than a wrong one
+  const sameUnit = latestUnitPts(pts);
+  const vals = sameUnit.pts.map((p) => p.v);
+  const avg = windowAverage(pts);
+  const avgMixed = showAvg && pts.length > 0 && avg == null;
   const latestVisible = pts[pts.length - 1];
   const badgeSt = latestVisible ? pointStatus(m, latestVisible) : "none";
 
@@ -193,6 +201,7 @@ function MetricChartImpl(props: Props) {
       {!view.full && pts.length > 0 && (
         <span className="it scale">{t("scale")}</span>
       )}
+      {avgMixed && <span className="it">{td("avgMixedUnits")}</span>}
     </div>
   );
 

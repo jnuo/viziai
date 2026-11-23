@@ -63,7 +63,7 @@ function renderChart(full: boolean) {
       setPinned={() => {}}
       showAvg={false}
       view={{ ...DEFAULT_VIEW, full }}
-      today={m.pts[4].t}
+      anchor={m.pts[4].t}
       fmt={makeDateFormats("tr")}
       onShowNormal={() => {}}
       onRemove={() => {}}

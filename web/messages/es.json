@@ -223,7 +223,9 @@
     "dashboard": {
       "loadingData": "Cargando datos…",
       "dataLoadFailed": "No se pudieron cargar los datos",
-      "metricOrderFailed": "No se pudo cargar la configuración de la pantalla principal.",
+      "homeLoading": "Cargando la pantalla principal…",
+      "homeLoadFailed": "No se pudo cargar la pantalla principal. Vuelve a intentarlo para hacer cambios.",
+      "retry": "Reintentar",
       "saveFailed": "No se pudo guardar la pantalla principal. Inténtalo de nuevo.",
       "values": "Valores",
       "latestReport": "Último análisis · {date}",
@@ -231,6 +233,7 @@
       "lastValueShort": "Último",
       "average": "Promedio",
       "averageShort": "Prom.",
+      "avgMixedUnits": "Unidades distintas, sin promedio",
       "showAverage": "Mostrar promedio",
       "noDataInRange": "No hay datos en este periodo",
       "weight": "Peso",

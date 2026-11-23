@@ -138,15 +138,17 @@ export function rangeWidth(
 
 /**
  * "Kişisel aralık": the middle 80% (p10–p90) of this person's own values in
- * the last 90 days. Needs at least `minPoints` values in that window.
+ * the 90 days up to `end` (the latest draw, like the date ranges, so a
+ * profile whose last test was months ago still gets a band). Needs at least
+ * `minPoints` values in that window.
  */
 export function personalBand(
   pts: Pick<Pt, "t" | "v">[],
-  today: number,
+  end: number,
   minPoints = 5,
 ): [number, number] | null {
   const v = pts
-    .filter((p) => p.t >= today - 90 * DAY && p.t <= today)
+    .filter((p) => p.t >= end - 90 * DAY && p.t <= end)
     .map((p) => p.v)
     .sort((a, b) => a - b);
   if (v.length < minPoints) return null;
@@ -439,6 +441,25 @@ export function buildMetrics(
   });
 }
 
+/**
+ * The points of a window that share the latest point's unit (unitKey; a
+ * point without a unit counts as matching). `mixed`: some point is in
+ * another unit, so the window must not be averaged or scaled as one.
+ */
+export function latestUnitPts(pts: Pt[]): { pts: Pt[]; mixed: boolean } {
+  const last = pts.findLast((p) => p.unit);
+  if (!last) return { pts, mixed: false };
+  const k = unitKey(last.unit);
+  const same = pts.filter((p) => !p.unit || unitKey(p.unit) === k);
+  return { pts: same, mixed: same.length !== pts.length };
+}
+
+/** Mean of a window; null when it is empty or mixes units (no wrong average). */
+export function windowAverage(pts: Pt[]): number | null {
+  if (!pts.length || latestUnitPts(pts).mixed) return null;
+  return pts.reduce((s, p) => s + p.v, 0) / pts.length;
+}
+
 /** Change between two points; null across a unit switch. */
 export function changeBetween(prev: Pt | null, cur: Pt): number | null {
   if (!prev) return null;
@@ -531,9 +552,11 @@ function computeStat(
 /**
  * The same test under several names becomes one metric: names equal after
  * Turkish folding ("Potasyum" / "POTASYUM"), or names mapped to the same
- * metric definition with the same unit. Different units stay apart (BUN vs
- * Üre are different numbers). The first variant (profile order) is kept as
- * the id; the others become search aliases and their values move over.
+ * metric definition, in both cases only with the same unit (unitKey, so
+ * "gr/dL" = "g/dL"). Different units stay apart (BUN vs Üre, or Glukoz in
+ * mg/dL vs mmol/L, are different numbers). The first variant (profile
+ * order) is kept as the id; the others become search aliases and their
+ * values move over.
  */
 export function mergeVariants(
   metrics: RawMetric[],
@@ -543,9 +566,10 @@ export function mergeVariants(
   const byKey = new Map<string, RawMetric>();
   const idMap = new Map<string, string>();
   for (const m of metrics) {
-    const keys = [`n:${fold(m.name)}`];
+    const unit = unitKey(cleanUnit(m.unit));
+    const keys = [`n:${fold(m.name)}:${unit}`];
     if (m.metric_definition_id) {
-      keys.push(`d:${m.metric_definition_id}:${unitKey(cleanUnit(m.unit))}`);
+      keys.push(`d:${m.metric_definition_id}:${unit}`);
     }
     const first = keys.map((k) => byKey.get(k)).find(Boolean);
     if (!first) {

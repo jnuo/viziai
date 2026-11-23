@@ -223,7 +223,9 @@
     "dashboard": {
       "loadingData": "Gegevens laden…",
       "dataLoadFailed": "Gegevens konden niet worden geladen",
-      "metricOrderFailed": "Instellingen van het startscherm konden niet worden geladen.",
+      "homeLoading": "Startscherm wordt geladen…",
+      "homeLoadFailed": "Het startscherm kon niet worden geladen. Probeer het opnieuw om wijzigingen te maken.",
+      "retry": "Opnieuw proberen",
       "saveFailed": "Startscherm kon niet worden opgeslagen. Probeer het opnieuw.",
       "values": "Waarden",
       "latestReport": "Laatste uitslag · {date}",
@@ -231,6 +233,7 @@
       "lastValueShort": "Laatste",
       "average": "Gemiddelde",
       "averageShort": "Gem.",
+      "avgMixedUnits": "Verschillende eenheden, geen gemiddelde",
       "showAverage": "Gemiddelde tonen",
       "noDataInRange": "Geen gegevens in deze periode",
       "weight": "Gewicht",

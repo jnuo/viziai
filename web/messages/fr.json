@@ -223,7 +223,9 @@
     "dashboard": {
       "loadingData": "Chargement des données…",
       "dataLoadFailed": "Impossible de charger les données",
-      "metricOrderFailed": "Impossible de charger les réglages de l’écran d’accueil.",
+      "homeLoading": "Chargement de l’écran d’accueil…",
+      "homeLoadFailed": "Impossible de charger l’écran d’accueil. Réessayez pour le modifier.",
+      "retry": "Réessayer",
       "saveFailed": "Impossible d’enregistrer l’écran d’accueil. Veuillez réessayer.",
       "values": "Valeurs",
       "latestReport": "Dernier bilan · {date}",
@@ -231,6 +233,7 @@
       "lastValueShort": "Dernière",
       "average": "Moyenne",
       "averageShort": "Moy.",
+      "avgMixedUnits": "Unités différentes, pas de moyenne",
       "showAverage": "Afficher la moyenne",
       "noDataInRange": "Aucune donnée sur cette période",
       "weight": "Poids",

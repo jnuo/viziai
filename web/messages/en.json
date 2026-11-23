@@ -223,7 +223,9 @@
     "dashboard": {
       "loadingData": "Loading data…",
       "dataLoadFailed": "Could not load data",
-      "metricOrderFailed": "Could not load home screen settings.",
+      "homeLoading": "Loading the home screen…",
+      "homeLoadFailed": "Could not load the home screen. Try again to make changes.",
+      "retry": "Try again",
       "saveFailed": "Could not save the home screen. Please try again.",
       "values": "Values",
       "latestReport": "Latest test · {date}",
@@ -231,6 +233,7 @@
       "lastValueShort": "Latest",
       "average": "Average",
       "averageShort": "Avg.",
+      "avgMixedUnits": "Mixed units, no average",
       "showAverage": "Show average",
       "noDataInRange": "No data in this range",
       "weight": "Weight",

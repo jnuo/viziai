@@ -494,6 +494,47 @@ test.describe("Dashboard: Ana ekran, picker, charts", () => {
     await context.close();
   });
 
+  test("PR #160: a failed Ana ekran load locks edits and never overwrites the saved list", async ({
+    browser,
+  }) => {
+    let failGet = true;
+    const { context, page } = await open(
+      browser,
+      userId,
+      TEST_EMAIL,
+      undefined,
+      (p) =>
+        p.route("**/api/metric-order?*", (route) =>
+          failGet
+            ? route.fulfill({ status: 500, body: "{}" })
+            : route.continue(),
+        ),
+    );
+    await page.getByRole("button", { name: /Tüm değerler/ }).click();
+    await page.getByRole("dialog").getByRole("searchbox").fill("ferr");
+    const add = page.getByRole("button", {
+      name: "Ana ekranda göster: Ferritin",
+    });
+    await expect(add).toBeDisabled();
+    await page.keyboard.press("Escape");
+    await expect(
+      page.getByText("Ana ekran yüklenemedi.", { exact: false }).first(),
+    ).toBeVisible();
+    await page.waitForTimeout(600);
+    expect(await homeInDb()).toEqual(HOME);
+
+    // retry: the saved list loads, edits unlock and save the FULL list
+    failGet = false;
+    await page.getByRole("button", { name: "Yeniden dene" }).click();
+    await expect.poll(() => cardNames(page)).toEqual(HOME);
+    await page.getByRole("button", { name: /Tüm değerler/ }).click();
+    await page.getByRole("dialog").getByRole("searchbox").fill("ferr");
+    await expect(add).toBeEnabled();
+    await add.click();
+    await expect.poll(homeInDb).toEqual([...HOME, "Ferritin"]);
+    await context.close();
+  });
+
   test("Ana ekran PUT rejects names the profile does not have", async ({
     browser,
   }) => {

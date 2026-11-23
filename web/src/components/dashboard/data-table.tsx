@@ -7,6 +7,7 @@ import {
   displayUnit,
   pointStatus,
   statusOf,
+  windowAverage,
   type DashMetric,
   type Pt,
 } from "@/lib/chart/model";
@@ -33,6 +34,7 @@ export function DataTable({
 }: Props) {
   const t = useTranslations("pages.dashboard.table");
   const ts = useTranslations("pages.dashboard.status");
+  const td = useTranslations("pages.dashboard");
   const wrapRef = useRef<HTMLDivElement>(null);
   const dates = useMemo(() => {
     const s = new Set<number>();
@@ -155,8 +157,25 @@ export function DataTable({
                       </td>
                     );
                   }
-                  const a = v.reduce((s, p) => s + p.v, 0) / v.length;
-                  const st = statusOf(a, m.ref_min, m.ref_max);
+                  const a = windowAverage(v);
+                  if (a == null) {
+                    // mixed units: no average rather than a wrong one
+                    return (
+                      <td key={m.id} className="na">
+                        <span className="cell">
+                          <span className="v">—</span>
+                          <span className="d">{td("avgMixedUnits")}</span>
+                        </span>
+                      </td>
+                    );
+                  }
+                  const l = v[v.length - 1];
+                  const own = l.refMin != null || l.refMax != null;
+                  const st = statusOf(
+                    a,
+                    own ? l.refMin : m.ref_min,
+                    own ? l.refMax : m.ref_max,
+                  );
                   return (
                     <td key={m.id}>
                       <span className="cell">

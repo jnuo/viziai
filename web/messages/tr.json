@@ -223,7 +223,9 @@
     "dashboard": {
       "loadingData": "Veriler yükleniyor…",
       "dataLoadFailed": "Veriler yüklenemedi",
-      "metricOrderFailed": "Ana ekran ayarları yüklenemedi.",
+      "homeLoading": "Ana ekran yükleniyor…",
+      "homeLoadFailed": "Ana ekran yüklenemedi. Değişiklik yapmak için yeniden deneyin.",
+      "retry": "Yeniden dene",
       "saveFailed": "Ana ekran kaydedilemedi. Lütfen tekrar deneyin.",
       "values": "Değerler",
       "latestReport": "Son tahlil · {date}",
@@ -231,6 +233,7 @@
       "lastValueShort": "Son",
       "average": "Ortalama",
       "averageShort": "Ort.",
+      "avgMixedUnits": "Birimler farklı, ortalama yok",
       "showAverage": "Ortalama göster",
       "noDataInRange": "Bu aralıkta veri yok",
       "weight": "Kilo",

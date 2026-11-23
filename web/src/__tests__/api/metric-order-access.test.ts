@@ -144,3 +144,24 @@ describe("parseNameList", () => {
     expect(parseNameList(["A", "A"])).toEqual(["A"]);
   });
 });
+
+describe("PR #160 review: an empty Ana ekran must be an explicit clear", () => {
+  beforeEach(() => {
+    levelMock.mockResolvedValue("owner");
+    sqlMock.mockReset();
+    sqlMock.mockResolvedValue([]);
+  });
+
+  it("refuses home: [] without clear: true and writes nothing", async () => {
+    const res = await put({ profileId: "p1", home: [] });
+    expect(res.status).toBe(409);
+    expect(sqlMock).not.toHaveBeenCalled();
+  });
+
+  it("clears it when the last item is removed explicitly (clear: true)", async () => {
+    const res = await put({ profileId: "p1", home: [], clear: true });
+    expect(res.status).toBe(200);
+    expect(sqlMock).toHaveBeenCalledTimes(1); // one batched write, no lookup
+    expect((sqlMock.mock.calls[0][0] as string[]).join("?")).toMatch(/is_favorite = false/);
+  });
+});

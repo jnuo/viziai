@@ -329,6 +329,30 @@ describe("mergeVariants", () => {
     );
     expect(metrics).toHaveLength(2);
   });
+
+  // PR #160 review: equal names after folding still need the same unit
+  it("keeps Turkish-case spellings apart when the unit differs", () => {
+    const { metrics, values } = mergeVariants(
+      [
+        { id: "Glukoz", name: "Glukoz", unit: "mg/dL", ref_min: 70, ref_max: 100 },
+        { id: "GLUKOZ", name: "GLUKOZ", unit: "mmol/L", ref_min: 3.9, ref_max: 5.6 },
+      ],
+      [v("Glukoz", D1, 92), v("GLUKOZ", D2, 5.1)],
+    );
+    expect(metrics.map((m) => m.id)).toEqual(["Glukoz", "GLUKOZ"]);
+    expect(values.map((x) => x.metric_id)).toEqual(["Glukoz", "GLUKOZ"]);
+  });
+
+  it("still merges spellings whose units differ only in writing (gr/dL = g/dL)", () => {
+    const { metrics } = mergeVariants(
+      [
+        { id: "Hemoglobin", name: "Hemoglobin", unit: "g/dL", ref_min: 12, ref_max: 16 },
+        { id: "HEMOGLOBIN", name: "HEMOGLOBIN", unit: "gr/dL", ref_min: 12, ref_max: 16 },
+      ],
+      [],
+    );
+    expect(metrics.map((m) => m.id)).toEqual(["Hemoglobin"]);
+  });
 });
 
 describe("change label (changeAt): 'İlk ölçüm' only for a single value", () => {
