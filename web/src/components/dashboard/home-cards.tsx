@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {
   changeAt,
+  displayUnit,
   moveItem,
   statusOf,
   pointStatus,
@@ -197,7 +198,9 @@ function Card({
         <span className="mc-name">{m.name}</span>
         <span className={`mc-val ${cls}`}>
           {value != null ? fmtV(value) : "—"}{" "}
-          <span className="mc-unit">{m.stat.last?.unit || m.unit}</span>
+          <span className="mc-unit">
+            {displayUnit(m.stat.last?.unit || m.unit)}
+          </span>
         </span>
         <span className="mc-sub">{sub}</span>
       </button>
@@ -219,7 +222,7 @@ function Card({
           <div className="vz-menu-info">
             <b>{m.full}</b>
             <br />
-            {t("refRange")}: {rt ? `${rt} ${m.unit}` : t("noRef")}
+            {t("refRange")}: {rt ? `${rt} ${displayUnit(m.unit)}` : t("noRef")}
             {m.stat.out ? ` · ${ts(lastSt)}` : ""}
           </div>
           <DropdownMenuSeparator />

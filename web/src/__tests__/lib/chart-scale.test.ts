@@ -22,7 +22,11 @@ describe("niceStep", () => {
 describe("yScale (fit to data)", () => {
   it("#157: a chronically low Trombosit series is not flattened by its range", () => {
     // synthetic fixture
-    const s = yScale([60, 70, 40, 35, 50], { nTicks: 5, refMin: 117, refMax: 354 });
+    const s = yScale([60, 70, 40, 35, 50], {
+      nTicks: 5,
+      refMin: 117,
+      refMax: 354,
+    });
     expect(s.y1).toBeLessThan(100);
     expect(s.y0).toBeGreaterThanOrEqual(20);
     expect(s.y1).toBeLessThanOrEqual(90);
@@ -123,6 +127,34 @@ describe("placeLabels (label thinning)", () => {
     }
   });
 
+  it("never drops the last label: an edge-strip label above it pushes it aside", () => {
+    // last point at the top-right with the "Normal aralık ↑" label right
+    // above it and the previous day's dot right below it (synthetic layout):
+    // neither "above" nor "below" is free
+    const pts = [
+      { x: 60, y: 150, v: 9.1, txt: "9.1", dl: "" },
+      { x: 520, y: 60, v: 10.1, txt: "10.1", dl: "↑0.3" },
+      { x: 556, y: 50, v: 9.9, txt: "9.9", dl: "↓0.2" },
+      { x: 564, y: 30, v: 10.2, txt: "10.2", dl: "↑0.3" },
+    ];
+    const strip = { x0: 470, x1: 600, y0: 0, y1: 22 };
+    const placed = placeLabels(pts, bounds, [strip]);
+    const last = placed.find((l) => l.i === 3);
+    expect(last).toBeDefined();
+    // it found a free spot: not on top of the strip label
+    const top = last!.y - 9.5; // label box top (12px high)
+    expect(top).toBeGreaterThanOrEqual(strip.y1);
+  });
+
+  it("never drops the last label even when every spot is taken", () => {
+    const pts = [
+      { x: 100, y: 100, v: 1, txt: "1", dl: "" },
+      { x: 300, y: 100, v: 2, txt: "2", dl: "↑1" },
+    ];
+    const wall = { x0: 0, x1: 600, y0: 0, y1: 200 };
+    expect(placeLabels(pts, bounds, [wall]).map((l) => l.i)).toEqual([1]);
+  });
+
   it("also labels the pinned point on a dense series", () => {
     const pts = mk(12, 45);
     expect(placeLabels(pts, bounds, [], 5).map((l) => l.i)).toContain(5);
@@ -138,16 +170,25 @@ describe("placeLabels (label thinning)", () => {
       dl: "",
     }));
     pts.forEach((p) => (p.y = 150 - p.v * 10));
-    expect(placeLabels(pts, bounds).map((l) => l.i).sort((a, b) => a - b)).toEqual([0, 3, 6, 11]);
+    expect(
+      placeLabels(pts, bounds)
+        .map((l) => l.i)
+        .sort((a, b) => a - b),
+    ).toEqual([0, 3, 6, 11]);
   });
 
   it("respects obstacles (e.g. the average pill)", () => {
-    const pts = [{ x: 100, y: 100, v: 1, txt: "1", dl: "" }];
-    const block = [
-      { x0: 0, x1: 600, y0: 70, y1: 95 },
-      { x0: 0, x1: 600, y0: 105, y1: 130 },
+    const pts = [
+      { x: 100, y: 100, v: 1, txt: "1", dl: "" },
+      { x: 400, y: 160, v: 2, txt: "2", dl: "↑1" },
     ];
-    expect(placeLabels(pts, bounds, block)).toHaveLength(0);
+    const block = [
+      { x0: 0, x1: 300, y0: 70, y1: 95 },
+      { x0: 0, x1: 300, y0: 105, y1: 130 },
+      { x0: 0, x1: 300, y0: 94, y1: 106 },
+    ];
+    // the first point has no free spot and is dropped; the last one is free
+    expect(placeLabels(pts, bounds, block).map((l) => l.i)).toEqual([1]);
   });
 });
 

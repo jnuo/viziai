@@ -354,6 +354,23 @@ export function unitKey(u: string): string {
     .replace(/^gr(?=\/)/, "g");
 }
 
+const SUP: Record<string, string> = {
+  "0": "⁰", "1": "¹", "2": "²", "3": "³", "4": "⁴",
+  "5": "⁵", "6": "⁶", "7": "⁷", "8": "⁸", "9": "⁹",
+};
+/**
+ * Unit for display only ("10^3/uL" -> "10³/µL", "x10^9/L" -> "10⁹/L",
+ * "ug/dL" -> "µg/dL"). Comparisons keep using the raw unit (unitKey).
+ * Enzyme units ("U/L") stay as they are.
+ */
+export function displayUnit(u: string | null | undefined): string {
+  return cleanUnit(u)
+    .replace(/^x\s*(?=10\^)/i, "")
+    .replace(/\^(\d+)/g, (_, d: string) => [...d].map((c) => SUP[c]).join(""))
+    .replace(/(^|[^A-Za-z])u(?=(L|l|g|mol|IU|U)\b)/g, "$1µ")
+    .replace(/μ/g, "µ");
+}
+
 export function buildMetrics(
   raw: RawMetric[],
   values: RawValue[],

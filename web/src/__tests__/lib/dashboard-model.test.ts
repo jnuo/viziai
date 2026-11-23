@@ -19,6 +19,7 @@ import {
   keepHidden,
   undoHomeToggle,
   lowerKey,
+  displayUnit,
   toMs,
   DAY,
   type RawMetric,
@@ -448,5 +449,23 @@ describe("Turkish case: ASCII 'I'", () => {
     expect(first("IDRAR")).toBe("İdrar Dansitesi");
     expect(first("ıdrar")).toBe("İdrar Dansitesi");
     expect(fold("HEMOGLOBIN")).toBe(fold("hemoglobın"));
+  });
+});
+
+describe("displayUnit (display only)", () => {
+  it("writes powers and micro the way labs print them", () => {
+    expect(displayUnit("10^3/uL")).toBe("10³/µL");
+    expect(displayUnit("x10^9/L")).toBe("10⁹/L");
+    expect(displayUnit("10^6/µL")).toBe("10⁶/µL");
+    expect(displayUnit("ug/dL")).toBe("µg/dL");
+    expect(displayUnit("uIU/mL")).toBe("µIU/mL");
+    expect(displayUnit("umol/L")).toBe("µmol/L");
+  });
+  it("leaves other units alone and keeps comparisons on the raw unit", () => {
+    expect(displayUnit("U/L")).toBe("U/L");
+    expect(displayUnit("mU/L")).toBe("mU/L");
+    expect(displayUnit("g/dL")).toBe("g/dL");
+    expect(displayUnit("-")).toBe("");
+    expect(unitKey(displayUnit("10^3/uL"))).toBe(unitKey("10^3/uL"));
   });
 });

@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef } from "react";
 import { useTranslations } from "next-intl";
 import {
   changeBetween,
+  displayUnit,
   pointStatus,
   statusOf,
   type DashMetric,
@@ -76,7 +77,7 @@ export function DataTable({
                   <th key={m.id} title={m.full}>
                     <div className="th-name">{m.name}</div>
                     <div className="th-sub">
-                      {m.unit}
+                      {displayUnit(m.unit)}
                       {rt ? ` · ${t("normal", { range: rt })}` : ""}
                     </div>
                   </th>

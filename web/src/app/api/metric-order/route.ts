@@ -9,6 +9,13 @@ import { reportError } from "@/lib/error-reporting";
 import { parseNameList } from "@/lib/chart/name-list";
 
 export const runtime = "nodejs";
+
+/** Kilo / Tansiyon cards (home measurements, not lab metrics) */
+const TRACKING_IDS = new Set([
+  "__tracking_weight",
+  "__tracking_bp_systolic",
+  "__tracking_bp_diastolic",
+]);
 export const dynamic = "force-dynamic";
 
 /**
@@ -110,6 +117,30 @@ export async function PUT(request: Request) {
     const level = await getProfileAccessLevel(userId, profileId);
     if (level !== "owner" && level !== "editor") {
       return NextResponse.json({ error: "Access denied" }, { status: 403 });
+    }
+
+    // Only names this profile has: its measured metrics, rows it already
+    // has a preference for, or the Kilo / Tansiyon pseudo-ids. Anything
+    // else would create preference rows for made-up names.
+    const names = (home ?? order)!;
+    const asked = names.filter((n) => !TRACKING_IDS.has(n));
+    if (asked.length > 0) {
+      const known = await sql`
+        SELECT DISTINCT m.name
+        FROM metrics m JOIN reports r ON r.id = m.report_id
+        WHERE r.profile_id = ${profileId} AND m.name = ANY(${asked}::text[])
+        UNION
+        SELECT name FROM metric_preferences
+        WHERE profile_id = ${profileId} AND name = ANY(${asked}::text[])
+      `;
+      const ok = new Set((known || []).map((r) => r.name as string));
+      const unknown = asked.filter((n) => !ok.has(n));
+      if (unknown.length > 0) {
+        return NextResponse.json(
+          { error: "Unknown metric names for this profile", unknown: unknown.length },
+          { status: 400 },
+        );
+      }
     }
 
     if (home) {

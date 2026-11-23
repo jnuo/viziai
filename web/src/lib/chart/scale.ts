@@ -193,8 +193,10 @@ export function textWidth(s: string, charW: number): number {
 /**
  * Value labels ("9.8 ↑0.1") on points: every point when ≤ 8 are visible,
  * otherwise only last/max/min/first plus the pinned point. Each label goes
- * above its dot (below for a valley) and is dropped — never overlapped —
- * when neither side fits.
+ * above its dot (below for a valley), else left or right of it, and is
+ * dropped — never overlapped — when nothing fits. The last and the pinned
+ * point are never dropped: with no free spot they take the in-bounds spot
+ * that overlaps least.
  */
 export function placeLabels(
   pts: LabelInput[],
@@ -211,7 +213,11 @@ export function placeLabels(
     if (p.v > pts[ma].v) ma = i;
   });
   const rest = n <= 8 ? pts.map((_, i) => n - 1 - i) : [];
-  const pin = pinnedIndex != null && pinnedIndex >= 0 && pinnedIndex < n ? [pinnedIndex] : [];
+  const pin =
+    pinnedIndex != null && pinnedIndex >= 0 && pinnedIndex < n
+      ? [pinnedIndex]
+      : [];
+  const must = new Set([...pin, n - 1]);
   const order = [...new Set([...pin, n - 1, ma, mi, 0, ...rest])];
   const placed = [...obstacles];
   const dots = pts.map((p) => ({
@@ -222,23 +228,45 @@ export function placeLabels(
   }));
   const out: PlacedLabel[] = [];
   const h = 12;
+  const clampX = (x0: number, w: number) =>
+    Math.max(bounds.x0, Math.min(x0, bounds.x1 - w));
   for (const i of order) {
     const p = pts[i];
-    const w = textWidth(p.txt, 6.4) + (p.dl ? textWidth(p.dl, 5.6) + 4 : 0) + 4;
+    const w =
+      textWidth(p.txt, 6.4) + (p.dl ? textWidth(p.dl, 5.6) + 4 : 0) + 4;
     const a = pts[i - 1];
     const b = pts[i + 1];
     const valley = (a || b) && (!a || p.v <= a.v) && (!b || p.v <= b.v);
-    for (const side of valley ? ["below", "above"] : ["above", "below"]) {
-      const x0 = Math.max(bounds.x0, Math.min(p.x - w / 2, bounds.x1 - w));
-      const y0 = side === "above" ? p.y - 7 - h : p.y + 7;
-      const bx = { x0, x1: x0 + w, y0, y1: y0 + h };
-      if (bx.y0 < bounds.y0 || bx.y1 > bounds.y1) continue;
-      if (placed.some((o) => boxesHit(o, bx))) continue;
-      if (dots.some((o, j) => j !== i && boxesHit(o, bx))) continue;
-      placed.push(bx);
-      out.push({ i, x: x0 + w / 2, y: y0 + h - 2.5, txt: p.txt, dl: p.dl });
-      break;
+    const above = { x0: clampX(p.x - w / 2, w), y0: p.y - 7 - h };
+    const below = { x0: clampX(p.x - w / 2, w), y0: p.y + 7 };
+    const left = { x0: p.x - 8 - w, y0: p.y - h / 2 };
+    const right = { x0: p.x + 8, y0: p.y - h / 2 };
+    const spots = (valley ? [below, above] : [above, below])
+      .concat([left, right])
+      .map((c) => ({ x0: c.x0, x1: c.x0 + w, y0: c.y0, y1: c.y0 + h }))
+      .filter(
+        (bx) =>
+          bx.x0 >= bounds.x0 &&
+          bx.x1 <= bounds.x1 &&
+          bx.y0 >= bounds.y0 &&
+          bx.y1 <= bounds.y1,
+      );
+    const hits = (bx: Box) =>
+      placed.filter((o) => boxesHit(o, bx)).length +
+      dots.filter((o, j) => j !== i && boxesHit(o, bx)).length;
+    let bx = spots.find((c) => hits(c) === 0);
+    if (!bx && must.has(i) && spots.length) {
+      bx = spots.reduce((best, c) => (hits(c) < hits(best) ? c : best));
     }
+    if (!bx) continue;
+    placed.push(bx);
+    out.push({
+      i,
+      x: bx.x0 + w / 2,
+      y: bx.y0 + h - 2.5,
+      txt: p.txt,
+      dl: p.dl,
+    });
   }
   return out;
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import {
   Popover,
@@ -20,6 +20,7 @@ type Props = {
 export function ViewMenu({ view, setView, isPhone }: Props) {
   const t = useTranslations("pages.dashboard.view");
   const [open, setOpen] = useState(false);
+  const btnRef = useRef<HTMLButtonElement>(null);
   const customized = view.full || !view.labels || view.pers;
 
   const check = (
@@ -97,6 +98,7 @@ export function ViewMenu({ view, setView, isPhone }: Props) {
 
   const trigger = (
     <button
+      ref={btnRef}
       type="button"
       className="vz-btn"
       aria-haspopup="dialog"
@@ -116,6 +118,11 @@ export function ViewMenu({ view, setView, isPhone }: Props) {
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetContent
             side="bottom"
+            // the trigger sits outside the Sheet: hand focus back explicitly
+            onCloseAutoFocus={(e) => {
+              e.preventDefault();
+              btnRef.current?.focus();
+            }}
             className="vzd vz-pop rounded-t-2xl px-4 pt-4 pb-[calc(20px+env(safe-area-inset-bottom))]"
           >
             <SheetTitle className="text-[13px] font-semibold">

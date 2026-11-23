@@ -25,6 +25,7 @@ import {
   personalBand,
   pointStatus,
   changeBetween,
+  displayUnit,
   prevOf,
   isOut,
   unitKey,
@@ -142,7 +143,7 @@ function MetricChartImpl(props: Props) {
   const refMin = m.ref_min;
   const refMax = m.ref_max;
   const rt = rangeText(refMin, refMax);
-  const unit = m.unit;
+  const unit = displayUnit(m.unit);
   const pers = useMemo(
     () => (view.pers && pts.length > 1 ? personalBand(m.pts, today) : null),
     [view.pers, pts.length, m.pts, today],
@@ -161,7 +162,7 @@ function MetricChartImpl(props: Props) {
       </span>
       {latestVisible && (
         <span className={`vz-badge ${statusClass(badgeSt)}`}>
-          {fmtV(latestVisible.v)} {latestVisible.unit || m.unit}
+          {fmtV(latestVisible.v)} {displayUnit(latestVisible.unit || m.unit)}
         </span>
       )}
       <button
@@ -343,7 +344,7 @@ function MetricChartImpl(props: Props) {
           <>
             <div className="tip-val">
               {fmtV(visibleP.v)}
-              <span className="u">{visibleP.unit || m.unit}</span>
+              <span className="u">{displayUnit(visibleP.unit || m.unit)}</span>
             </div>
             <div className="tip-meta">
               <span className={`sdot ${statusClass(st)}`} />
@@ -606,8 +607,10 @@ function Overlay(p: OverlayProps) {
       });
       const w = txt.length * 5.6 + 8;
       const ty = up ? plot.y + 11 : bottom - 6;
-      const hx = right - w;
-      obstacles.push({ x0: hx, x1: right, y0: ty - 11, y1: ty + 4 });
+      // left end of the latest strip: the newest points (and their labels,
+      // which are never dropped) sit at the right
+      const hx = Math.max(plot.x, Math.min(x0, right - w));
+      obstacles.push({ x0: hx, x1: hx + w, y0: ty - 11, y1: ty + 4 });
       const act = (e: React.SyntheticEvent) => {
         e.stopPropagation();
         p.onShowNormal();
@@ -637,7 +640,7 @@ function Overlay(p: OverlayProps) {
             height={24}
             rx={6}
           />
-          <text className="vz-edge-lbl" x={right - 4} y={ty} textAnchor="end">
+          <text className="vz-edge-lbl" x={hx + 4} y={ty} textAnchor="start">
             {txt}
           </text>
         </g>,
@@ -686,7 +689,12 @@ function Overlay(p: OverlayProps) {
     const x = X((prev.t + pt.t) / 2);
     nodes.push(
       <g key={`unit-${pt.t}`}>
-        <title>{t("unitChanged", { from: prev.unit, to: pt.unit })}</title>
+        <title>
+          {t("unitChanged", {
+            from: displayUnit(prev.unit),
+            to: displayUnit(pt.unit),
+          })}
+        </title>
         <line x1={x} x2={x} y1={bottom - 5} y2={bottom + 3} stroke="var(--vz-muted-fg)" strokeWidth={1.5} />
         <rect x={x - 6} y={bottom - 8} width={12} height={14} fill="transparent" />
       </g>,

@@ -409,6 +409,107 @@ test.describe("Dashboard: Ana ekran, picker, charts", () => {
     await context.close();
   });
 
+  test("#157: the edge strip switches every chart to full scale with the band", async ({
+    browser,
+  }) => {
+    const { context, page, errors } = await open(browser, userId, TEST_EMAIL);
+    const cards = page.locator(".vz-chart-card");
+    await expect(cards).toHaveCount(2);
+    // fit-to-data: both ranges are off-scale, no band drawn
+    await expect(page.locator(".vz-chart-card .vz-edge-btn")).toHaveCount(2);
+    await expect(page.locator(".vz-chart-card .recharts-reference-area")).toHaveCount(0);
+    await page.locator('[data-metric="Trombosit"] .vz-edge-btn').click();
+    // all charts: full scale, band visible, no "fit" caption, no strip
+    for (const id of ["Hemoglobin", "Trombosit"]) {
+      const c = page.locator(`[data-metric="${id}"]`);
+      await expect(c.locator(".recharts-reference-area").first()).toBeVisible();
+      await expect(c).not.toContainText("Ölçek: değerlere göre");
+      await expect(c.locator(".vz-edge-btn")).toHaveCount(0);
+    }
+    await page.getByRole("button", { name: /Görünüm/ }).click();
+    await expect(page.getByLabel("Normal aralığı göster")).toBeChecked();
+    await page.getByLabel("Normal aralığı göster").uncheck(); // restore default
+    await page.keyboard.press("Escape");
+    expect(errors).toEqual([]);
+    await context.close();
+  });
+
+  test("#159: a date pinned on one of 4 charts shows on all; a gap says so", async ({
+    browser,
+  }) => {
+    const { context, page, errors } = await open(browser, userId, TEST_EMAIL);
+    await page.locator('[data-id="Lökosit"] .vz-mcard').click();
+    await page.locator('[data-id="Kreatinin"] .vz-mcard').click();
+    await expect(page.locator(".vz-chart-card")).toHaveCount(4);
+    // click 2026-03-23 on the Hemoglobin chart (Lökosit was not measured then)
+    const ms = (d: string) => Date.parse(`${d}T00:00:00Z`);
+    const a = ms(DATES[0]);
+    const b = ms(DATES[DATES.length - 1]);
+    const pad = Math.max((b - a) * 0.035, 0.6 * 86_400_000);
+    const f = (ms(DATES[3]) - a + pad) / (b - a + 2 * pad);
+    const hit = page.locator('[data-metric="Hemoglobin"] .vz-hit');
+    const box = await hit.boundingBox();
+    await hit.click({ position: { x: box!.width * f, y: box!.height / 2 } });
+    await expect(page.locator(".vz-chip")).toContainText("Sabit tarih");
+    await expect(page.locator(".vz-chart-card .vz-tip")).toHaveCount(4);
+    await expect(page.locator('[data-metric="Lökosit"] .vz-tip')).toContainText(
+      "Bu tarihte ölçüm yok",
+    );
+    for (const id of ["Hemoglobin", "Trombosit", "Kreatinin"]) {
+      await expect(page.locator(`[data-metric="${id}"] .vz-tip`)).not.toContainText(
+        "Bu tarihte ölçüm yok",
+      );
+    }
+    // clicking the same date again unpins it everywhere
+    await hit.click({ position: { x: box!.width * f, y: box!.height / 2 } });
+    await page.mouse.move(0, 0);
+    await expect(page.locator(".vz-chip")).toHaveCount(0);
+    await expect(page.locator(".vz-chart-card .vz-tip")).toHaveCount(0);
+    expect(errors).toEqual([]);
+    await context.close();
+  });
+
+  test("#159: Görünüm on a phone is a bottom sheet; Escape / outside tap close it and focus returns", async ({
+    browser,
+  }) => {
+    const { context, page } = await open(browser, userId, TEST_EMAIL, {
+      width: 390,
+      height: 844,
+    });
+    const btn = page.getByRole("button", { name: /Görünüm/ });
+    await btn.click();
+    const sheet = page.getByRole("dialog");
+    await expect(sheet).toBeVisible();
+    const sb = await sheet.boundingBox();
+    expect(sb!.y + sb!.height).toBeGreaterThanOrEqual(844 - 1); // anchored to the bottom
+    await expect(page.getByRole("button", { name: "1 sütun" })).toHaveCount(0);
+    await page.keyboard.press("Escape");
+    await expect(sheet).toBeHidden();
+    await expect(btn).toBeFocused();
+    await btn.click();
+    await expect(sheet).toBeVisible();
+    await page.mouse.click(195, 40); // the scrim above the sheet
+    await expect(sheet).toBeHidden();
+    await expect(btn).toBeFocused();
+    await context.close();
+  });
+
+  test("Ana ekran PUT rejects names the profile does not have", async ({
+    browser,
+  }) => {
+    const { context, page } = await open(browser, userId, TEST_EMAIL);
+    const res = await page.request.put("/api/metric-order", {
+      data: { profileId, home: [...HOME, "Uydurma Değer"] },
+    });
+    expect(res.status()).toBe(400);
+    const rows = await sql`
+      SELECT 1 FROM metric_preferences
+      WHERE profile_id = ${profileId} AND name = 'Uydurma Değer'`;
+    expect(rows).toHaveLength(0);
+    expect(await homeInDb()).toEqual(HOME);
+    await context.close();
+  });
+
   test("search ranks abbreviations and Turkish case first", async ({
     browser,
   }) => {

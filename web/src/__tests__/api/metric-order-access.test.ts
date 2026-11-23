@@ -59,12 +59,19 @@ it("rejects unauthenticated requests", async () => {
   expect(res.status).toBe(401);
 });
 
+/** the name lookup knows every name it is asked about */
+const knowsAll = () =>
+  sqlMock.mockImplementationOnce(async (_s: unknown, ...params: unknown[]) =>
+    (params[1] as string[]).map((name) => ({ name })),
+  );
+
 it.each(["owner", "editor"])("lets an %s write Ana ekran in ONE batched statement", async (lvl) => {
   levelMock.mockResolvedValue(lvl);
+  knowsAll();
   const res = await put({ profileId: "p1", home: ["Trombosit", "Hemoglobin", "Trombosit"] });
   expect(res.status).toBe(200);
-  expect(sqlMock).toHaveBeenCalledTimes(1);
-  const [strings, ...params] = sqlMock.mock.calls[0];
+  expect(sqlMock).toHaveBeenCalledTimes(2); // name lookup + one write
+  const [strings, ...params] = sqlMock.mock.calls[1];
   const text = (strings as string[]).join("?");
   expect(text).toMatch(/INSERT INTO metric_preferences/);
   expect(text).toMatch(/ON CONFLICT \(profile_id, name\) DO UPDATE/);
@@ -75,10 +82,11 @@ it.each(["owner", "editor"])("lets an %s write Ana ekran in ONE batched statemen
 
 it("upserts the legacy order in one statement (no silent drops)", async () => {
   levelMock.mockResolvedValue("editor");
+  knowsAll();
   const res = await put({ profileId: "p1", order: ["A", "B", "C"] });
   expect(res.status).toBe(200);
-  expect(sqlMock).toHaveBeenCalledTimes(1);
-  expect((sqlMock.mock.calls[0][0] as string[]).join("?")).toMatch(/INSERT INTO metric_preferences[\s\S]*ON CONFLICT/);
+  expect(sqlMock).toHaveBeenCalledTimes(2);
+  expect((sqlMock.mock.calls[1][0] as string[]).join("?")).toMatch(/INSERT INTO metric_preferences[\s\S]*ON CONFLICT/);
 });
 
 it.each([
@@ -93,6 +101,38 @@ it.each([
   const res = await put(body);
   expect(res.status).toBe(400);
   expect(sql).not.toHaveBeenCalled();
+});
+
+describe("PUT accepts only names the profile has", () => {
+  beforeEach(() => {
+    levelMock.mockResolvedValue("editor");
+    sqlMock.mockReset();
+  });
+
+  it("rejects a made-up name with 400 and writes nothing", async () => {
+    // the profile knows Hemoglobin only
+    sqlMock.mockResolvedValueOnce([{ name: "Hemoglobin" }]);
+    const res = await put({ profileId: "p1", home: ["Hemoglobin", "Made up"] });
+    expect(res.status).toBe(400);
+    expect(sqlMock).toHaveBeenCalledTimes(1); // the lookup, no write
+  });
+
+  it("rejects made-up names on the legacy order path too", async () => {
+    sqlMock.mockResolvedValueOnce([]);
+    const res = await put({ profileId: "p1", order: ["Made up"] });
+    expect(res.status).toBe(400);
+    expect(sqlMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("accepts known names plus the Kilo / Tansiyon ids", async () => {
+    sqlMock.mockResolvedValueOnce([{ name: "Hemoglobin" }]).mockResolvedValue([]);
+    const res = await put({
+      profileId: "p1",
+      home: ["__tracking_weight", "Hemoglobin"],
+    });
+    expect(res.status).toBe(200);
+    expect(sqlMock).toHaveBeenCalledTimes(2); // lookup + one batched write
+  });
 });
 
 describe("parseNameList", () => {

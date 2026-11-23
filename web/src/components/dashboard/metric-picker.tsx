@@ -28,6 +28,7 @@ import {
   CATEGORY_ORDER,
   SORT_KINDS,
   changeAt,
+  displayUnit,
   highlightRange,
   searchMetrics,
   sorter,
@@ -547,7 +548,7 @@ function PickerRow({
   ]
     .filter(Boolean)
     .join(" · ");
-  const unit = last.unit || m.unit;
+  const unit = displayUnit(last.unit || m.unit);
   return (
     <>
       <span className={`sdot ${statusClass(s.st)}`} title={ts(s.st)} />
