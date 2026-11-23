@@ -152,6 +152,8 @@ test.describe("Dashboard: date range", () => {
     // 15.12.25 – 15.06.26: the 12 dense draws + 10.01.26 + 20.03.26
     await expect(hbDots(page)).toHaveCount(14);
 
+    // let in-flight requests (profile switcher) settle, or the reload cancels them and logs "Failed to fetch"
+    await page.waitForLoadState("networkidle");
     await page.reload();
     await expect(page.getByTestId("home-cards")).toBeVisible();
     await expect(preset(page, "6 ay")).toHaveAttribute("aria-pressed", "true");
@@ -165,6 +167,7 @@ test.describe("Dashboard: date range", () => {
     await back.click();
     await expect(preset(page, "1 ay")).toHaveAttribute("aria-pressed", "true");
     await expect(preset(page, "1 ay")).toContainText("otomatik");
+    await page.waitForLoadState("networkidle");
     await page.reload();
     await expect(page.getByTestId("home-cards")).toBeVisible();
     await expect(preset(page, "1 ay")).toContainText("otomatik");
